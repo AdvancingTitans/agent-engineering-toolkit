@@ -1,7 +1,7 @@
 # Agent Engineering Toolkit audit
 
-- Root: `/Users/yjw/Documents/Codex/2026-07-11/vibe-coding-chatgpt-conversation-6a5217df-c2e4/work/dogfood/cli-creator-skill`
-- Generated: `2026-07-11T10:54:41.324149+00:00`
+- Root: `/Users/yjw/agent/Agent Engineering Toolkit/work/dogfood/cli-creator-skill`
+- Generated: `2026-07-11T11:00:34.150265+00:00`
 - Assets: 1
 - Findings: FAIL 0 · UNKNOWN 0 · PASS 0
 

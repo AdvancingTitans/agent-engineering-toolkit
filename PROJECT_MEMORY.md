@@ -1,5 +1,14 @@
 # Agent Engineering Toolkit — Project Memory
 
+## Canonical workspace
+
+All future implementation work belongs in:
+`/Users/yjw/agent/Agent Engineering Toolkit`
+
+This repository was migrated here on 2026-07-11 with its Git history, phase
+tags, local fixtures, and dogfood snapshots intact. Treat this path as the only
+active workspace; the prior Codex-generated directory is archival.
+
 ## Resume protocol
 
 At the start of any new task, read this file, then run `git status --short`,

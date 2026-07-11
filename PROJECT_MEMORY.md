@@ -1,0 +1,89 @@
+# Agent Engineering Toolkit — Project Memory
+
+## Resume protocol
+
+At the start of any new task, read this file, then run `git status --short`,
+`git tag --sort=-creatordate | head`, and
+`uv run --no-editable python -m unittest discover -s tests`. Do not start a
+later phase until the current phase's acceptance checks pass and this file is
+updated.
+
+## Product decision
+
+`aet` is an Evidence First, read-only engineering gate for coding-agent
+context and Skills. It proves what can be inspected locally and reports
+unknowns; it never invents a holistic trust score.
+
+Primary users are individual developers and small teams using Codex, Claude
+Code, Cursor, Copilot, or compatible agent Skills across multiple repositories.
+
+Out of scope: an agent runtime, a Skill marketplace, automatic prompt rewrites,
+and model-dependent prompt regression. The only retained later expansion is
+**Repo Archaeologist**, planned as `aet evolve`, not a dependency of the static
+core.
+
+## Non-negotiable design rules
+
+1. Local, deterministic, and read-only by default; no LLM or API key in v0.1.
+2. Every finding has a stable ID, status, severity, evidence location,
+   remediation, and rule version.
+3. Use `PASS`, `FAIL`, `UNKNOWN`, and `NOT_APPLICABLE`; do not produce a single
+   opaque score.
+4. Keep the core dependency-light. Python 3.11+ standard library is sufficient
+   for v0.1.
+5. New rules require a fixture that proves both a clean and failing case.
+6. End every phase by: testing, committing, tagging, updating this file, and
+   bumping/installing the local Skill version.
+
+## Architecture
+
+`discovery.py` locates context assets → `rules.py` produces evidence-backed
+findings → `reporters.py` serializes Markdown, JSON, or SARIF → `cli.py`
+controls output and CI exit status.
+
+Supported v0.1 assets: `AGENTS.md`, `CLAUDE.md`, `CODEX.md`,
+`copilot-instructions.md`, `.cursorrules`, and every `SKILL.md` below the
+target root.
+
+## Version and rollback ledger
+
+| Stage | Version | Git tag | Result | Rollback |
+|---|---:|---|---|---|
+| Phase 0 | Skill 0.0.1 | `phase-0-dogfood` | Workspace, fixtures, dogfood baseline, project memory, and conservative path semantics. | `git checkout phase-0-dogfood` |
+| v0.1 | pending | pending | Static context and Skill audit CLI. | `git checkout <v0.1-tag>` |
+
+## Current implementation status
+
+Phase 0 complete. v0.1 release hardening is next; do not implement Intent Gate.
+
+### Phase 0 result — 2026-07-11
+
+- Initialized this repository and the `agent-engineering-toolkit` Skill.
+- Added clean and broken fixtures plus an initial evidence schema and static
+  rule prototype for dogfooding.
+- Audited read-only shallow clones stored outside Git tracking:
+  - `stock-analysis` at `e875974992e8a5258df9723ead115390efecf5a1`
+  - `pain-miner` at `ddf3ce20a1bc0cfbd04b79ac76c8e713b6ff0fda`
+  - `cli-creator-skill` at `418e941607a53be95921edbbb8e2196411b7893d`
+- Final dogfood reports are in `docs/dogfood/`; each discovered one Skill and
+  emitted zero FAIL/UNKNOWN findings under the v0.1 prototype.
+- Dogfood corrected two false-positive risks before release: generated output
+  names are not local paths, and verification detection recognises Chinese as
+  well as English wording.
+- Local Skill installed at
+  `~/.codex/skills/agent-engineering-toolkit`, version `0.0.1`.
+
+## Next phase after v0.1
+
+v0.2 is **Intent Gate only**: a human-reviewable intent contract, changed-path
+budget, required proof checks, and an evidence-backed `aet review --base`.
+No model-generated judgement should be the sole release gate.
+
+## Known limits
+
+- v0.1 parses local Markdown and paths; it cannot prove that a remote MCP
+  server is reachable or that a command semantically succeeds.
+- Detection is intentionally conservative. A missing local target is a FAIL;
+  a remote, dynamic, or bare filename is left unverified rather than guessed.
+- Repo Archaeologist needs GitHub history, Issues, PRs, and releases, so it is
+  deferred behind the stable evidence schema.

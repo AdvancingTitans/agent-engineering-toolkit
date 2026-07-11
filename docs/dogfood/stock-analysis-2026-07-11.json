@@ -1,0 +1,18 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-07-11T10:54:41.152277+00:00",
+  "root": "/Users/yjw/Documents/Codex/2026-07-11/vibe-coding-chatgpt-conversation-6a5217df-c2e4/work/dogfood/stock-analysis",
+  "assets": [
+    {
+      "path": "skills/stock-analysis/SKILL.md",
+      "kind": "skill"
+    }
+  ],
+  "findings": [],
+  "summary": {
+    "PASS": 0,
+    "FAIL": 0,
+    "UNKNOWN": 0,
+    "NOT_APPLICABLE": 0
+  }
+}

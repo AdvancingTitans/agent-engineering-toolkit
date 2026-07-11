@@ -2,6 +2,23 @@
 
 ## Unreleased
 
+## 1.3.0 — 2026-07-12
+
+- Added an optional, deterministic **Context Manifest**: `aet context discover`
+  records discoverable local instructions and Skills with SHA-256 hashes;
+  `record` adds local references and explicit read attestations; `verify`
+  reports changed/missing assets and workspace freshness.
+- Read declarations are deliberately stored as `agent_attestation` (L5), while
+  discovery and hashes remain L1 local evidence. AET does not claim that a
+  model saw, understood, or used a recorded asset.
+- Added a local JSON **Decision Ledger**: `aet decision init`, `add`, `list`,
+  `verify`, and `supersede` preserve decision state, source hashes, evidence
+  state, and replacement history. It is source-backed project memory, not RAG
+  or a generic Agent-memory subsystem.
+- Added regression coverage for Context Manifest discovery/attestation/drift,
+  Decision Ledger hash verification, and supersession; updated the portable
+  Skill, bilingual README, package metadata, and wheel smoke target.
+
 ## 1.2.0 — 2026-07-12
 
 - Added an optional, append-only **Run Manifest** (`aet run init`, `status`,

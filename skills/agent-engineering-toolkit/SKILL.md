@@ -5,7 +5,7 @@ description: Produce evidence-backed audits and intent-to-diff reviews for codin
 
 # Agent Engineering Toolkit
 
-Current Skill version: `1.2.0` (Evidence Plane: audit, review, trace, evidence, evolve, optional Run Manifest)
+Current Skill version: `1.3.0` (Evidence Plane: audit, review, trace, evidence, evolve, optional Run Manifest, Context Manifest, and Decision Ledger)
 
 Use the `aet` CLI as the source of truth. The host agent may choose its own
 shell or package runner, but must preserve the commands' exit status and attach
@@ -21,6 +21,8 @@ Choose one initial surface. If the request is ambiguous, default to read-only `a
 | Check a proposed or completed diff | `aet review . --base <base>` | Review report |
 | Prove a command actually ran | `aet trace --proof <id> … -- <argv>` | Trace + pack |
 | Understand why a repo changed | `aet evolve plan/collect/build/report` | Evolution Pack |
+| Record which local context was available | `aet context discover/record/verify` | Context Manifest |
+| Preserve a source-backed project decision | `aet decision init/add/verify` | Decision Ledger |
 
 Repo Archaeologist example: “Explain why this repository adopted a plugin architecture; link releases, PRs, Issues, commits, and README changes, and separate direct evidence from candidates.” Use `aet evolve`; never invent author intent.
 
@@ -77,6 +79,33 @@ Repo Archaeologist example: “Explain why this repository adopted a plugin arch
 7. Report the command, exit status, summary, and evidence-file path. Do not
    claim a referenced command, remote MCP, or model output was verified unless
    another tool actually performed and recorded that check.
+
+8. For an explicit context boundary, use:
+
+   ```bash
+   aet context discover . --output .aet/context/manifest.json
+   aet context record --manifest .aet/context/manifest.json --read AGENTS.md
+   aet context verify --manifest .aet/context/manifest.json
+   ```
+
+   Discovery is L1 evidence that an asset existed with a recorded hash.
+   `--read` is only an L5 agent/host attestation; it cannot prove the model
+   read, understood, or used the asset. Do not describe this feature as RAG,
+   generic Agent memory, or host telemetry.
+
+9. For a durable, source-backed project decision, use:
+
+   ```bash
+   aet decision init --output .aet/decisions.json
+   aet decision add --ledger .aet/decisions.json --id DEC-0001 \
+     --claim "Keep proof execution explicit." --evidence-state EVIDENCED \
+     --source docs/productization-plan.md
+   aet decision verify --ledger .aet/decisions.json
+   ```
+
+   `EVIDENCED` and `INFERRED` decisions require local hashed sources.
+   Verification proves only that recorded bytes still match; it does not make
+   the decision universally or permanently correct.
 
 ## Portable use
 

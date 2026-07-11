@@ -134,6 +134,95 @@ class ProductizationTests(unittest.TestCase):
             self.assertEqual(manifest["lifecycle"]["state"], "STALE")
             self.assertEqual(manifest["lifecycle"]["history"][-1]["event"], "repository_changed")
 
+    def test_context_manifest_distinguishes_discovery_attestation_and_drift(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            _git(root, "init")
+            _git(root, "config", "user.email", "aet@example.test")
+            _git(root, "config", "user.name", "AET test")
+            (root / "AGENTS.md").write_text("# Instructions\n", encoding="utf-8")
+            skill = root / "skills" / "example" / "SKILL.md"
+            skill.parent.mkdir(parents=True)
+            skill.write_text("---\nname: example\n---\n\n# Example\n", encoding="utf-8")
+            reference = root / "docs" / "architecture.md"
+            reference.parent.mkdir()
+            reference.write_text("# Architecture\n", encoding="utf-8")
+            (root / ".gitignore").write_text(".aet/\n", encoding="utf-8")
+            _git(root, "add", "AGENTS.md", "skills", "docs", ".gitignore")
+            _git(root, "commit", "-m", "base")
+            manifest = root / ".aet" / "context.json"
+            previous = Path.cwd()
+            try:
+                os.chdir(root)
+                self.assertEqual(main(["context", "discover", ".", "--output", str(manifest)]), 0)
+                self.assertEqual(main([
+                    "context", "record", "--manifest", str(manifest), "--read", "AGENTS.md",
+                    "--reference", "docs/architecture.md",
+                ]), 0)
+                self.assertEqual(main(["context", "verify", "--manifest", str(manifest), "--format", "json"]), 0)
+                context = json.loads(manifest.read_text(encoding="utf-8"))
+                assets = {asset["path"]: asset for asset in context["assets"]}
+                self.assertTrue(assets["AGENTS.md"]["declared_read"])
+                self.assertEqual(assets["AGENTS.md"]["declaration_source"], "agent_attestation")
+                self.assertEqual(assets["docs/architecture.md"]["role"], "reference")
+                (root / "AGENTS.md").write_text("# Changed instructions\n", encoding="utf-8")
+                self.assertEqual(main(["context", "verify", "--manifest", str(manifest), "--format", "json"]), 1)
+            finally:
+                os.chdir(previous)
+
+    def test_decision_ledger_tracks_evidence_and_supersession(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            _git(root, "init")
+            _git(root, "config", "user.email", "aet@example.test")
+            _git(root, "config", "user.name", "AET test")
+            source = root / "docs" / "decision-source.md"
+            source.parent.mkdir()
+            source.write_text("# Source\n", encoding="utf-8")
+            (root / ".gitignore").write_text(".aet/\n", encoding="utf-8")
+            _git(root, "add", "docs", ".gitignore")
+            _git(root, "commit", "-m", "base")
+            ledger = root / ".aet" / "decisions.json"
+            previous = Path.cwd()
+            try:
+                os.chdir(root)
+                self.assertEqual(main(["decision", "init", "--output", str(ledger)]), 0)
+                self.assertEqual(main([
+                    "decision", "add", "--ledger", str(ledger), "--id", "DEC-0001",
+                    "--claim", "Keep proof execution explicit.", "--evidence-state", "EVIDENCED",
+                    "--source", "docs/decision-source.md",
+                ]), 0)
+                self.assertEqual(main([
+                    "decision", "add", "--ledger", str(ledger), "--id", "DEC-0002",
+                    "--claim", "Replace the earlier decision.", "--evidence-state", "EVIDENCED",
+                    "--source", "docs/decision-source.md", "--supersedes", "DEC-0001",
+                ]), 0)
+                self.assertEqual(main([
+                    "decision", "add", "--ledger", str(ledger), "--id", "DEC-0003",
+                    "--claim", "Replace the replacement decision.", "--evidence-state", "EVIDENCED",
+                    "--source", "docs/decision-source.md",
+                ]), 0)
+                self.assertEqual(main([
+                    "decision", "supersede", "--ledger", str(ledger), "--id", "DEC-0002", "--by", "DEC-0003",
+                ]), 0)
+                with self.assertRaises(SystemExit):
+                    main([
+                        "decision", "add", "--ledger", str(ledger), "--id", "DEC-0004",
+                        "--claim", "An unaccepted replacement.", "--evidence-state", "EVIDENCED",
+                        "--state", "PROPOSED", "--source", "docs/decision-source.md", "--supersedes", "DEC-0003",
+                    ])
+                self.assertEqual(main(["decision", "verify", "--ledger", str(ledger), "--format", "json"]), 0)
+                data = json.loads(ledger.read_text(encoding="utf-8"))
+                decisions = {decision["id"]: decision for decision in data["decisions"]}
+                self.assertEqual(decisions["DEC-0001"]["state"], "SUPERSEDED")
+                self.assertEqual(decisions["DEC-0001"]["superseded_by"], "DEC-0002")
+                self.assertEqual(decisions["DEC-0002"]["state"], "SUPERSEDED")
+                self.assertEqual(decisions["DEC-0002"]["superseded_by"], "DEC-0003")
+                source.write_text("# Changed source\n", encoding="utf-8")
+                self.assertEqual(main(["decision", "verify", "--ledger", str(ledger), "--format", "json"]), 1)
+            finally:
+                os.chdir(previous)
+
     def test_init_never_overwrites_existing_candidate(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             output = Path(directory) / "aet.toml"

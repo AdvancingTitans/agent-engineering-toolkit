@@ -19,7 +19,7 @@ comforting score.
 Use it before an agent changes a repository, at handoff or release time, or
 when you need a cited answer to “why is this repository built this way?”
 
-[Quick start](#quick-start) · [Capability surface](#capability-surface) · [Run Manifest](#run-manifest-an-optional-delivery-lifecycle) · [Quality](#quality-and-current-results) · [Repo Archaeologist](#repo-archaeologist) · [Contributing](CONTRIBUTING.md)
+[Quick start](#quick-start) · [Capability surface](#capability-surface) · [Context & decisions](#context-and-decisions-local-provenance-not-agent-memory) · [Run Manifest](#run-manifest-an-optional-delivery-lifecycle) · [Quality](#quality-and-current-results) · [Repo Archaeologist](#repo-archaeologist) · [Contributing](CONTRIBUTING.md)
 
 ## Why AET, and why now?
 
@@ -41,6 +41,8 @@ what was declared, what was explicitly executed, and what remains unknown.
 | Is the diff inside the human-approved intent? | `aet review` | An intent-gate report for path budget, allowed paths, and declared proofs. |
 | Did the command run against the reviewed workspace? | `aet trace` + `aet evidence pack` | A redacted execution record plus proof and workspace-snapshot bindings. |
 | What delivery stage is this evidence chain in, and did it become stale? | `aet run` | An optional append-only Run Manifest with explicit lifecycle states. |
+| Which local instructions/references were available, and what was only claimed as read? | `aet context` | A hash-bound Context Manifest; read declarations are explicit attestations. |
+| Which project decisions have local sources, and which records supersede them? | `aet decision` | A source-hash Decision Ledger with verification and supersession history. |
 | Why did the repository evolve this way? | `aet evolve` | An Evolution Pack, timeline, decision index, and cited report. |
 | What should be fixed first? | `aet triage` | Transparent priority ordering; it never changes a finding status. |
 
@@ -121,15 +123,51 @@ writing each normal JSON artifact. `aet run status` is read-only; `aet run
 verify` records an observed stale transition and exits non-zero when stale;
 `aet run close` refuses anything other than a fresh `PACKED` run.
 
+### Context and decisions: local provenance, not Agent memory
+
+v1.3.0 adds two optional, local JSON artifacts for a task's durable engineering
+facts. They are independent of `audit`, `review`, `trace`, and `run`.
+
+```bash
+# Record discoverable instructions/Skills, then explicitly attest a read and a local reference.
+aet context discover . --output .aet/context/manifest.json
+aet context record --manifest .aet/context/manifest.json \
+  --read AGENTS.md --reference docs/architecture.md
+aet context verify --manifest .aet/context/manifest.json
+
+# Store one source-backed project decision and verify its local sources later.
+aet decision init --output .aet/decisions.json
+aet decision add --ledger .aet/decisions.json --id DEC-0001 \
+  --claim "Keep proof execution explicit." --evidence-state EVIDENCED \
+  --source docs/productization-plan.md
+aet decision list --ledger .aet/decisions.json
+aet decision verify --ledger .aet/decisions.json
+```
+
+`context discover` is L1 evidence that an asset was found and hashes its
+content. `context record --read` is an L5 `agent_attestation`: it records that
+an agent or host claimed to read an asset; it does not prove that a model saw,
+understood, or used the content. `context verify` checks asset hashes and the
+captured workspace snapshot, so changed context becomes visible rather than
+silently carrying a previous declaration forward.
+
+The Decision Ledger is a small source-backed memory for maintainers, not a
+generic Agent memory or RAG system. `EVIDENCED` and `INFERRED` records require
+at least one local file with a SHA-256 hash; `ATTESTED` and `UNKNOWN` preserve
+their weaker epistemic state. Use `aet decision supersede --id DEC-0001 --by
+DEC-0002` only after the accepted replacement exists. Verification establishes
+whether recorded source bytes still match—not whether a decision is eternally
+correct.
+
 ## Quality and current results
 
 AET deliberately reports a status matrix rather than a synthetic “agent trust
 score.” Its only numeric model, `aet triage`, exposes its weights and is used
 only to order remediation work.
 
-| Release check | v1.2.0 result | How to reproduce |
+| Release check | v1.3.0 result | How to reproduce |
 | --- | --- | --- |
-| Regression suite | 25 tests passed | `uv run --no-editable --reinstall-package agent-engineering-toolkit python -m unittest discover -s tests -v` |
+| Regression suite | 27 tests passed | `uv run --no-editable --reinstall-package agent-engineering-toolkit python -m unittest discover -s tests -v` |
 | Strict self-audit | 0 `FAIL`, 0 `UNKNOWN` in the configured production Skill scope | `uv run --no-editable aet audit . --strict` |
 | Intent review | Release diff must stay inside the reviewed contract | `uv run --no-editable aet review . --base v1.1.0 --intent aet.intent.json` |
 | Distribution smoke | Wheel built and invoked in an isolated environment | `uv build` then install the wheel shown below |
@@ -147,7 +185,7 @@ what AET does and does not claim.
 Install the published GitHub Release wheel with [uv](https://docs.astral.sh/uv/):
 
 ```bash
-uv tool install https://github.com/AdvancingTitans/agent-engineering-toolkit/releases/download/v1.2.0/agent_engineering_toolkit-1.2.0-py3-none-any.whl
+uv tool install https://github.com/AdvancingTitans/agent-engineering-toolkit/releases/download/v1.3.0/agent_engineering_toolkit-1.3.0-py3-none-any.whl
 aet --version
 ```
 
@@ -306,7 +344,8 @@ examples/                        Copyable intent and workflow examples
 The core implementation is deliberately small: `discovery.py` finds context
 assets, `rules.py` produces evidence-backed audit findings, `review.py`
 compares intent to a Git diff, `evidence.py` records Trace and packs, `run.py`
-records optional lifecycle transitions,
+records optional lifecycle transitions, `context.py` records local context
+provenance, `decision.py` records source-backed project decisions,
 `evolve.py` builds the repository-evolution graph, and `reporters.py` writes
 portable output.
 

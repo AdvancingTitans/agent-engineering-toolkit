@@ -461,8 +461,24 @@ Evidence IR。
 以下不是成功：更大的 `SKILL.md`、更多 report 文件、单个“健康分数”、没有来源的
 模型故事、或未经批准的自动修复。
 
-## 下一步（唯一推荐顺序）
+## v1.3 决策：局部上下文来源与决策账本（2026-07-12）
 
-先启动 **v0.3.1 基线修复与可配置范围**，完成后才开始 Evidence IR。它解决当前
-README 漂移和 self-audit 不可用两个真实问题，并为 `evolve` 所需的 source policy 与
-schema 打下最小基础。任何 Repo Archaeologist 功能都不得先于这一基础上线。
+在 v1.1 的 workspace snapshot 和 v1.2 的 Run Manifest 之后，下一项有明确价值、且不
+改变 AET 产品边界的能力是：把“本任务有哪些本地上下文”和“项目为何保留某个工程决策”
+变成可复核的本地数据，而不是让它们留在对话或 Markdown 叙事中。
+
+采用两个独立 JSON 产物：
+
+| 产物 | 解决的问题 | 可证明的事实 | 明确不能证明 |
+| --- | --- | --- | --- |
+| Context Manifest | 任务可用的指令、Skill 和本地参考是否发生漂移？ | 发现到的文件、路径、SHA-256、快照；宿主/Agent 的读取声明 | 模型看见、理解或使用过内容 |
+| Decision Ledger | 一条长期工程结论有什么本地来源、是否已被替代？ | 本地来源哈希、evidence state、决策状态和 supersession 链 | 决策永远正确或作者的私人意图 |
+
+`context record --read` 仅为 L5 `agent_attestation`；发现与哈希是 L1。Decision Ledger
+的 `EVIDENCED`/`INFERRED` 记录必须有至少一个本地来源，`ATTESTED`/`UNKNOWN` 直接保留
+其弱认知状态。`verify` 只报告来源字节或上下文快照是否仍匹配，不能把 `PASS` 扩张为语义
+正确性。
+
+不采用 LangGraph、XState、工作流引擎、embedding、向量数据库、RAG、后台记忆 Agent 或
+宿主控制器。状态机文章提供的是白名单迁移和显式状态的表达法；这里以小型命令和 JSON
+ledger 吸收该思想，绝不将 AET 变成 Runtime。

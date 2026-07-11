@@ -292,3 +292,18 @@ deterministic core.
   guardrails for coding agents and use focused topics rather than broad AI
   hype. Keep public claims tied to reproducible release checks; do not claim
   PyPI publication unless it actually occurs.
+
+## v1.3.0 implementation and release candidate — 2026-07-12
+
+- Added `aet context discover`, `record`, and `verify`. The Context Manifest
+  records local instruction/Skill discovery and hashes; a declared read is
+  explicitly an `agent_attestation`, never evidence that a model understood or
+  used the file.
+- Added the local JSON Decision Ledger with `init`, `add`, `list`, `verify`,
+  and `supersede`. It stores source hashes, evidence state, lifecycle state,
+  and replacement history; it is project decision provenance, not generic
+  Agent memory or RAG.
+- Regression coverage now includes both a clean and a changed-source/context
+  path, as well as direct supersession. The v1.3 release gate requires 27 unit
+  tests, strict self-audit, reviewed intent, a proof-bound Trace/Evidence Pack,
+  and an isolated wheel smoke test.

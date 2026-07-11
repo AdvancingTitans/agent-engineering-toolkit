@@ -9,6 +9,8 @@ from typing import Sequence
 
 from . import __version__
 from .config import ConfigError, load_audit_config
+from .context import ContextError, discover_context, record_context, render_context_verification, verify_context
+from .decision import DecisionError, add_decision, init_ledger, list_decisions, render_decisions, supersede_decision, verify_ledger
 from .discovery import discover_assets
 from .evidence import EvidenceError, bind_proof, compile_evidence_pack, render_evidence_viewer, trace_command, workspace_snapshot
 from .evolve import EvolveError, build_evolution, collect_evolution, query_evolution, write_evolution_plan, write_evolution_report
@@ -77,6 +79,41 @@ def build_parser() -> argparse.ArgumentParser:
     query = evolve_commands.add_parser("query", help="Search normalized evolution objects without making new claims.")
     query.add_argument("--graph", required=True, type=Path)
     query.add_argument("--question", required=True)
+    context_parser = commands.add_parser("context", help="Record local context discovery and explicit read attestations.")
+    context_commands = context_parser.add_subparsers(dest="context_command", required=True)
+    context_discover = context_commands.add_parser("discover", help="Write a non-overwriting Context Manifest from discoverable assets.")
+    context_discover.add_argument("path", nargs="?", default=".")
+    context_discover.add_argument("--config", type=Path, help="Optional aet.toml scan policy (default: <root>/aet.toml).")
+    context_discover.add_argument("--output", required=True, type=Path)
+    context_record = context_commands.add_parser("record", help="Record local references and declared-read attestations.")
+    context_record.add_argument("--manifest", required=True, type=Path)
+    context_record.add_argument("--read", action="append", default=[], help="Root-relative recorded asset claimed as read (repeatable).")
+    context_record.add_argument("--reference", action="append", default=[], help="Root-relative local reference to record (repeatable).")
+    context_verify = context_commands.add_parser("verify", help="Verify recorded local context hashes and freshness.")
+    context_verify.add_argument("--manifest", required=True, type=Path)
+    context_verify.add_argument("--format", choices=("markdown", "json"), default="markdown")
+    context_verify.add_argument("--output", type=Path)
+    decision_parser = commands.add_parser("decision", help="Maintain a source-backed local Decision Ledger.")
+    decision_commands = decision_parser.add_subparsers(dest="decision_command", required=True)
+    decision_init = decision_commands.add_parser("init", help="Create a non-overwriting Decision Ledger.")
+    decision_init.add_argument("--output", required=True, type=Path)
+    decision_add = decision_commands.add_parser("add", help="Add a source-backed project decision.")
+    decision_add.add_argument("--ledger", required=True, type=Path)
+    decision_add.add_argument("--id", required=True)
+    decision_add.add_argument("--claim", required=True)
+    decision_add.add_argument("--evidence-state", choices=("EVIDENCED", "ATTESTED", "INFERRED", "UNKNOWN"), required=True)
+    decision_add.add_argument("--state", choices=("PROPOSED", "ACCEPTED"), default="ACCEPTED")
+    decision_add.add_argument("--source", action="append", default=[], help="Root-relative local source file (repeatable).")
+    decision_add.add_argument("--supersedes", action="append", default=[], help="Existing decision id to supersede (repeatable).")
+    for name, help_text in (("list", "List recorded decisions."), ("verify", "Verify recorded source hashes without mutating the ledger.")):
+        command = decision_commands.add_parser(name, help=help_text)
+        command.add_argument("--ledger", required=True, type=Path)
+        command.add_argument("--format", choices=("markdown", "json"), default="markdown")
+        command.add_argument("--output", type=Path)
+    decision_supersede = decision_commands.add_parser("supersede", help="Mark a decision superseded by an accepted replacement.")
+    decision_supersede.add_argument("--ledger", required=True, type=Path)
+    decision_supersede.add_argument("--id", required=True)
+    decision_supersede.add_argument("--by", required=True)
     run_parser = commands.add_parser("run", help="Record an optional, evidence-only delivery lifecycle.")
     run_commands = run_parser.add_subparsers(dest="run_command", required=True)
     run_init = run_commands.add_parser("init", help="Create a Run Manifest bound to a human-reviewed intent.")
@@ -94,6 +131,48 @@ def main(argv: Sequence[str] | None = None) -> int:
     raw_argv = list(sys.argv[1:] if argv is None else argv)
     parser = build_parser()
     args = parser.parse_args(raw_argv)
+    if args.command == "context":
+        try:
+            if args.context_command == "discover":
+                root = Path(args.path).resolve()
+                if not root.is_dir():
+                    raise ContextError(f"context root does not exist: {root}")
+                discover_context(root, args.output, load_audit_config(root, args.config))
+                return 0
+            if args.context_command == "record":
+                record_context(args.manifest, read_paths=args.read, reference_paths=args.reference)
+                return 0
+            result = verify_context(args.manifest)
+            rendered = render_context_verification(result, args.format)
+            if args.output:
+                args.output.parent.mkdir(parents=True, exist_ok=True)
+                args.output.write_text(rendered, encoding="utf-8")
+            else:
+                print(rendered, end="")
+            return 1 if result["status"] == "FAIL" else 0
+        except (ContextError, ConfigError) as error:
+            raise SystemExit(f"aet: context failed: {error}") from error
+    if args.command == "decision":
+        try:
+            if args.decision_command == "init":
+                init_ledger(args.output)
+                return 0
+            if args.decision_command == "add":
+                add_decision(args.ledger, identifier=args.id, claim=args.claim, evidence_state=args.evidence_state, state=args.state, sources=args.source, supersedes=args.supersedes)
+                return 0
+            if args.decision_command == "supersede":
+                supersede_decision(args.ledger, identifier=args.id, replacement=args.by)
+                return 0
+            result = list_decisions(args.ledger) if args.decision_command == "list" else verify_ledger(args.ledger)
+            rendered = render_decisions(result, args.format)
+            if args.output:
+                args.output.parent.mkdir(parents=True, exist_ok=True)
+                args.output.write_text(rendered, encoding="utf-8")
+            else:
+                print(rendered, end="")
+            return 1 if result.get("status") == "FAIL" else 0
+        except DecisionError as error:
+            raise SystemExit(f"aet: decision failed: {error}") from error
     if args.command == "trace":
         if "--" not in raw_argv:
             parser.error("trace requires -- before the command argv")

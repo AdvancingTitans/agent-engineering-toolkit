@@ -1,6 +1,6 @@
 {
-  "intent": "Release v1.2.0 with an optional evidence-only Run Manifest lifecycle, explicit stale-state verification, and finer workspace-snapshot freshness reasons.",
-  "changed_path_budget": 18,
+  "intent": "Release v1.3.0 with deterministic Context Manifests, explicit read-attestation boundaries, and source-backed Decision Ledgers without adding an Agent runtime or generic memory system.",
+  "changed_path_budget": 20,
   "allowed_paths": [
     "aet.intent.json",
     "PROJECT_MEMORY.md",
@@ -23,7 +23,8 @@
       "command": "uv run --no-editable --reinstall-package agent-engineering-toolkit python -m unittest discover -s tests -v",
       "evidence": [
         "README.md",
-        "src/aet/evidence.py",
+        "src/aet/context.py",
+        "src/aet/decision.py",
         "tests/test_productization.py"
       ]
     }

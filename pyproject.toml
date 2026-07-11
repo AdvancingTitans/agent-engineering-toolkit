@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "agent-engineering-toolkit"
-version = "0.2.0"
+version = "0.3.0"
 description = "Evidence-first audits and intent-to-diff reviews for coding-agent context and skills."
 readme = "README.md"
 requires-python = ">=3.11"

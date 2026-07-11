@@ -1,5 +1,5 @@
 {
-  "intent": "Release v0.2 Intent Gate with deterministic contract, Git diff, and proof-evidence checks.",
+  "intent": "Release v0.3 Evidence Pack compiler and opt-in redacted command Trace.",
   "changed_path_budget": 12,
   "allowed_paths": [
     "aet.intent.json",
@@ -21,10 +21,10 @@
     },
     {
       "id": "wheel-smoke-test",
-      "command": "uv build && uv pip install --python <fresh-venv>/bin/python dist/agent_engineering_toolkit-0.2.0-py3-none-any.whl",
+      "command": "uv build && uv pip install --python <fresh-venv>/bin/python dist/agent_engineering_toolkit-0.3.0-py3-none-any.whl",
       "evidence": [
         "pyproject.toml",
-        "src/aet/review.py"
+        "src/aet/evidence.py"
       ]
     }
   ]

@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 import json
+import os
 import subprocess
+import sys
 import unittest
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -75,6 +77,84 @@ class AuditTests(unittest.TestCase):
                 {("AET-REV-003", "FAIL"), ("AET-REV-004", "FAIL")},
             )
 
+    def test_trace_records_successful_command_and_redacts_logs(self) -> None:
+        with TemporaryDirectory() as directory:
+            output = Path(directory) / "trace.json"
+            command = [sys.executable, "-c", "print('token=supersecret')"]
+            self.assertEqual(main(["trace", "--output", str(output), "--", *command]), 0)
+            trace = json.loads(output.read_text(encoding="utf-8"))
+            self.assertEqual(trace["trace"]["execution"]["exit_code"], 0)
+            self.assertEqual(trace["trace"]["execution"]["status"], "PASS")
+            self.assertNotIn("supersecret", output.read_text(encoding="utf-8"))
+            stdout = output.with_suffix(".stdout.log")
+            self.assertTrue(stdout.is_file())
+            self.assertNotIn("supersecret", stdout.read_text(encoding="utf-8"))
+            self.assertEqual(trace["trace"]["stdout"]["sha256"], _sha256(stdout))
+
+    def test_trace_records_nonzero_exit_without_invalidating_trace(self) -> None:
+        with TemporaryDirectory() as directory:
+            output = Path(directory) / "trace.json"
+            self.assertEqual(main(["trace", "--output", str(output), "--", sys.executable, "-c", "raise SystemExit(7)"]), 7)
+            trace = json.loads(output.read_text(encoding="utf-8"))
+            self.assertEqual(trace["trace"]["execution"], {"status": "FAIL", "exit_code": 7})
+            self.assertEqual(trace["summary"]["FAIL"], 1)
+
+    def test_evidence_pack_marks_missing_inputs_unknown_and_replaces_output_atomically(self) -> None:
+        with TemporaryDirectory() as directory:
+            output = Path(directory) / "evidence-pack.json"
+            output.write_text("old output", encoding="utf-8")
+            self.assertEqual(main(["evidence", "pack", "--output", str(output)]), 0)
+            pack = json.loads(output.read_text(encoding="utf-8"))
+            self.assertEqual(pack["components"]["audit"]["status"], "UNKNOWN")
+            self.assertEqual(pack["components"]["review"]["status"], "UNKNOWN")
+            self.assertEqual(pack["components"]["trace"]["status"], "UNKNOWN")
+            self.assertFalse(list(Path(directory).glob(".evidence-pack.json.*")))
+
+    def test_evidence_pack_validates_schema_and_keeps_source_hash_stable(self) -> None:
+        with TemporaryDirectory() as directory:
+            root = Path(directory)
+            invalid = root / "invalid.json"
+            invalid.write_text('{"report_kind": "audit"}', encoding="utf-8")
+            with self.assertRaises(SystemExit):
+                main(["evidence", "pack", "--audit", str(invalid), "--output", str(root / "bad-pack.json")])
+
+            audit = root / "audit.json"
+            audit.write_text(json.dumps(_minimal_report("audit")), encoding="utf-8")
+            first = root / "first.json"
+            second = root / "second.json"
+            self.assertEqual(main(["evidence", "pack", "--audit", str(audit), "--output", str(first)]), 0)
+            self.assertEqual(main(["evidence", "pack", "--audit", str(audit), "--output", str(second)]), 0)
+            self.assertEqual(
+                json.loads(first.read_text(encoding="utf-8"))["components"]["audit"]["sha256"],
+                json.loads(second.read_text(encoding="utf-8"))["components"]["audit"]["sha256"],
+            )
+
+    def test_clean_git_fixture_can_compile_audit_review_trace_and_pack(self) -> None:
+        with _review_repository() as (root, base):
+            _write_contract(root, budget=2, evidence=["aet.intent.json"])
+            contract = json.loads((root / "aet.intent.json").read_text(encoding="utf-8"))
+            contract["allowed_paths"].append(".aet/**")
+            (root / "aet.intent.json").write_text(json.dumps(contract), encoding="utf-8")
+            evidence = root / ".aet" / "evidence"
+            audit = evidence / "audit.json"
+            review_output = evidence / "review.json"
+            trace = evidence / "trace.json"
+            pack = evidence / "evidence-pack.json"
+            previous = Path.cwd()
+            try:
+                os.chdir(root)
+                self.assertEqual(main(["audit", ".", "--format", "json", "--output", str(audit)]), 0)
+                self.assertEqual(main(["review", ".", "--base", base, "--format", "json", "--output", str(review_output)]), 0)
+                self.assertEqual(main(["trace", "--output", str(trace), "--", sys.executable, "-c", "print('ok')"]), 0)
+                self.assertEqual(main([
+                    "evidence", "pack", "--audit", str(audit), "--review", str(review_output), "--trace", str(trace), "--output", str(pack),
+                ]), 0)
+            finally:
+                os.chdir(previous)
+            compiled = json.loads(pack.read_text(encoding="utf-8"))
+            self.assertTrue(all(component["status"] == "PASS" for component in compiled["components"].values()))
+            self.assertEqual(compiled["components"]["trace"]["report"]["execution"]["status"], "PASS")
+
 
 class _review_repository:
     def __enter__(self) -> tuple[Path, str]:
@@ -107,6 +187,24 @@ def _write_contract(root: Path, *, budget: int, evidence: list[str]) -> None:
             "evidence": evidence,
         }],
     }), encoding="utf-8")
+
+
+def _minimal_report(kind: str) -> dict:
+    return {
+        "schema_version": "0.3.0",
+        "report_kind": kind,
+        "generated_at": "2026-07-11T00:00:00+00:00",
+        "root": "/tmp/example",
+        "assets": [],
+        "findings": [],
+        "summary": {"PASS": 0, "FAIL": 0, "UNKNOWN": 0, "NOT_APPLICABLE": 0},
+    }
+
+
+def _sha256(path: Path) -> str:
+    import hashlib
+
+    return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
 if __name__ == "__main__":

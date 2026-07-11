@@ -12,6 +12,8 @@ uv tool install agent-engineering-toolkit
 aet audit .
 aet audit . --format sarif --output aet.sarif --strict
 aet review --base main
+aet trace --output .aet/evidence/trace.json -- python -m unittest discover -s tests
+aet evidence pack --audit .aet/evidence/audit.json --review .aet/evidence/review.json --trace .aet/evidence/trace.json --output .aet/evidence/evidence-pack.json
 ```
 
 ## What v0.1 checks
@@ -59,10 +61,34 @@ local evidence. It does not execute proof commands: command execution is not
 read-only, and a declared command is not evidence that it passed. Run the
 commands separately and retain their output in the normal review record.
 
+## What v0.3 adds: Evidence Pack and Trace
+
+`aet trace` is the only command that executes anything. It requires an
+explicit argv after `--`; `audit` and `review` remain read-only. Trace stores
+the argv, exit code, timestamps, working directory, Git HEAD and worktree
+digest, plus SHA-256 digests for redacted stdout and stderr artifacts. Built-in
+redaction covers common API-key, token, password, Bearer, OpenAI, and GitHub
+secret forms; add a project-specific regular expression with repeated
+`--redact-pattern` options. Values that cannot be decoded or redacted safely
+are recorded as `UNKNOWN`, never persisted unchanged.
+
+```bash
+aet trace --output .aet/evidence/trace.json --redact-pattern 'internal-[A-Za-z0-9]+' -- ./scripts/check-release
+```
+
+`aet evidence pack` validates independently generated audit, review, and trace
+JSON reports, hashes each supplied source, and atomically writes a portable
+JSON pack. Omit any component when it did not run: the resulting component is
+explicitly `UNKNOWN`; a missing check never becomes implied evidence. The pack
+retains individual finding summaries and trace execution status rather than
+reducing them to a score. It includes only redacted trace excerpts and SHA-256
+artifact digests—never raw command logs.
+
 ## Scope
 
-v0.2 adds deterministic intent-to-diff review. Repo Archaeologist is retained
-as a future, separate `aet evolve` capability;
+v0.3 completes the deterministic static core with an opt-in execution trace
+and portable Evidence Pack. Repo Archaeologist is retained as a future,
+separate `aet evolve` capability;
 it is deliberately not part of the static core.
 
 See [PROJECT_MEMORY.md](PROJECT_MEMORY.md) for decisions, phase results, and

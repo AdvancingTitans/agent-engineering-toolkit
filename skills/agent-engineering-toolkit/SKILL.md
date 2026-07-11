@@ -5,7 +5,7 @@ description: Produce evidence-backed audits and intent-to-diff reviews for codin
 
 # Agent Engineering Toolkit
 
-Current Skill version: `0.2.1` (portable Agent Skill packaging)
+Current Skill version: `0.3.0` (portable Evidence Pack and opt-in Trace)
 
 Use the `aet` CLI as the source of truth. The host agent may choose its own
 shell or package runner, but must preserve the commands' exit status and attach
@@ -29,7 +29,22 @@ the emitted evidence instead of paraphrasing it as unverified fact.
    aet review . --base main --format json --output .aet/evidence/review.json
    ```
 
-5. Report the command, exit status, summary, and evidence-file path. Do not
+5. When command execution is explicitly requested, run it only through Trace,
+   then compile the available reports into a portable pack:
+
+   ```bash
+   aet trace --output .aet/evidence/trace.json -- <command> [args...]
+   aet evidence pack \
+     --audit .aet/evidence/audit.json \
+     --review .aet/evidence/review.json \
+     --trace .aet/evidence/trace.json \
+     --output .aet/evidence/evidence-pack.json
+   ```
+
+   `--` is required. Trace is opt-in; neither audit nor review may execute a
+   declared proof command. Attach the generated JSON to the handoff.
+
+6. Report the command, exit status, summary, and evidence-file path. Do not
    claim a referenced command, remote MCP, or model output was verified unless
    another tool actually performed and recorded that check.
 
@@ -43,12 +58,14 @@ OpenAI-specific UI metadata; other hosts may ignore it.
 
 For compatibility rules and output contracts, read
 [cross-agent use](references/cross-agent-use.md), then the applicable
-[audit contract](references/v0.1-contract.md) or
-[review contract](references/v0.2-contract.md).
+[audit contract](references/v0.1-contract.md),
+[review contract](references/v0.2-contract.md), or
+[Evidence Pack and Trace contract](references/v0.3-contract.md).
 
 ## Boundaries
 
-v0.2 is deterministic and local. It does not execute referenced or proof
-commands, contact MCP servers, judge model output, or infer intent from prose.
-Evidence Pack and opt-in command Trace are planned for v0.3; do not claim they
-exist until their CLI commands and schema have shipped.
+Audit, review, and Evidence Pack compilation are deterministic and local.
+Only `aet trace` executes a command, and only the explicit argv after `--`.
+Trace redacts configured secret patterns before persistence; undecodable or
+unredactable fields remain `UNKNOWN`. No command, MCP server, or model output
+is verified unless Trace records it.

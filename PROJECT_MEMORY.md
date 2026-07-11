@@ -67,12 +67,13 @@ target root.
 | v0.1 | Skill 0.1.0 / package 0.1.0 | `v0.1.0` | Static context and Skill audit CLI with Markdown, JSON, SARIF, CI example, tests, and wheel verification. | `git checkout v0.1.0` |
 | v0.2 | Skill 0.2.0 / package 0.2.0 | `v0.2.0` | Intent Gate: human-reviewable contract, changed-path budget, scope checks, and proof-evidence checks. | `git checkout v0.2.0` |
 | Skill portability | Skill 0.2.1 / package 0.2.0 | `skill-v0.2.1` | Tool-neutral `SKILL.md` cleanup and cross-agent contract. | `git checkout skill-v0.2.1` |
-| v0.3 | planned Skill/package 0.3.0 | pending | Evidence Pack compiler and opt-in command Trace. | `git checkout <v0.3-tag>` |
+| v0.3 | Skill/package 0.3.0 | `v0.3.0` | Host-neutral Evidence Pack compiler and opt-in, redacted command Trace. | `git checkout v0.3.0` |
 
 ## Current implementation status
 
-v0.2 complete. v0.3 is next: host-neutral Evidence Pack and opt-in command
-Trace. Repo Archaeologist remains a separate future `aet evolve` capability.
+v0.3 complete. The deterministic static core now includes host-neutral
+Evidence Packs and explicit command Trace. Repo Archaeologist remains a
+separate future `aet evolve` capability.
 
 ### Phase 0 result — 2026-07-11
 
@@ -137,15 +138,34 @@ Trace. Repo Archaeologist remains a separate future `aet evolve` capability.
 - Upgraded and reinstalled the local Skill to `0.2.1` after structural
   validation and the current test suite passed.
 
-## Next phase: v0.3 Evidence Pack and Trace
+## v0.3 result — 2026-07-11
 
-### Objective
+- Added `aet trace --output ... -- <command> [args...]`: the sole opt-in
+  execution path. It records redacted argv, exit status, timestamps, working
+  directory, Git HEAD/worktree digest, and SHA-256 digests of redacted
+  stdout/stderr artifacts. A non-zero command produces a valid `FAIL` Trace;
+  it is not successful proof.
+- Added `aet evidence pack`, which schema-validates independently produced
+  audit, review, and trace JSON, records source SHA-256 values, atomically
+  writes a portable JSON pack, and marks missing optional components
+  `UNKNOWN`. It preserves component summaries and excludes raw command logs.
+- Added acceptance coverage for successful and failing commands, built-in
+  secret redaction, stable hashes, invalid schemas, missing inputs, atomic
+  replacement, and an audit → review → trace → pack temporary Git fixture.
+- Ran 11 unit tests through Trace, built 0.3.0 source/wheel distributions, and
+  installed the wheel into a fresh virtual environment for a Trace smoke test.
+- Updated the canonical and local cross-agent Skill to 0.3.0 with the portable
+  `v0.3-contract.md` reference.
+
+## Released phase: v0.3 Evidence Pack and Trace
+
+### Objective (completed)
 
 Turn the existing audit and review reports plus explicitly requested command
 execution into one portable, content-addressed Evidence Pack that any agent can
 attach to a handoff or CI run.
 
-### Command contract to implement
+### Command contract implemented
 
 ```bash
 # Explicit execution only; `--` separates the trace options from the command.
@@ -159,7 +179,7 @@ aet evidence pack \
   --output .aet/evidence/evidence-pack.json
 ```
 
-### Required design decisions
+### Design decisions implemented
 
 1. `trace` is opt-in and executes only the explicit argv after `--`; neither
    audit nor review may start executing commands implicitly.
@@ -177,7 +197,7 @@ aet evidence pack \
 6. Keep the format host-neutral JSON. It must be consumable by any agent that
    can read files; no MCP, model API, or vendor trace API is permitted.
 
-### Acceptance checks
+### Acceptance checks completed
 
 - Unit tests cover a successful command, a non-zero command, secret redaction,
   stable hashing, invalid input schema, missing optional inputs, and atomic

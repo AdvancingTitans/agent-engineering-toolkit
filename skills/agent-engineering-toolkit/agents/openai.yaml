@@ -1,4 +1,4 @@
 interface:
   display_name: "Agent Engineering Toolkit"
-  short_description: "Audit agent context and skills with evidence."
-  default_prompt: "Use $agent-engineering-toolkit to audit this repository before agent work."
+  short_description: "Evidence-backed agent engineering gates."
+  default_prompt: "Use $agent-engineering-toolkit to audit and review this agent-authored change with evidence."

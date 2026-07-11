@@ -26,6 +26,11 @@ unknowns; it never invents a holistic trust score.
 Primary users are individual developers and small teams using Codex, Claude
 Code, Cursor, Copilot, or compatible agent Skills across multiple repositories.
 
+The final distributable form is the canonical cross-agent Skill in
+`skills/agent-engineering-toolkit/`; the `aet` CLI is its deterministic local
+runtime. Every shipped capability must be exposed through this tool-neutral
+Skill and retain JSON/SARIF evidence contracts so any agent host can invoke it.
+
 Out of scope: an agent runtime, a Skill marketplace, automatic prompt rewrites,
 and model-dependent prompt regression. The only retained later expansion is
 **Repo Archaeologist**, planned as `aet evolve`, not a dependency of the static
@@ -61,11 +66,13 @@ target root.
 | Phase 0 | Skill 0.0.1 | `phase-0-dogfood` | Workspace, fixtures, dogfood baseline, project memory, and conservative path semantics. | `git checkout phase-0-dogfood` |
 | v0.1 | Skill 0.1.0 / package 0.1.0 | `v0.1.0` | Static context and Skill audit CLI with Markdown, JSON, SARIF, CI example, tests, and wheel verification. | `git checkout v0.1.0` |
 | v0.2 | Skill 0.2.0 / package 0.2.0 | `v0.2.0` | Intent Gate: human-reviewable contract, changed-path budget, scope checks, and proof-evidence checks. | `git checkout v0.2.0` |
+| Skill portability | Skill 0.2.1 / package 0.2.0 | `skill-v0.2.1` | Tool-neutral `SKILL.md` cleanup and cross-agent contract. | `git checkout skill-v0.2.1` |
+| v0.3 | planned Skill/package 0.3.0 | pending | Evidence Pack compiler and opt-in command Trace. | `git checkout <v0.3-tag>` |
 
 ## Current implementation status
 
-v0.2 complete. Intent Gate is the final static-core gate; Repo Archaeologist
-remains a separate future `aet evolve` capability.
+v0.2 complete. v0.3 is next: host-neutral Evidence Pack and opt-in command
+Trace. Repo Archaeologist remains a separate future `aet evolve` capability.
 
 ### Phase 0 result — 2026-07-11
 
@@ -117,11 +124,77 @@ remains a separate future `aet evolve` capability.
   wheel in a fresh virtual environment. The local Skill is updated to 0.2.0
   with the v0.2 contract reference.
 
-## Next phase after v0.2
+### Skill portability result — 2026-07-11
 
-No static-core phase is planned. Repo Archaeologist remains `aet evolve` and
-must not become a dependency of audit or review. No model-generated judgement
-should be the sole release gate.
+- Removed the generated-template residue from the canonical Skill and made its
+  workflow tool-neutral: the shared boundary is `aet` plus JSON/SARIF output,
+  not any vendor-specific API.
+- Added `references/cross-agent-use.md`. Native Skill hosts install the whole
+  folder; agents without native Skill support can load `SKILL.md` as project
+  instructions and invoke the same CLI.
+- `agents/openai.yaml` remains optional UI metadata. It must never become a
+  runtime dependency or reduce compatibility for another agent host.
+- Upgraded and reinstalled the local Skill to `0.2.1` after structural
+  validation and the current test suite passed.
+
+## Next phase: v0.3 Evidence Pack and Trace
+
+### Objective
+
+Turn the existing audit and review reports plus explicitly requested command
+execution into one portable, content-addressed Evidence Pack that any agent can
+attach to a handoff or CI run.
+
+### Command contract to implement
+
+```bash
+# Explicit execution only; `--` separates the trace options from the command.
+aet trace --output .aet/evidence/trace.json -- <command> [args...]
+
+# Compile independently generated audit, review, and trace artifacts.
+aet evidence pack \
+  --audit .aet/evidence/audit.json \
+  --review .aet/evidence/review.json \
+  --trace .aet/evidence/trace.json \
+  --output .aet/evidence/evidence-pack.json
+```
+
+### Required design decisions
+
+1. `trace` is opt-in and executes only the explicit argv after `--`; neither
+   audit nor review may start executing commands implicitly.
+2. Store argv, exit code, start/finish timestamps, working directory, Git HEAD
+   and diff digest, plus SHA-256 digests of captured stdout/stderr artifacts.
+   Do not write raw output to the Evidence Pack by default.
+3. Redact configured secret patterns from command metadata and persisted log
+   excerpts. If redaction confidence is insufficient, mark the field
+   `UNKNOWN` rather than retaining the value.
+4. `evidence pack` validates the input report schemas, records each input's
+   SHA-256, preserves `PASS`/`FAIL`/`UNKNOWN` without collapsing them to a
+   score, and writes atomically.
+5. Inputs may be absent, but the pack must record the missing component as
+   `UNKNOWN` and never imply that a test or review happened.
+6. Keep the format host-neutral JSON. It must be consumable by any agent that
+   can read files; no MCP, model API, or vendor trace API is permitted.
+
+### Acceptance checks
+
+- Unit tests cover a successful command, a non-zero command, secret redaction,
+  stable hashing, invalid input schema, missing optional inputs, and atomic
+  output replacement.
+- A clean temporary Git fixture produces audit → review → trace → pack with
+  source hashes and no fabricated status.
+- A failing command has a recorded non-zero status and a valid Trace artifact;
+  it does not become a successful proof.
+- Build and install the 0.3.0 wheel in a fresh virtual environment.
+- Upgrade the canonical and local cross-agent Skill to 0.3.0, update this
+  memory with actual results, commit, and tag `v0.3.0`.
+
+## After v0.3
+
+The static core will be complete. Repo Archaeologist remains `aet evolve` and
+must not become a dependency of audit, review, trace, or Evidence Pack. No
+model-generated judgement should be the sole release gate.
 
 ## Known limits
 

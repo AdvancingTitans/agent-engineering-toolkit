@@ -10,13 +10,18 @@ from . import __version__
 from .models import Asset, Finding, Severity, Status, finding_counts
 
 
-def report_data(root: Path, assets: list[Asset], findings: list[Finding], *, kind: str = "audit", review: dict | None = None) -> dict:
+def report_data(root: Path, assets: list[Asset], findings: list[Finding], *, kind: str = "audit", review: dict | None = None, scope: dict | None = None) -> dict:
     data = {
         "schema_version": __version__,
         "report_kind": kind,
         "generated_at": datetime.now(UTC).isoformat(),
         "root": str(root.resolve()),
+        "run_id": __import__("uuid").uuid4().hex,
+        "tool": {"name": "aet", "version": __version__},
+        "scope": scope or {"root": str(root.resolve())},
         "assets": [{"path": asset.relative_path, "kind": asset.kind} for asset in assets],
+        "sources": [],
+        "claims": [],
         "findings": [finding.to_dict() for finding in findings],
         "summary": finding_counts(findings),
     }

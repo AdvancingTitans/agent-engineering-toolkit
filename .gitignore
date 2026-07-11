@@ -7,3 +7,4 @@ build/
 *.egg-info/
 .aet/
 work/
+.DS_Store

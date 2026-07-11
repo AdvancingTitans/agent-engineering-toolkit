@@ -1,117 +1,98 @@
 # Agent Engineering Toolkit
 
-Evidence-first static audits for coding-agent context and Skills.
+**Evidence-first guardrails for coding agents.** AET makes four things reviewable: the instructions an agent reads, the scope it is allowed to change, the commands that actually ran, and the evidence behind a repository's history.
 
-`aet` checks the files that steer coding agents — such as `AGENTS.md`,
-`CLAUDE.md`, `SKILL.md`, references, and local command paths — before an agent
-starts work. It is read-only, deterministic, and does not require an API key or
-an LLM.
+It is local-first, deterministic by default, has no API-key or LLM dependency, and never turns `UNKNOWN` into a pass by averaging it into a score.
+
+## Install
 
 ```bash
 uv tool install agent-engineering-toolkit
-aet audit .
-aet audit . --format sarif --output aet.sarif --strict
-aet review --base main
-aet trace --output .aet/evidence/trace.json -- python -m unittest discover -s tests
-aet evidence pack --audit .aet/evidence/audit.json --review .aet/evidence/review.json --trace .aet/evidence/trace.json --output .aet/evidence/evidence-pack.json
+aet --version
 ```
 
-## What v0.1 checks
+For a checkout: `uv run --no-editable aet audit . --strict`.
 
-- Broken Markdown links and explicit local command targets.
-- Oversized root instruction files and duplicated directives.
-- Skill frontmatter, directory/name consistency, referenced local files, and a
-  verification step.
+## Four product surfaces
 
-Each finding carries a rule ID, file/line evidence, severity, remediation, and
-rule version. The report uses `PASS`, `FAIL`, `UNKNOWN`, and
-`NOT_APPLICABLE`; it intentionally does not hide uncertainty behind a single
-score.
+| Need | Command | Evidence produced |
+| --- | --- | --- |
+| Trust current instructions / Skills | `aet audit .` | Audit JSON / Markdown / SARIF |
+| Check a proposed or completed diff | `aet review . --base main` | Intent-gate review |
+| Prove a command actually ran | `aet trace --proof … -- …` | Redacted Trace + Evidence Pack |
+| Why did this repository evolve this way? | `aet evolve …` | Evolution Pack / timeline / cited report |
 
-## Output formats and exit codes
-
-`--format markdown` is the default. `json` is for agents and automation, and
-`sarif` is for code-scanning systems.
-
-- Default exit code is non-zero when a `FAIL` finding is emitted.
-- `--strict` is additionally non-zero for `WARN` findings.
-
-## What v0.2 adds: Intent Gate
-
-`aet review --base <revision>` compares the current worktree to a Git base
-revision and checks it against `aet.intent.json`. The contract is intentionally
-small, reviewable JSON:
-
-```json
-{
-  "intent": "Add the review command with regression coverage.",
-  "changed_path_budget": 8,
-  "allowed_paths": ["aet.intent.json", "src/aet/**", "tests/**", "README.md"],
-  "required_proofs": [{
-    "id": "unit-tests",
-    "command": "uv run --no-editable python -m unittest discover -s tests",
-    "evidence": ["tests/test_audit.py"]
-  }]
-}
-```
-
-The gate reports whether the contract is valid, the path budget is respected,
-every changed path matches the approved scope, and every required proof has
-local evidence. It does not execute proof commands: command execution is not
-read-only, and a declared command is not evidence that it passed. Run the
-commands separately and retain their output in the normal review record.
-
-## What v0.3 adds: Evidence Pack and Trace
-
-`aet trace` is the only command that executes anything. It requires an
-explicit argv after `--`; `audit` and `review` remain read-only. Trace stores
-the argv, exit code, timestamps, working directory, Git HEAD and worktree
-digest, plus SHA-256 digests for redacted stdout and stderr artifacts. Built-in
-redaction covers common API-key, token, password, Bearer, OpenAI, and GitHub
-secret forms; add a project-specific regular expression with repeated
-`--redact-pattern` options. Values that cannot be decoded or redacted safely
-are recorded as `UNKNOWN`, never persisted unchanged.
+### Audit context and Skills
 
 ```bash
-aet trace --output .aet/evidence/trace.json --redact-pattern 'internal-[A-Za-z0-9]+' -- ./scripts/check-release
+aet init --output aet.toml
+aet audit . --strict --format json --output .aet/evidence/audit.json
 ```
 
-`aet evidence pack` validates independently generated audit, review, and trace
-JSON reports, hashes each supplied source, and atomically writes a portable
-JSON pack. Omit any component when it did not run: the resulting component is
-explicitly `UNKNOWN`; a missing check never becomes implied evidence. The pack
-retains individual finding summaries and trace execution status rather than
-reducing them to a score. It includes only redacted trace excerpts and SHA-256
-artifact digests—never raw command logs.
+`aet.toml` keeps scan boundaries and exclusions explicit and reviewable. `init` writes a candidate only and never overwrites it. AET detects broken relative references, stale absolute local paths, command targets, context bloat, duplicate directives, and Skill integrity.
 
-## Scope
+### Review a change against human intent
 
-v0.3 completes the deterministic static core with an opt-in execution trace
-and portable Evidence Pack. Repo Archaeologist is retained as a future,
-separate `aet evolve` capability;
-it is deliberately not part of the static core.
-
-See [PROJECT_MEMORY.md](PROJECT_MEMORY.md) for decisions, phase results, and
-rollback points.
-
-## Development verification
+Create a concise `aet.intent.json`, then run:
 
 ```bash
-uv run --no-editable python -m unittest discover -s tests -v
+aet review . --base main --format json --output .aet/evidence/review.json
+```
+
+The gate checks contract validity, changed-path budget, allowed paths, and declared local proof evidence. It does not execute proof commands.
+
+### Bind real execution to a proof
+
+```bash
+aet trace --proof unit-tests --intent aet.intent.json --output .aet/evidence/trace.json -- \
+  uv run --no-editable python -m unittest discover -s tests -v
+aet evidence pack --audit .aet/evidence/audit.json --review .aet/evidence/review.json \
+  --trace .aet/evidence/trace.json --output .aet/evidence/evidence-pack.json
+aet evidence viewer --pack .aet/evidence/evidence-pack.json --output .aet/evidence/evidence-viewer.html
+```
+
+Trace is opt-in and requires `--`. It stores redacted argv/log excerpts, exit status, timestamps, Git identity, and content digests. A supplied `--proof` binds Trace to the intent hash; a mismatch is `FAIL`, a missing trace is `UNKNOWN`.
+
+### Repo Archaeologist: `aet evolve`
+
+`evolve` is a first-class AET use case, not a separate product. It links Git objects and documentation without claiming to know an author's private intent.
+
+```bash
+aet evolve plan . --question "Why was this release made?" --output .aet/evolve/plan.json
+aet evolve collect . --question "Why was this release made?" --output .aet/evolve/run
+aet evolve build --manifest .aet/evolve/run/source-manifest.json --output .aet/evolve/run
+aet evolve report --graph .aet/evolve/run/object-graph.json --output .aet/evolve/run
+```
+
+The output contains `source-manifest.json`, `object-graph.json`, `linkage-report.json`, `evolution-pack.json`, `timeline.mmd`, `decision-index.json`, `unanswered-questions.md`, and `evolution-report.md`. Tag/commit and document/version relations are `DIRECT`; unresolved textual `#123` mentions are only `CANDIDATE`.
+
+Local Git/docs are offline defaults. Use a GitHub export with `--source-export`; live retrieval requires explicit `--remote github` and records request status/source hashes. Missing remote data is `UNKNOWN`, never guessed.
+
+## Evidence model and triage
+
+Reports use a versioned Evidence IR envelope (`schema_version`, `run_id`, `tool`, `scope`, `sources`, `claims`, and a status summary). Levels are L0 declared intent, L1 static local file, L2 executed Trace, L3 Git history, L4 explicitly retrieved remote data, and L5 human attestation.
+
+`aet triage --report audit.json --output triage.json` provides an explainable repair-order score. It exposes its factors/model version and **never changes** `PASS`/`FAIL`/`UNKNOWN` or release policy.
+
+## Agent Skill
+
+The portable Skill is [`skills/agent-engineering-toolkit/`](skills/agent-engineering-toolkit/). It routes agents to audit, review, evidence, or evolve with the smallest safe workflow. Read its [v1 contract](skills/agent-engineering-toolkit/references/v1-contract.md).
+
+## Development and release verification
+
+```bash
+uv run --no-editable --reinstall-package agent-engineering-toolkit python -m unittest discover -s tests -v
+uv run --no-editable aet audit . --strict --format json --output .aet/evidence/audit.json
 uv build
+uv run --isolated --with dist/agent_engineering_toolkit-1.0.0-py3-none-any.whl aet --version
 ```
 
-`--no-editable` keeps local checks reliable with Python 3.13, which ignores
-the underscore-prefixed editable `.pth` file generated by common build tools.
+GitHub Actions runs the suite, strict self-audit, build, and isolated wheel smoke on pushes/PRs. A `v*` tag creates a GitHub Release with build artifacts.
 
-## Universal Agent Skill
+## Security boundary
 
-The canonical Skill is
-`skills/agent-engineering-toolkit/`. It is tool-neutral: any agent that can
-read its `SKILL.md` and invoke the local `aet` CLI can use the same audit,
-review, JSON, and SARIF workflow. Native Skill hosts should install the complete
-folder; hosts without a native loader can include `SKILL.md` in their project
-instructions. The optional `agents/openai.yaml` is UI metadata only.
+Read [security and retention](docs/security-and-retention.md) before sharing artifacts. AET does not upload repository data; generic execution is only via opt-in Trace; remote history collection is explicit; and `.aet/` is ignored because it can contain reviewed paths and redacted excerpts.
 
-Evidence Pack and opt-in command Trace are planned for v0.3. They will keep the
-same host-neutral JSON boundary; they are not implemented in the current CLI.
+## License
+
+MIT. See [LICENSE](LICENSE).

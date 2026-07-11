@@ -10,6 +10,7 @@ from .models import Asset, Evidence, Finding, Severity, Status
 
 LINK_RE = re.compile(r"\[[^\]]*\]\(([^)]+)\)")
 INLINE_PATH_RE = re.compile(r"`([^`\n]+\.(?:md|py|sh|json|toml|yaml|yml))`")
+ABSOLUTE_PATH_RE = re.compile(r"(?<![\w:])(/(?:[\w .@+-]+/)*[\w .@+-]+\.(?:md|py|sh|json|toml|yaml|yml))(?!\w)")
 COMMAND_TARGET_RE = re.compile(r"(?:python(?:3)?\s+|\.\/)([\w./-]+\.(?:py|sh))")
 FRONTMATTER_RE = re.compile(r"\A---\s*\n(.*?)\n---\s*\n", re.DOTALL)
 FIELD_RE = re.compile(r"^([\w-]+):\s*(.+?)\s*$", re.MULTILINE)
@@ -56,6 +57,8 @@ def _check_local_targets(root: Path, asset: Asset, text: str) -> list[Finding]:
         target = match.group(1)
         if target.startswith(("./", "../")) and not any(char.isspace() for char in target):
             targets.append((target, _line_number(text, match.start(1)), "inline path"))
+    for match in ABSOLUTE_PATH_RE.finditer(text):
+        targets.append((match.group(1), _line_number(text, match.start(1)), "absolute local path"))
     for match in COMMAND_TARGET_RE.finditer(text):
         targets.append((match.group(1), _line_number(text, match.start(1)), "command target"))
 
@@ -67,13 +70,14 @@ def _check_local_targets(root: Path, asset: Asset, text: str) -> list[Finding]:
         if not target or (target, line) in seen:
             continue
         seen.add((target, line))
-        resolved = (asset.path.parent / target).resolve()
+        resolved = Path(target).resolve() if Path(target).is_absolute() else (asset.path.parent / target).resolve()
         try:
             resolved.relative_to(root.resolve())
         except ValueError:
-            continue
+            if not Path(target).is_absolute():
+                continue
         if not resolved.exists():
-            rule_id = "AET-CTX-002" if source == "command target" else "AET-CTX-001"
+            rule_id = "AET-CTX-002" if source == "command target" else "AET-CTX-003" if source == "absolute local path" else "AET-CTX-001"
             claim = f"{source.capitalize()} points to a missing local target: {target}"
             findings.append(
                 Finding(

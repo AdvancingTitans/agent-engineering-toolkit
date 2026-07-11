@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import hashlib
+import html
 import json
 import os
 import re
@@ -30,7 +31,7 @@ _DEFAULT_SECRET_PATTERNS = (
 )
 
 
-def trace_command(argv: list[str], output: Path, redaction_patterns: Iterable[str] = ()) -> tuple[dict[str, Any], int]:
+def trace_command(argv: list[str], output: Path, redaction_patterns: Iterable[str] = (), proof: dict[str, Any] | None = None) -> tuple[dict[str, Any], int]:
     """Run one explicit argv command and persist only redacted command evidence."""
     if not argv:
         raise EvidenceError("trace requires an explicit command after --")
@@ -64,8 +65,13 @@ def trace_command(argv: list[str], output: Path, redaction_patterns: Iterable[st
         "schema_version": __version__,
         "report_kind": "trace",
         "generated_at": finished_at,
+        "run_id": hashlib.sha256((str(output) + started_at).encode("utf-8")).hexdigest()[:16],
+        "tool": {"name": "aet", "version": __version__},
+        "scope": {"root": str(cwd)},
         "root": str(cwd),
         "assets": [],
+        "sources": [],
+        "claims": [],
         "findings": [],
         "summary": {
             Status.PASS.value: int(execution_status == Status.PASS.value),
@@ -83,6 +89,7 @@ def trace_command(argv: list[str], output: Path, redaction_patterns: Iterable[st
             "git": _git_metadata(cwd),
             "stdout": _artifact_record(stdout_path, stdout),
             "stderr": _artifact_record(stderr_path, stderr),
+            **({"proof": proof} if proof else {}),
         },
     }
     _atomic_write_json(output, data)
@@ -96,14 +103,47 @@ def compile_evidence_pack(*, audit: Path | None, review: Path | None, trace: Pat
         "review": _component("review", review),
         "trace": _component("trace", trace),
     }
+    proof_binding = _proof_binding(components)
     data = {
         "schema_version": __version__,
         "report_kind": "evidence_pack",
         "generated_at": _timestamp(),
         "components": components,
+        "proof_binding": proof_binding,
     }
     _atomic_write_json(output.resolve(), data)
     return data
+
+
+def bind_proof(intent_path: Path, proof_id: str) -> dict[str, Any]:
+    """Bind a Trace to one declared proof without executing the declared command."""
+    if not proof_id:
+        raise EvidenceError("proof id must be non-empty")
+    try:
+        contract = json.loads(intent_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as error:
+        raise EvidenceError(f"cannot read proof contract: {error}") from error
+    proofs = contract.get("required_proofs") if isinstance(contract, dict) else None
+    if not isinstance(proofs, list):
+        raise EvidenceError("proof contract has no required_proofs list")
+    for proof in proofs:
+        if isinstance(proof, dict) and proof.get("id") == proof_id and isinstance(proof.get("command"), str):
+            return {"id": proof_id, "intent_path": str(intent_path.resolve()), "intent_sha256": hashlib.sha256(intent_path.read_bytes()).hexdigest(), "command": proof["command"], "status": Status.PASS.value}
+    raise EvidenceError(f"proof id is not declared by contract: {proof_id}")
+
+
+def render_evidence_viewer(pack_path: Path, output: Path) -> None:
+    """Render a no-network static review surface from an existing JSON pack."""
+    try:
+        pack = json.loads(pack_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as error:
+        raise EvidenceError(f"cannot read Evidence Pack: {error}") from error
+    if pack.get("report_kind") != "evidence_pack":
+        raise EvidenceError("viewer input must have report_kind=evidence_pack")
+    pretty = html.escape(json.dumps(pack, indent=2, ensure_ascii=False))
+    status = html.escape(str(pack.get("proof_binding", {}).get("status", "UNKNOWN")))
+    content = "<!doctype html><meta charset=utf-8><title>AET Evidence Pack</title><style>body{font:16px system-ui;max-width:1000px;margin:2rem auto;padding:0 1rem}pre{white-space:pre-wrap;background:#f6f8fa;padding:1rem;border-radius:6px}</style><h1>Evidence Pack</h1><p>Proof binding: <strong>" + status + "</strong></p><pre>" + pretty + "</pre>"
+    _atomic_write_text(output.resolve(), content + "\n")
 
 
 def _component(kind: str, path: Path | None) -> dict[str, Any]:
@@ -124,6 +164,27 @@ def _component(kind: str, path: Path | None) -> dict[str, Any]:
         "sha256": hashlib.sha256(raw).hexdigest(),
         "report": _portable_report(kind, report),
     }
+
+
+def _proof_binding(components: dict[str, dict[str, Any]]) -> dict[str, Any]:
+    review = components["review"]
+    trace = components["trace"]
+    if review["status"] != Status.PASS.value or trace["status"] != Status.PASS.value:
+        return {"status": Status.UNKNOWN.value, "reason": "review or trace component was not supplied"}
+    trace_proof = trace["report"].get("proof")
+    if not isinstance(trace_proof, dict):
+        return {"status": Status.UNKNOWN.value, "reason": "trace was not bound to a declared proof"}
+    review_metadata = review["report"].get("review", {})
+    declared = {proof.get("id"): proof for proof in review_metadata.get("proofs", []) if isinstance(proof, dict)}
+    proof = declared.get(trace_proof.get("id"))
+    if proof is None:
+        return {"status": Status.FAIL.value, "reason": "trace proof id is absent from review contract"}
+    if review_metadata.get("contract_sha256") != trace_proof.get("intent_sha256"):
+        return {"status": Status.FAIL.value, "reason": "trace contract hash does not match review contract"}
+    execution = trace["report"].get("execution", {})
+    if execution.get("status") != Status.PASS.value:
+        return {"status": Status.FAIL.value, "reason": "bound proof command did not exit successfully"}
+    return {"status": Status.PASS.value, "proof_id": trace_proof["id"], "contract_sha256": trace_proof["intent_sha256"]}
 
 
 def _validate_report(kind: str, report: Any) -> None:
@@ -171,6 +232,8 @@ def _portable_report(kind: str, report: dict[str, Any]) -> dict[str, Any]:
         portable["git"] = report["trace"].get("git")
         portable["stdout"] = _portable_artifact(report["trace"].get("stdout"))
         portable["stderr"] = _portable_artifact(report["trace"].get("stderr"))
+        if "proof" in report["trace"]:
+            portable["proof"] = report["trace"]["proof"]
     return portable
 
 

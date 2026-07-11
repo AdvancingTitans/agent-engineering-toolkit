@@ -1,0 +1,7 @@
+# AET self-audit policy. Negative fixtures are tested directly, not treated as
+# repository instructions in the release gate.
+[scan]
+include = ["skills/**"]
+exclude = [
+  { pattern = "tests/fixtures/**", reason = "Negative fixtures intentionally contain broken instructions and Skills." },
+]

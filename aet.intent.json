@@ -1,15 +1,22 @@
 {
-  "intent": "Release v0.3 Evidence Pack compiler and opt-in redacted command Trace.",
-  "changed_path_budget": 12,
+  "intent": "Release AET v1.0: configurable Evidence IR, proof-bound execution records, Repo Archaeologist, static review artifacts, and GitHub-ready delivery.",
+  "changed_path_budget": 45,
   "allowed_paths": [
     "aet.intent.json",
+    ".gitignore",
     "PROJECT_MEMORY.md",
     "README.md",
+    "CHANGELOG.md",
+    "aet.toml",
     "pyproject.toml",
     "uv.lock",
     "src/aet/**",
     "tests/**",
-    "skills/agent-engineering-toolkit/**"
+    "skills/agent-engineering-toolkit/**",
+    "docs/**",
+    "schemas/**",
+    "examples/**",
+    ".github/**"
   ],
   "required_proofs": [
     {
@@ -21,10 +28,11 @@
     },
     {
       "id": "wheel-smoke-test",
-      "command": "uv build && uv pip install --python <fresh-venv>/bin/python dist/agent_engineering_toolkit-0.3.0-py3-none-any.whl",
+      "command": "uv build && uv run --isolated --with dist/agent_engineering_toolkit-1.0.0-py3-none-any.whl aet --version",
       "evidence": [
         "pyproject.toml",
-        "src/aet/evidence.py"
+        "src/aet/evidence.py",
+        "pyproject.toml"
       ]
     }
   ]

@@ -216,6 +216,49 @@ The static core will be complete. Repo Archaeologist remains `aet evolve` and
 must not become a dependency of audit, review, trace, or Evidence Pack. No
 model-generated judgement should be the sole release gate.
 
+## Productization design — 2026-07-11
+
+The complete post-v0.3 product plan is recorded in
+`docs/productization-plan.md`. It was produced from the original “设计 Agent
+工具包方案” conversation, the active repository at `v0.3.0`, and a source
+review of `yaojingang/yao-meta-skill` at commit
+`4eb11f923dc71173736ebf541a7eebfff942d10e`.
+
+### Decision
+
+`aet` is an Evidence Plane, not a general-purpose Skill OS. Its stable product
+surfaces are Context/Skill Hygiene (`audit`), Intent Change Control (`review`),
+Execution Evidence (`trace`/`evidence pack`), and Repository Evolution
+(`aet evolve`). Repo Archaeologist is therefore a first-class usage scenario
+of the canonical cross-agent Skill, but remains independent of the offline
+deterministic core.
+
+### Product rules added
+
+1. Reuse an Evidence IR with source hashes and verification levels; preserve
+   `PASS`/`FAIL`/`UNKNOWN` rather than creating a health score.
+2. Scores may only prioritize reviewer work; they cannot release a change or
+   convert an unknown into a pass.
+3. `evolve` must distinguish direct, corroborated, candidate, and unknown
+   links across Git, docs, releases, PRs, and Issues. Model narration is an
+   optional, provenance-bound inference and cannot become source evidence.
+4. Implement `v0.3.1` first: fix the stale README v0.3 claim, add auditable
+   discovery excludes/config, and make self-audit usable despite intentional
+   failing fixtures. Then execute v0.4 Evidence IR/proof binding, v0.5 Skill
+   UX/governance, v0.6 offline evolve, and v0.7 GitHub evolve.
+
+### Current planning findings (not yet fixed)
+
+- `aet audit . --strict` produces expected FAIL/UNKNOWN results from
+  `tests/fixtures/broken_project`, proving the current discovery layer lacks
+  a configurable test-fixture boundary.
+- `README.md` still contains an obsolete statement that v0.3 Trace and
+  Evidence Pack are planned/not implemented, although `v0.3.0` implements
+  them. This is a documentation defect.
+- This entry is a design/memory update only; no v0.3 behavior was changed and
+  no new release tag has been created. Resume implementation from the v0.3.1
+  acceptance criteria in the productization plan.
+
 ## Known limits
 
 - v0.1 parses local Markdown and paths; it cannot prove that a remote MCP
@@ -224,3 +267,12 @@ model-generated judgement should be the sole release gate.
   a remote, dynamic, or bare filename is left unverified rather than guessed.
 - Repo Archaeologist needs GitHub history, Issues, PRs, and releases, so it is
   deferred behind the stable evidence schema.
+
+## v1.0.0 implementation and release candidate — 2026-07-11
+
+- Implemented the Evidence Plane: configurable `audit`, intent `review`, proof-bound `trace` / Evidence Pack / static viewer, transparent non-gating `triage`, and `aet evolve` as the Repo Archaeologist surface (plan, local Git/docs, export or explicit GitHub API, graph, report, query).
+- Added Evidence IR metadata and L0–L5 boundaries while preserving `PASS`/`FAIL`/`UNKNOWN` as authoritative. Weighted triage factors are visible and cannot alter a gate.
+- Fixed self-audit with reasoned `aet.toml` exclusion for intentionally broken fixtures. Added stale absolute-path detection after auditing Codex global `AGENTS.md`, whose Skill index can drift from installed paths.
+- Scoped Codex `AGENTS.md` dogfood found 52 stale absolute Skill paths and one root-context-bloat warning; the audit did not mutate global instructions.
+- Added v1 README, contracts, schema, canonical Skill flow, changelog, CI and tag-driven GitHub release workflow.
+- Before tagging, require strict self-audit, full unit suite, wheel plus isolated CLI smoke, a proof-bound Evidence Pack, GitHub audit/evolution evidence, and a clean intentional commit.

@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "agent-engineering-toolkit"
-version = "0.3.0"
-description = "Evidence-first audits and intent-to-diff reviews for coding-agent context and skills."
+version = "1.0.0"
+description = "Evidence-first audits, change gates, execution proof, and repository archaeology for coding agents."
 readme = "README.md"
 requires-python = ">=3.11"
 license = "MIT"
@@ -14,6 +14,10 @@ classifiers = [
   "Programming Language :: Python :: 3",
   "Programming Language :: Python :: 3 :: Only",
 ]
+
+[project.urls]
+Homepage = "https://github.com/AdvancingTitans/agent-engineering-toolkit"
+Issues = "https://github.com/AdvancingTitans/agent-engineering-toolkit/issues"
 
 [project.scripts]
 aet = "aet.cli:main"

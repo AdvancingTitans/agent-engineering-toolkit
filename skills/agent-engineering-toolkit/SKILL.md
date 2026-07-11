@@ -5,11 +5,24 @@ description: Produce evidence-backed audits and intent-to-diff reviews for codin
 
 # Agent Engineering Toolkit
 
-Current Skill version: `0.3.0` (portable Evidence Pack and opt-in Trace)
+Current Skill version: `1.0.0` (Evidence Plane: audit, review, evidence, evolve)
 
 Use the `aet` CLI as the source of truth. The host agent may choose its own
 shell or package runner, but must preserve the commands' exit status and attach
 the emitted evidence instead of paraphrasing it as unverified fact.
+
+## Route the request
+
+Choose one initial surface. If the request is ambiguous, default to read-only `audit` or `evolve plan`.
+
+| User need | Initial command | Output |
+| --- | --- | --- |
+| Trust current instructions / Skills | `aet audit . --strict` | Audit report |
+| Check a proposed or completed diff | `aet review . --base <base>` | Review report |
+| Prove a command actually ran | `aet trace --proof <id> … -- <argv>` | Trace + pack |
+| Understand why a repo changed | `aet evolve plan/collect/build/report` | Evolution Pack |
+
+Repo Archaeologist example: “Explain why this repository adopted a plugin architecture; link releases, PRs, Issues, commits, and README changes, and separate direct evidence from candidates.” Use `aet evolve`; never invent author intent.
 
 ## Workflow
 
@@ -33,7 +46,7 @@ the emitted evidence instead of paraphrasing it as unverified fact.
    then compile the available reports into a portable pack:
 
    ```bash
-   aet trace --output .aet/evidence/trace.json -- <command> [args...]
+   aet trace --proof <proof-id> --intent aet.intent.json --output .aet/evidence/trace.json -- <command> [args...]
    aet evidence pack \
      --audit .aet/evidence/audit.json \
      --review .aet/evidence/review.json \
@@ -44,7 +57,18 @@ the emitted evidence instead of paraphrasing it as unverified fact.
    `--` is required. Trace is opt-in; neither audit nor review may execute a
    declared proof command. Attach the generated JSON to the handoff.
 
-6. Report the command, exit status, summary, and evidence-file path. Do not
+6. For archaeology, use:
+
+   ```bash
+   aet evolve plan . --question "<question>" --output .aet/evolve/plan.json
+   aet evolve collect . --question "<question>" --output .aet/evolve/run
+   aet evolve build --manifest .aet/evolve/run/source-manifest.json --output .aet/evolve/run
+   aet evolve report --graph .aet/evolve/run/object-graph.json --output .aet/evolve/run
+   ```
+
+   Use `--remote github` only on explicit request. Missing remote data is `UNKNOWN`; a textual `#123` relation is only a candidate until source objects establish it.
+
+7. Report the command, exit status, summary, and evidence-file path. Do not
    claim a referenced command, remote MCP, or model output was verified unless
    another tool actually performed and recorded that check.
 
@@ -60,7 +84,7 @@ For compatibility rules and output contracts, read
 [cross-agent use](references/cross-agent-use.md), then the applicable
 [audit contract](references/v0.1-contract.md),
 [review contract](references/v0.2-contract.md), or
-[Evidence Pack and Trace contract](references/v0.3-contract.md).
+[Evidence Pack and Trace contract](references/v0.3-contract.md), then the [v1 product contract](references/v1-contract.md).
 
 ## Boundaries
 

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import fnmatch
+import hashlib
 import json
 import subprocess
 from dataclasses import dataclass
@@ -78,6 +79,8 @@ def review(root: Path, base: str, intent_path: Path) -> tuple[list[Finding], dic
         "intent": contract.intent,
         "changed_paths": changed_paths,
         "changed_path_budget": contract.changed_path_budget,
+        "contract_sha256": hashlib.sha256(contract_path.read_bytes()).hexdigest(),
+        "proofs": [{"id": proof.identifier, "command": proof.command, "evidence": list(proof.evidence)} for proof in contract.required_proofs],
     }
     return sorted(findings, key=lambda item: (item.severity, item.rule_id, item.claim)), metadata
 

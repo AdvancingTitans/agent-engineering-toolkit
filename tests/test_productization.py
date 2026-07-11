@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import os
 import subprocess
 import tempfile
 import unittest
@@ -68,6 +69,70 @@ class ProductizationTests(unittest.TestCase):
             self.assertEqual(main(["evidence", "pack", "--audit", str(audit), "--review", str(review), "--trace", str(trace), "--output", str(pack)]), 0)
             data = json.loads(pack.read_text(encoding="utf-8"))
             self.assertEqual(data["proof_binding"]["status"], "PASS")
+
+    def test_run_manifest_records_a_complete_evidence_only_lifecycle(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            _git(root, "init")
+            _git(root, "config", "user.email", "aet@example.test")
+            _git(root, "config", "user.name", "AET test")
+            (root / "README.md").write_text("base\n", encoding="utf-8")
+            (root / ".gitignore").write_text(".aet/\n", encoding="utf-8")
+            _git(root, "add", "README.md", ".gitignore")
+            _git(root, "commit", "-m", "base")
+            base = subprocess.run(["git", "rev-parse", "HEAD"], cwd=root, text=True, capture_output=True, check=True).stdout.strip()
+            intent = root / "aet.intent.json"
+            intent.write_text(json.dumps({
+                "intent": "Verify a complete run.", "changed_path_budget": 1,
+                "allowed_paths": ["aet.intent.json"],
+                "required_proofs": [{"id": "unit", "command": "python -c pass", "evidence": ["aet.intent.json"]}],
+            }), encoding="utf-8")
+            run = root / ".aet" / "runs" / "release.json"
+            audit, review, trace, pack = (root / ".aet" / "evidence" / name for name in ("audit.json", "review.json", "trace.json", "pack.json"))
+            previous = Path.cwd()
+            try:
+                os.chdir(root)
+                self.assertEqual(main(["run", "init", "--intent", "aet.intent.json", "--output", str(run)]), 0)
+                self.assertEqual(main(["audit", ".", "--format", "json", "--output", str(audit), "--run", str(run)]), 0)
+                self.assertEqual(main(["review", ".", "--base", base, "--format", "json", "--output", str(review), "--run", str(run)]), 0)
+                self.assertEqual(main(["trace", "--proof", "unit", "--intent", "aet.intent.json", "--output", str(trace), "--run", str(run), "--", "python3", "-c", "pass"]), 0)
+                self.assertEqual(main(["evidence", "pack", "--audit", str(audit), "--review", str(review), "--trace", str(trace), "--output", str(pack), "--run", str(run)]), 0)
+                self.assertEqual(main(["run", "close", "--run", str(run), "--format", "json"]), 0)
+            finally:
+                os.chdir(previous)
+            manifest = json.loads(run.read_text(encoding="utf-8"))
+            self.assertEqual(manifest["lifecycle"]["state"], "CLOSED")
+            self.assertEqual([event["event"] for event in manifest["lifecycle"]["history"]], ["created", "bind_intent", "attach_audit", "attach_review", "attach_trace", "attach_evidence_pack", "close"])
+
+    def test_run_verify_persists_stale_after_the_workspace_changes(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            _git(root, "init")
+            _git(root, "config", "user.email", "aet@example.test")
+            _git(root, "config", "user.name", "AET test")
+            (root / "README.md").write_text("base\n", encoding="utf-8")
+            (root / ".gitignore").write_text(".aet/\n", encoding="utf-8")
+            _git(root, "add", "README.md", ".gitignore")
+            _git(root, "commit", "-m", "base")
+            (root / "aet.intent.json").write_text(json.dumps({
+                "intent": "Verify stale state.", "changed_path_budget": 1,
+                "allowed_paths": ["aet.intent.json"],
+                "required_proofs": [{"id": "unit", "command": "python -c pass", "evidence": ["aet.intent.json"]}],
+            }), encoding="utf-8")
+            run = root / ".aet" / "runs" / "run.json"
+            audit = root / ".aet" / "evidence" / "audit.json"
+            previous = Path.cwd()
+            try:
+                os.chdir(root)
+                self.assertEqual(main(["run", "init", "--output", str(run)]), 0)
+                self.assertEqual(main(["audit", ".", "--format", "json", "--output", str(audit), "--run", str(run)]), 0)
+                (root / "README.md").write_text("changed\n", encoding="utf-8")
+                self.assertEqual(main(["run", "verify", "--run", str(run), "--format", "json"]), 1)
+            finally:
+                os.chdir(previous)
+            manifest = json.loads(run.read_text(encoding="utf-8"))
+            self.assertEqual(manifest["lifecycle"]["state"], "STALE")
+            self.assertEqual(manifest["lifecycle"]["history"][-1]["event"], "repository_changed")
 
     def test_init_never_overwrites_existing_candidate(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

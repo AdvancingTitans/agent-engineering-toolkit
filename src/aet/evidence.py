@@ -11,7 +11,7 @@ import subprocess
 import tempfile
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any, Iterable
+from typing import Any, Iterable, Mapping
 
 from . import __version__
 from .models import Status
@@ -106,7 +106,14 @@ def compile_evidence_pack(*, audit: Path | None, review: Path | None, trace: Pat
     }
     proof_binding = _proof_binding(components)
     pack_snapshot = _pack_workspace_snapshot(components)
-    snapshot_binding = _snapshot_binding(components, pack_snapshot)
+    binding = compare_workspace_snapshots({
+        "pack": pack_snapshot,
+        **{
+            kind: component["report"].get("workspace_snapshot")
+            for kind, component in components.items()
+            if component["status"] == Status.PASS.value and isinstance(component.get("report"), dict)
+        },
+    })
     data = {
         "schema_version": __version__,
         "report_kind": "evidence_pack",
@@ -114,7 +121,7 @@ def compile_evidence_pack(*, audit: Path | None, review: Path | None, trace: Pat
         "components": components,
         "proof_binding": proof_binding,
         "workspace_snapshot": pack_snapshot,
-        "snapshot_binding": snapshot_binding,
+        "snapshot_binding": binding,
     }
     _atomic_write_json(output.resolve(), data)
     return data
@@ -214,6 +221,7 @@ def workspace_snapshot(cwd: Path) -> dict[str, Any]:
     untracked = _git(root, "ls-files", "--others", "--exclude-standard")
     if head is None or diff is None or untracked is None:
         return {"status": Status.UNKNOWN.value, "reason": "Git workspace state could not be captured"}
+    tracked_worktree_sha256 = hashlib.sha256(diff.encode("utf-8")).hexdigest()
     worktree = hashlib.sha256()
     worktree.update(b"tracked\\0" + diff.encode("utf-8"))
     untracked_manifest = hashlib.sha256()
@@ -227,12 +235,18 @@ def workspace_snapshot(cwd: Path) -> dict[str, Any]:
     worktree.update(b"untracked\\0" + untracked_manifest.digest())
     worktree_digest = worktree.hexdigest()
     digest = hashlib.sha256((head.strip() + "\\0" + worktree_digest).encode("utf-8")).hexdigest()
+    intent = _control_file_fingerprint(root, "aet.intent.json")
+    config = _control_file_fingerprint(root, "aet.toml")
     return {
         "status": Status.PASS.value,
         "head_sha": head.strip(),
+        "tracked_worktree_sha256": tracked_worktree_sha256,
         "worktree_digest": worktree_digest,
         "untracked_manifest_sha256": untracked_manifest.hexdigest(),
         "digest": digest,
+        "intent_sha256": intent["sha256"],
+        "config_sha256": config["sha256"],
+        "control_files": {"intent": intent, "config": config},
     }
 
 
@@ -247,20 +261,27 @@ def _pack_workspace_snapshot(components: dict[str, dict[str, Any]]) -> dict[str,
     return workspace_snapshot(Path(next(iter(roots))))
 
 
-def _snapshot_binding(components: dict[str, dict[str, Any]], pack_snapshot: dict[str, Any]) -> dict[str, Any]:
-    snapshots: dict[str, dict[str, Any]] = {"pack": pack_snapshot}
-    for kind, component in components.items():
-        if component["status"] == Status.PASS.value:
-            report = component.get("report")
-            snapshots[kind] = report.get("workspace_snapshot") if isinstance(report, dict) else None
+def compare_workspace_snapshots(snapshots: Mapping[str, Any]) -> dict[str, Any]:
+    """Compare named snapshots without changing any proof or finding result."""
     unavailable = [name for name, snapshot in snapshots.items() if not _is_complete_snapshot(snapshot)]
     if unavailable:
         return {"status": Status.UNKNOWN.value, "reason": f"workspace snapshot unavailable for: {', '.join(unavailable)}"}
     digests = {snapshot["digest"] for snapshot in snapshots.values()}
     if len(digests) == 1:
         return {"status": Status.PASS.value, "state": "EXACT_MATCH", "digest": next(iter(digests))}
-    heads = {snapshot["head_sha"] for snapshot in snapshots.values()}
-    state = "HEAD_MATCH_WORKTREE_DIFFERS" if len(heads) == 1 else "HEAD_DIFFERS"
+    control_changes = _changed_control_files(snapshots.values())
+    if control_changes == {"intent"}:
+        state = "INTENT_CHANGED"
+    elif control_changes == {"config"}:
+        state = "CONFIG_CHANGED"
+    elif control_changes:
+        state = "CONTROL_FILES_CHANGED"
+    elif len({snapshot["head_sha"] for snapshot in snapshots.values()}) != 1:
+        state = "HEAD_DIFFERS"
+    elif len({snapshot["untracked_manifest_sha256"] for snapshot in snapshots.values()}) != 1 and len({snapshot["tracked_worktree_sha256"] for snapshot in snapshots.values()}) == 1:
+        state = "UNTRACKED_SET_CHANGED"
+    else:
+        state = "HEAD_MATCH_WORKTREE_DIFFERS"
     return {"status": Status.FAIL.value, "state": state, "snapshots": {name: snapshot["digest"] for name, snapshot in snapshots.items()}}
 
 
@@ -268,8 +289,26 @@ def _is_complete_snapshot(snapshot: Any) -> bool:
     return (
         isinstance(snapshot, dict)
         and snapshot.get("status") == Status.PASS.value
-        and all(isinstance(snapshot.get(field), str) and snapshot[field] for field in ("head_sha", "worktree_digest", "untracked_manifest_sha256", "digest"))
+        and all(isinstance(snapshot.get(field), str) and snapshot[field] for field in ("head_sha", "tracked_worktree_sha256", "worktree_digest", "untracked_manifest_sha256", "digest"))
     )
+
+
+def _control_file_fingerprint(root: Path, relative: str) -> dict[str, Any]:
+    candidate = root / relative
+    if not candidate.exists():
+        return {"path": relative, "status": Status.NOT_APPLICABLE.value, "sha256": None}
+    if not candidate.is_file():
+        return {"path": relative, "status": Status.UNKNOWN.value, "sha256": None}
+    return {"path": relative, "status": Status.PASS.value, "sha256": hashlib.sha256(candidate.read_bytes()).hexdigest()}
+
+
+def _changed_control_files(snapshots: Iterable[dict[str, Any]]) -> set[str]:
+    values = list(snapshots)
+    changed: set[str] = set()
+    for name, key in (("intent", "intent_sha256"), ("config", "config_sha256")):
+        if len({snapshot.get(key) for snapshot in values}) != 1:
+            changed.add(name)
+    return changed
 
 
 def _validate_report(kind: str, report: Any) -> None:

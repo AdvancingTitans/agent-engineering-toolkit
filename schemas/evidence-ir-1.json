@@ -11,7 +11,7 @@
     "scope": { "type": "object" },
     "workspace_snapshot": {
       "type": "object",
-      "description": "Git HEAD and working-tree digests captured when this report was produced."
+      "description": "Git HEAD, tracked and untracked working-tree digests, plus optional control-file fingerprints captured when this report was produced."
     },
     "sources": { "type": "array" },
     "claims": { "type": "array" },

@@ -5,7 +5,7 @@ description: Produce evidence-backed audits and intent-to-diff reviews for codin
 
 # Agent Engineering Toolkit
 
-Current Skill version: `1.1.0` (Evidence Plane: audit, review, evidence, evolve)
+Current Skill version: `1.2.0` (Evidence Plane: audit, review, trace, evidence, evolve, optional Run Manifest)
 
 Use the `aet` CLI as the source of truth. The host agent may choose its own
 shell or package runner, but must preserve the commands' exit status and attach
@@ -65,6 +65,12 @@ Repo Archaeologist example: “Explain why this repository adopted a plugin arch
    aet evolve build --manifest .aet/evolve/run/source-manifest.json --output .aet/evolve/run
    aet evolve report --graph .aet/evolve/run/object-graph.json --output .aet/evolve/run
    ```
+
+   For a delivery that needs an explicit lifecycle, initialize an optional Run
+   Manifest before producing artifacts, then attach each generated JSON with
+   `--run .aet/runs/<name>.json`. A Run records artifact order and marks the
+   delivery `STALE` when its recorded workspace no longer matches; it never
+   chooses or executes a command for the user.
 
    Use `--remote github` only on explicit request. Missing remote data is `UNKNOWN`; a textual `#123` relation is only a candidate until source objects establish it.
 

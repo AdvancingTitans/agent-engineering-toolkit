@@ -10,6 +10,7 @@ from tempfile import TemporaryDirectory
 
 from aet.cli import main
 from aet.discovery import discover_assets
+from aet.evidence import compare_workspace_snapshots, workspace_snapshot
 from aet.reporters import report_data, render_sarif
 from aet.review import review
 from aet.rules import run_rules
@@ -178,6 +179,25 @@ class AuditTests(unittest.TestCase):
             self.assertEqual(compiled["proof_binding"]["status"], "PASS")
             self.assertEqual(compiled["snapshot_binding"]["status"], "FAIL")
             self.assertEqual(compiled["snapshot_binding"]["state"], "HEAD_MATCH_WORKTREE_DIFFERS")
+
+    def test_snapshot_distinguishes_intent_and_config_changes(self) -> None:
+        with _review_repository() as (root, _):
+            (root / "aet.intent.json").write_text('{"intent":"before"}', encoding="utf-8")
+            before = workspace_snapshot(root)
+            (root / "aet.intent.json").write_text('{"intent":"after"}', encoding="utf-8")
+            self.assertEqual(compare_workspace_snapshots({"before": before, "after": workspace_snapshot(root)})["state"], "INTENT_CHANGED")
+            (root / "aet.toml").write_text("[scan]\ninclude = []\nexclude = []\n", encoding="utf-8")
+            config_before = workspace_snapshot(root)
+            (root / "aet.toml").write_text("[scan]\ninclude = ['AGENTS.md']\nexclude = []\n", encoding="utf-8")
+            self.assertEqual(compare_workspace_snapshots({"before": config_before, "after": workspace_snapshot(root)})["state"], "CONFIG_CHANGED")
+
+    def test_snapshot_distinguishes_untracked_set_changes(self) -> None:
+        with _review_repository() as (root, _):
+            before = workspace_snapshot(root)
+            (root / "new-report.md").write_text("untracked\n", encoding="utf-8")
+            binding = compare_workspace_snapshots({"before": before, "after": workspace_snapshot(root)})
+            self.assertEqual(binding["status"], "FAIL")
+            self.assertEqual(binding["state"], "UNTRACKED_SET_CHANGED")
 
 
 class _review_repository:

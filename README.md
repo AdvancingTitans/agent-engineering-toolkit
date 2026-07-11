@@ -19,7 +19,7 @@ comforting score.
 Use it before an agent changes a repository, at handoff or release time, or
 when you need a cited answer to “why is this repository built this way?”
 
-[Quick start](#quick-start) · [Capability surface](#capability-surface) · [Quality](#quality-and-current-results) · [Repo Archaeologist](#repo-archaeologist) · [Contributing](CONTRIBUTING.md)
+[Quick start](#quick-start) · [Capability surface](#capability-surface) · [Run Manifest](#run-manifest-an-optional-delivery-lifecycle) · [Quality](#quality-and-current-results) · [Repo Archaeologist](#repo-archaeologist) · [Contributing](CONTRIBUTING.md)
 
 ## Why AET, and why now?
 
@@ -40,6 +40,7 @@ what was declared, what was explicitly executed, and what remains unknown.
 | Can this agent safely follow the repository instructions and Skills? | `aet audit` | Markdown, JSON, or SARIF findings with locations and fixes. |
 | Is the diff inside the human-approved intent? | `aet review` | An intent-gate report for path budget, allowed paths, and declared proofs. |
 | Did the command run against the reviewed workspace? | `aet trace` + `aet evidence pack` | A redacted execution record plus proof and workspace-snapshot bindings. |
+| What delivery stage is this evidence chain in, and did it become stale? | `aet run` | An optional append-only Run Manifest with explicit lifecycle states. |
 | Why did the repository evolve this way? | `aet evolve` | An Evolution Pack, timeline, decision index, and cited report. |
 | What should be fixed first? | `aet triage` | Transparent priority ordering; it never changes a finding status. |
 
@@ -90,6 +91,9 @@ supplied snapshots with the workspace at pack time.
 - `HEAD_MATCH_WORKTREE_DIFFERS` means the commit is unchanged but the working
   tree changed after at least one artifact was produced.
 - `HEAD_DIFFERS` means the compared artifacts come from different commits.
+- `INTENT_CHANGED`, `CONFIG_CHANGED`, and `UNTRACKED_SET_CHANGED` identify
+  those specific freshness breaks instead of collapsing them into a generic
+  workspace difference.
 - `UNKNOWN` means a Git snapshot could not be captured or an older report did
   not contain one.
 
@@ -97,17 +101,37 @@ This is intentionally a separate `snapshot_binding`. A successful proof stays
 `PASS` even when the workspace later becomes stale; the Viewer marks delivery
 as `STALE` rather than pretending the command was never executed.
 
+### Run Manifest: an optional delivery lifecycle
+
+v1.2.0 adds `aet run` for cases where the relationship between independent
+artifacts matters. It is a local, append-only task ledger—not an Agent runtime
+or workflow engine. It never selects a command, retries work, calls a model,
+or takes control of an agent host.
+
+```text
+INTENT_BOUND → AUDITED → REVIEWED → PROVEN → PACKED → CLOSED
+                                      │
+                         workspace or control file changes
+                                      ↓
+                                    STALE
+```
+
+Create one only when a delivery needs this lifecycle, then pass `--run` while
+writing each normal JSON artifact. `aet run status` is read-only; `aet run
+verify` records an observed stale transition and exits non-zero when stale;
+`aet run close` refuses anything other than a fresh `PACKED` run.
+
 ## Quality and current results
 
 AET deliberately reports a status matrix rather than a synthetic “agent trust
 score.” Its only numeric model, `aet triage`, exposes its weights and is used
 only to order remediation work.
 
-| Release check | v1.1.0 result | How to reproduce |
+| Release check | v1.2.0 result | How to reproduce |
 | --- | --- | --- |
-| Regression suite | 21 tests passed | `uv run --no-editable --reinstall-package agent-engineering-toolkit python -m unittest discover -s tests -v` |
+| Regression suite | 25 tests passed | `uv run --no-editable --reinstall-package agent-engineering-toolkit python -m unittest discover -s tests -v` |
 | Strict self-audit | 0 `FAIL`, 0 `UNKNOWN` in the configured production Skill scope | `uv run --no-editable aet audit . --strict` |
-| Intent review | Release diff must stay inside the reviewed contract | `uv run --no-editable aet review . --base v1.0.0 --intent aet.intent.json` |
+| Intent review | Release diff must stay inside the reviewed contract | `uv run --no-editable aet review . --base v1.1.0 --intent aet.intent.json` |
 | Distribution smoke | Wheel built and invoked in an isolated environment | `uv build` then install the wheel shown below |
 | Delivery automation | CI on `main`, plus tag-driven GitHub Release workflow | [Actions](https://github.com/AdvancingTitans/agent-engineering-toolkit/actions) |
 
@@ -123,7 +147,7 @@ what AET does and does not claim.
 Install the published GitHub Release wheel with [uv](https://docs.astral.sh/uv/):
 
 ```bash
-uv tool install https://github.com/AdvancingTitans/agent-engineering-toolkit/releases/download/v1.1.0/agent_engineering_toolkit-1.1.0-py3-none-any.whl
+uv tool install https://github.com/AdvancingTitans/agent-engineering-toolkit/releases/download/v1.2.0/agent_engineering_toolkit-1.2.0-py3-none-any.whl
 aet --version
 ```
 
@@ -203,6 +227,24 @@ Trace is opt-in, requires `--`, records only the explicit command, and stores
 redacted excerpts plus hashes. The static viewer needs no server or external
 assets.
 
+### 4. Optionally record a delivery lifecycle
+
+```bash
+aet run init --intent aet.intent.json --output .aet/runs/release.json
+aet audit . --format json --output .aet/evidence/audit.json --run .aet/runs/release.json
+aet review . --base main --format json --output .aet/evidence/review.json --run .aet/runs/release.json
+aet trace --proof unit-tests --intent aet.intent.json --output .aet/evidence/trace.json \
+  --run .aet/runs/release.json -- python -m unittest discover -s tests -v
+aet evidence pack --audit .aet/evidence/audit.json --review .aet/evidence/review.json \
+  --trace .aet/evidence/trace.json --output .aet/evidence/evidence-pack.json \
+  --run .aet/runs/release.json
+aet run verify --run .aet/runs/release.json
+aet run close --run .aet/runs/release.json
+```
+
+Keep `.aet/` ignored when using a Run; otherwise generated evidence is itself
+an untracked workspace change and is correctly reported as stale.
+
 ## Repo Archaeologist
 
 `aet evolve` is for the question a changelog cannot answer alone: **what
@@ -263,7 +305,8 @@ examples/                        Copyable intent and workflow examples
 
 The core implementation is deliberately small: `discovery.py` finds context
 assets, `rules.py` produces evidence-backed audit findings, `review.py`
-compares intent to a Git diff, `evidence.py` records Trace and packs,
+compares intent to a Git diff, `evidence.py` records Trace and packs, `run.py`
+records optional lifecycle transitions,
 `evolve.py` builds the repository-evolution graph, and `reporters.py` writes
 portable output.
 

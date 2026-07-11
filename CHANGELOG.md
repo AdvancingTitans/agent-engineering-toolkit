@@ -2,6 +2,22 @@
 
 ## Unreleased
 
+## 1.2.0 — 2026-07-12
+
+- Added an optional, append-only **Run Manifest** (`aet run init`, `status`,
+  `verify`, and `close`) that describes a delivery lifecycle without becoming
+  a workflow engine. Existing `audit`, `review`, `trace`, and `evidence pack`
+  commands remain independently usable and may opt in through `--run`.
+- Added declared lifecycle states: `INTENT_BOUND`, `AUDITED`, `REVIEWED`,
+  `PROVEN`, `PACKED`, `STALE`, and `CLOSED`. A Run records every transition
+  and only closes a fresh, successfully packed evidence chain.
+- Extended `workspace_snapshot` with tracked-worktree, intent, and config
+  fingerprints. Snapshot binding now distinguishes `INTENT_CHANGED`,
+  `CONFIG_CHANGED`, and `UNTRACKED_SET_CHANGED` from generic workspace or
+  HEAD differences.
+- Added regression coverage for the full Run lifecycle, persisted stale state,
+  intent/config changes, and changes to the untracked file set.
+
 ## 1.1.0 — 2026-07-12
 
 - Added a shared `workspace_snapshot` to audit, review, and Trace reports. It

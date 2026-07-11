@@ -14,6 +14,19 @@ class Status(StrEnum):
     NOT_APPLICABLE = "NOT_APPLICABLE"
 
 
+class RunState(StrEnum):
+    """Lifecycle position of an optional AET delivery run, not a finding."""
+
+    CREATED = "CREATED"
+    INTENT_BOUND = "INTENT_BOUND"
+    AUDITED = "AUDITED"
+    REVIEWED = "REVIEWED"
+    PROVEN = "PROVEN"
+    PACKED = "PACKED"
+    STALE = "STALE"
+    CLOSED = "CLOSED"
+
+
 class Severity(StrEnum):
     INFO = "INFO"
     WARN = "WARN"

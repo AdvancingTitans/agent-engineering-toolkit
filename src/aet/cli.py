@@ -14,6 +14,7 @@ from .evidence import EvidenceError, bind_proof, compile_evidence_pack, render_e
 from .evolve import EvolveError, build_evolution, collect_evolution, query_evolution, write_evolution_plan, write_evolution_report
 from .reporters import render_json, render_markdown, render_sarif, report_data
 from .review import ReviewError, review
+from .run import RunError, attach_artifact, close_run, init_run, render_run_status, run_status, verify_run
 from .rules import run_rules
 from .triage import TriageError, triage_report
 
@@ -27,6 +28,7 @@ def build_parser() -> argparse.ArgumentParser:
         command.add_argument("--format", choices=("markdown", "json", "sarif"), default="markdown")
         command.add_argument("--output", type=Path, help="Write report to this path instead of stdout.")
         command.add_argument("--strict", action="store_true", help="Return non-zero for warnings as well as failures.")
+        command.add_argument("--run", type=Path, help="Optionally attach this report to an existing AET Run Manifest.")
     commands.choices["audit"].add_argument("--config", type=Path, help="Optional aet.toml scan policy (default: <root>/aet.toml).")
     review_parser = commands.choices["review"]
     review_parser.add_argument("--base", required=True, help="Git revision to compare with the current worktree.")
@@ -36,6 +38,7 @@ def build_parser() -> argparse.ArgumentParser:
     trace_parser.add_argument("--redact-pattern", action="append", default=[], help="Additional regular expression to redact from argv and log excerpts (repeatable).")
     trace_parser.add_argument("--proof", help="Bind this Trace to a proof id declared by --intent.")
     trace_parser.add_argument("--intent", type=Path, default=Path("aet.intent.json"), help="Intent contract used with --proof.")
+    trace_parser.add_argument("--run", type=Path, help="Optionally attach this Trace to an existing AET Run Manifest.")
     trace_parser.add_argument("argv", nargs=argparse.REMAINDER, help="Command and arguments; must follow --.")
     evidence_parser = commands.add_parser("evidence", help="Compile portable evidence artifacts.")
     evidence_commands = evidence_parser.add_subparsers(dest="evidence_command", required=True)
@@ -44,6 +47,7 @@ def build_parser() -> argparse.ArgumentParser:
     pack_parser.add_argument("--review", type=Path, help="Review JSON artifact.")
     pack_parser.add_argument("--trace", type=Path, help="Trace JSON artifact.")
     pack_parser.add_argument("--output", required=True, type=Path, help="Write the Evidence Pack JSON to this path.")
+    pack_parser.add_argument("--run", type=Path, help="Optionally attach this Evidence Pack to an existing AET Run Manifest.")
     viewer_parser = evidence_commands.add_parser("viewer", help="Render a static, no-network HTML view of an Evidence Pack.")
     viewer_parser.add_argument("--pack", required=True, type=Path, help="Evidence Pack JSON artifact.")
     viewer_parser.add_argument("--output", required=True, type=Path, help="Write HTML viewer to this path.")
@@ -73,6 +77,16 @@ def build_parser() -> argparse.ArgumentParser:
     query = evolve_commands.add_parser("query", help="Search normalized evolution objects without making new claims.")
     query.add_argument("--graph", required=True, type=Path)
     query.add_argument("--question", required=True)
+    run_parser = commands.add_parser("run", help="Record an optional, evidence-only delivery lifecycle.")
+    run_commands = run_parser.add_subparsers(dest="run_command", required=True)
+    run_init = run_commands.add_parser("init", help="Create a Run Manifest bound to a human-reviewed intent.")
+    run_init.add_argument("--intent", type=Path, default=Path("aet.intent.json"))
+    run_init.add_argument("--output", required=True, type=Path)
+    for name, help_text in (("status", "Show the current lifecycle state without mutating it."), ("verify", "Persist STALE if the registered workspace changed."), ("close", "Close a fresh PACKED run.")):
+        command = run_commands.add_parser(name, help=help_text)
+        command.add_argument("--run", required=True, type=Path)
+        command.add_argument("--format", choices=("markdown", "json"), default="markdown")
+        command.add_argument("--output", type=Path)
     return parser
 
 
@@ -88,18 +102,46 @@ def main(argv: Sequence[str] | None = None) -> int:
         try:
             proof = bind_proof(args.intent, args.proof) if args.proof else None
             _, exit_code = trace_command(args.argv, args.output, args.redact_pattern, proof)
+            if args.run:
+                attach_artifact(args.run, "trace", args.output)
         except EvidenceError as error:
             raise SystemExit(f"aet: trace failed: {error}") from error
+        except RunError as error:
+            raise SystemExit(f"aet: run failed: {error}") from error
         return exit_code
     if args.command == "evidence":
         try:
             if args.evidence_command == "pack":
                 compile_evidence_pack(audit=args.audit, review=args.review, trace=args.trace, output=args.output)
+                if args.run:
+                    attach_artifact(args.run, "evidence_pack", args.output)
             else:
                 render_evidence_viewer(args.pack, args.output)
         except EvidenceError as error:
             raise SystemExit(f"aet: evidence pack failed: {error}") from error
+        except RunError as error:
+            raise SystemExit(f"aet: run failed: {error}") from error
         return 0
+    if args.command == "run":
+        try:
+            if args.run_command == "init":
+                init_run(args.output, args.intent)
+                status = run_status(args.output)
+            elif args.run_command == "status":
+                status = run_status(args.run)
+            elif args.run_command == "verify":
+                status = verify_run(args.run)
+            else:
+                status = close_run(args.run)
+        except RunError as error:
+            raise SystemExit(f"aet: run failed: {error}") from error
+        rendered = render_run_status(status, "json" if args.run_command == "init" else args.format)
+        if args.run_command == "init" or args.output is None:
+            print(rendered, end="")
+        else:
+            args.output.parent.mkdir(parents=True, exist_ok=True)
+            args.output.write_text(rendered, encoding="utf-8")
+        return 1 if args.run_command == "verify" and status["state"] == "STALE" else 0
     if args.command == "init":
         if args.output.exists():
             raise SystemExit(f"aet: candidate already exists and will not be overwritten: {args.output}")
@@ -150,6 +192,13 @@ def main(argv: Sequence[str] | None = None) -> int:
         args.output.write_text(rendered, encoding="utf-8")
     else:
         print(rendered, end="")
+    if args.run:
+        try:
+            if args.output is None:
+                raise RunError("--run requires --output so the produced report can be attached")
+            attach_artifact(args.run, args.command, args.output)
+        except RunError as error:
+            raise SystemExit(f"aet: run failed: {error}") from error
     has_failure = data["summary"]["FAIL"] > 0
     has_warning = any(finding.severity.value == "WARN" for finding in findings)
     return 1 if has_failure or (args.strict and has_warning) else 0

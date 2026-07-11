@@ -1,6 +1,6 @@
 {
-  "intent": "Release v1.1.0 with workspace-snapshot freshness checks and the previously merged bilingual product, contribution, and Issue-intake documentation.",
-  "changed_path_budget": 21,
+  "intent": "Release v1.2.0 with an optional evidence-only Run Manifest lifecycle, explicit stale-state verification, and finer workspace-snapshot freshness reasons.",
+  "changed_path_budget": 18,
   "allowed_paths": [
     "aet.intent.json",
     "PROJECT_MEMORY.md",

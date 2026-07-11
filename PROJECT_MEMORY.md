@@ -60,10 +60,12 @@ target root.
 |---|---:|---|---|---|
 | Phase 0 | Skill 0.0.1 | `phase-0-dogfood` | Workspace, fixtures, dogfood baseline, project memory, and conservative path semantics. | `git checkout phase-0-dogfood` |
 | v0.1 | Skill 0.1.0 / package 0.1.0 | `v0.1.0` | Static context and Skill audit CLI with Markdown, JSON, SARIF, CI example, tests, and wheel verification. | `git checkout v0.1.0` |
+| v0.2 | Skill 0.2.0 / package 0.2.0 | `v0.2.0` | Intent Gate: human-reviewable contract, changed-path budget, scope checks, and proof-evidence checks. | `git checkout v0.2.0` |
 
 ## Current implementation status
 
-v0.1 complete. Do not implement Intent Gate until a new request starts v0.2.
+v0.2 complete. Intent Gate is the final static-core gate; Repo Archaeologist
+remains a separate future `aet evolve` capability.
 
 ### Phase 0 result — 2026-07-11
 
@@ -101,11 +103,25 @@ v0.1 complete. Do not implement Intent Gate until a new request starts v0.2.
   underscore-prefixed `.pth` file that CPython skips. Use `uv run
   --no-editable` for local verification; released wheels are unaffected.
 
-## Next phase after v0.1
+### v0.2 result — 2026-07-11
 
-v0.2 is **Intent Gate only**: a human-reviewable intent contract, changed-path
-budget, required proof checks, and an evidence-backed `aet review --base`.
-No model-generated judgement should be the sole release gate.
+- Added `aet review --base <revision>`, which reads a human-authored
+  `aet.intent.json`, compares the working tree (including untracked files) to
+  the Git base, and emits evidence-backed `AET-REV-001` through
+  `AET-REV-004` findings for contract validity, changed-path budget, scope,
+  and local proof evidence.
+- Intent Gate stays read-only: it never executes declared proof commands. A
+  PASS for proof evidence means the command and local evidence were declared;
+  human review must run the command separately before claiming it passed.
+- Added passing and failing Git-backed review tests, then verified the 0.2.0
+  wheel in a fresh virtual environment. The local Skill is updated to 0.2.0
+  with the v0.2 contract reference.
+
+## Next phase after v0.2
+
+No static-core phase is planned. Repo Archaeologist remains `aet evolve` and
+must not become a dependency of audit or review. No model-generated judgement
+should be the sole release gate.
 
 ## Known limits
 

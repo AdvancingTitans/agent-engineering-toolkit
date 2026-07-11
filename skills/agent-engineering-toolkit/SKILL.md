@@ -5,7 +5,7 @@ description: Audit a repository's coding-agent context and Skills with the local
 
 # Agent Engineering Toolkit
 
-Current Skill version: `0.1.0` (v0.1 release)
+Current Skill version: `0.2.0` (v0.2 release)
 
 Use the repository-local `aet` CLI to make deterministic, read-only findings
 about agent instructions and Skills. Never claim a remote service, dynamic
@@ -27,13 +27,27 @@ it.
 5. Before saying the context is ready, rerun the same command and report its
    summary. A non-zero exit status means it is not ready under that gate.
 
+## Intent Gate
+
+For a change review, require a human-authored `aet.intent.json`, then run:
+
+```bash
+uv run aet review --base main
+```
+
+Read every `FAIL` first. `review` verifies changed-path scope and budget plus
+the presence of local proof evidence. It deliberately does not execute proof
+commands; run those separately before claiming the proof passed.
+
 ## Boundaries
 
-v0.1 audits local paths, context shape, and Skill structure. It does not run
-referenced commands, contact MCP servers, judge model output, or review a diff
-against a task intent. Preserve those limits in every user-facing conclusion.
+v0.2 audits local paths, context shape, Skill structure, and a Git diff against
+a human-authored intent contract. It does not run referenced or proof commands,
+contact MCP servers, or judge model output. Preserve those limits in every
+user-facing conclusion.
 
-For format and rule details, read [the v0.1 contract](references/v0.1-contract.md).
+For format and rule details, read [the v0.1 contract](references/v0.1-contract.md)
+and [the v0.2 contract](references/v0.2-contract.md).
 
 Delete this entire "Structuring This Skill" section when done - it's just guidance.]
 

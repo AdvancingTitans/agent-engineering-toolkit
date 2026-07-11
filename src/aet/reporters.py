@@ -6,24 +6,29 @@ import json
 from datetime import UTC, datetime
 from pathlib import Path
 
+from . import __version__
 from .models import Asset, Finding, Severity, Status, finding_counts
 
 
-def report_data(root: Path, assets: list[Asset], findings: list[Finding]) -> dict:
-    return {
-        "schema_version": "0.1.0",
+def report_data(root: Path, assets: list[Asset], findings: list[Finding], *, kind: str = "audit", review: dict | None = None) -> dict:
+    data = {
+        "schema_version": __version__,
+        "report_kind": kind,
         "generated_at": datetime.now(UTC).isoformat(),
         "root": str(root.resolve()),
         "assets": [{"path": asset.relative_path, "kind": asset.kind} for asset in assets],
         "findings": [finding.to_dict() for finding in findings],
         "summary": finding_counts(findings),
     }
+    if review is not None:
+        data["review"] = review
+    return data
 
 
 def render_markdown(data: dict) -> str:
     summary = data["summary"]
     lines = [
-        "# Agent Engineering Toolkit audit",
+        f"# Agent Engineering Toolkit {data['report_kind']}",
         "",
         f"- Root: `{data['root']}`",
         f"- Generated: `{data['generated_at']}`",
@@ -31,6 +36,13 @@ def render_markdown(data: dict) -> str:
         f"- Findings: FAIL {summary['FAIL']} · UNKNOWN {summary['UNKNOWN']} · PASS {summary['PASS']}",
         "",
     ]
+    if data["report_kind"] == "review":
+        review = data["review"]
+        lines.extend([
+            f"- Base: `{review['base']}`",
+            f"- Intent contract: `{review['intent_contract']}`",
+            f"- Changed paths: {len(review['changed_paths'])}/{review['changed_path_budget']}",
+        ])
     if not data["findings"]:
         lines.extend(["No findings. The discovered assets passed the v0.1 static rules.", ""])
         return "\n".join(lines)

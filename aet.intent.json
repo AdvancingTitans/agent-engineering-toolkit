@@ -1,0 +1,31 @@
+{
+  "intent": "Release v0.2 Intent Gate with deterministic contract, Git diff, and proof-evidence checks.",
+  "changed_path_budget": 12,
+  "allowed_paths": [
+    "aet.intent.json",
+    "PROJECT_MEMORY.md",
+    "README.md",
+    "pyproject.toml",
+    "uv.lock",
+    "src/aet/**",
+    "tests/**",
+    "skills/agent-engineering-toolkit/**"
+  ],
+  "required_proofs": [
+    {
+      "id": "unit-tests",
+      "command": "uv run --no-editable --reinstall-package agent-engineering-toolkit python -m unittest discover -s tests -v",
+      "evidence": [
+        "tests/test_audit.py"
+      ]
+    },
+    {
+      "id": "wheel-smoke-test",
+      "command": "uv build && uv pip install --python <fresh-venv>/bin/python dist/agent_engineering_toolkit-0.2.0-py3-none-any.whl",
+      "evidence": [
+        "pyproject.toml",
+        "src/aet/review.py"
+      ]
+    }
+  ]
+}

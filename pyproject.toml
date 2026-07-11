@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "agent-engineering-toolkit"
-version = "0.1.0"
-description = "Evidence-first static audits for coding-agent context and skills."
+version = "0.2.0"
+description = "Evidence-first audits and intent-to-diff reviews for coding-agent context and skills."
 readme = "README.md"
 requires-python = ">=3.11"
 license = "MIT"

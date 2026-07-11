@@ -11,6 +11,7 @@ an LLM.
 uv tool install agent-engineering-toolkit
 aet audit .
 aet audit . --format sarif --output aet.sarif --strict
+aet review --base main
 ```
 
 ## What v0.1 checks
@@ -33,10 +34,35 @@ score.
 - Default exit code is non-zero when a `FAIL` finding is emitted.
 - `--strict` is additionally non-zero for `WARN` findings.
 
+## What v0.2 adds: Intent Gate
+
+`aet review --base <revision>` compares the current worktree to a Git base
+revision and checks it against `aet.intent.json`. The contract is intentionally
+small, reviewable JSON:
+
+```json
+{
+  "intent": "Add the review command with regression coverage.",
+  "changed_path_budget": 8,
+  "allowed_paths": ["aet.intent.json", "src/aet/**", "tests/**", "README.md"],
+  "required_proofs": [{
+    "id": "unit-tests",
+    "command": "uv run --no-editable python -m unittest discover -s tests",
+    "evidence": ["tests/test_audit.py"]
+  }]
+}
+```
+
+The gate reports whether the contract is valid, the path budget is respected,
+every changed path matches the approved scope, and every required proof has
+local evidence. It does not execute proof commands: command execution is not
+read-only, and a declared command is not evidence that it passed. Run the
+commands separately and retain their output in the normal review record.
+
 ## Scope
 
-v0.1 audits context and Skills only. Intent-to-diff review is the next release.
-Repo Archaeologist is retained as a future, separate `aet evolve` capability;
+v0.2 adds deterministic intent-to-diff review. Repo Archaeologist is retained
+as a future, separate `aet evolve` capability;
 it is deliberately not part of the static core.
 
 See [PROJECT_MEMORY.md](PROJECT_MEMORY.md) for decisions, phase results, and

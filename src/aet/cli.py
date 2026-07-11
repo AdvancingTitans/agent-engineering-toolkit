@@ -9,6 +9,7 @@ from typing import Sequence
 from . import __version__
 from .discovery import discover_assets
 from .reporters import render_json, render_markdown, render_sarif, report_data
+from .review import ReviewError, review
 from .rules import run_rules
 
 
@@ -16,24 +17,32 @@ def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="aet", description="Evidence-first static audits for agent context and Skills.")
     parser.add_argument("--version", action="version", version=__version__)
     commands = parser.add_subparsers(dest="command", required=True)
-    audit = commands.add_parser("audit", help="Audit agent context assets and Skills.")
-    audit.add_argument("path", nargs="?", default=".", help="Repository root to audit (default: current directory).")
-    audit.add_argument("--format", choices=("markdown", "json", "sarif"), default="markdown")
-    audit.add_argument("--output", type=Path, help="Write report to this path instead of stdout.")
-    audit.add_argument("--strict", action="store_true", help="Return non-zero for warnings as well as failures.")
+    for command in (commands.add_parser("audit", help="Audit agent context assets and Skills."), commands.add_parser("review", help="Review a Git diff against an intent contract.")):
+        command.add_argument("path", nargs="?", default=".", help="Repository root to inspect (default: current directory).")
+        command.add_argument("--format", choices=("markdown", "json", "sarif"), default="markdown")
+        command.add_argument("--output", type=Path, help="Write report to this path instead of stdout.")
+        command.add_argument("--strict", action="store_true", help="Return non-zero for warnings as well as failures.")
+    review_parser = commands.choices["review"]
+    review_parser.add_argument("--base", required=True, help="Git revision to compare with the current worktree.")
+    review_parser.add_argument("--intent", type=Path, default=Path("aet.intent.json"), help="Human-reviewed JSON intent contract (default: aet.intent.json).")
     return parser
 
 
 def main(argv: Sequence[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
-    if args.command != "audit":
-        return 2
     root = Path(args.path).resolve()
     if not root.is_dir():
-        raise SystemExit(f"aet: audit root does not exist or is not a directory: {root}")
-    assets = discover_assets(root)
-    findings = run_rules(root, assets)
-    data = report_data(root, assets, findings)
+        raise SystemExit(f"aet: root does not exist or is not a directory: {root}")
+    if args.command == "audit":
+        assets = discover_assets(root)
+        findings = run_rules(root, assets)
+        data = report_data(root, assets, findings)
+    else:
+        try:
+            findings, review_metadata = review(root, args.base, args.intent)
+        except ReviewError as error:
+            raise SystemExit(f"aet: review failed: {error}") from error
+        data = report_data(root, [], findings, kind="review", review=review_metadata)
     rendered = {"markdown": render_markdown, "json": render_json, "sarif": render_sarif}[args.format](data)
     if args.output:
         args.output.parent.mkdir(parents=True, exist_ok=True)

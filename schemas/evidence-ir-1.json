@@ -9,6 +9,10 @@
     "run_id": { "type": "string" },
     "tool": { "type": "object" },
     "scope": { "type": "object" },
+    "workspace_snapshot": {
+      "type": "object",
+      "description": "Git HEAD and working-tree digests captured when this report was produced."
+    },
     "sources": { "type": "array" },
     "claims": { "type": "array" },
     "summary": { "type": "object" }

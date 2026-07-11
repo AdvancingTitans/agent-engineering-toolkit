@@ -2,6 +2,21 @@
 
 ## Unreleased
 
+## 1.1.0 — 2026-07-12
+
+- Added a shared `workspace_snapshot` to audit, review, and Trace reports. It
+  captures the Git HEAD plus deterministic tracked and untracked worktree
+  digests without executing a declared proof command.
+- Evidence Packs now compare every supplied artifact with the workspace at
+  pack time through `snapshot_binding`: `EXACT_MATCH`,
+  `HEAD_MATCH_WORKTREE_DIFFERS`, `HEAD_DIFFERS`, or explicit `UNKNOWN`.
+  A stale snapshot is reported separately from proof success; a command that
+  passed is never rewritten as though it did not run.
+- Reworked the static Evidence Viewer around delivery state, proof binding,
+  and snapshot binding before exposing the raw JSON.
+- Added regression coverage for exact snapshot matches and changes made after
+  a successful proof; refreshed the release workflow's wheel smoke target.
+
 - Reframed the README as a bilingual product entrypoint with an architecture,
   quality boundary, quick-start flows, Repo Archaeologist guide, and audience
   guidance.

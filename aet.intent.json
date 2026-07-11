@@ -1,6 +1,6 @@
 {
-  "intent": "Make AET approachable to new users with bilingual product documentation, safe contribution paths, and GitHub Issue intake.",
-  "changed_path_budget": 14,
+  "intent": "Release v1.1.0 with workspace-snapshot freshness checks and the previously merged bilingual product, contribution, and Issue-intake documentation.",
+  "changed_path_budget": 21,
   "allowed_paths": [
     "aet.intent.json",
     "PROJECT_MEMORY.md",
@@ -8,17 +8,23 @@
     "CHANGELOG.md",
     "CONTRIBUTING.md",
     "docs/**",
+    ".github/**",
     "examples/**",
-    ".github/**"
+    "pyproject.toml",
+    "uv.lock",
+    "src/aet/**",
+    "tests/**",
+    "schemas/**",
+    "skills/agent-engineering-toolkit/**"
   ],
   "required_proofs": [
     {
-      "id": "documentation-checks",
+      "id": "regression-suite",
       "command": "uv run --no-editable --reinstall-package agent-engineering-toolkit python -m unittest discover -s tests -v",
       "evidence": [
         "README.md",
-        "docs/README.zh-CN.md",
-        "CONTRIBUTING.md"
+        "src/aet/evidence.py",
+        "tests/test_productization.py"
       ]
     }
   ]

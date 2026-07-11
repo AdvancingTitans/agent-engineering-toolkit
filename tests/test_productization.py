@@ -135,6 +135,8 @@ class ProductizationTests(unittest.TestCase):
             self.assertEqual(main(["evidence", "viewer", "--pack", str(pack), "--output", str(viewer)]), 0)
             html = viewer.read_text(encoding="utf-8")
             self.assertIn("Evidence Pack", html)
+            self.assertIn("Snapshot binding", html)
+            self.assertIn("INCOMPLETE", html)
             self.assertNotIn("<script src=", html)
 
     def test_triage_score_is_explainable_and_cannot_change_finding_status(self) -> None:

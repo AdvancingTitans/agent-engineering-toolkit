@@ -154,6 +154,30 @@ class AuditTests(unittest.TestCase):
             compiled = json.loads(pack.read_text(encoding="utf-8"))
             self.assertTrue(all(component["status"] == "PASS" for component in compiled["components"].values()))
             self.assertEqual(compiled["components"]["trace"]["report"]["execution"]["status"], "PASS")
+            self.assertEqual(compiled["snapshot_binding"]["state"], "EXACT_MATCH")
+
+    def test_evidence_pack_marks_workspace_changes_stale_without_overriding_proof(self) -> None:
+        with _review_repository() as (root, base):
+            _write_contract(root, budget=1, evidence=["aet.intent.json"])
+            evidence = root / ".aet" / "evidence"
+            audit = evidence / "audit.json"
+            review_output = evidence / "review.json"
+            trace = evidence / "trace.json"
+            pack = evidence / "evidence-pack.json"
+            previous = Path.cwd()
+            try:
+                os.chdir(root)
+                self.assertEqual(main(["audit", ".", "--format", "json", "--output", str(audit)]), 0)
+                self.assertEqual(main(["review", ".", "--base", base, "--format", "json", "--output", str(review_output)]), 0)
+                self.assertEqual(main(["trace", "--proof", "unit-tests", "--intent", "aet.intent.json", "--output", str(trace), "--", sys.executable, "-c", "pass"]), 0)
+                (root / "README.md").write_text("changed after proof\n", encoding="utf-8")
+                self.assertEqual(main(["evidence", "pack", "--audit", str(audit), "--review", str(review_output), "--trace", str(trace), "--output", str(pack)]), 0)
+            finally:
+                os.chdir(previous)
+            compiled = json.loads(pack.read_text(encoding="utf-8"))
+            self.assertEqual(compiled["proof_binding"]["status"], "PASS")
+            self.assertEqual(compiled["snapshot_binding"]["status"], "FAIL")
+            self.assertEqual(compiled["snapshot_binding"]["state"], "HEAD_MATCH_WORKTREE_DIFFERS")
 
 
 class _review_repository:
@@ -164,7 +188,8 @@ class _review_repository:
         _git(self.root, "config", "user.email", "aet@example.test")
         _git(self.root, "config", "user.name", "AET test")
         (self.root / "README.md").write_text("base\n", encoding="utf-8")
-        _git(self.root, "add", "README.md")
+        (self.root / ".gitignore").write_text(".aet/\n", encoding="utf-8")
+        _git(self.root, "add", "README.md", ".gitignore")
         _git(self.root, "commit", "-m", "base")
         return self.root, _git(self.root, "rev-parse", "HEAD").stdout.strip()
 

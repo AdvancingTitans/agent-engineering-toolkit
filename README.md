@@ -39,7 +39,7 @@ what was declared, what was explicitly executed, and what remains unknown.
 | --- | --- | --- |
 | Can this agent safely follow the repository instructions and Skills? | `aet audit` | Markdown, JSON, or SARIF findings with locations and fixes. |
 | Is the diff inside the human-approved intent? | `aet review` | An intent-gate report for path budget, allowed paths, and declared proofs. |
-| Did the command really run? | `aet trace` + `aet evidence pack` | A redacted execution record and portable, content-addressed Evidence Pack. |
+| Did the command run against the reviewed workspace? | `aet trace` + `aet evidence pack` | A redacted execution record plus proof and workspace-snapshot bindings. |
 | Why did the repository evolve this way? | `aet evolve` | An Evolution Pack, timeline, decision index, and cited report. |
 | What should be fixed first? | `aet triage` | Transparent priority ordering; it never changes a finding status. |
 
@@ -79,17 +79,35 @@ verify—not a discounted pass. Evidence levels distinguish a human declaration
 (L0), local files (L1), executed commands (L2), local Git (L3), explicitly
 retrieved remote data (L4), and human attestation (L5).
 
+### Freshness is separate from proof success
+
+Starting in v1.1.0, `audit`, `review`, and `trace` record a deterministic
+`workspace_snapshot`: the Git HEAD and digests of tracked and untracked
+working-tree state. When `aet evidence pack` is produced, AET compares the
+supplied snapshots with the workspace at pack time.
+
+- `EXACT_MATCH` means the reviewed, traced, and packed workspace match.
+- `HEAD_MATCH_WORKTREE_DIFFERS` means the commit is unchanged but the working
+  tree changed after at least one artifact was produced.
+- `HEAD_DIFFERS` means the compared artifacts come from different commits.
+- `UNKNOWN` means a Git snapshot could not be captured or an older report did
+  not contain one.
+
+This is intentionally a separate `snapshot_binding`. A successful proof stays
+`PASS` even when the workspace later becomes stale; the Viewer marks delivery
+as `STALE` rather than pretending the command was never executed.
+
 ## Quality and current results
 
 AET deliberately reports a status matrix rather than a synthetic “agent trust
 score.” Its only numeric model, `aet triage`, exposes its weights and is used
 only to order remediation work.
 
-| Release check | v1.0.0 result | How to reproduce |
+| Release check | v1.1.0 result | How to reproduce |
 | --- | --- | --- |
-| Regression suite | 20 tests passed | `uv run --no-editable --reinstall-package agent-engineering-toolkit python -m unittest discover -s tests -v` |
+| Regression suite | 21 tests passed | `uv run --no-editable --reinstall-package agent-engineering-toolkit python -m unittest discover -s tests -v` |
 | Strict self-audit | 0 `FAIL`, 0 `UNKNOWN` in the configured production Skill scope | `uv run --no-editable aet audit . --strict` |
-| Intent review | Current documentation change: 4 `PASS`, 0 `FAIL`, 0 `UNKNOWN` against `v1.0.0` | `uv run --no-editable aet review . --base v1.0.0` |
+| Intent review | Release diff must stay inside the reviewed contract | `uv run --no-editable aet review . --base v1.0.0 --intent aet.intent.json` |
 | Distribution smoke | Wheel built and invoked in an isolated environment | `uv build` then install the wheel shown below |
 | Delivery automation | CI on `main`, plus tag-driven GitHub Release workflow | [Actions](https://github.com/AdvancingTitans/agent-engineering-toolkit/actions) |
 
@@ -105,7 +123,7 @@ what AET does and does not claim.
 Install the published GitHub Release wheel with [uv](https://docs.astral.sh/uv/):
 
 ```bash
-uv tool install https://github.com/AdvancingTitans/agent-engineering-toolkit/releases/download/v1.0.0/agent_engineering_toolkit-1.0.0-py3-none-any.whl
+uv tool install https://github.com/AdvancingTitans/agent-engineering-toolkit/releases/download/v1.1.0/agent_engineering_toolkit-1.1.0-py3-none-any.whl
 aet --version
 ```
 

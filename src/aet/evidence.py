@@ -73,6 +73,7 @@ def trace_command(argv: list[str], output: Path, redaction_patterns: Iterable[st
         "sources": [],
         "claims": [],
         "findings": [],
+        "workspace_snapshot": workspace_snapshot(cwd),
         "summary": {
             Status.PASS.value: int(execution_status == Status.PASS.value),
             Status.FAIL.value: int(execution_status == Status.FAIL.value),
@@ -104,12 +105,16 @@ def compile_evidence_pack(*, audit: Path | None, review: Path | None, trace: Pat
         "trace": _component("trace", trace),
     }
     proof_binding = _proof_binding(components)
+    pack_snapshot = _pack_workspace_snapshot(components)
+    snapshot_binding = _snapshot_binding(components, pack_snapshot)
     data = {
         "schema_version": __version__,
         "report_kind": "evidence_pack",
         "generated_at": _timestamp(),
         "components": components,
         "proof_binding": proof_binding,
+        "workspace_snapshot": pack_snapshot,
+        "snapshot_binding": snapshot_binding,
     }
     _atomic_write_json(output.resolve(), data)
     return data
@@ -141,8 +146,22 @@ def render_evidence_viewer(pack_path: Path, output: Path) -> None:
     if pack.get("report_kind") != "evidence_pack":
         raise EvidenceError("viewer input must have report_kind=evidence_pack")
     pretty = html.escape(json.dumps(pack, indent=2, ensure_ascii=False))
-    status = html.escape(str(pack.get("proof_binding", {}).get("status", "UNKNOWN")))
-    content = "<!doctype html><meta charset=utf-8><title>AET Evidence Pack</title><style>body{font:16px system-ui;max-width:1000px;margin:2rem auto;padding:0 1rem}pre{white-space:pre-wrap;background:#f6f8fa;padding:1rem;border-radius:6px}</style><h1>Evidence Pack</h1><p>Proof binding: <strong>" + status + "</strong></p><pre>" + pretty + "</pre>"
+    proof_status = html.escape(str(pack.get("proof_binding", {}).get("status", "UNKNOWN")))
+    snapshot = pack.get("snapshot_binding", {})
+    snapshot_status = html.escape(str(snapshot.get("status", "UNKNOWN")))
+    snapshot_state = html.escape(str(snapshot.get("state", snapshot.get("reason", "not verified"))))
+    delivery_state = "READY" if proof_status == Status.PASS.value and snapshot_status == Status.PASS.value else "STALE" if snapshot_status == Status.FAIL.value else "INCOMPLETE"
+    content = (
+        "<!doctype html><meta charset=utf-8><title>AET Evidence Pack</title>"
+        "<style>body{font:16px system-ui;max-width:1000px;margin:2rem auto;padding:0 1rem}"
+        "table{border-collapse:collapse;width:100%;max-width:680px}th,td{border:1px solid #d0d7de;padding:.65rem;text-align:left}"
+        "th{background:#f6f8fa}pre{white-space:pre-wrap;background:#f6f8fa;padding:1rem;border-radius:6px}</style>"
+        "<h1>Evidence Pack</h1><table><tr><th>Delivery state</th><td><strong>" + delivery_state + "</strong></td></tr>"
+        "<tr><th>Proof binding</th><td>" + proof_status + "</td></tr>"
+        "<tr><th>Snapshot binding</th><td>" + snapshot_status + " — " + snapshot_state + "</td></tr></table>"
+        "<p>Proof binding records whether the declared command succeeded. Snapshot binding separately records whether the supplied evidence and current workspace are the same revision.</p>"
+        "<details><summary>Raw Evidence Pack JSON</summary><pre>" + pretty + "</pre></details>"
+    )
     _atomic_write_text(output.resolve(), content + "\n")
 
 
@@ -187,6 +206,72 @@ def _proof_binding(components: dict[str, dict[str, Any]]) -> dict[str, Any]:
     return {"status": Status.PASS.value, "proof_id": trace_proof["id"], "contract_sha256": trace_proof["intent_sha256"]}
 
 
+def workspace_snapshot(cwd: Path) -> dict[str, Any]:
+    """Capture the Git state that an artifact can actually support."""
+    root = cwd.resolve()
+    head = _git(root, "rev-parse", "HEAD")
+    diff = _git(root, "diff", "--binary", "HEAD", "--")
+    untracked = _git(root, "ls-files", "--others", "--exclude-standard")
+    if head is None or diff is None or untracked is None:
+        return {"status": Status.UNKNOWN.value, "reason": "Git workspace state could not be captured"}
+    worktree = hashlib.sha256()
+    worktree.update(b"tracked\\0" + diff.encode("utf-8"))
+    untracked_manifest = hashlib.sha256()
+    for relative in sorted(line for line in untracked.splitlines() if line):
+        candidate = root / relative
+        untracked_manifest.update(relative.encode("utf-8") + b"\\0")
+        if candidate.is_file():
+            untracked_manifest.update(hashlib.sha256(candidate.read_bytes()).digest())
+        else:
+            untracked_manifest.update(b"[not-a-file]")
+    worktree.update(b"untracked\\0" + untracked_manifest.digest())
+    worktree_digest = worktree.hexdigest()
+    digest = hashlib.sha256((head.strip() + "\\0" + worktree_digest).encode("utf-8")).hexdigest()
+    return {
+        "status": Status.PASS.value,
+        "head_sha": head.strip(),
+        "worktree_digest": worktree_digest,
+        "untracked_manifest_sha256": untracked_manifest.hexdigest(),
+        "digest": digest,
+    }
+
+
+def _pack_workspace_snapshot(components: dict[str, dict[str, Any]]) -> dict[str, Any]:
+    roots = {
+        component["report"].get("root")
+        for component in components.values()
+        if component["status"] == Status.PASS.value and isinstance(component.get("report"), dict)
+    }
+    if len(roots) != 1 or not isinstance(next(iter(roots), None), str):
+        return {"status": Status.UNKNOWN.value, "reason": "supplied reports do not share one workspace root"}
+    return workspace_snapshot(Path(next(iter(roots))))
+
+
+def _snapshot_binding(components: dict[str, dict[str, Any]], pack_snapshot: dict[str, Any]) -> dict[str, Any]:
+    snapshots: dict[str, dict[str, Any]] = {"pack": pack_snapshot}
+    for kind, component in components.items():
+        if component["status"] == Status.PASS.value:
+            report = component.get("report")
+            snapshots[kind] = report.get("workspace_snapshot") if isinstance(report, dict) else None
+    unavailable = [name for name, snapshot in snapshots.items() if not _is_complete_snapshot(snapshot)]
+    if unavailable:
+        return {"status": Status.UNKNOWN.value, "reason": f"workspace snapshot unavailable for: {', '.join(unavailable)}"}
+    digests = {snapshot["digest"] for snapshot in snapshots.values()}
+    if len(digests) == 1:
+        return {"status": Status.PASS.value, "state": "EXACT_MATCH", "digest": next(iter(digests))}
+    heads = {snapshot["head_sha"] for snapshot in snapshots.values()}
+    state = "HEAD_MATCH_WORKTREE_DIFFERS" if len(heads) == 1 else "HEAD_DIFFERS"
+    return {"status": Status.FAIL.value, "state": state, "snapshots": {name: snapshot["digest"] for name, snapshot in snapshots.items()}}
+
+
+def _is_complete_snapshot(snapshot: Any) -> bool:
+    return (
+        isinstance(snapshot, dict)
+        and snapshot.get("status") == Status.PASS.value
+        and all(isinstance(snapshot.get(field), str) and snapshot[field] for field in ("head_sha", "worktree_digest", "untracked_manifest_sha256", "digest"))
+    )
+
+
 def _validate_report(kind: str, report: Any) -> None:
     if not isinstance(report, dict):
         raise EvidenceError(f"{kind} input must be a JSON object")
@@ -224,6 +309,8 @@ def _portable_report(kind: str, report: dict[str, Any]) -> dict[str, Any]:
         "summary": report["summary"],
         "findings": report["findings"],
     }
+    if "workspace_snapshot" in report:
+        portable["workspace_snapshot"] = report["workspace_snapshot"]
     if kind == "review":
         portable["review"] = report["review"]
     if kind == "trace":
@@ -298,34 +385,23 @@ def _artifact_record(path: Path, log: dict[str, Any]) -> dict[str, Any]:
 
 
 def _git_metadata(cwd: Path) -> dict[str, Any]:
-    head = _git(cwd, "rev-parse", "HEAD")
-    if head is None:
+    snapshot = workspace_snapshot(cwd)
+    if snapshot["status"] != Status.PASS.value:
         return {
             "head": {"status": Status.UNKNOWN.value},
             "diff_digest": {"status": Status.UNKNOWN.value},
         }
-    diff = _git(cwd, "diff", "--binary", "HEAD", "--")
-    untracked = _git(cwd, "ls-files", "--others", "--exclude-standard")
-    if diff is None or untracked is None:
-        digest = {"status": Status.UNKNOWN.value}
-    else:
-        hasher = hashlib.sha256()
-        hasher.update(b"tracked\0")
-        hasher.update(diff.encode("utf-8"))
-        for relative in sorted(line for line in untracked.splitlines() if line):
-            hasher.update(b"untracked\0" + relative.encode("utf-8") + b"\0")
-            candidate = cwd / relative
-            if candidate.is_file():
-                hasher.update(hashlib.sha256(candidate.read_bytes()).digest())
-        digest = {"status": Status.PASS.value, "value": hasher.hexdigest()}
     return {
-        "head": {"status": Status.PASS.value, "value": head.strip()},
-        "diff_digest": digest,
+        "head": {"status": Status.PASS.value, "value": snapshot["head_sha"]},
+        "diff_digest": {"status": Status.PASS.value, "value": snapshot["worktree_digest"]},
     }
 
 
 def _git(cwd: Path, *args: str) -> str | None:
-    completed = subprocess.run(["git", *args], cwd=cwd, text=True, capture_output=True, check=False)
+    try:
+        completed = subprocess.run(["git", *args], cwd=cwd, text=True, capture_output=True, check=False)
+    except OSError:
+        return None
     return completed.stdout if completed.returncode == 0 else None
 
 

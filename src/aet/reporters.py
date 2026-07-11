@@ -10,7 +10,7 @@ from . import __version__
 from .models import Asset, Finding, Severity, Status, finding_counts
 
 
-def report_data(root: Path, assets: list[Asset], findings: list[Finding], *, kind: str = "audit", review: dict | None = None, scope: dict | None = None) -> dict:
+def report_data(root: Path, assets: list[Asset], findings: list[Finding], *, kind: str = "audit", review: dict | None = None, scope: dict | None = None, workspace_snapshot: dict | None = None) -> dict:
     data = {
         "schema_version": __version__,
         "report_kind": kind,
@@ -27,6 +27,8 @@ def report_data(root: Path, assets: list[Asset], findings: list[Finding], *, kin
     }
     if review is not None:
         data["review"] = review
+    if workspace_snapshot is not None:
+        data["workspace_snapshot"] = workspace_snapshot
     return data
 
 

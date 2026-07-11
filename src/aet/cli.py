@@ -10,7 +10,7 @@ from typing import Sequence
 from . import __version__
 from .config import ConfigError, load_audit_config
 from .discovery import discover_assets
-from .evidence import EvidenceError, bind_proof, compile_evidence_pack, render_evidence_viewer, trace_command
+from .evidence import EvidenceError, bind_proof, compile_evidence_pack, render_evidence_viewer, trace_command, workspace_snapshot
 from .evolve import EvolveError, build_evolution, collect_evolution, query_evolution, write_evolution_plan, write_evolution_report
 from .reporters import render_json, render_markdown, render_sarif, report_data
 from .review import ReviewError, review
@@ -137,13 +137,13 @@ def main(argv: Sequence[str] | None = None) -> int:
             raise SystemExit(f"aet: invalid config: {error}") from error
         assets = discover_assets(root, config)
         findings = run_rules(root, assets)
-        data = report_data(root, assets, findings, scope={"root": str(root), "config": config.to_dict()})
+        data = report_data(root, assets, findings, scope={"root": str(root), "config": config.to_dict()}, workspace_snapshot=workspace_snapshot(root))
     else:
         try:
             findings, review_metadata = review(root, args.base, args.intent)
         except ReviewError as error:
             raise SystemExit(f"aet: review failed: {error}") from error
-        data = report_data(root, [], findings, kind="review", review=review_metadata)
+        data = report_data(root, [], findings, kind="review", review=review_metadata, workspace_snapshot=workspace_snapshot(root))
     rendered = {"markdown": render_markdown, "json": render_json, "sarif": render_sarif}[args.format](data)
     if args.output:
         args.output.parent.mkdir(parents=True, exist_ok=True)

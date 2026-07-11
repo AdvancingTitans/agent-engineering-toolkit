@@ -5,7 +5,7 @@ description: Produce evidence-backed audits and intent-to-diff reviews for codin
 
 # Agent Engineering Toolkit
 
-Current Skill version: `1.0.0` (Evidence Plane: audit, review, evidence, evolve)
+Current Skill version: `1.1.0` (Evidence Plane: audit, review, evidence, evolve)
 
 Use the `aet` CLI as the source of truth. The host agent may choose its own
 shell or package runner, but must preserve the commands' exit status and attach

@@ -50,11 +50,11 @@ target root.
 | Stage | Version | Git tag | Result | Rollback |
 |---|---:|---|---|---|
 | Phase 0 | Skill 0.0.1 | `phase-0-dogfood` | Workspace, fixtures, dogfood baseline, project memory, and conservative path semantics. | `git checkout phase-0-dogfood` |
-| v0.1 | pending | pending | Static context and Skill audit CLI. | `git checkout <v0.1-tag>` |
+| v0.1 | Skill 0.1.0 / package 0.1.0 | `v0.1.0` | Static context and Skill audit CLI with Markdown, JSON, SARIF, CI example, tests, and wheel verification. | `git checkout v0.1.0` |
 
 ## Current implementation status
 
-Phase 0 complete. v0.1 release hardening is next; do not implement Intent Gate.
+v0.1 complete. Do not implement Intent Gate until a new request starts v0.2.
 
 ### Phase 0 result — 2026-07-11
 
@@ -72,6 +72,25 @@ Phase 0 complete. v0.1 release hardening is next; do not implement Intent Gate.
   well as English wording.
 - Local Skill installed at
   `~/.codex/skills/agent-engineering-toolkit`, version `0.0.1`.
+
+### v0.1 result — 2026-07-11
+
+- Released the read-only `aet audit [path]` command with Markdown, JSON, and
+  SARIF output plus CI exit semantics (`FAIL` always fails; `--strict` also
+  fails on `WARN`).
+- Implemented deterministic checks for missing local Markdown/explicit command
+  targets, root instruction bloat, duplicate long directives, required Skill
+  frontmatter, Skill name/directory mismatch, and verification instructions.
+- Added four standard-library tests covering clean and failing fixtures, CLI
+  exit codes, and SARIF parsing. Use the exact resume command above.
+- Added a GitHub Actions SARIF example and built a source distribution and
+  wheel. Release verification includes running the wheel from a fresh temporary
+  virtual environment.
+- Upgraded and reinstalled the local Skill at
+  `~/.codex/skills/agent-engineering-toolkit`, version `0.1.0`.
+- On this Python 3.13 + uv environment, editable installs create an
+  underscore-prefixed `.pth` file that CPython skips. Use `uv run
+  --no-editable` for local verification; released wheels are unaffected.
 
 ## Next phase after v0.1
 

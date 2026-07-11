@@ -5,7 +5,7 @@ description: Audit a repository's coding-agent context and Skills with the local
 
 # Agent Engineering Toolkit
 
-Current Skill version: `0.0.1` (Phase 0 baseline)
+Current Skill version: `0.1.0` (v0.1 release)
 
 Use the repository-local `aet` CLI to make deterministic, read-only findings
 about agent instructions and Skills. Never claim a remote service, dynamic

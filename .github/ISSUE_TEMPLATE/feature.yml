@@ -1,0 +1,31 @@
+name: Feature request
+description: Propose an evidence-preserving workflow, rule, or documentation improvement.
+title: "feature: "
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem and user
+      description: Describe the coding-agent workflow and the decision it currently makes hard to review.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed evidence and boundary
+      description: State what source AET would inspect, what artifact it would emit, and what must remain UNKNOWN.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Explain why a test, existing audit rule, existing CI check, or documentation change is not enough.
+  - type: checkboxes
+    id: contribution
+    attributes:
+      label: Contribution
+      options:
+        - label: I can help provide a sanitized fixture, example, or pull request.
+          required: false

@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased
+
+- Reframed the README as a bilingual product entrypoint with an architecture,
+  quality boundary, quick-start flows, Repo Archaeologist guide, and audience
+  guidance.
+- Added a complete Simplified Chinese README, a contribution guide, a copyable
+  intent example, and structured GitHub Issue forms.
+
 ## 1.0.0 — 2026-07-11
 
 - Added scoped `aet.toml` audit policies with explicit exclusion reasons.

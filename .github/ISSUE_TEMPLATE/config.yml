@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: AET documentation
+    url: https://github.com/AdvancingTitans/agent-engineering-toolkit#documentation
+    about: Read the contracts, security boundary, and contribution guide before opening a general question.

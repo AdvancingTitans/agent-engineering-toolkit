@@ -1,38 +1,24 @@
 {
-  "intent": "Release AET v1.0: configurable Evidence IR, proof-bound execution records, Repo Archaeologist, static review artifacts, and GitHub-ready delivery.",
-  "changed_path_budget": 45,
+  "intent": "Make AET approachable to new users with bilingual product documentation, safe contribution paths, and GitHub Issue intake.",
+  "changed_path_budget": 14,
   "allowed_paths": [
     "aet.intent.json",
-    ".gitignore",
     "PROJECT_MEMORY.md",
     "README.md",
     "CHANGELOG.md",
-    "aet.toml",
-    "pyproject.toml",
-    "uv.lock",
-    "src/aet/**",
-    "tests/**",
-    "skills/agent-engineering-toolkit/**",
+    "CONTRIBUTING.md",
     "docs/**",
-    "schemas/**",
     "examples/**",
     ".github/**"
   ],
   "required_proofs": [
     {
-      "id": "unit-tests",
+      "id": "documentation-checks",
       "command": "uv run --no-editable --reinstall-package agent-engineering-toolkit python -m unittest discover -s tests -v",
       "evidence": [
-        "tests/test_audit.py"
-      ]
-    },
-    {
-      "id": "wheel-smoke-test",
-      "command": "uv build && uv run --isolated --with dist/agent_engineering_toolkit-1.0.0-py3-none-any.whl aet --version",
-      "evidence": [
-        "pyproject.toml",
-        "src/aet/evidence.py",
-        "pyproject.toml"
+        "README.md",
+        "docs/README.zh-CN.md",
+        "CONTRIBUTING.md"
       ]
     }
   ]

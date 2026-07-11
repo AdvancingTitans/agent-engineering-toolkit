@@ -276,3 +276,19 @@ deterministic core.
 - Scoped Codex `AGENTS.md` dogfood found 52 stale absolute Skill paths and one root-context-bloat warning; the audit did not mutate global instructions.
 - Added v1 README, contracts, schema, canonical Skill flow, changelog, CI and tag-driven GitHub release workflow.
 - Before tagging, require strict self-audit, full unit suite, wheel plus isolated CLI smoke, a proof-bound Evidence Pack, GitHub audit/evolution evidence, and a clean intentional commit.
+
+## Documentation and community entrypoint — 2026-07-11
+
+- Reworked the English README from a command-first reference into a product
+  entrypoint: user problem, four capability surfaces, evidence architecture,
+  verified quality boundary, install paths, workflow guides, Repo
+  Archaeologist, audience fit, and repository map.
+- Added `docs/README.zh-CN.md` as the complete Simplified Chinese companion,
+  with an explicit language switch at the top of both README files.
+- Added `CONTRIBUTING.md`, a copyable generic intent example, and GitHub Issue
+  forms so external users can report sanitized evidence-boundary defects or
+  propose concrete workflows without exposing private repository content.
+- GitHub discovery metadata should describe AET as evidence-first engineering
+  guardrails for coding agents and use focused topics rather than broad AI
+  hype. Keep public claims tied to reproducible release checks; do not claim
+  PyPI publication unless it actually occurs.

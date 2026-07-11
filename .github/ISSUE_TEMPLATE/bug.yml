@@ -1,0 +1,47 @@
+name: Bug report
+description: Report a reproducible AET behavior or evidence-boundary problem.
+title: "bug: "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please remove secrets, private repository paths, and unredacted command output.
+  - type: input
+    id: version
+    attributes:
+      label: AET version
+      placeholder: "aet --version"
+    validations:
+      required: true
+  - type: textarea
+    id: command
+    attributes:
+      label: Exact command and safe reproduction steps
+      description: Include a minimal public fixture or sanitized directory shape when possible.
+      placeholder: |
+        aet audit . --strict
+        Expected: ...
+        Actual: ...
+    validations:
+      required: true
+  - type: dropdown
+    id: surface
+    attributes:
+      label: AET surface
+      options:
+        - audit
+        - review
+        - trace / evidence pack
+        - triage
+        - evolve / Repo Archaeologist
+        - documentation or installation
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Sanitized context
+      description: What did AET claim, and what evidence boundary should it have observed?
+    validations:
+      required: true

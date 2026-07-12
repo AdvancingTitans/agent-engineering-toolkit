@@ -10,14 +10,60 @@
 
 > AET is the local evidence layer between an agent’s work and a claim that the work is ready.
 
-**Agent Engineering Toolkit (AET)** is an evidence-first CLI and portable Agent
-Skill for repositories changed by coding agents. It records what was inspected,
-what a human approved, what command actually ran, and what remains unknown.
-It can also turn recurring *structured* evidence failures into a bounded Skill
-proposal—then independently replay, gate, and stage it for human review.
+Modern coding agents are becoming increasingly capable of writing code, but improving how they work is still largely a manual and heuristic process. Skills are rewritten after failures, prompts are refined through trial and error, and successful sessions are often forgotten while unsuccessful ones are difficult to explain.
 
-It is not an agent runtime, a trust-score generator, a hosted telemetry product,
-or an automatic prompt rewriter.
+**Agent Engineering Toolkit (AET) treats evidence—not prompts or model weights—as the optimization target for coding agents.**
+
+Instead of asking an agent to reflect on what it *thinks* happened, AET records what actually happened:
+
+- what instructions and Skills were available;
+- what changes were approved by humans;
+- what commands were explicitly executed;
+- what evidence those commands produced;
+- what remains unverified;
+- and whether the collected evidence still matches the current repository.
+
+These records become reusable engineering artifacts rather than disposable execution logs.
+
+```text
+Coding Session
+        │
+        ▼
+Collect structured evidence
+        │
+        ▼
+Understand recurring failures
+        │
+        ▼
+Generate bounded Skill improvements
+        │
+        ▼
+Replay + Validation Gate
+        │
+        ▼
+Human Review & Adoption
+        │
+        ▼
+Better Skill
+        │
+        ▼
+Next Coding Session
+```
+
+Unlike conventional agent reflection, AET never allows unrestricted self-modification.
+
+Every candidate improvement must remain inside explicitly editable regions, preserve immutable contracts, replay successfully in isolation, pass independent validation and held-out gates, and finally be adopted explicitly by a human.
+
+Evidence therefore serves two purposes simultaneously:
+
+- it explains **why** an agent can be trusted today;
+- it determines **how** the agent is allowed to improve tomorrow.
+
+As more coding sessions accumulate, AET transforms isolated execution records into an evidence-driven engineering feedback loop, enabling coding agents to become more reliable without changing the underlying model.
+
+AET is **not** an agent runtime, an autonomous coding framework, or a prompt optimizer.
+
+It is an evidence-driven self-evolution framework that makes coding agents continuously improvable through verifiable engineering evidence.
 
 ## Start here
 

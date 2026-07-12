@@ -10,60 +10,56 @@
 
 > AET is the local evidence layer between an agent’s work and a claim that the work is ready.
 
-Modern coding agents are becoming increasingly capable of writing code, but improving how they work is still largely a manual and heuristic process. Skills are rewritten after failures, prompts are refined through trial and error, and successful sessions are often forgotten while unsuccessful ones are difficult to explain.
+**Agent Engineering Toolkit (AET)** makes coding-agent work inspectable before
+it is trusted, and improvable only when the improvement is itself evidenced.
+It records the instructions available to an agent, the human-approved change
+boundary, explicit command execution, produced artifacts, and any verification
+gap. Those records can travel with a delivery—or, when failures repeat, become
+the input to a bounded Skill-improvement experiment.
 
-**Agent Engineering Toolkit (AET) treats evidence—not prompts or model weights—as the optimization target for coding agents.**
+This answers two different engineering questions with one evidence model:
 
-Instead of asking an agent to reflect on what it *thinks* happened, AET records what actually happened:
+| Question | AET answer |
+| --- | --- |
+| “Can we honestly say this agent delivery is ready?” | Audit instructions, review an approved diff, trace an explicit proof, and hand off the resulting evidence. |
+| “Can this recurring agent failure improve the Skill safely?” | Mine structured failures, patch only marked Skill regions, replay baseline and candidate, gate the result, then require a human adoption decision. |
 
-- what instructions and Skills were available;
-- what changes were approved by humans;
-- what commands were explicitly executed;
-- what evidence those commands produced;
-- what remains unverified;
-- and whether the collected evidence still matches the current repository.
+The important distinction is that AET is not a self-reporting layer. A natural
+language answer never substitutes for a recorded command, artifact, snapshot,
+or explicit `UNKNOWN` state.
 
-These records become reusable engineering artifacts rather than disposable execution logs.
+## Why AET exists
 
-```text
-Coding Session
-        │
-        ▼
-Collect structured evidence
-        │
-        ▼
-Understand recurring failures
-        │
-        ▼
-Generate bounded Skill improvements
-        │
-        ▼
-Replay + Validation Gate
-        │
-        ▼
-Human Review & Adoption
-        │
-        ▼
-Better Skill
-        │
-        ▼
-Next Coding Session
-```
+Coding agents make it inexpensive to change a repository, but not necessarily
+easy to answer the questions that matter at handoff: *Which instructions were
+in scope? Was this command really run? Does the output still describe this
+workspace? What is verified, and what remains unknown?*
 
-Unlike conventional agent reflection, AET never allows unrestricted self-modification.
+Most teams solve fragments of this with chat transcripts, CI logs, prompt
+edits, or manual checklists. AET gives those fragments a local, structured,
+hash-bound form and keeps their meanings deliberately narrow. That makes the
+system useful for ordinary delivery work today, without pretending that every
+agent session should become training data tomorrow.
 
-Every candidate improvement must remain inside explicitly editable regions, preserve immutable contracts, replay successfully in isolation, pass independent validation and held-out gates, and finally be adopted explicitly by a human.
+## Why AET
 
-Evidence therefore serves two purposes simultaneously:
+- **Evidence-first, not confidence-first.** `UNKNOWN` stays a verification gap;
+  it is never discounted into a pass.
+- **Smallest safe surface.** `audit` and `review` inspect; only `trace` executes
+  the explicit argv after `--`.
+- **Local by default.** Evidence collection, review, Experience Store, and
+  federation do not require a hosted telemetry service or transcript archive.
+- **Proof remains fresh-or-stale.** A successful command and a workspace that
+  later changed are represented as separate facts.
+- **Learning is constrained.** Candidate Skills are hash-bound, limited to
+  marked editable blocks, validated independently, staged, and adopted only by
+  an explicit human action.
+- **Behavior can be observed.** Static Skill-document checks remain Gate 0;
+  opt-in Scripted, Codex, and Claude Code runners can evaluate actual isolated
+  task executions with deterministic scoring.
 
-- it explains **why** an agent can be trusted today;
-- it determines **how** the agent is allowed to improve tomorrow.
-
-As more coding sessions accumulate, AET transforms isolated execution records into an evidence-driven engineering feedback loop, enabling coding agents to become more reliable without changing the underlying model.
-
-AET is **not** an agent runtime, an autonomous coding framework, or a prompt optimizer.
-
-It is an evidence-driven self-evolution framework that makes coding agents continuously improvable through verifiable engineering evidence.
+AET is **not** an agent runtime, a general autonomous coding framework, a
+hosted monitoring product, or a system that auto-edits production Skills.
 
 ## Start here
 
@@ -95,28 +91,85 @@ found a problem,” not “no audit JSON was produced.”
 | Which existing findings should be handled first? | `aet triage` | Explainable ordering; never a changed finding status. |
 | Can repeated evidence failures improve a Skill safely? | `aet learn` | Evidence-only experience set, bounded candidate, Gate, and staged review copy. |
 
+## Where AET fits
+
+These tools are complementary. The comparison is about the job each one owns,
+not a claim that one should replace the others.
+
+| Tool category | Best used for | What AET adds or deliberately does not do |
+| --- | --- | --- |
+| Coding-agent runtime (Codex, Claude Code, Copilot) | Planning and executing the work in a repository. | AET does not replace the runtime; it records the local evidence needed to make its delivery claims reviewable. |
+| CI, tests, linters, and security scanners | Checking code or a deployment against their own rules. | AET can trace an explicit check and bind its artifact to intent, workspace freshness, and a handoff; it does not replace the checker. |
+| Skill authoring / governance system ([Yao Meta Skill](https://github.com/yaojingang/yao-meta-skill)) | Creating, packaging, compiling, evaluating, and governing reusable cross-platform Skill assets. | AET focuses on the evidence around a coding-agent delivery and on bounded improvement of an in-use Skill. Use Yao to engineer the Skill product; use AET to evidence and constrain work performed with it. |
+| Skill optimizer ([SkillOpt](https://github.com/microsoft/SkillOpt)) | Training a Skill document from scored rollouts and held-out validation. | AET provides local engineering evidence semantics—intent boundaries, explicit command proof, artifact handling, freshness, and human adoption—rather than a general benchmark optimizer. |
+| Transcript analytics / agent observability | Searching broad session history, dashboards, or fleet telemetry. | AET defaults to structured Evidence Only records and local storage; it intentionally does not ingest an unbounded transcript archive. |
+
+### Choose AET when
+
+- You need a credible handoff after an agent changed code: not just “tests passed,”
+  but the command, exit status, declared artifact, approved scope, and freshness.
+- You need to preserve the difference between **PASS**, **FAIL**, and
+  **UNKNOWN** instead of collapsing uncertainty into a score.
+- You want to improve a Skill from repeated engineering failures without letting
+  an optimizer silently weaken safety semantics or overwrite production guidance.
+- You need a local, portable evidence format that works alongside—not inside—an
+  existing agent runtime and CI system.
+
+### Do not choose AET as
+
+- a replacement for writing tests, running CI, reviewing code, or securing a
+  deployment;
+- a substitute for an agent runtime or task planner;
+- a promise that an Agent understood a file merely because it was discovered or
+  attested as read; or
+- an automatic self-modification daemon. `propose`, `gate`, `stage`, and
+  `adopt` are intentionally separate actions.
+
 ## Architecture
 
 ```mermaid
 flowchart TB
-  A["Instructions and Skills"] --> B["audit\nstatic facts"]
-  C["Approved intent + Git diff"] --> D["review\nscope facts"]
-  E["Explicit argv after --"] --> F["trace\nexecuted proof"]
-  G["Local Git + docs\noptional explicit remote export"] --> H["evolve\ncited history"]
-  B --> I["Versioned Evidence IR\nstatus + hashes + snapshots"]
-  D --> I
-  F --> I
-  I --> J["Evidence Pack / Viewer\nRun / Context / Decision"]
-  H --> K["Evolution Pack"]
-  I -. "repeated, structured\nEvidence Only records" .-> L["learn\npattern → bounded patch → replay → Gate"]
-  L --> M["stage for human review"]
-  M -. "explicit --yes" .-> N["adopt + Decision Ledger"]
+  subgraph delivery["Delivery evidence plane"]
+    A["Instructions + Skills"] --> B["audit\nstatic instruction facts"]
+    C["Human intent + Git diff"] --> D["review\nscope and proof contract"]
+    E["Explicit argv after --"] --> F["trace\nexecuted proof + declared artifacts"]
+    G["Repository context + decisions"] --> H["context / decision / evolve\nhash-bound local history"]
+    B --> I["Evidence IR\nstatus + hashes + workspace snapshots"]
+    D --> I
+    F --> I
+    H --> I
+    I --> J["Handoff\nEvidence Pack / Viewer / Run"]
+  end
+
+  subgraph learning["Optional evidence-gated evolution"]
+    I -. "structured Evidence Only\nrepeated failures" .-> K["harvest + mine\npattern support"]
+    K --> L["propose\nbounded Patch IR"]
+    L --> M["replay\nstatic Gate 0 or isolated host rollout"]
+    M --> N["gate\ncore + validation + held-out + cost"]
+    N --> O["stage\nhuman review copy"]
+    O -. "explicit --yes" .-> P["adopt\nSkill + Decision Ledger"]
+    N -. "fail / inconclusive" .-> Q["reject record\nnegative constraint"]
+  end
+
+  P --> A
 ```
 
-The dashed path is deliberately optional. AET does not treat every artifact as
-training data, and a passed Gate does not modify the production Skill.
+The learning path is deliberately optional. AET does not treat every artifact
+as training data; static text checks are not presented as observed behavior;
+and a passing Gate does not modify a production Skill.
 
-## A normal delivery
+## How to use AET
+
+Start with the job, not the biggest workflow:
+
+| If you need to… | Start with | Add only if needed |
+| --- | --- | --- |
+| Check whether an Agent’s local guidance is usable | `aet audit` | `context` when you need a hash-bound record of discovered/read assets. |
+| Deliver an Agent-authored change | `audit` + `review` + `trace` | `evidence pack` for a portable handoff; `run` when the delivery has multiple lifecycle steps. |
+| Explain why a repository looks this way | `aet evolve plan` | `collect/build/report` after reviewing the collection plan. |
+| Improve a recurring Skill failure | `learn harvest` + `mine` | `propose/replay/gate/stage`; use a real host runner only when explicitly configured. |
+
+### Recipe: evidence-backed delivery
 
 ```bash
 # 1. Audit instructions and review the approved diff. Neither runs tests.
@@ -155,7 +208,7 @@ Evidence Only JSON → inspect → mine → bounded Patch IR → isolated replay
 → core + validation + held-out Gate → stage → human adopt or reject
 ```
 
-### Phase 0–6, available now
+### What is implemented today
 
 | Phase | What is implemented |
 | --- | --- |
@@ -167,6 +220,11 @@ Evidence Only JSON → inspect → mine → bounded Patch IR → isolated replay
 | 5. Local federation | `collect` and `--experience-store` merge de-identified packs without networking. |
 | 6. Sleep | Local bounded loop, append-only `SKILL_EVOLUTION` event history, budgets, target-change check, and stage-only terminal action. |
 | 7. Real-host evaluation | Isolated fixture workspaces, normalized command/final-answer events, deterministic behavioral scoring, repeated paired rollouts, and `PASS`/`FAIL`/`INCONCLUSIVE`/`INFRASTRUCTURE_ERROR` statistics. |
+
+The real-host fixture is a proof-handoff smoke test, not a broad claim that
+every task distribution is solved. For an adoption-grade observed Gate, bring
+your own separated core, validation, and held-out tasks; configure sufficient
+paired rollouts; and treat `INCONCLUSIVE` as a non-passing result.
 
 ```bash
 # Phase 1: build and inspect a local Evidence Only experience set.

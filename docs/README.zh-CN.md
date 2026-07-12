@@ -10,62 +10,41 @@
 
 > AET 是 Coding Agent 的工作结果与“可以交付”这一结论之间的本地证据层。
 
-如今的 Coding Agent 已经能够完成越来越复杂的软件开发任务，但 Agent 本身如何持续改进，仍然主要依赖经验和试错：Prompt 不断修改，Skill 不断重写，成功经验难以沉淀，失败原因也缺乏可验证的依据。
+**Agent Engineering Toolkit（AET）** 先让 Coding Agent 的工作可检查，再只在改进本身
+有证据时让它演进。它记录 Agent 可见的指令、人工批准的改动边界、显式执行的命令、产物
+与验证缺口。这些记录既可以随一次交付交接，也可以在失败反复出现时成为受限 Skill 改进
+实验的输入。
 
-**Agent Engineering Toolkit（AET）将 Agent 的优化对象从 Prompt 和模型参数，转变为可验证的工程证据（Evidence）。**
+它用同一套证据模型回答两个问题：
 
-AET 不关注 Agent 认为自己做了什么，而关注实际发生了什么。
+| 问题 | AET 的回答 |
+| --- | --- |
+| “这次 Agent 交付可以如实说已就绪吗？” | 审计指令、审查人工批准的 diff、Trace 显式 proof，并交接证据。 |
+| “反复出现的 Agent 失败能安全改进 Skill 吗？” | 从结构化失败中挖掘模式，只改标记区域，回放 baseline/candidate，经过 Gate 后仍由人采纳。 |
 
-它会记录：
+关键在于：AET 不接受 Agent 的自我陈述替代事实。自然语言答复不能替代已记录的命令、产物、
+快照或明确的 `UNKNOWN`。
 
-- Agent 使用了哪些指令和 Skills；
-- 人工批准了哪些修改范围；
-- 实际执行了哪些命令；
-- 命令产生了哪些证据；
-- 哪些内容仍然缺乏验证；
-- 以及这些证据是否仍然对应当前仓库状态。
+## 为什么要做 AET
 
-这些信息最终不会停留在聊天记录里，而会沉淀为可复用、可审计、可交接的工程资产。
+Coding Agent 让“改动仓库”变得很便宜，却没有自动回答交付时最关键的问题：*哪些指令在
+范围内？命令是否真的跑过？产物是否仍对应当前工作区？哪些已验证，哪些仍未知？*
 
-```text
-一次 Coding Session
-        │
-        ▼
-采集结构化证据
-        │
-        ▼
-发现重复出现的问题
-        │
-        ▼
-生成受限的 Skill 改进方案
-        │
-        ▼
-隔离回放 + Validation Gate
-        │
-        ▼
-人工审核并采纳
-        │
-        ▼
-Skill 持续改进
-        │
-        ▼
-进入下一次 Coding Session
-```
+聊天记录、CI 日志、Prompt 修改和人工清单各自能解决一部分。AET 把它们沉淀为本地、结构化、
+哈希绑定的工程事实，并保持语义克制：它今天服务于可信交付，而不是把每次 Agent 对话都当作
+训练数据。
 
-与传统 Agent Reflection 最大的不同在于，AET 从不允许 Agent 无约束地修改自己。
+## 为什么是 AET
 
-每一次改进都必须限定在允许编辑的区域内，保持不可变契约不被破坏，在隔离环境完成回放，通过独立的验证集和 Held-out Gate，并最终由人工决定是否采纳。
+- **证据优先，而非置信度优先。** `UNKNOWN` 永远是验证缺口，不会被折算成通过。
+- **最小安全能力面。** `audit`、`review` 只检查；只有 `trace` 执行 `--` 后显式 argv。
+- **默认本地。** 证据、Experience Store 与跨项目汇集不要求托管遥测或完整 transcript。
+- **proof 与 freshness 分离。** 命令曾成功和工作区后来变更是两个独立事实。
+- **改进受约束。** Candidate 受哈希、editable block、独立验证、stage 与人工 adopt 共同限制。
+- **可观测真实行为。** 静态 Skill 检查只是 Gate 0；可选 Scripted、Codex、Claude Code runner
+  可在隔离任务中用确定性规则评分实际行为。
 
-因此，证据在 AET 中承担着双重职责：
-
-- 它解释今天为什么可以相信一次交付；
-- 它决定明天 Agent 可以如何安全地持续改进。
-
-随着越来越多的 Coding Session 被记录下来，AET 会把零散的执行记录逐渐演化为一套基于证据驱动的工程反馈闭环，使 Agent 在不修改底层模型的前提下持续提升可靠性。
-
-AET **不是** Agent Runtime，不是自动编程框架，也不是 Prompt 优化器。
-
-它是一套基于证据驱动的 Agent 自进化框架，让 Coding Agent 能够通过工程证据持续、安全、可验证地演进。
+AET **不是** Agent Runtime、通用自动编程框架、托管监控产品，也不会自动修改生产 Skill。
 
 ## 快速开始
 
@@ -94,27 +73,77 @@ aet audit . --strict --format json --output .aet/evidence/audit.json
 | 现有 finding 应先修哪个？ | `aet triage` | 可解释排序；绝不改变 finding 原状态。 |
 | 重复证据问题能否安全改进 Skill？ | `aet learn` | Evidence Only 经验集、受限候选、Gate 与 staged 副本。 |
 
+## AET 在工具链中的位置
+
+这些工具可以组合使用；下表说明的是各自负责的问题，不是“谁替代谁”的排序。
+
+| 工具类别 | 更适合解决什么 | AET 增加什么，或刻意不做什么 |
+| --- | --- | --- |
+| Coding Agent Runtime（Codex、Claude Code、Copilot） | 在仓库中规划与执行实际工作。 | AET 不替代 Runtime；它记录 Runtime 的交付结论所需的本地证据。 |
+| CI、测试、Lint 与安全扫描 | 用各自的规则检查代码或部署。 | AET 可 Trace 显式检查，并将其产物绑定到 intent、工作区 freshness 与 handoff；不替代检查器。 |
+| Skill 工程/治理系统（[Yao Meta Skill](https://github.com/yaojingang/yao-meta-skill)） | 创建、打包、编译、评估并治理可复用的跨平台 Skill 资产。 | AET 聚焦 Coding Agent 交付周围的证据，以及正在使用的 Skill 的受限改进。用 Yao 工程化 Skill 产品；用 AET 为使用该 Skill 的工作提供证据与约束。 |
+| Skill 优化器（[SkillOpt](https://github.com/microsoft/SkillOpt)） | 根据有分数的 rollout 与 held-out validation 训练 Skill 文档。 | AET 提供本地工程证据语义：intent 边界、显式命令 proof、artifact、freshness 与人工 adopt；它不是通用 benchmark 优化器。 |
+| Transcript 分析 / Agent 可观测平台 | 搜索大规模历史会话、看仪表盘或管理 fleet telemetry。 | AET 默认只保存结构化 Evidence Only 记录，不会摄取无限增长的 transcript 档案。 |
+
+### 适合使用 AET 的场景
+
+- Agent 改完代码后，需要可信 handoff：不仅是“测试通过”，还要有命令、退出码、声明产物、
+  批准范围与 freshness。
+- 需要保留 **PASS**、**FAIL**、**UNKNOWN** 的差异，而不是把不确定性压缩成一个分数。
+- 希望从重复工程失败中改进 Skill，但不允许优化器悄悄放宽安全语义或覆盖正式指令。
+- 已经在用 Agent Runtime 和 CI，需要一个本地、可移植的证据层与它们协作。
+
+### AET 不替代什么
+
+- 测试、CI、代码审查或部署安全；
+- Agent Runtime 或任务规划器；
+- 仅因为文件被发现或被声明“已读”，就断言模型理解/使用了该文件；
+- 自动自我修改服务。`propose`、`gate`、`stage`、`adopt` 被有意拆开。
+
 ## 架构
 
 ```mermaid
 flowchart TB
-  A["指令与 Skills"] --> B["audit\n静态事实"]
-  C["人工 intent + Git diff"] --> D["review\n范围事实"]
-  E["-- 后的显式 argv"] --> F["trace\n已执行 proof"]
-  G["本地 Git + 文档\n可选显式远端导出"] --> H["evolve\n可引用历史"]
-  B --> I["Versioned Evidence IR\n状态 + 哈希 + 快照"]
-  D --> I
-  F --> I
-  I --> J["Evidence Pack / Viewer\nRun / Context / Decision"]
-  H --> K["Evolution Pack"]
-  I -. "重复的结构化\nEvidence Only 记录" .-> L["learn\n模式 → 受限补丁 → 回放 → Gate"]
-  L --> M["stage 供人工审阅"]
-  M -. "显式 --yes" .-> N["adopt + Decision Ledger"]
+  subgraph delivery["交付证据平面"]
+    A["指令与 Skills"] --> B["audit\n静态指令事实"]
+    C["人工 intent + Git diff"] --> D["review\n范围与 proof 契约"]
+    E["-- 后的显式 argv"] --> F["trace\n已执行 proof + 声明产物"]
+    G["仓库 Context 与决策"] --> H["context / decision / evolve\n哈希绑定的本地历史"]
+    B --> I["Evidence IR\n状态 + 哈希 + 工作区快照"]
+    D --> I
+    F --> I
+    H --> I
+    I --> J["交接\nEvidence Pack / Viewer / Run"]
+  end
+
+  subgraph learning["可选的 Evidence-Gated Evolution"]
+    I -. "重复的结构化\nEvidence Only 记录" .-> K["harvest + mine\n模式支持度"]
+    K --> L["propose\n受限 Patch IR"]
+    L --> M["replay\n静态 Gate 0 或隔离宿主 rollout"]
+    M --> N["gate\ncore + validation + held-out + 成本"]
+    N --> O["stage\n人工审阅副本"]
+    O -. "显式 --yes" .-> P["adopt\nSkill + Decision Ledger"]
+    N -. "FAIL / INCONCLUSIVE" .-> Q["reject 记录\n负向约束"]
+  end
+
+  P --> A
 ```
 
-虚线是可选支路：并非每份证据都会进入学习集，Gate 通过也绝不会修改生产 Skill。
+学习支路是可选的：AET 不会把每份证据都当成训练数据；静态文本检查不会被描述为已观测
+Agent 行为；Gate 通过也不会修改生产 Skill。
 
-## 常规交付流程
+## 如何使用 AET
+
+先按工作选择入口，而不是直接启动最重的工作流：
+
+| 如果你需要… | 先使用 | 仅在需要时再增加 |
+| --- | --- | --- |
+| 检查 Agent 本地指引是否可用 | `aet audit` | 需要发现/已读资产的哈希记录时使用 `context`。 |
+| 交付 Agent 生成的改动 | `audit` + `review` + `trace` | 需要可移植交接时使用 `evidence pack`；多生命周期步骤时使用 `run`。 |
+| 解释仓库为何形成当前结构 | `aet evolve plan` | 审查收集计划后再执行 `collect/build/report`。 |
+| 改进反复出现的 Skill 失败 | `learn harvest` + `mine` | `propose/replay/gate/stage`；只有显式配置时才使用真实宿主 runner。 |
+
+### 配方：有证据的交付
 
 ```bash
 # audit 与 review 不执行测试。
@@ -155,6 +184,10 @@ Evidence Only JSON → inspect → mine → bounded Patch IR → 隔离回放
 | 5. 跨项目本地经验 | `collect` 与 `--experience-store` 汇总脱敏包；不联网。 |
 | 6. Sleep | 本地有界闭环、`SKILL_EVOLUTION` 事件历史、预算、目标变更检测、最终只 stage。 |
 | 7. 真实宿主评估 | Scripted、Codex、Claude Code 的隔离 fixture；规范化命令/最终答复事件、确定性评分、配对重复 rollout 与统计门禁。 |
+
+真实宿主 fixture 是 proof-handoff 的 smoke test，不代表已经覆盖任意任务分布。要得到可用于
+adopt 的已观测 Gate，需提供彼此隔离的 core、validation 与 held-out 任务，配置足够的配对
+rollout，并将 `INCONCLUSIVE` 视为未通过。
 
 ```bash
 # Phase 1：只处理结构化 AET JSON。

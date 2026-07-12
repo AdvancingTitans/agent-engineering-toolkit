@@ -1,6 +1,6 @@
 {
-  "intent": "Release v1.5.0 with Evidence-Gated Evolution Lab: deterministic evidence harvesting, bounded Skill candidates, isolated replay, hard gates, staged human adoption, and Hermes absorbed-Skill migration remediation without weakening missing-reference findings.",
-  "changed_path_budget": 30,
+  "intent": "Release v1.6.0 with complete evidence-gated evolution phases: schemas, Evidence Only cross-project experience store, bounded model adapter, isolated replay viewer, independent cost-aware Gates, bounded Sleep run history, refreshed portable Skill, and user-first bilingual documentation.",
+  "changed_path_budget": 36,
   "allowed_paths": [
     "aet.intent.json",
     "PROJECT_MEMORY.md",

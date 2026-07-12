@@ -4,387 +4,207 @@
 [![Release](https://img.shields.io/github/v/release/AdvancingTitans/agent-engineering-toolkit?display_name=tag&sort=semver)](https://github.com/AdvancingTitans/agent-engineering-toolkit/releases)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-3776AB)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-2ea44f)](../LICENSE)
-[![Docs: English](https://img.shields.io/badge/docs-English-blue)](../README.md)
+[![English](https://img.shields.io/badge/docs-English-blue)](../README.md)
 
 **[English](../README.md) · [简体中文](README.zh-CN.md)**
 
-> Coding Agent 可以很快地改代码；AET 让它的工程证据也能随交付一起抵达。
+> AET 是 Coding Agent 的工作结果与“可以交付”这一结论之间的本地证据层。
 
-**Agent Engineering Toolkit（AET）** 是面向 Coding Agent 的、证据优先的本地 CLI
-与可移植 Agent Skill。它审查 Agent 读取的指令、人工批准的改动边界、实际运行过的
-命令，以及支撑仓库演进结论的历史证据；它不会把缺失证据粉饰成一个看似安心的分数。
-v1.5 还可把重复出现的结构化证据问题转成**受限的 Skill 改进候选**，在独立评估上验证后，
-由人决定是否采纳。
+**Agent Engineering Toolkit（AET）** 是面向 Agent 改造仓库的证据优先 CLI 与可移植
+Agent Skill。它记录检查过什么、人工批准了什么、哪条命令真实运行过，以及还有什么
+尚未验证。它还能把反复出现的**结构化**证据问题变成受限的 Skill 改进候选，经过独立
+回放与门禁后，仅暂存给人审阅。
 
-适合在 Agent 开工前、交付或发布时，以及回答“这个仓库为什么会演变成现在这样？”时使用。
-
-[快速开始](#快速开始) · [能力面](#能力面) · [证据门控进化](#证据门控进化v15) · [Context 与决策](#context-与决策本地来源记录而非-agent-memory) · [质量与当前结果](#质量与当前结果) · [Repo Archaeologist](#repo-archaeologist) · [参与贡献](../CONTRIBUTING.md)
-
-## 为什么需要 AET？
-
-Coding Agent 即使给出看起来干净的 diff，也可能遵循了过期指令、超出批准范围，或把
-从未运行的命令说成验证。Git 历史能告诉你“改了什么”，却常常无法把 release、文档、
-Issue 和 commit 串成可审阅的因果证据。
-
-AET 是 Agent 工作与“已经就绪”这个结论之间的一层小而确定的工程护栏。它不替代测试、
-安全扫描、代码审查或 Agent runtime；它为这些流程提供可携带的凭据：检查了什么、
-声明了什么、显式执行了什么，以及还有什么尚不可知。
-
-## 能力面
-
-| 用户问题 | AET 能力 | 产物 |
-| --- | --- | --- |
-| 这个 Agent 能安全地遵循当前指令和 Skill 吗？ | `aet audit` | 带位置和修复建议的 Markdown、JSON 或 SARIF。 |
-| 这次 diff 是否在人工批准的意图范围内？ | `aet review` | 路径预算、允许路径和已声明 proof 的 Intent Gate 报告。 |
-| 这条命令是否在已审查工作区运行，并生成了声明的测试报告？ | `aet trace --artifact` + `aet evidence pack` | 脱敏执行记录、显式捕获的报告，以及 proof / 工作区快照绑定。 |
-| 这份交付证据正处于哪个阶段，是否已经过期？ | `aet run` | 可选、append-only 的 Run Manifest 与明确生命周期状态。 |
-| 哪些本地指令/参考资料可用，哪些只是被声明为已读？ | `aet context` | 哈希绑定的 Context Manifest；读取声明是显式 attestation。 |
-| 哪些项目决策有本地来源，哪条记录已替代它？ | `aet decision` | 带来源哈希、验证和 supersession 历史的 Decision Ledger。 |
-| 仓库为什么这样演进？ | `aet evolve` | Evolution Pack、时间线、决策索引和带引用报告。 |
-| 应先修什么？ | `aet triage` | 透明修复排序；不会改变 finding 状态。 |
-| 重复出现的证据问题能否改进 Agent Skill，又不悄悄降低标准？ | `aet learn` | 受限候选、隔离回放、Gate 报告，以及可选的人工审阅 staged 副本。 |
-
-### 它也是一个 Skill
-
-[`skills/agent-engineering-toolkit/`](../skills/agent-engineering-toolkit/)
-中的可移植 Skill 会引导 Codex、Claude Code、Cursor、Copilot 兼容宿主和其他
-Skill-aware Agent，在 **audit / review / evidence / evolve** 中选择最小且安全的
-工作流。CLI 是确定性 runtime；即使宿主没有原生 Skill loader，也可读取
-`SKILL.md` 并消费 JSON 证据产物。
-
-## 架构与说明
-
-```mermaid
-flowchart LR
-  A["Agent 指令\n与 Skills"] --> B["audit\n静态卫生检查"]
-  C["人工意图\n+ Git diff"] --> D["review\n改动边界"]
-  E["-- 后的\n显式 argv"] --> F["trace\n脱敏执行证据"]
-  G["Git、文档、release、\nIssue、PR"] --> H["evolve\nRepo Archaeologist"]
-  B --> I["Evidence IR\n状态 + 来源哈希"]
-  D --> I
-  F --> I
-  H --> J["Evolution Pack\n关系 + 引用"]
-  I --> L["learn\n模式 → 受限候选 → gate"]
-  L --> K
-  I --> K["审阅者、CI、\n或 Agent handoff"]
-  J --> K
-```
-
-四个主能力相互独立：离线 `audit` 不会访问 GitHub；`review` 不会执行 proof；只有
-`trace` 才会执行 `--` 后的精确 argv；`evolve --remote github` 必须显式指定。
-这让报告不会悄悄宣称它没有能力证明的事实。
-
-## 证据门控进化（v1.5）
-
-AET 不是“会自己改自己”的 Agent，而是能从重复工程失败中学习、同时保留证据边界的系统：
-
-```text
-结构化 AET 证据 → 失败模式 → 受限候选 → 隔离回放
-→ immutable/core/held-out 门禁 → stage → 人工 adopt 或 reject
-```
-
-默认 **Evidence Only**：只读取本地 AET JSON、finding、哈希、快照和明确的拒绝原因；
-不读取原始对话、shell 输出、环境变量或 secrets，也不会上传经验数据。模型辅助候选为
-opt-in，必须提供显式本地命令；模型只能返回受限 Patch IR，不能决定 gate 或采纳 Skill。
-
-```bash
-# Phase 1–3：本地证据形成受限候选。
-aet learn harvest --evidence .aet/evidence --output .aet/learn/experiences.json
-aet learn mine --experiences .aet/learn/experiences.json --output .aet/learn/patterns.json
-aet learn propose --engine rules --patterns .aet/learn/patterns.json \
-  --target skills/agent-engineering-toolkit/SKILL.md --output .aet/learn/candidates/CAND-001
-
-# Phase 3–6：隔离回放与独立门禁。通过后也只会 stage。
-aet learn gate --candidate .aet/learn/candidates/CAND-001 --core eval/core \
-  --validation eval/validation --held-out eval/held-out --output .aet/learn/gates/CAND-001.json
-aet learn stage --candidate .aet/learn/candidates/CAND-001 \
-  --gate .aet/learn/gates/CAND-001.json --output .aet/learn/staged
-```
-
-`aet learn adopt --yes` 故意独立存在：写入前会复核目标哈希，并将采纳记录到本地
-Decision Ledger。`aet learn reject` 保留拒绝理由。`aet learn sleep` 可运行有上限的本地
-序列，但最终动作始终只是 **stage**。完整的不可变契约与保留边界见
-[evolution boundary](evolution-boundary.md)。
-
-所有报告使用带版本的 Evidence IR envelope，保留原子状态：`PASS`、`FAIL`、
-`UNKNOWN`、`NOT_APPLICABLE`。`UNKNOWN` 代表待验证工作，不是打折后的通过。证据等级
-区分人工声明（L0）、本地文件（L1）、已执行命令（L2）、本地 Git（L3）、显式取得的
-远端数据（L4）和人工背书（L5）。
-
-### proof 成功与证据新鲜度分开表达
-
-从 v1.1.0 起，`audit`、`review` 与 `trace` 都记录确定性的
-`workspace_snapshot`：Git HEAD，以及已跟踪和未跟踪工作区状态的摘要。生成
-`aet evidence pack` 时，AET 会将这些快照与打包时的工作区比较。
-
-- `EXACT_MATCH`：审查、执行与打包对应同一工作区。
-- `HEAD_MATCH_WORKTREE_DIFFERS`：commit 未变，但至少一份产物生成后工作区改变。
-- `HEAD_DIFFERS`：被比较的产物来自不同 commit。
-- `INTENT_CHANGED`、`CONFIG_CHANGED`、`UNTRACKED_SET_CHANGED`：分别明确
-  指出意图、配置或未跟踪文件集合造成的新鲜度失效。
-- `UNKNOWN`：无法捕获 Git 快照，或旧报告中没有快照。
-
-这是独立的 `snapshot_binding`。即使工作区随后过期，已成功的 proof 仍是 `PASS`；
-Viewer 会把交付标记为 `STALE`，而不会假装该命令从未执行。
-
-### Run Manifest：可选的交付生命周期
-
-v1.2.0 引入 `aet run`，用于需要明确关联独立证据产物的交付。它是本地、
-append-only 的任务账本，不是 Agent runtime 或 workflow engine：不会选择命令、
-重试工作、调用模型，也不会接管 Agent 宿主。
-
-```text
-INTENT_BOUND → AUDITED → REVIEWED → PROVEN → PACKED → CLOSED
-                                      │
-                              工作区或控制文件变化
-                                      ↓
-                                    STALE
-```
-
-仅在需要该生命周期时创建 Run，并在写出普通 JSON 产物时附带 `--run`。`aet run
-status` 只读；`aet run verify` 会持久记录观察到的过期迁移，并在 `STALE` 时返回
-非零退出码；`aet run close` 只接受仍然新鲜的 `PACKED` Run。
-
-### Context 与决策：本地来源记录，而非 Agent Memory
-
-v1.3.0 新增两份可选的本地 JSON 产物，用于记录任务中需要长期复核的工程事实；它们与
-`audit`、`review`、`trace`、`run` 相互独立。
-
-```bash
-# 记录可发现的指令/Skill，再显式声明已读并加入一个本地参考资料。
-aet context discover . --output .aet/context/manifest.json
-aet context record --manifest .aet/context/manifest.json \
-  --read AGENTS.md --reference docs/architecture.md
-aet context verify --manifest .aet/context/manifest.json
-
-# 保存一条有来源支撑的项目决策，并在之后检查来源是否仍一致。
-aet decision init --output .aet/decisions.json
-aet decision add --ledger .aet/decisions.json --id DEC-0001 \
-  --claim "Keep proof execution explicit." --evidence-state EVIDENCED \
-  --source docs/productization-plan.md
-aet decision list --ledger .aet/decisions.json
-aet decision verify --ledger .aet/decisions.json
-```
-
-`context discover` 是 L1：它只证明资产被发现，并记录当时的内容哈希。`context record
---read` 是 L5 `agent_attestation`：它只记录 Agent 或宿主声称读过某资产，不能证明模型
-看见、理解或使用过它。`context verify` 会检查资产哈希和工作区快照，让已经变化的上下文
-显式失效，而不是沿用旧声明。
-
-Decision Ledger 是给维护者使用的、带来源的轻量项目记忆，不是通用 Agent Memory 或 RAG
-系统。`EVIDENCED` 与 `INFERRED` 至少需要一份有 SHA-256 的本地文件来源；`ATTESTED` 与
-`UNKNOWN` 会保留较弱的认知状态。仅当替代决策已是 `ACCEPTED` 时，才使用
-`aet decision supersede --id DEC-0001 --by DEC-0002`。验证只能说明来源字节是否仍匹配，
-不宣称某个决策永远正确。
-
-## 质量与当前结果
-
-AET 故意展示 status matrix，而不是“Agent 信任度总分”。唯一有权重的模型是
-`aet triage`，它会公开因素和版本，并且只用于修复排序。
-
-| Release 检查 | v1.5.0 实测结果 | 复现方式 |
-| --- | --- | --- |
-| 回归测试 | 34 项测试通过 | `uv run --no-editable --reinstall-package agent-engineering-toolkit python -m unittest discover -s tests -v` |
-| 严格自审 | 在配置的 production Skill 范围内为 0 `FAIL`、0 `UNKNOWN` | `uv run --no-editable aet audit . --strict` |
-| Intent Review | 发布 diff 必须在已审阅合同范围内 | `uv run --no-editable aet review . --base v1.3.0 --intent aet.intent.json` |
-| 分发冒烟 | 成功构建 wheel，并在隔离环境中调用 | `uv build` 后安装上方 wheel |
-| 自动交付 | `main` 上 CI，`v*` tag 触发 GitHub Release | [Actions](https://github.com/AdvancingTitans/agent-engineering-toolkit/actions) |
-
-这些结果只证明已列出的机制和命令；它们不声称所有仓库或所有 Agent 决策都安全。
-请参阅[规则目录](rule-catalog.md)与[安全、隐私和保留边界](security-and-retention.md)。
+它不是 Agent runtime、信任评分器、托管遥测产品，也不是自动改写 prompt 的黑盒。
 
 ## 快速开始
 
-### 安装已发布 CLI
-
-使用 [uv](https://docs.astral.sh/uv/) 安装 GitHub Release wheel：
-
 ```bash
-uv tool install https://github.com/AdvancingTitans/agent-engineering-toolkit/releases/download/v1.5.0/agent_engineering_toolkit-1.5.0-py3-none-any.whl
+uv tool install https://github.com/AdvancingTitans/agent-engineering-toolkit/releases/download/v1.6.0/agent_engineering_toolkit-1.6.0-py3-none-any.whl
 aet --version
-```
 
-也可以直接试用当前源码，不污染全局环境：
-
-```bash
-git clone https://github.com/AdvancingTitans/agent-engineering-toolkit.git
-cd agent-engineering-toolkit
-uv run --no-editable aet audit . --strict
-```
-
-### 第一次安全审计
-
-```bash
 aet init --output aet.toml
 aet audit . --strict --format json --output .aet/evidence/audit.json
 ```
 
-`aet.toml` 会把扫描包含范围和排除范围变为可审阅配置；排除项必须附原因，`init`
-只写入候选文件，绝不覆盖已有配置。
+即使发现真实问题，`aet audit` 也会先写出 JSON 再以非零退出码结束。非零表示“证据发现
+问题”，不是“没有生成审计 JSON”；应先阅读该产物。
 
-### 将 AET 装入 Agent 宿主
+## 选择最小能力面
 
-将整个 [`skills/agent-engineering-toolkit/`](../skills/agent-engineering-toolkit/)
-目录复制到宿主的 Skill 目录。例如 Codex 可使用：
+| 你要确认什么？ | 命令 | 产物 |
+| --- | --- | --- |
+| 指令、本地引用和 Skill 是否可用？ | `aet audit` | 含位置、证据与修复建议的 Markdown / JSON / SARIF。 |
+| diff 是否在人工批准边界内？ | `aet review` | intent、路径预算与 proof 声明报告。 |
+| 显式命令是否运行并生成已声明报告？ | `aet trace -- <argv>` | 脱敏执行记录与可选捕获产物。 |
+| 如何随 handoff 或 release 交付证据？ | `aet evidence pack` | Portable Evidence Pack 与静态 Viewer。 |
+| 审查/测试后工作区是否过期？ | `aet run` | 可选的 append-only 交付生命周期。 |
+| 哪些 Context 与决策有本地来源？ | `aet context`、`aet decision` | 哈希绑定的 Context Manifest 与 Decision Ledger。 |
+| 仓库为什么这样演进？ | `aet evolve` | 可引用的本地/显式远端演进报告。 |
+| 现有 finding 应先修哪个？ | `aet triage` | 可解释排序；绝不改变 finding 原状态。 |
+| 重复证据问题能否安全改进 Skill？ | `aet learn` | Evidence Only 经验集、受限候选、Gate 与 staged 副本。 |
 
-```bash
-cp -R skills/agent-engineering-toolkit ~/.codex/skills/
+## 架构
+
+```mermaid
+flowchart TB
+  A["指令与 Skills"] --> B["audit\n静态事实"]
+  C["人工 intent + Git diff"] --> D["review\n范围事实"]
+  E["-- 后的显式 argv"] --> F["trace\n已执行 proof"]
+  G["本地 Git + 文档\n可选显式远端导出"] --> H["evolve\n可引用历史"]
+  B --> I["Versioned Evidence IR\n状态 + 哈希 + 快照"]
+  D --> I
+  F --> I
+  I --> J["Evidence Pack / Viewer\nRun / Context / Decision"]
+  H --> K["Evolution Pack"]
+  I -. "重复的结构化\nEvidence Only 记录" .-> L["learn\n模式 → 受限补丁 → 回放 → Gate"]
+  L --> M["stage 供人工审阅"]
+  M -. "显式 --yes" .-> N["adopt + Decision Ledger"]
 ```
 
-没有原生 Skill loader 的宿主，可将 `SKILL.md` 作为 Agent 指令，并确保 `aet` 位于
-`PATH` 中。
+虚线是可选支路：并非每份证据都会进入学习集，Gate 通过也绝不会修改生产 Skill。
 
-## 如何使用
-
-### 1. Agent 开工前审计指令
+## 常规交付流程
 
 ```bash
-aet audit . --strict --format sarif --output .aet/evidence/audit.sarif
-```
+# audit 与 review 不执行测试。
+aet audit . --strict --format json --output .aet/evidence/audit.json
+aet review . --base main --intent aet.intent.json --format json --output .aet/evidence/review.json
 
-Audit 会发现本地引用或命令目标失效、绝对路径漂移、上下文膨胀、重复指令，以及格式
-不完整的 Skill。
-
-### 2. 用人工意图审查 diff
-
-写一个声明批准路径、改动预算和 proof 的小型 `aet.intent.json`；仓库提供了
-[最小示例](../examples/aet.intent.example.json)。
-
-```bash
-cp examples/aet.intent.example.json aet.intent.json
-aet review . --base main --format json --output .aet/evidence/review.json
-```
-
-Review 只证明合同与范围满足，故意不执行其中声明的命令。
-
-### 3. 绑定已执行 proof，生成 handoff 包
-
-```bash
+# 只有 Trace 可执行 -- 后的精确 argv。
 aet trace --proof unit-tests --intent aet.intent.json \
-  --output .aet/evidence/trace.json -- \
+  --artifact reports/junit.xml --output .aet/evidence/trace.json -- \
   python -m unittest discover -s tests -v
 
-aet evidence pack \
-  --audit .aet/evidence/audit.json \
-  --review .aet/evidence/review.json \
-  --trace .aet/evidence/trace.json \
+aet evidence pack --audit .aet/evidence/audit.json \
+  --review .aet/evidence/review.json --trace .aet/evidence/trace.json \
   --output .aet/evidence/evidence-pack.json
-
 aet evidence viewer --pack .aet/evidence/evidence-pack.json \
   --output .aet/evidence/evidence-viewer.html
 ```
 
-Trace 是 opt-in，要求 `--`，只记录显式命令；保存的是脱敏片段和内容哈希。静态 viewer
-不需要服务器或外部资产。
+proof 成功与 freshness 分开表达：命令可能确实成功，但之后工作区变化会让交付变为
+STALE。`UNKNOWN` 是待验证缺口，绝不是打折后的通过。
 
-### 捕获显式声明的 pytest 报告
+## Evidence-Gated Evolution
 
-`trace` 不会猜测命令写出了哪些文件。若测试报告属于交付结论，必须显式声明其相对于
-工作区的路径。命令结束后，AET 才读取完整 UTF-8 文本报告、先脱敏再持久化，并将其嵌入
-可携带的 Evidence Pack。
+v1.6 按以下闭环实现“基于证据的进化”：
 
-```bash
-aet trace --artifact reports/junit.xml --output .aet/evidence/pytest-trace.json -- \
-  pytest --junitxml=reports/junit.xml
-aet evidence pack --trace .aet/evidence/pytest-trace.json \
-  --output .aet/evidence/evidence-pack.json
+```text
+Evidence Only JSON → inspect → mine → bounded Patch IR → 隔离回放
+→ core + validation + held-out Gate → stage → 人工 adopt 或 reject
 ```
 
-绝对路径、工作区外路径、缺失、非常规文件、无法解码或无法安全脱敏的产物均为
-`UNKNOWN`。只要显式请求的产物未被安全捕获，即使 pytest 本身返回 0，Trace 也会返回
-非零。这样能分别保留两个事实：命令确实执行过，但请求的报告并未被安全保留。stdout 与
-stderr 仍只保存片段和 hash；此时绑定 proof 仍为 `UNKNOWN`，Run 也不会推进到 `PROVEN`。
-完整报告仅在用户明确 opt-in 后才会进入 Pack。
-
-### 4. 可选：记录交付生命周期
+| Phase | 已实现内容 |
+| --- | --- |
+| 0. Contract | immutable/editable 标记、Candidate 与任务 schema、硬语义门禁。 |
+| 1. Experience Store | Evidence Only `harvest`、`inspect`/`summarize`、确定性统计与支持度。 |
+| 2. Rules | 带哈希、diff、rationale、source manifest 的 editable-block Patch IR。 |
+| 3. Replay / Gate | 临时副本回放、静态 Gate Viewer、候选自审计、core/validation/held-out。 |
+| 4. Model | 显式本地 adapter、超时、受限 JSON 接口与 rejected-candidate 约束。 |
+| 5. 跨项目本地经验 | `collect` 与 `--experience-store` 汇总脱敏包；不联网。 |
+| 6. Sleep | 本地有界闭环、`SKILL_EVOLUTION` 事件历史、预算、目标变更检测、最终只 stage。 |
 
 ```bash
-aet run init --intent aet.intent.json --output .aet/runs/release.json
-aet audit . --format json --output .aet/evidence/audit.json --run .aet/runs/release.json
-aet review . --base main --format json --output .aet/evidence/review.json --run .aet/runs/release.json
-aet trace --proof unit-tests --intent aet.intent.json --output .aet/evidence/trace.json \
-  --run .aet/runs/release.json -- python -m unittest discover -s tests -v
-aet evidence pack --audit .aet/evidence/audit.json --review .aet/evidence/review.json \
-  --trace .aet/evidence/trace.json --output .aet/evidence/evidence-pack.json \
-  --run .aet/runs/release.json
-aet run verify --run .aet/runs/release.json
-aet run close --run .aet/runs/release.json
+# Phase 1：只处理结构化 AET JSON。
+aet learn harvest --evidence .aet/evidence --output .aet/learn/experiences.json
+aet learn inspect --experiences .aet/learn/experiences.json --output .aet/learn/inspection.json
+aet learn mine --experiences .aet/learn/experiences.json --output .aet/learn/patterns.json
+
+# Phase 2–3：候选只能改带标记的 editable block。
+aet learn propose --engine rules --patterns .aet/learn/patterns.json \
+  --target skills/agent-engineering-toolkit/SKILL.md --output .aet/learn/candidates/CAND-001
+aet learn replay --candidate .aet/learn/candidates/CAND-001 \
+  --suite eval/core --suite eval/validation --suite eval/held-out \
+  --output .aet/learn/replays/CAND-001.json
+aet learn gate --candidate .aet/learn/candidates/CAND-001 --core eval/core \
+  --validation eval/validation --held-out eval/held-out \
+  --output .aet/learn/gates/CAND-001.json
+aet learn viewer --gate .aet/learn/gates/CAND-001.json --output .aet/learn/CAND-001.html
+aet learn stage --candidate .aet/learn/candidates/CAND-001 \
+  --gate .aet/learn/gates/CAND-001.json --output .aet/learn/staged
 ```
 
-使用 Run 时请将 `.aet/` 加入 `.gitignore`；否则生成的证据本身会构成未跟踪工作区变化，
-并被正确标记为 `STALE`。
+Gate 会拒绝 immutable 字节变化、editable block 外修改、哈希异常、validation 与
+held-out 重叠、候选自审计失败、回归、token/命令面预算超限和 workflow overuse 上升。
+输出是指标向量，不是单一“信任分”。
 
-## Repo Archaeologist
+`aet learn adopt --yes` 故意与 stage 分离：它会复核目标哈希，并写入本地 Decision
+Ledger。`reject` 会留下拒绝理由；两者都不 commit 或 push。
 
-`aet evolve` 面向 changelog 单独回答不了的问题：**改了什么、何时改、哪个来源把它们
-联系起来、还有哪些未知？**
+### 跨项目本地经验与定时执行
 
 ```bash
+# 只显式汇集本地、去标识的 Evidence Only 包。
+aet learn collect --experiences .aet/learn/experiences.json --store ~/.aet/experience
+aet learn harvest --experience-store ~/.aet/experience --output .aet/learn/merged.json
+
+# scheduler 可以调用，但必须保留明确预算和 stage-only 终点。
+aet learn sleep --evidence .aet/evidence --target skills/agent-engineering-toolkit/SKILL.md \
+  --core eval/core --validation eval/validation --held-out eval/held-out \
+  --max-candidates 1 --max-replays 2 --max-model-calls 1 --timeout-seconds 120 \
+  --output .aet/learn/nightly
+```
+
+默认不会读取 transcript、shell output、环境变量、secret，也不会上传、自动 commit、
+push 或 adopt。精确边界见 [evolution boundary](evolution-boundary.md)。
+
+## Context、决策与历史
+
+```bash
+aet context discover . --output .aet/context/manifest.json
+aet context record --manifest .aet/context/manifest.json --read AGENTS.md
+aet context verify --manifest .aet/context/manifest.json
+
+aet decision init --output .aet/decisions.json
+aet decision add --ledger .aet/decisions.json --id DEC-0001 \
+  --claim "Keep proof execution explicit." --evidence-state EVIDENCED \
+  --source docs/evolution-boundary.md
+aet decision verify --ledger .aet/decisions.json
+
 aet evolve plan . --question "Why was this release made?" --output .aet/evolve/plan.json
 aet evolve collect . --question "Why was this release made?" --output .aet/evolve/run
 aet evolve build --manifest .aet/evolve/run/source-manifest.json --output .aet/evolve/run
 aet evolve report --graph .aet/evolve/run/object-graph.json --output .aet/evolve/run
 ```
 
-默认流程完全离线，只读取 Git 对象与仓库文档。按需指定 `--remote github` 后，才会把
-显式取得的 Issue、PR、release 写进来源 manifest。tag → commit 可以是 `DIRECT`；只
-出现文本 `#123` 而没有目标对象时仍是 `CANDIDATE`。AET 不会把这种不确定性改写为关于
-作者私人意图的故事。
+`context record --read` 只是 Agent/宿主“已读”的 attestation，不能证明模型理解或使用了
+内容；`decision verify` 只验证记录的来源字节是否仍匹配，不宣称决策永远正确。
+`evolve` 默认离线，只有显式 `--remote github` 才处理远端导出。
 
-完整定义见 [`evolve` contract](evolve-contract.md)。
+## 安装可移植 Skill 与 Hermes 迁移
 
-## 优势
+请复制完整目录，而不是只复制 `SKILL.md`：
 
-- **证据优先，不是结论优先。** 每个 finding 保留位置、修复建议、来源和状态；缺失检查始终可见。
-- **默认本地。** 静态 audit、review、triage 和本地考古不需要 API key、LLM 或后台服务。
-- **副作用明确。** 只有 Trace 会执行通用命令；GitHub 收集必须 opt-in。
-- **跨 Agent 可用。** Skill 指导 Agent，JSON、SARIF、Markdown 则服务于人、CI 与其他工具。
-- **尊重认知边界。** Repo Archaeologist 连接证据并暴露未回答问题，而不是猜测变更动机。
-
-## 最适合谁？
-
-AET 特别适合：
-
-- 使用 Codex、Claude Code、Cursor、Copilot 或类似 Agent 修改仓库的工程师；
-- 需要轻量、可审阅 release 或 handoff 记录的维护者；
-- 维护长期 `AGENTS.md`、`CLAUDE.md` 或可复用 Skill 库的团队；
-- 想在陌生仓库上快速获得带引用历史解释的开发者。
-
-它不是 Agent runtime、自动 prompt 重写器、托管安全平台，也不能替代语义测试和人工审查。
-
-## 仓库结构与核心组成
-
-```text
-src/aet/                         确定性 CLI 与 Evidence 模型
-skills/agent-engineering-toolkit/ 可移植跨 Agent Skill 和 contracts
-schemas/                         版本化 Evidence IR schema
-tests/                           回归测试及正/负 fixture
-docs/                            合同、产品设计、安全说明、中文 README
-examples/                        可复制的 intent 与 workflow 示例
-.github/workflows/               CI 与 tag 驱动 GitHub Release 自动化
+```bash
+# 请从本仓库的 source checkout 执行（wheel 只包含 CLI，不携带 Skill 资源）：
+git clone https://github.com/AdvancingTitans/agent-engineering-toolkit.git
+cd agent-engineering-toolkit
+cp -R skills/agent-engineering-toolkit ~/.codex/skills/
+aet audit ~/.codex --format json --output ~/.aet/evidence/codex-audit.json
 ```
 
-实现保持刻意精简：`discovery.py` 发现上下文资产，`rules.py` 产生带证据的 audit
-finding，`review.py` 将 intent 与 Git diff 对照，`evidence.py` 记录 Trace 并打包，
-`run.py` 记录生命周期，`context.py` 记录本地上下文来源，`decision.py` 记录带来源的项目
-决策，`evolve.py` 构建仓库演进图，`reporters.py` 输出可携带报告。
+若 Hermes 的旧 Skill 路径已经被吸收到新的 `software-delivery-workflow`，AET 仍会把
+旧引用保留为 `FAIL`，但在发现真实的 `.absorbed_into` 迁移元数据时，会给出本机替代
+路径。这样既不掩盖失效指令，也不会只留下难以行动的路径错误。
 
-## 文档与贡献
+## 验证与边界
 
-| 主题 | 入口 |
-| --- | --- |
-| 英文文档 | [README.md](../README.md) |
-| 规则和 gate 影响 | [rule-catalog.md](rule-catalog.md) |
-| Repo Archaeologist contract | [evolve-contract.md](evolve-contract.md) |
-| 安全、隐私和保留 | [security-and-retention.md](security-and-retention.md) |
-| 产品决策与设计依据 | [productization-plan.md](productization-plan.md) |
-| 版本历史 | [CHANGELOG.md](../CHANGELOG.md) |
-| 贡献指南 | [CONTRIBUTING.md](../CONTRIBUTING.md) |
+在源码 checkout 中运行：
 
-最有价值的贡献是可复现的失败、缺失的边界，或 AET 尚不能表达的真实工作流。请阅读
-[CONTRIBUTING.md](../CONTRIBUTING.md)，使用 Issue 表单，并让 PR 小到可以按 intent
-contract 审阅。我们欢迎首次贡献者和真实使用案例。
+```bash
+uv run --no-editable --reinstall-package agent-engineering-toolkit \
+  python -m unittest discover -s tests -v
+uv run --no-editable --reinstall-package agent-engineering-toolkit \
+  aet audit . --strict --format json --output .aet/evidence/self-audit.json
+uv build
+```
 
-## License
+AET 能验证记录的字节、显式命令退出码和声明产物处理；它不能证明模型理解指令、决策
+永远正确、未 Trace 的命令运行过，也不能从缺失远端数据推断结论。使用前请阅读
+[规则目录](rule-catalog.md)与[安全、隐私和保留边界](security-and-retention.md)。
 
-MIT，详见 [LICENSE](../LICENSE)。
+## 贡献
+
+见 [CONTRIBUTING.md](../CONTRIBUTING.md)。涉及证据语义的变更必须有测试、清晰的契约
+更新与人工审阅的 intent 边界。

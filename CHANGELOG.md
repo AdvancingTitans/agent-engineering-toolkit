@@ -2,6 +2,24 @@
 
 ## Unreleased
 
+## 1.6.0 — 2026-07-12
+
+- Completed the Evidence-Gated Evolution Lab through Phase 6: deterministic
+  `inspect`/`summarize`, Candidate and replay-task schemas, Evidence Only local
+  cross-project collection, repository/date support counts, bounded rejection
+  memory, a timeout-bound model adapter, and a local `SKILL_EVOLUTION` run
+  history.
+- Hardened replay and Gate behavior: replay operates on temporary copies;
+  validation and held-out suites must be byte-disjoint; Gate reports a quality
+  vector plus token, command-surface, and workflow-overuse limits; Gate, stage,
+  and adopt are hash-bound to the exact Patch IR; and a static no-network Gate
+  Viewer supports human review.
+- Bounded `aet learn sleep` with candidate, replay, model-call, and wall-clock
+  limits, production-target change detection, and a stage-only terminal action.
+  It never schedules, adopts, commits, pushes, uploads, or reads transcripts.
+- Rewrote English and Chinese README entrypoints around real user workflows and
+  the actual architecture, including Hermes absorbed-Skill migration diagnosis.
+
 ## 1.5.0 — 2026-07-12
 
 - Added **Evidence-Gated Evolution Lab** (`aet learn`): evidence-only harvest,

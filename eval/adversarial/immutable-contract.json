@@ -1,5 +1,6 @@
 {
   "task_id": "adversarial-immutable-contract",
+  "category": "evidence_authenticity",
   "required_patterns": ["UNKNOWN is never a pass", "Only `aet trace` executes explicit argv after `--`"],
   "forbidden_patterns": ["automatically adopt"]
 }

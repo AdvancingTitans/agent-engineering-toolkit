@@ -1,49 +1,80 @@
-# Evidence-Gated Evolution Boundary
+# Evidence-Gated Evolution boundary
 
-`aet learn` improves routing guidance from structured local evidence. It is not
-an autonomous self-modifying Agent.
+`aet learn` is a local engineering-improvement loop. It learns from structured
+AET evidence, not from an unbounded transcript archive, and it never turns a
+proposal into a production change by itself.
 
-## Immutable contract
+## What is immutable
 
-The following never enter the optimizer's edit budget:
+The canonical Skill marks immutable and editable regions explicitly. A
+candidate may modify only a named `aet-learn:editable` block. Gate 0 rejects a
+candidate that changes any other byte, its target, its baseline hash, or its
+Patch IR budget.
 
 - `UNKNOWN` is never a pass.
-- Only `aet trace -- <argv>` executes a declared command.
+- Only `aet trace -- <argv>` executes a command.
 - `audit`, `review`, and Evidence Pack compilation do not execute proof commands.
-- A context `--read` record is an attestation, not proof of model comprehension.
-- A proposal, replay, gate, or stage is not adoption.
-- Candidate adoption, Git commit, Git push, and remote sharing require explicit human action.
-
-The canonical Skill wraps immutable text in `aet-learn:immutable` markers.
-Candidates can change only named `aet-learn:editable` blocks. Gate 0 compares
-the immutable bytes, target type, operation count, and edit budget before any
-evaluation runs.
+- A context `--read` declaration is an attestation, not proof of comprehension.
+- Propose, replay, gate, and stage are not adoption.
+- Adoption, commit, push, remote sharing, and transcript retention require an explicit human action.
 
 ## Evidence and privacy
 
-The default **Evidence Only** profile reads AET JSON reports, finding IDs,
-statuses, command/artifact hashes, snapshots, and explicit rejection reasons.
-It does not read transcripts, shell output, environment variables, or secrets.
-`harvest` is local and accepts multiple evidence directories, including a
-user-maintained `~/.aet/experience/` collection; it never uploads or fetches
-experience data.
+The default profile is **Evidence Only**. `harvest` reads local AET JSON,
+finding IDs, report hashes, snapshots, and rejection records. It does not read
+raw prompts, transcripts, shell output, environment variables, secrets, or
+undeclared file content. `collect` accepts only Evidence Only packs into a
+user-controlled local store such as `~/.aet/experience/`; no command fetches
+or uploads that store.
 
-## Gate policy
+`inspect`/`summarize` are deterministic pre-proposal reports. `mine` records
+support count, independent repository fingerprints, and distinct dates. A
+pattern is HIGH only with five experiences from three repositories across two
+dates; MEDIUM needs three experiences. These are transparent support rules,
+not an LLM confidence score.
 
-Every candidate must pass all of these:
+## Candidate and model authority
 
-1. bounded Patch IR and immutable-contract checks;
-2. static candidate self-audit in a temporary copy;
-3. immutable core evaluation with no regression;
-4. separate validation and held-out suites with no regression and at least one improvement;
-5. explicit human review before adoption.
+The [`learn-candidate` schema](../schemas/learn-candidate.schema.json) fixes
+the Patch IR surface: one to three replacements of existing editable blocks,
+with before hashes and character limits. `propose --engine rules` is the
+default. `--engine model` is opt-in and requires an explicit local argv,
+timeout, bounded JSON input/output, and optional local rejected-candidate
+records. A model cannot change evidence, define a gate, adopt a candidate, or
+run a shell command through AET.
 
-The result is a metric vector, not an Agent trust score. Rejected candidates
-remain auditable input for future human or model-assisted proposals.
+## Replay and Gates
 
-## Model adapters
+`replay` writes baseline and candidate copies into a temporary directory and
+uses the built-in deterministic Skill-document runner. The production Skill is
+read-only during replay. Tasks follow the
+[`learn-task` schema](../schemas/learn-task.schema.json); future host runners
+must produce the same result contract rather than bypassing the gate.
 
-`--engine model` is opt-in and requires an explicit `--model-command` argv.
-The adapter receives a JSON request on stdin and must return bounded Patch IR
-JSON on stdout. Its output cannot modify evidence, decide a Gate, or adopt a
-candidate. Rule proposals remain the default.
+Every Gate requires all of the following:
+
+1. target/hash/editable-region/Patch IR checks;
+2. a static candidate audit in a temporary copy;
+3. no regression in the immutable core suite;
+4. no overlap between validation and held-out task bytes;
+5. no validation or held-out regression and at least one independent improvement;
+6. token, command-surface, and workflow-overuse limits;
+7. explicit human review before `adopt --yes`.
+
+The report is a metric vector, never an agent-trust score. `viewer` produces a
+static, no-network HTML review artifact for the Gate.
+
+## Cross-project and Sleep operation
+
+Multiple repositories may add de-identified packs with `collect`; users merge
+them with `harvest --experience-store`. The store is local and is never
+silently shared.
+
+`sleep` performs `harvest → mine → propose → replay → gate → stage` and writes
+an append-only `learning-run.json` with `run_type: SKILL_EVOLUTION` and state
+events. Its default policy is one candidate, two replay suites, at most one
+model call, and a 120-second wall-clock budget. It checks that the production
+target has not changed, writes only under its output directory until a human
+runs `adopt --yes`, and never commits, pushes, schedules itself, or uploads
+data. A scheduler may invoke it, but should pass explicit limits and keep the
+production repository read-only.

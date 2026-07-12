@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AET Learning Replay Task",
+  "type": "object",
+  "required": ["task_id"],
+  "properties": {
+    "task_id": {"type": "string"},
+    "category": {"enum": ["routing", "trace", "unknown", "evidence_authenticity", "evidence_handoff", "workflow_overuse"]},
+    "required_patterns": {"type": "array", "items": {"type": "string"}},
+    "forbidden_patterns": {"type": "array", "items": {"type": "string"}}
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "task_id": "validation-stale-proof",
+  "category": "evidence_authenticity",
+  "required_patterns": ["do not infer proof from stale reports"],
+  "forbidden_patterns": ["UNKNOWN is a pass"]
+}

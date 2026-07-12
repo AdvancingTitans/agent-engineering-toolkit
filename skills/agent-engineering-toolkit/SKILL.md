@@ -5,7 +5,7 @@ description: Produce evidence-backed audits and intent-to-diff reviews for codin
 
 # Agent Engineering Toolkit
 
-Current Skill version: `1.5.0` (Evidence-Gated Evolution Lab)
+Current Skill version: `1.6.0` (Evidence-Gated Evolution Lab)
 
 Use the `aet` CLI as the source of truth. The host agent may choose its own
 shell or package runner, but must preserve the commands' exit status and attach
@@ -30,7 +30,7 @@ Choose one initial surface. If the request is ambiguous, default to read-only `a
 | Understand why a repo changed | `aet evolve plan/collect/build/report` | Evolution Pack |
 | Record which local context was available | `aet context discover/record/verify` | Context Manifest |
 | Preserve a source-backed project decision | `aet decision init/add/verify` | Decision Ledger |
-| Improve a marked Skill block from recurring evidence | `aet learn harvest/mine/propose/gate/stage` | Staged candidate + Gate report |
+| Improve a marked Skill block from recurring evidence | `aet learn harvest/inspect/mine/propose/replay/gate/stage` | Staged candidate + Gate report |
 
 Repo Archaeologist example: “Explain why this repository adopted a plugin architecture; link releases, PRs, Issues, commits, and README changes, and separate direct evidence from candidates.” Use `aet evolve`; never invent author intent.
 
@@ -123,6 +123,7 @@ Repo Archaeologist example: “Explain why this repository adopted a plugin arch
 
     ```bash
     aet learn harvest --evidence .aet/evidence --output .aet/learn/experiences.json
+    aet learn inspect --experiences .aet/learn/experiences.json --output .aet/learn/inspection.json
     aet learn mine --experiences .aet/learn/experiences.json --output .aet/learn/patterns.json
     aet learn propose --engine rules --patterns .aet/learn/patterns.json \
       --target skills/agent-engineering-toolkit/SKILL.md --output .aet/learn/candidates/CAND-001
@@ -134,8 +135,11 @@ Repo Archaeologist example: “Explain why this repository adopted a plugin arch
 
     `stage` is a proposal for human review, not adoption. Only a human may run
     `aet learn adopt --yes` after reviewing the patch and the Gate report. Use
-    `aet learn reject` to preserve why a candidate was declined. `aet learn
-    sleep` may run this bounded loop locally, but it only stages a passing
+    `aet learn reject` to preserve why a candidate was declined and `aet learn
+    viewer --gate <gate.json>` for a static review page. `aet learn collect`
+    can add Evidence Only packs to a user-controlled local cross-project store;
+    it never uploads them. `aet learn sleep` may run the bounded loop with
+    explicit candidate/replay/model/time budgets, but it only stages a passing
     candidate and never reads raw transcripts by default.
 <!-- aet-learn:end -->
 

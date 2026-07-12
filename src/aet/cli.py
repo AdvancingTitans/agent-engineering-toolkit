@@ -14,7 +14,7 @@ from .decision import DecisionError, add_decision, init_ledger, list_decisions, 
 from .discovery import discover_assets
 from .evidence import EvidenceError, bind_proof, compile_evidence_pack, render_evidence_viewer, trace_command, workspace_snapshot
 from .evolve import EvolveError, build_evolution, collect_evolution, query_evolution, write_evolution_plan, write_evolution_report
-from .learn import LearnError, adopt, gate, harvest, mine, propose, reject, replay, sleep, stage
+from .learn import LearnError, adopt, collect, gate, harvest, inspect_experiences, mine, propose, reject, render_learn_viewer, replay, sleep, stage
 from .reporters import render_json, render_markdown, render_sarif, report_data
 from .review import ReviewError, review
 from .run import RunError, attach_artifact, close_run, init_run, render_run_status, run_status, verify_run
@@ -65,7 +65,15 @@ def build_parser() -> argparse.ArgumentParser:
     learn_harvest = learn_commands.add_parser("harvest", help="Normalize structured AET evidence without reading transcripts.")
     learn_harvest.add_argument("--runs", type=Path)
     learn_harvest.add_argument("--evidence", type=Path)
+    learn_harvest.add_argument("--experience-store", type=Path, help="Optional local Evidence Only store to merge; never fetched or uploaded.")
     learn_harvest.add_argument("--output", required=True, type=Path)
+    learn_collect = learn_commands.add_parser("collect", help="Add an Evidence Only experience pack to a local cross-project store.")
+    learn_collect.add_argument("--experiences", required=True, type=Path)
+    learn_collect.add_argument("--store", required=True, type=Path)
+    for name in ("inspect", "summarize"):
+        command = learn_commands.add_parser(name, help="Deterministically summarize Evidence Only experience records.")
+        command.add_argument("--experiences", required=True, type=Path)
+        command.add_argument("--output", required=True, type=Path)
     learn_mine = learn_commands.add_parser("mine", help="Deterministically group recurring evidence deviations.")
     learn_mine.add_argument("--experiences", required=True, type=Path)
     learn_mine.add_argument("--output", required=True, type=Path)
@@ -75,6 +83,8 @@ def build_parser() -> argparse.ArgumentParser:
     learn_propose.add_argument("--output", required=True, type=Path)
     learn_propose.add_argument("--engine", choices=("rules", "model"), default="rules")
     learn_propose.add_argument("--model-command", nargs="+", help="Explicit argv for an opt-in model adapter; it receives JSON on stdin.")
+    learn_propose.add_argument("--model-timeout-seconds", type=float, default=30)
+    learn_propose.add_argument("--rejected", type=Path, help="Auditable local rejection records supplied as negative constraints.")
     learn_replay = learn_commands.add_parser("replay", help="Replay deterministic evaluation suites without changing the target Skill.")
     learn_replay.add_argument("--candidate", required=True, type=Path)
     learn_replay.add_argument("--suite", action="append", required=True, type=Path)
@@ -98,9 +108,13 @@ def build_parser() -> argparse.ArgumentParser:
     learn_reject.add_argument("--candidate", required=True, type=Path)
     learn_reject.add_argument("--reason", required=True)
     learn_reject.add_argument("--output", required=True, type=Path)
+    learn_viewer = learn_commands.add_parser("viewer", help="Render a static, no-network HTML view of a learning Gate.")
+    learn_viewer.add_argument("--gate", required=True, type=Path)
+    learn_viewer.add_argument("--output", required=True, type=Path)
     learn_sleep = learn_commands.add_parser("sleep", help="Run harvest→mine→propose→replay→gate→stage; it never adopts.")
     learn_sleep.add_argument("--runs", type=Path)
     learn_sleep.add_argument("--evidence", type=Path)
+    learn_sleep.add_argument("--experience-store", type=Path)
     learn_sleep.add_argument("--target", required=True, type=Path)
     learn_sleep.add_argument("--validation", required=True, type=Path)
     learn_sleep.add_argument("--held-out", required=True, type=Path)
@@ -108,6 +122,11 @@ def build_parser() -> argparse.ArgumentParser:
     learn_sleep.add_argument("--output", required=True, type=Path)
     learn_sleep.add_argument("--engine", choices=("rules", "model"), default="rules")
     learn_sleep.add_argument("--model-command", nargs="+")
+    learn_sleep.add_argument("--rejected", type=Path)
+    learn_sleep.add_argument("--max-candidates", type=int, default=1)
+    learn_sleep.add_argument("--max-replays", type=int, default=2)
+    learn_sleep.add_argument("--max-model-calls", type=int, default=1)
+    learn_sleep.add_argument("--timeout-seconds", type=float, default=120)
     evolve_parser = commands.add_parser("evolve", help="Evidence-linked repository archaeology (Repo Archaeologist).")
     evolve_commands = evolve_parser.add_subparsers(dest="evolve_command", required=True)
     plan = evolve_commands.add_parser("plan", help="Write a read-only evolution collection plan.")
@@ -286,13 +305,19 @@ def main(argv: Sequence[str] | None = None) -> int:
     if args.command == "learn":
         try:
             if args.learn_command == "harvest":
-                harvest(runs=args.runs, evidence=args.evidence, output=args.output)
+                harvest(runs=args.runs, evidence=args.evidence, experience_store=args.experience_store, output=args.output)
+                return 0
+            if args.learn_command == "collect":
+                collect(experiences=args.experiences, store=args.store)
+                return 0
+            if args.learn_command in {"inspect", "summarize"}:
+                inspect_experiences(experiences=args.experiences, output=args.output)
                 return 0
             if args.learn_command == "mine":
                 mine(experiences=args.experiences, output=args.output)
                 return 0
             if args.learn_command == "propose":
-                propose(patterns=args.patterns, target=args.target, output=args.output, engine=args.engine, model_command=args.model_command)
+                propose(patterns=args.patterns, target=args.target, output=args.output, engine=args.engine, model_command=args.model_command, model_timeout_seconds=args.model_timeout_seconds, rejected=args.rejected)
                 return 0
             if args.learn_command == "replay":
                 replay(candidate=args.candidate, suite=args.suite, output=args.output)
@@ -308,8 +333,11 @@ def main(argv: Sequence[str] | None = None) -> int:
                     raise LearnError("adopt requires --yes; stage is the safe default")
                 adopt(candidate=args.candidate, gate=args.gate, ledger=args.ledger)
                 return 0
+            if args.learn_command == "viewer":
+                render_learn_viewer(gate=args.gate, output=args.output)
+                return 0
             if args.learn_command == "sleep":
-                result = sleep(runs=args.runs, evidence=args.evidence, target=args.target, validation=args.validation, held_out=args.held_out, core=args.core, output=args.output, engine=args.engine, model_command=args.model_command)
+                result = sleep(runs=args.runs, evidence=args.evidence, experience_store=args.experience_store, target=args.target, validation=args.validation, held_out=args.held_out, core=args.core, output=args.output, engine=args.engine, model_command=args.model_command, rejected=args.rejected, max_candidates=args.max_candidates, max_replays=args.max_replays, max_model_calls=args.max_model_calls, timeout_seconds=args.timeout_seconds)
                 return 0 if result["status"] in {"PASS", "NOT_APPLICABLE"} else 1
             reject(candidate=args.candidate, reason=args.reason, output=args.output)
             return 0

@@ -1,0 +1,12 @@
+{
+  "intent": "Verify the fixture unit test with a recorded local proof.",
+  "changed_path_budget": 4,
+  "allowed_paths": [".aet/**", "reports/**"],
+  "required_proofs": [
+    {
+      "id": "unit-tests",
+      "command": "python -m unittest discover -s tests -v",
+      "evidence": ["reports/unit-tests.txt"]
+    }
+  ]
+}

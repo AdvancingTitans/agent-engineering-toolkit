@@ -21,6 +21,9 @@ from .decision import DecisionError, add_decision, init_ledger
 from .discovery import discover_assets
 from .models import Status
 from .rules import run_rules
+from .learn_runners import AgentRunRequest, RunnerError, create_runner, runner_names
+from .learn_scoring import score_rollout
+from .learn_statistics import compare_pairs
 
 
 class LearnError(ValueError):
@@ -113,13 +116,22 @@ def mine(*, experiences: Path, output: Path) -> dict[str, Any]:
         identifiers = sorted({str(row.get("experience_id")) for row in support_rows})
         repositories = sorted({str(row.get("repository_fingerprint", "UNKNOWN")) for row in support_rows})
         dates = sorted({str(row.get("observed_at", "UNKNOWN"))[:10] for row in support_rows})
+        tasks = sorted({str(row.get("task", {}).get("task_id", "UNKNOWN")) for row in support_rows if isinstance(row.get("task"), dict)})
+        runners = sorted({str(row.get("target", {}).get("host", "UNKNOWN")) for row in support_rows if isinstance(row.get("target"), dict)})
         count = len(identifiers)
-        confidence = "HIGH" if count >= 5 and len(repositories) >= 3 and len(dates) >= 2 else "MEDIUM" if count >= 3 else "LOW"
+        real_runner = any(item not in {"UNKNOWN", "static", "builtin-static-skill"} for item in runners)
+        confidence = "HIGH" if count >= 5 and len(repositories) >= 3 and len(tasks) >= 3 and len(dates) >= 2 and real_runner else "MEDIUM" if count >= 3 else "LOW"
         patterns.append({
             "pattern_id": f"PAT-{_sha(deviation.encode())[:8].upper()}", "kind": deviation,
-            "support": {"experience_count": count, "repository_count": len(repositories), "date_count": len(dates)},
+            "support": {"experience_count": count, "repository_count": len(repositories), "task_count": len(tasks), "runner_count": len(runners), "date_count": len(dates)},
             "confidence": confidence, "evidence_refs": identifiers,
         })
+    # A compact, deterministic composite recognizes evidence-handoff failures without an LLM grouping facts.
+    components = {item["kind"] for item in patterns}
+    proof_components = {"MISSING_TRACE_PROOF", "UNSUPPORTED_SUCCESS_CLAIM", "MISSING_EVIDENCE_PATH"}
+    if len(components & proof_components) >= 2:
+        refs = sorted({reference for item in patterns if item["kind"] in proof_components for reference in item["evidence_refs"]})
+        patterns.append({"pattern_id": "PAT-PROOF-HANDOFF", "kind": "PROOF_HANDOFF_FAILURE", "components": sorted(components & proof_components), "support": {"experience_count": len(refs)}, "confidence": "LOW", "evidence_refs": refs})
     result = {"schema_version": __version__, "report_kind": "learning_patterns", "generated_at": _time(), "patterns": patterns}
     _write_json(output, result)
     return result
@@ -200,6 +212,137 @@ def replay(*, candidate: Path, suite: Iterable[Path], output: Path) -> dict[str,
     }
     _write_json(output, data)
     return data
+
+
+def runner_inventory(*, name: str | None = None, config: dict[str, Any] | None = None) -> dict[str, Any]:
+    """List runner capabilities or verify one explicitly requested local host."""
+    selected = [name] if name else list(runner_names())
+    rows = []
+    for runner_name in selected:
+        runner = create_runner(runner_name, config)
+        verified, error = True, None
+        try:
+            runner.validate()
+        except RunnerError as caught:
+            verified, error = False, str(caught)
+        rows.append({"name": runner_name, "capabilities": runner.capabilities().__dict__, "available": verified, "error": error})
+    return {"report_kind": "learning_runners", "runners": rows}
+
+
+def verify_suite(*, suite: Path, output: Path) -> dict[str, Any]:
+    """Validate Task v2 fixture availability without executing a host or model."""
+    tasks = _observed_tasks([suite])
+    seen: set[str] = set()
+    failures: list[str] = []
+    for task, source in tasks:
+        identifier = task["task_id"]
+        if identifier in seen:
+            failures.append(f"duplicate task_id: {identifier}")
+        seen.add(identifier)
+        fixture = task.get("fixture", {}).get("source") if isinstance(task.get("fixture"), dict) else None
+        candidate = (source.parent / fixture).resolve() if isinstance(fixture, str) else None
+        if candidate is None or not candidate.exists():
+            failures.append(f"task {identifier} fixture is unavailable")
+    result = {"report_kind": "learning_suite_verification", "suite": str(suite), "task_count": len(tasks), "task_ids": sorted(seen), "status": Status.PASS.value if tasks and not failures else Status.FAIL.value, "failures": failures, "suite_sha256": sorted(_suite_fingerprints(suite))}
+    _write_json(output, result)
+    return result
+
+
+def replay_observed(*, candidate: Path, suite: Iterable[Path], output: Path, runner_name: str, rollouts: int = 1, runner_config: dict[str, Any] | None = None, retain_workspaces: bool = True, seed: int | None = None) -> dict[str, Any]:
+    """Run baseline and candidate Skills in separate fixture copies and score evidence."""
+    if runner_name == "static":
+        raise LearnError("static runner has no observed behavior; use replay for static contract checks")
+    if rollouts < 1:
+        raise LearnError("observed replay requires at least one rollout")
+    metadata, baseline, proposed = _candidate_material(candidate)
+    runner = create_runner(runner_name, runner_config)
+    try:
+        runner.validate()
+    except RunnerError as error:
+        raise LearnError(f"runner validation failed: {error}") from error
+    tasks = _observed_tasks(suite)
+    if not tasks:
+        raise LearnError("observed replay suite has no Learn Task v2 tasks")
+    output = output.resolve()
+    output.mkdir(parents=True, exist_ok=True)
+    all_pairs = []
+    for task, source in tasks:
+        allowed = task.get("runner", {}).get("allowed", []) if isinstance(task.get("runner"), dict) else []
+        if allowed and runner_name not in allowed:
+            raise LearnError(f"task {task['task_id']} does not allow runner {runner_name}")
+        for iteration in range(rollouts):
+            # Alternate first variant; pairing keeps fixture/task/host conditions identical.
+            order = (("baseline", baseline), ("candidate", proposed)) if iteration % 2 == 0 else (("candidate", proposed), ("baseline", baseline))
+            pair: dict[str, Any] = {"task_id": task["task_id"], "iteration": iteration, "seed": None if seed is None else seed + iteration}
+            for variant, skill in order:
+                rollout = _observed_rollout(task=task, task_source=source, skill=skill, candidate_id=metadata["candidate_id"], variant=variant, iteration=iteration, runner=runner, output=output, seed=pair["seed"], runner_config=runner_config)
+                pair[variant] = rollout
+            all_pairs.append(pair)
+    result = {"schema_version": __version__, "report_kind": "learning_observed_replay", "candidate_id": metadata["candidate_id"], "generated_at": _time(), "runner": runner_name, "runner_capabilities": runner.capabilities().__dict__, "isolated": True, "raw_output_private": True, "network_isolation": "PARTIAL" if not runner.capabilities().supports_network_isolation else "ENFORCED", "pairs": all_pairs, "retain_workspaces": retain_workspaces}
+    _write_json(output / "observed-replay.json", result)
+    return result
+
+
+def gate_observed(*, candidate: Path, core: Path | None, validation: Path, held_out: Path, output: Path, runner_name: str, rollouts: int, statistics_profile: str, runner_config: dict[str, Any] | None = None) -> dict[str, Any]:
+    """Gate real host behavior. INCONCLUSIVE and infrastructure errors cannot stage."""
+    metadata, baseline, proposed = _candidate_material(candidate)
+    hard = _hard_gate_failures(metadata, baseline, proposed)
+    audit_failures = _candidate_audit_failures(metadata, proposed)
+    if _suite_fingerprints(validation) & _suite_fingerprints(held_out):
+        hard.append("validation and held-out suites overlap")
+    report: dict[str, Any] = {"schema_version": __version__, "report_kind": "learning_observed_gate", "candidate_id": metadata["candidate_id"], "baseline_sha256": metadata["baseline_sha256"], "candidate_sha256": metadata["candidate_sha256"], "runner": runner_name, "statistics_profile": statistics_profile, "hard_gate_failures": hard, "candidate_audit_failures": audit_failures, "generated_at": _time()}
+    suites = {"validation": validation, "held_out": held_out}
+    if core is not None:
+        suites = {"core": core, **suites}
+    comparisons: dict[str, Any] = {}
+    for name, suite in suites.items():
+        replay_dir = output.parent / "replays" / metadata["candidate_id"] / name
+        replay = replay_observed(candidate=candidate, suite=[suite], output=replay_dir, runner_name=runner_name, rollouts=rollouts, runner_config=runner_config)
+        comparisons[name] = {"replay": str(replay_dir / "observed-replay.json"), "statistics": compare_pairs(replay["pairs"], profile=statistics_profile)}
+    report["comparisons"] = comparisons
+    statuses = [row["statistics"]["status"] for row in comparisons.values()]
+    status = "PASS" if not hard and not audit_failures and all(value == "PASS" for value in statuses) else ("INFRASTRUCTURE_ERROR" if "INFRASTRUCTURE_ERROR" in statuses else "INCONCLUSIVE" if "INCONCLUSIVE" in statuses or "PRELIMINARY" in statuses else "FAIL")
+    report["status"] = status
+    report["acceptance"] = "Observed PASS requires real isolated host runs, no hard regression, and adoptable paired statistics. A preliminary/static result cannot stage."
+    _write_json(output, report)
+    return report
+
+
+def tournament(*, candidates: Iterable[Path], validation: Path, held_out: Path, output: Path, runner_name: str, rollouts: int, statistics_profile: str, core: Path | None = None, runner_config: dict[str, Any] | None = None) -> dict[str, Any]:
+    """Run constraint-first candidate selection; held-out is only opened for finalists."""
+    candidates = list(candidates)
+    if len(candidates) < 2:
+        raise LearnError("tournament requires at least two explicit candidate directories")
+    output.mkdir(parents=True, exist_ok=True)
+    exposure = {"validation_sha256": sorted(_suite_fingerprints(validation)), "held_out_sha256": sorted(_suite_fingerprints(held_out)), "held_out_exposure_count": 1}
+    preliminary: list[dict[str, Any]] = []
+    for candidate in candidates:
+        metadata, baseline, proposed = _candidate_material(candidate)
+        failures = _hard_gate_failures(metadata, baseline, proposed) + _candidate_audit_failures(metadata, proposed)
+        if failures:
+            preliminary.append({"candidate": str(candidate), "candidate_id": metadata["candidate_id"], "status": "FAIL", "reason": failures})
+            continue
+        core_stats = None
+        if core is not None:
+            core_replay = replay_observed(candidate=candidate, suite=[core], output=output / "core" / metadata["candidate_id"], runner_name=runner_name, rollouts=rollouts, runner_config=runner_config)
+            core_stats = compare_pairs(core_replay["pairs"], profile=statistics_profile)
+            if core_stats["status"] not in {"PASS", "PRELIMINARY"}:
+                preliminary.append({"candidate": str(candidate), "candidate_id": metadata["candidate_id"], "status": core_stats["status"], "core": core_stats})
+                continue
+        validation_replay = replay_observed(candidate=candidate, suite=[validation], output=output / "validation" / metadata["candidate_id"], runner_name=runner_name, rollouts=rollouts, runner_config=runner_config)
+        stats = compare_pairs(validation_replay["pairs"], profile=statistics_profile)
+        preliminary.append({"candidate": str(candidate), "candidate_id": metadata["candidate_id"], "status": stats["status"], "validation": stats, "core": core_stats, "added_tokens": _token_estimate(proposed) - _token_estimate(baseline), "operations": len(metadata.get("operations", [])), "engine": metadata.get("engine", "rules")})
+    finalists = [item for item in preliminary if item["status"] in {"PASS", "PRELIMINARY"}]
+    finalists.sort(key=lambda item: (-item["validation"]["absolute_task_gain"], item["operations"], item["added_tokens"], 0 if item["engine"] == "rules" else 1, item["candidate_id"]))
+    final = None
+    if finalists:
+        winner = finalists[0]
+        gate_path = output / "gates" / f"{winner['candidate_id']}.json"
+        gate_result = gate_observed(candidate=Path(winner["candidate"]), core=core, validation=validation, held_out=held_out, output=gate_path, runner_name=runner_name, rollouts=rollouts, statistics_profile=statistics_profile, runner_config=runner_config)
+        final = {"candidate_id": winner["candidate_id"], "candidate": winner["candidate"], "gate": str(gate_path), "status": gate_result["status"]}
+    result = {"report_kind": "learning_tournament", "generated_at": _time(), "runner": runner_name, "statistics_profile": statistics_profile, "exposure": exposure, "preliminary": preliminary, "finalist": final, "stage": None, "adopted": False}
+    _write_json(output / "tournament.json", result)
+    return result
 
 
 def gate(*, candidate: Path, validation: Path, held_out: Path, output: Path, core: Path | None = None) -> dict[str, Any]:
@@ -290,6 +433,29 @@ def reject(*, candidate: Path, reason: str, output: Path) -> dict[str, Any]:
     return record
 
 
+def record_feedback(*, run: Path, outcome: str, reason_codes: list[str], output: Path, reason: str | None = None) -> dict[str, Any]:
+    """Record compact human feedback without exporting transcript or free text."""
+    if outcome not in {"accepted", "rejected"} or not reason_codes or not all(re.fullmatch(r"[A-Z0-9_]+", item) for item in reason_codes):
+        raise LearnError("feedback requires accepted/rejected and one or more uppercase reason codes")
+    source = _read_json(run)
+    run_hash = _sha(run.read_bytes())
+    record = {"schema_version": __version__, "report_kind": "learning_feedback", "feedback_id": f"FB-{run_hash[:12].upper()}", "recorded_at": _time(), "run_sha256": run_hash, "task_id": source.get("task_id", "UNKNOWN"), "candidate_id": source.get("candidate_id", "UNKNOWN"), "outcome": outcome, "reason_codes": sorted(set(reason_codes)), "human_text_retained": False, "reason_text_sha256": _sha(reason.encode()) if reason else None, "corrected_behavior": {"required_surfaces": source.get("required_surfaces", []), "required_evidence": source.get("required_evidence", [])}, "privacy": {"profile": "evidence-only", "raw_transcript_retained": False}}
+    _write_json(output, record)
+    return record
+
+
+def inspect_feedback(*, feedback: Path, output: Path) -> dict[str, Any]:
+    rows = [_read_json(path) for path in _json_sources(feedback) if _read_json(path).get("report_kind") == "learning_feedback"]
+    codes: dict[str, int] = {}
+    for row in rows:
+        for code in row.get("reason_codes", []):
+            if isinstance(code, str):
+                codes[code] = codes.get(code, 0) + 1
+    result = {"report_kind": "learning_feedback_inspection", "feedback_count": len(rows), "reason_code_counts": dict(sorted(codes.items())), "privacy": {"profile": "evidence-only", "raw_transcript_retained": False}}
+    _write_json(output, result)
+    return result
+
+
 def render_learn_viewer(*, gate: Path, output: Path) -> None:
     """Render a local, no-network gate viewer for human adoption review."""
     data = _read_json(gate)
@@ -297,7 +463,7 @@ def render_learn_viewer(*, gate: Path, output: Path) -> None:
     _atomic_text(output, "<!doctype html><meta charset=\"utf-8\"><title>AET Evidence-Gated Evolution</title><style>body{font:16px system-ui;max-width:960px;margin:2rem auto;padding:0 1rem}pre{background:#111;color:#e8e8e8;padding:1rem;overflow:auto}strong{color:#0a7}</style><h1>Evidence-Gated Evolution</h1><p>Human review artifact. A passing gate is not adoption.</p><pre>" + body + "</pre>")
 
 
-def sleep(*, runs: Path | None, evidence: Path | None, target: Path, validation: Path, held_out: Path, output: Path, core: Path | None = None, engine: str = "rules", model_command: list[str] | None = None, experience_store: Path | None = None, rejected: Path | None = None, max_candidates: int = 1, max_replays: int = 2, max_model_calls: int = 1, timeout_seconds: float = 120) -> dict[str, Any]:
+def sleep(*, runs: Path | None, evidence: Path | None, target: Path, validation: Path, held_out: Path, output: Path, core: Path | None = None, engine: str = "rules", model_command: list[str] | None = None, experience_store: Path | None = None, rejected: Path | None = None, max_candidates: int = 1, max_replays: int = 2, max_model_calls: int = 1, timeout_seconds: float = 120, runner_name: str = "static", rollouts: int = 1, statistics_profile: str = "preliminary", runner_config: dict[str, Any] | None = None) -> dict[str, Any]:
     """Run a bounded local cycle. It may stage but never adopts, commits, pushes, or uploads."""
     if max_candidates != 1 or max_replays < 2 or max_model_calls < (1 if engine == "model" else 0) or timeout_seconds <= 0:
         raise LearnError("sleep policy requires max-candidates=1, max-replays>=2, sufficient model-call budget, and a positive timeout")
@@ -306,7 +472,7 @@ def sleep(*, runs: Path | None, evidence: Path | None, target: Path, validation:
     target = target.resolve()
     before = _sha(target.read_bytes())
     run = _load_learning_run(output)
-    _record_learning_event(run, "HARVESTED", policy={"max_candidates": max_candidates, "max_replays": max_replays, "max_model_calls": max_model_calls, "timeout_seconds": timeout_seconds, "local_only": True, "auto_adopt": False})
+    _record_learning_event(run, "HARVESTED", policy={"max_candidates": max_candidates, "max_replays": max_replays, "max_model_calls": max_model_calls, "timeout_seconds": timeout_seconds, "runner": runner_name, "rollouts": rollouts, "statistics_profile": statistics_profile, "local_only": True, "auto_adopt": False})
     experiences, patterns = output / "experiences.json", output / "patterns.json"
     harvest(runs=runs, evidence=evidence, experience_store=experience_store, output=experiences)
     _write_learning_run(output, run)
@@ -320,11 +486,15 @@ def sleep(*, runs: Path | None, evidence: Path | None, target: Path, validation:
     candidate_dir = output / "candidates" / "candidate"
     candidate = propose(patterns=patterns, target=target, output=candidate_dir, engine=engine, model_command=model_command, model_timeout_seconds=max(0.01, timeout_seconds - (time.monotonic() - started)), rejected=rejected)
     _record_learning_event(run, "PROPOSED", candidate_id=candidate["candidate_id"])
-    replay(candidate=candidate_dir, suite=[validation, held_out], output=output / "replays" / f"{candidate['candidate_id']}.json")
-    _record_learning_event(run, "REPLAYED", replay_count=2)
+    if runner_name == "static":
+        replay(candidate=candidate_dir, suite=[validation, held_out], output=output / "replays" / f"{candidate['candidate_id']}.json")
+        _record_learning_event(run, "REPLAYED", replay_count=2, runner="static", observed=False)
+    else:
+        replay_observed(candidate=candidate_dir, suite=[validation, held_out], output=output / "replays" / candidate["candidate_id"], runner_name=runner_name, rollouts=rollouts, runner_config=runner_config)
+        _record_learning_event(run, "REPLAYED", replay_count=rollouts * 2, runner=runner_name, observed=True)
     _ensure_within_timeout(started, timeout_seconds)
     gate_path = output / "gates" / f"{candidate['candidate_id']}.json"
-    result = gate(candidate=candidate_dir, validation=validation, held_out=held_out, core=core, output=gate_path)
+    result = gate(candidate=candidate_dir, validation=validation, held_out=held_out, core=core, output=gate_path) if runner_name == "static" else gate_observed(candidate=candidate_dir, validation=validation, held_out=held_out, core=core, output=gate_path, runner_name=runner_name, rollouts=rollouts, statistics_profile=statistics_profile, runner_config=runner_config)
     _record_learning_event(run, "GATED", gate_status=result["status"])
     _ensure_within_timeout(started, timeout_seconds)
     staged = None
@@ -351,13 +521,18 @@ def _experience_from_report(data: dict[str, Any], source: Path) -> dict[str, Any
     snapshot = data.get("workspace_snapshot") if isinstance(data.get("workspace_snapshot"), dict) else {}
     observed_at = data.get("generated_at") if isinstance(data.get("generated_at"), str) else "UNKNOWN"
     fingerprint = snapshot.get("digest") or snapshot.get("head_sha") or _sha(str(source.parent).encode())
+    deviations = _deviations(data)
+    if data.get("report_kind") == "learning_feedback":
+        deviations = [item for item in data.get("reason_codes", []) if isinstance(item, str)]
+        observed_at = data.get("recorded_at") if isinstance(data.get("recorded_at"), str) else observed_at
+        fingerprint = _sha(str(data.get("run_sha256", "UNKNOWN")).encode())
     return {
         "experience_id": f"EXP-{_sha(raw)[:12]}", "source": {"sha256": _sha(raw), "report_kind": data["report_kind"], "path_redacted": True},
         "report_kind": data["report_kind"], "schema_version": data.get("schema_version", "UNKNOWN"), "observed_at": observed_at,
         "repository_fingerprint": str(fingerprint), "workspace_snapshot": snapshot or {"status": "UNKNOWN"},
         "target": {"aet_version": data.get("schema_version", "UNKNOWN"), "host": data.get("host", "UNKNOWN")},
-        "task": {"intent_class": data.get("intent_class", "UNKNOWN")}, "outcome": {"completed": not bool(_deviations(data)), "workflow_deviation": _deviations(data)},
-        "deviations": _deviations(data), "privacy": {"raw_transcript_retained": False, "profile": "evidence-only"},
+        "task": {"intent_class": data.get("intent_class", "UNKNOWN"), "task_id": data.get("task_id", "UNKNOWN")}, "outcome": {"completed": not bool(deviations), "workflow_deviation": deviations},
+        "deviations": deviations, "privacy": {"raw_transcript_retained": False, "profile": "evidence-only"},
     }
 
 
@@ -400,6 +575,8 @@ def _deviations(data: dict[str, Any]) -> list[str]:
     summary = data.get("summary")
     if isinstance(summary, dict) and summary.get(Status.UNKNOWN.value, 0):
         values.append("UNKNOWN_REQUIRES_PRESERVATION")
+    if data.get("report_kind") == "learning_observed_score":
+        values.extend(item["code"] for item in data.get("findings", []) if isinstance(item, dict) and item.get("status") == Status.FAIL.value and isinstance(item.get("code"), str))
     return sorted(set(values))
 
 
@@ -525,9 +702,9 @@ def _cost_metrics(baseline: str, proposed: str, validation_baseline: dict[str, A
 def _quality_vector(validation: dict[str, Any], held_out: dict[str, Any], hard_failures: list[str]) -> dict[str, Any]:
     all_results = validation["results"] + held_out["results"]
     return {
-        "correct_routing_rate": _pass_rate(all_results, "routing"), "unsupported_claim_rate": _failure_rate_results(all_results, "evidence_authenticity"),
-        "unknown_preservation_rate": _pass_rate(all_results, "unknown"), "intent_boundary_compliance": 1.0 if not hard_failures else 0.0,
-        "required_trace_rate": _pass_rate(all_results, "trace"), "evidence_attachment_rate": _pass_rate(all_results, "evidence_handoff"),
+        "static_contract_correct_routing_rate": _pass_rate(all_results, "routing"), "static_contract_unsupported_claim_rate": _failure_rate_results(all_results, "evidence_authenticity"),
+        "static_contract_unknown_preservation_rate": _pass_rate(all_results, "unknown"), "static_contract_intent_boundary_compliance": 1.0 if not hard_failures else 0.0,
+        "static_contract_required_trace_rate": _pass_rate(all_results, "trace"), "static_contract_evidence_attachment_rate": _pass_rate(all_results, "evidence_handoff"),
     }
 
 
@@ -611,6 +788,74 @@ def _json_sources(path: Path | None) -> Iterable[Path]:
     if path is None or not path.exists():
         return []
     return [path] if path.is_file() and path.suffix == ".json" else sorted(item for item in path.rglob("*.json") if item.is_file())
+
+
+def _observed_tasks(suites: Iterable[Path]) -> list[tuple[dict[str, Any], Path]]:
+    tasks: list[tuple[dict[str, Any], Path]] = []
+    for suite in suites:
+        for source in _json_sources(suite):
+            task = _read_json(source)
+            if task.get("schema_version") == "2.0" and isinstance(task.get("task_id"), str) and isinstance(task.get("prompt"), str):
+                tasks.append((task, source))
+    return tasks
+
+
+def _observed_rollout(*, task: dict[str, Any], task_source: Path, skill: str, candidate_id: str, variant: str, iteration: int, runner: Any, output: Path, seed: int | None, runner_config: dict[str, Any] | None) -> dict[str, Any]:
+    fixture = task.get("fixture", {}) if isinstance(task.get("fixture"), dict) else {}
+    declared = fixture.get("source")
+    if not isinstance(declared, str):
+        raise LearnError(f"task {task['task_id']} fixture.source is required")
+    fixture_source = (task_source.parent / declared).resolve()
+    if not fixture_source.exists():
+        fixture_source = Path(declared).resolve()
+    source_repo = fixture_source / "repo" if (fixture_source / "repo").is_dir() else fixture_source
+    if not source_repo.is_dir():
+        raise LearnError(f"task fixture is unavailable: {declared}")
+    run_id = f"{runner.name}-{candidate_id}-{variant}-{task['task_id']}-{iteration:03d}"
+    rollout_dir = output / "rollouts" / run_id
+    workspace = rollout_dir / "workspace"
+    if rollout_dir.exists():
+        raise LearnError(f"rollout output already exists and will not be overwritten: {rollout_dir}")
+    shutil.copytree(source_repo, workspace)
+    injected = workspace / ".aet-rollout" / "candidate.SKILL.md"
+    _atomic_text(injected, skill)
+    # Delivery is deliberate and snapshot-visible before the Agent starts; it is not a read attestation.
+    bootstrap = workspace / "AGENTS.md"
+    existing = bootstrap.read_text(encoding="utf-8") if bootstrap.exists() else ""
+    _atomic_text(bootstrap, existing + "\nAET evaluation: follow .aet-rollout/candidate.SKILL.md for this task.\n")
+    aet_argv = (runner_config or {}).get("aet_argv")
+    if aet_argv is not None:
+        if not isinstance(aet_argv, list) or not aet_argv or not all(isinstance(item, str) for item in aet_argv):
+            raise LearnError("runner aet_argv must be an explicit non-empty argv array")
+        wrapper = workspace / ".aet-rollout" / "bin" / "aet"
+        wrapper.parent.mkdir(parents=True, exist_ok=True)
+        _atomic_text(wrapper, "#!/bin/sh\nexec " + " ".join(_shell_quote(item) for item in aet_argv) + ' "$@"\n')
+        wrapper.chmod(0o755)
+    policy = task.get("policy", {}) if isinstance(task.get("policy"), dict) else {}
+    request = AgentRunRequest(run_id=run_id, task_id=task["task_id"], prompt=task["prompt"], workspace=workspace, skill_path=injected, output_dir=rollout_dir, timeout_seconds=float(policy.get("timeout_seconds", 180)), environment_allowlist=tuple(item for item in policy.get("environment_allowlist", ["PATH"]) if isinstance(item, str)), command_allowlist=tuple(item for item in policy.get("allowed_commands", []) if isinstance(item, str)), network_policy=str(policy.get("network", "deny")), seed=seed, metadata={"script": task.get("script", {}), "task_source": str(task_source), "fixture_sha256": _sha(_fixture_bytes(source_repo))})
+    try:
+        result = runner.run(request)
+        event_path = Path(result.tool_events_path) if result.tool_events_path else None
+        has_events = bool(event_path and event_path.exists() and event_path.read_text(encoding="utf-8").strip())
+        run_status = "INFRASTRUCTURE_ERROR" if result.timed_out or (result.exit_code not in {0, None} and not has_events) else "COMPLETE"
+        _write_json(rollout_dir / "run.json", {"report_kind": "learning_agent_run", "run_id": run_id, "status": run_status, "runner": result.runner_name, "runner_version": result.runner_version, "result": {"exit_code": result.exit_code, "timed_out": result.timed_out, "before_snapshot": result.before_snapshot_path, "after_snapshot": result.after_snapshot_path}, "privacy": {"raw_transcript_retained": True, "experience_export": "structured-only"}})
+        score = score_rollout(task=task, rollout_dir=rollout_dir) if run_status == "COMPLETE" else {"report_kind": "learning_observed_score", "status": "INFRASTRUCTURE_ERROR", "findings": [{"code": "INFRASTRUCTURE_ERROR", "status": "UNKNOWN", "evidence_refs": [str(rollout_dir / "stderr.txt")], "message": "Host exited without normalized Agent events."}], "metrics": {"task_completion_rate": 0.0}}
+    except (RunnerError, OSError, ValueError) as error:
+        score = {"report_kind": "learning_observed_score", "status": "INFRASTRUCTURE_ERROR", "findings": [{"code": "INFRASTRUCTURE_ERROR", "status": "UNKNOWN", "evidence_refs": [str(rollout_dir)], "message": str(error)}], "metrics": {"task_completion_rate": 0.0}}
+        _write_json(rollout_dir / "run.json", {"report_kind": "learning_agent_run", "run_id": run_id, "status": "INFRASTRUCTURE_ERROR", "reason": str(error), "privacy": {"raw_transcript_retained": False, "experience_export": "structured-only"}})
+    _write_json(rollout_dir / "scoring.json", score)
+    return {"run_id": run_id, "status": score["status"], "findings": score.get("findings", []), "metrics": score.get("metrics", {}), "rollout": str(rollout_dir), "task_sha256": _sha(json.dumps(task, sort_keys=True).encode())}
+
+
+def _fixture_bytes(source: Path) -> bytes:
+    rows = []
+    for item in sorted(path for path in source.rglob("*") if path.is_file() and ".git" not in path.parts):
+        rows.append((item.relative_to(source).as_posix(), _sha(item.read_bytes())))
+    return json.dumps(rows, separators=(",", ":")).encode()
+
+
+def _shell_quote(value: str) -> str:
+    return "'" + value.replace("'", "'\"'\"'") + "'"
 
 
 def _read_json(path: Path) -> dict[str, Any]:

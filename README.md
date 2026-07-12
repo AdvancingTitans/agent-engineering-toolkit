@@ -68,8 +68,8 @@ It is an evidence-driven self-evolution framework that makes coding agents conti
 ## Start here
 
 ```bash
-# Install the v1.6 release wheel, then verify it.
-uv tool install https://github.com/AdvancingTitans/agent-engineering-toolkit/releases/download/v1.6.0/agent_engineering_toolkit-1.6.0-py3-none-any.whl
+# Install the v1.7 release wheel, then verify it.
+uv tool install https://github.com/AdvancingTitans/agent-engineering-toolkit/releases/download/v1.7.0/agent_engineering_toolkit-1.7.0-py3-none-any.whl
 aet --version
 
 # Establish a baseline before an agent changes the repository.
@@ -143,9 +143,12 @@ never a discounted pass.
 
 ## Evidence-Gated Evolution
 
-This is AET’s v1.6 implementation of evidence-driven improvement. It is
-designed for repeated routing, proof-handoff, or `UNKNOWN`-handling failures—not
-for silently editing arbitrary code or policy.
+This is AET’s v1.7 implementation of evidence-driven improvement. It can keep
+the v1.6 static document contract gate as Gate 0, then explicitly run a
+baseline and candidate Skill in isolated fixture copies through Scripted,
+Codex, or Claude Code hosts. It is designed for repeated routing,
+proof-handoff, or `UNKNOWN`-handling failures—not for silently editing arbitrary
+code or policy.
 
 ```text
 Evidence Only JSON → inspect → mine → bounded Patch IR → isolated replay
@@ -159,10 +162,11 @@ Evidence Only JSON → inspect → mine → bounded Patch IR → isolated replay
 | 0. Contract | Immutable/editable markers; candidate and task schemas; hard semantic gates. |
 | 1. Experience store | Evidence-only `harvest`, `inspect`/`summarize`, deterministic mining and support counts. |
 | 2. Rule proposal | Bounded editable-block Patch IR with hashes, diff, rationale, and source manifest. |
-| 3. Replay and Gate | Temporary-copy replay, static Gate Viewer, candidate self-audit, core/validation/held-out checks. |
+| 3. Static replay and Gate 0 | Temporary-copy document contract replay, candidate self-audit, and core/validation/held-out checks. |
 | 4. Model assist | Opt-in explicit local adapter, timeout, bounded JSON interface, and rejected-candidate constraints. |
 | 5. Local federation | `collect` and `--experience-store` merge de-identified packs without networking. |
 | 6. Sleep | Local bounded loop, append-only `SKILL_EVOLUTION` event history, budgets, target-change check, and stage-only terminal action. |
+| 7. Real-host evaluation | Isolated fixture workspaces, normalized command/final-answer events, deterministic behavioral scoring, repeated paired rollouts, and `PASS`/`FAIL`/`INCONCLUSIVE`/`INFRASTRUCTURE_ERROR` statistics. |
 
 ```bash
 # Phase 1: build and inspect a local Evidence Only experience set.
@@ -192,6 +196,42 @@ overuse. It reports a metric vector rather than one “trust” number.
 `aet learn adopt --yes` is intentionally separate: it rechecks the target hash
 and writes a local Decision Ledger record. `reject` preserves a reason. Neither
 command commits or pushes.
+
+### Real-host evaluation (opt-in)
+
+The static runner is deliberately not an Agent-behavior claim. Use a real host
+only when explicitly named; every baseline/candidate run receives an independent
+fixture copy and writes private raw outputs plus public structured events,
+before/after snapshots, scores, and hashes. `UNKNOWN` and host failures never
+become a pass.
+
+```bash
+# Discover installed adapters without contacting a model.
+aet learn runner list
+
+# Run actual host behavior. Create a local `runner.json` containing
+# `{"aet_argv": ["/absolute/path/to/aet"], "inherit_home": true}`;
+# raw host output stays inside the rollout directory.
+aet learn replay --candidate .aet/learn/candidates/CAND-001 \
+  --suite eval/real-agent/core --runner codex --rollouts 3 \
+  --runner-config runner.json --output .aet/learn/replays/CAND-001
+
+# Only an adoptable profile can produce an observed PASS. A small sample is
+# INCONCLUSIVE rather than a pass, and stage/adopt remain separate.
+aet learn gate --candidate .aet/learn/candidates/CAND-001 \
+  --core eval/real-agent/core --validation eval/real-agent/validation \
+  --held-out eval/real-agent/held-out --runner codex --rollouts 6 \
+  --statistics-profile adoptable --runner-config runner.json \
+  --output .aet/learn/gates/CAND-001-observed.json
+```
+
+`runner.json` is local configuration, not a credential store. Codex and Claude
+Code adapters report `network_isolation: PARTIAL`: an isolated workspace protects
+the production checkout, but neither host CLI is claimed to provide OS-level
+network denial or command allowlisting. A host startup/auth/model failure is an
+`INFRASTRUCTURE_ERROR`, not an Agent failure. The included
+`eval/real-agent/core` fixture is a real proof-handoff smoke test; expand and
+rotate validation/held-out suites before using an observed Gate for adoption.
 
 ### Local cross-project learning and scheduled use
 

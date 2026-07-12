@@ -1,0 +1,13 @@
+{
+  "schema_version": "1.7.0-dev",
+  "report_kind": "learning_patterns",
+  "patterns": [
+    {
+      "pattern_id": "PAT-REAL-PROOF",
+      "kind": "MISSING_TRACE_PROOF",
+      "support": {"experience_count": 5, "repository_count": 3, "task_count": 3, "runner_count": 1, "date_count": 2},
+      "confidence": "HIGH",
+      "evidence_refs": ["synthetic-fixture-only"]
+    }
+  ]
+}

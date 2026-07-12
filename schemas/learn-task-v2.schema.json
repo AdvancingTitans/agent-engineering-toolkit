@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AET Learn Task v2",
+  "type": "object",
+  "required": ["schema_version", "task_id", "prompt", "fixture", "policy", "expected_behavior"],
+  "properties": {
+    "schema_version": {"const": "2.0"},
+    "task_id": {"type": "string", "minLength": 1},
+    "prompt": {"type": "string", "minLength": 1},
+    "fixture": {"type": "object", "required": ["source"], "properties": {"source": {"type": "string"}}},
+    "policy": {"type": "object"},
+    "expected_behavior": {"type": "object"},
+    "runner": {"type": "object"},
+    "script": {"type": ["array", "object"]}
+  },
+  "additionalProperties": true
+}

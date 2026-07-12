@@ -5,7 +5,7 @@ description: Produce evidence-backed audits and intent-to-diff reviews for codin
 
 # Agent Engineering Toolkit
 
-Current Skill version: `1.6.0` (Evidence-Gated Evolution Lab)
+Current Skill version: `1.7.0` (Evidence-Gated Evolution Lab)
 
 Use the `aet` CLI as the source of truth. The host agent may choose its own
 shell or package runner, but must preserve the commands' exit status and attach
@@ -141,6 +141,25 @@ Repo Archaeologist example: “Explain why this repository adopted a plugin arch
     it never uploads them. `aet learn sleep` may run the bounded loop with
     explicit candidate/replay/model/time budgets, but it only stages a passing
     candidate and never reads raw transcripts by default.
+
+    Static replay checks the Skill document only. When an explicit real-host
+    evaluation is requested, first inspect local adapters with `aet learn
+    runner list`, then name the host and local runner configuration:
+
+    ```bash
+    aet learn replay --candidate <candidate-dir> --suite <task-suite> \
+      --runner codex --rollouts 3 --runner-config <local-runner.json> \
+      --output <rollout-dir>
+    aet learn gate --candidate <candidate-dir> --core <core-suite> \
+      --validation <validation-suite> --held-out <held-out-suite> \
+      --runner codex --rollouts 6 --statistics-profile adoptable \
+      --runner-config <local-runner.json> --output <gate.json>
+    ```
+
+    Treat host startup, authentication, missing structured events, and small
+    samples as `INFRASTRUCTURE_ERROR` or `INCONCLUSIVE`, never as a candidate
+    pass. Codex/Claude workspace copies protect the production repository but
+    do not prove OS-level network denial; report that boundary as PARTIAL.
 <!-- aet-learn:end -->
 
 ## Portable use

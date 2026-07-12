@@ -14,7 +14,7 @@ from .decision import DecisionError, add_decision, init_ledger, list_decisions, 
 from .discovery import discover_assets
 from .evidence import EvidenceError, bind_proof, compile_evidence_pack, render_evidence_viewer, trace_command, workspace_snapshot
 from .evolve import EvolveError, build_evolution, collect_evolution, query_evolution, write_evolution_plan, write_evolution_report
-from .learn import LearnError, adopt, collect, gate, harvest, inspect_experiences, mine, propose, reject, render_learn_viewer, replay, sleep, stage
+from .learn import LearnError, adopt, collect, gate, gate_observed, harvest, inspect_experiences, inspect_feedback, mine, propose, record_feedback, reject, render_learn_viewer, replay, replay_observed, runner_inventory, sleep, stage, tournament, verify_suite
 from .reporters import render_json, render_markdown, render_sarif, report_data
 from .review import ReviewError, review
 from .run import RunError, attach_artifact, close_run, init_run, render_run_status, run_status, verify_run
@@ -89,12 +89,50 @@ def build_parser() -> argparse.ArgumentParser:
     learn_replay.add_argument("--candidate", required=True, type=Path)
     learn_replay.add_argument("--suite", action="append", required=True, type=Path)
     learn_replay.add_argument("--output", required=True, type=Path)
+    learn_replay.add_argument("--runner", choices=("static", "scripted", "codex", "claude-code"), default="static", help="Explicit host. static is a document contract check, never observed behavior.")
+    learn_replay.add_argument("--rollouts", type=int, default=1, help="Repeated isolated runs for non-static hosts.")
+    learn_replay.add_argument("--seed", type=int)
+    learn_replay.add_argument("--runner-config", type=Path, help="Optional local runner JSON configuration; it is never fetched.")
     learn_gate = learn_commands.add_parser("gate", help="Run immutable-contract, audit, validation, and held-out gates.")
     learn_gate.add_argument("--candidate", required=True, type=Path)
     learn_gate.add_argument("--validation", required=True, type=Path)
     learn_gate.add_argument("--held-out", required=True, type=Path)
     learn_gate.add_argument("--core", type=Path, help="Optional immutable core task suite; it may not regress.")
     learn_gate.add_argument("--output", required=True, type=Path)
+    learn_gate.add_argument("--runner", choices=("static", "scripted", "codex", "claude-code"), default="static")
+    learn_gate.add_argument("--rollouts", type=int, default=1)
+    learn_gate.add_argument("--statistics-profile", choices=("preliminary", "adoptable"), default="preliminary")
+    learn_gate.add_argument("--runner-config", type=Path)
+    learn_runner = learn_commands.add_parser("runner", help="List or explicitly verify locally installed real-host runners.")
+    learn_runner.add_argument("action", choices=("list", "verify"))
+    learn_runner.add_argument("--runner", choices=("static", "scripted", "codex", "claude-code"))
+    learn_runner.add_argument("--runner-config", type=Path)
+    learn_feedback = learn_commands.add_parser("feedback", help="Record or inspect compact, Evidence Only human rollout feedback.")
+    feedback_commands = learn_feedback.add_subparsers(dest="feedback_command", required=True)
+    feedback_record = feedback_commands.add_parser("record")
+    feedback_record.add_argument("--run", required=True, type=Path)
+    feedback_record.add_argument("--outcome", choices=("accepted", "rejected"), required=True)
+    feedback_record.add_argument("--reason-code", action="append", required=True)
+    feedback_record.add_argument("--reason")
+    feedback_record.add_argument("--output", required=True, type=Path)
+    feedback_inspect = feedback_commands.add_parser("inspect")
+    feedback_inspect.add_argument("--feedback", required=True, type=Path)
+    feedback_inspect.add_argument("--output", required=True, type=Path)
+    learn_tournament = learn_commands.add_parser("tournament", help="Select one observed-behavior finalist; it never adopts or stages automatically.")
+    learn_tournament.add_argument("--candidate", action="append", required=True, type=Path)
+    learn_tournament.add_argument("--validation", required=True, type=Path)
+    learn_tournament.add_argument("--held-out", required=True, type=Path)
+    learn_tournament.add_argument("--core", type=Path)
+    learn_tournament.add_argument("--runner", choices=("scripted", "codex", "claude-code"), required=True)
+    learn_tournament.add_argument("--rollouts", type=int, default=1)
+    learn_tournament.add_argument("--statistics-profile", choices=("preliminary", "adoptable"), default="preliminary")
+    learn_tournament.add_argument("--runner-config", type=Path)
+    learn_tournament.add_argument("--output", required=True, type=Path)
+    learn_suite = learn_commands.add_parser("suite", help="Verify Learn Task v2 fixture and task integrity without running a host.")
+    suite_commands = learn_suite.add_subparsers(dest="suite_command", required=True)
+    suite_verify = suite_commands.add_parser("verify")
+    suite_verify.add_argument("--suite", required=True, type=Path)
+    suite_verify.add_argument("--output", required=True, type=Path)
     learn_stage = learn_commands.add_parser("stage", help="Copy a passing candidate for human review; never adopts it.")
     learn_stage.add_argument("--candidate", required=True, type=Path)
     learn_stage.add_argument("--gate", required=True, type=Path)
@@ -127,6 +165,10 @@ def build_parser() -> argparse.ArgumentParser:
     learn_sleep.add_argument("--max-replays", type=int, default=2)
     learn_sleep.add_argument("--max-model-calls", type=int, default=1)
     learn_sleep.add_argument("--timeout-seconds", type=float, default=120)
+    learn_sleep.add_argument("--runner", choices=("static", "scripted", "codex", "claude-code"), default="static")
+    learn_sleep.add_argument("--rollouts", type=int, default=1)
+    learn_sleep.add_argument("--statistics-profile", choices=("preliminary", "adoptable"), default="preliminary")
+    learn_sleep.add_argument("--runner-config", type=Path)
     evolve_parser = commands.add_parser("evolve", help="Evidence-linked repository archaeology (Repo Archaeologist).")
     evolve_commands = evolve_parser.add_subparsers(dest="evolve_command", required=True)
     plan = evolve_commands.add_parser("plan", help="Write a read-only evolution collection plan.")
@@ -320,10 +362,32 @@ def main(argv: Sequence[str] | None = None) -> int:
                 propose(patterns=args.patterns, target=args.target, output=args.output, engine=args.engine, model_command=args.model_command, model_timeout_seconds=args.model_timeout_seconds, rejected=args.rejected)
                 return 0
             if args.learn_command == "replay":
-                replay(candidate=args.candidate, suite=args.suite, output=args.output)
+                config = _runner_config(args.runner_config)
+                if args.runner == "static":
+                    replay(candidate=args.candidate, suite=args.suite, output=args.output)
+                else:
+                    replay_observed(candidate=args.candidate, suite=args.suite, output=args.output, runner_name=args.runner, rollouts=args.rollouts, seed=args.seed, runner_config=config)
                 return 0
             if args.learn_command == "gate":
-                result = gate(candidate=args.candidate, validation=args.validation, held_out=args.held_out, core=args.core, output=args.output)
+                config = _runner_config(args.runner_config)
+                result = gate(candidate=args.candidate, validation=args.validation, held_out=args.held_out, core=args.core, output=args.output) if args.runner == "static" else gate_observed(candidate=args.candidate, validation=args.validation, held_out=args.held_out, core=args.core, output=args.output, runner_name=args.runner, rollouts=args.rollouts, statistics_profile=args.statistics_profile, runner_config=config)
+                return 0 if result["status"] == "PASS" else 1
+            if args.learn_command == "runner":
+                config = _runner_config(args.runner_config)
+                result = runner_inventory(name=args.runner if args.action == "verify" else None, config=config)
+                print(render_json(result), end="")
+                return 0 if all(item["available"] for item in result["runners"]) else 1
+            if args.learn_command == "feedback":
+                if args.feedback_command == "record":
+                    record_feedback(run=args.run, outcome=args.outcome, reason_codes=args.reason_code, reason=args.reason, output=args.output)
+                else:
+                    inspect_feedback(feedback=args.feedback, output=args.output)
+                return 0
+            if args.learn_command == "tournament":
+                result = tournament(candidates=args.candidate, validation=args.validation, held_out=args.held_out, core=args.core, output=args.output, runner_name=args.runner, rollouts=args.rollouts, statistics_profile=args.statistics_profile, runner_config=_runner_config(args.runner_config))
+                return 0 if result.get("finalist", {}).get("status") == "PASS" else 1
+            if args.learn_command == "suite":
+                result = verify_suite(suite=args.suite, output=args.output)
                 return 0 if result["status"] == "PASS" else 1
             if args.learn_command == "stage":
                 stage(candidate=args.candidate, gate=args.gate, output=args.output)
@@ -337,7 +401,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                 render_learn_viewer(gate=args.gate, output=args.output)
                 return 0
             if args.learn_command == "sleep":
-                result = sleep(runs=args.runs, evidence=args.evidence, experience_store=args.experience_store, target=args.target, validation=args.validation, held_out=args.held_out, core=args.core, output=args.output, engine=args.engine, model_command=args.model_command, rejected=args.rejected, max_candidates=args.max_candidates, max_replays=args.max_replays, max_model_calls=args.max_model_calls, timeout_seconds=args.timeout_seconds)
+                result = sleep(runs=args.runs, evidence=args.evidence, experience_store=args.experience_store, target=args.target, validation=args.validation, held_out=args.held_out, core=args.core, output=args.output, engine=args.engine, model_command=args.model_command, rejected=args.rejected, max_candidates=args.max_candidates, max_replays=args.max_replays, max_model_calls=args.max_model_calls, timeout_seconds=args.timeout_seconds, runner_name=args.runner, rollouts=args.rollouts, statistics_profile=args.statistics_profile, runner_config=_runner_config(args.runner_config))
                 return 0 if result["status"] in {"PASS", "NOT_APPLICABLE"} else 1
             reject(candidate=args.candidate, reason=args.reason, output=args.output)
             return 0
@@ -391,6 +455,19 @@ def main(argv: Sequence[str] | None = None) -> int:
     has_failure = data["summary"]["FAIL"] > 0
     has_warning = any(finding.severity.value == "WARN" for finding in findings)
     return 1 if has_failure or (args.strict and has_warning) else 0
+
+
+def _runner_config(path: Path | None) -> dict[str, object] | None:
+    if path is None:
+        return None
+    try:
+        import json
+        value = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, ValueError) as error:
+        raise LearnError(f"runner config must be a local JSON object: {error}") from error
+    if not isinstance(value, dict):
+        raise LearnError("runner config must be a JSON object")
+    return value
 
 
 if __name__ == "__main__":

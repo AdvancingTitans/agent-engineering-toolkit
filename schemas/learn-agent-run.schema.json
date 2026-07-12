@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AET normalized Agent rollout event",
+  "type": "object",
+  "required": ["event_id", "sequence", "time", "type", "source", "payload"],
+  "properties": {
+    "event_id": {"type": "string"},
+    "sequence": {"type": "integer", "minimum": 1},
+    "time": {"type": "string"},
+    "type": {"enum": ["session_start", "skill_loaded", "user_prompt", "tool_call", "command", "file_read", "file_write", "artifact_created", "final_response", "session_end", "runner_error", "timeout"]},
+    "source": {"type": "string"},
+    "payload": {"type": "object"}
+  },
+  "additionalProperties": false
+}

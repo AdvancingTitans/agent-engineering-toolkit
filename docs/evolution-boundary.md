@@ -45,11 +45,25 @@ run a shell command through AET.
 
 ## Replay and Gates
 
-`replay` writes baseline and candidate copies into a temporary directory and
-uses the built-in deterministic Skill-document runner. The production Skill is
-read-only during replay. Tasks follow the
-[`learn-task` schema](../schemas/learn-task.schema.json); future host runners
-must produce the same result contract rather than bypassing the gate.
+`replay --runner static` writes baseline and candidate copies into a temporary
+directory and uses the built-in deterministic Skill-document runner. Its metric
+names begin with `static_contract_`; it is a cheap Gate 0, not observed Agent
+behavior.
+
+`replay --runner scripted|codex|claude-code` creates a separate fixture copy
+for each baseline/candidate rollout. The runner records normalized JSONL events,
+private raw stdout/stderr hashes, final response, and before/after snapshots.
+The deterministic scorer checks actual command events, Trace output, artifact
+paths, workspace scope, and final claims. It never treats a host exit code or a
+textual “I read the Skill” assertion as task success. Learn Task v2 uses
+[`learn-task-v2`](../schemas/learn-task-v2.schema.json); normalized event
+records follow [`learn-agent-run`](../schemas/learn-agent-run.schema.json).
+
+Codex and Claude adapters are opt-in local processes. They do not install or
+log in to a host, do not read host history, and keep full output out of Evidence
+Only experiences. Their workspace isolation protects the production checkout,
+but AET reports network isolation and command allowlisting as `PARTIAL` unless
+an external sandbox proves stronger controls.
 
 Every Gate requires all of the following:
 
@@ -60,6 +74,14 @@ Every Gate requires all of the following:
 5. no validation or held-out regression and at least one independent improvement;
 6. token, command-surface, and workflow-overuse limits;
 7. explicit human review before `adopt --yes`.
+
+An observed `adoptable` Gate additionally requires paired baseline/candidate
+rollouts, at least five usable pairs, zero safety regressions, an absolute task
+gain of at least 0.05, and two-sided exact McNemar `p <= 0.05`. Small samples
+are `INCONCLUSIVE`, and host startup/auth/model failures are
+`INFRASTRUCTURE_ERROR`; neither can stage. `tournament` opens held-out only for
+the constraint-ranked finalist and prefers the smallest rules candidate when
+effects are tied.
 
 The report is a metric vector, never an agent-trust score. `viewer` produces a
 static, no-network HTML review artifact for the Gate.
@@ -72,9 +94,19 @@ silently shared.
 
 `sleep` performs `harvest → mine → propose → replay → gate → stage` and writes
 an append-only `learning-run.json` with `run_type: SKILL_EVOLUTION` and state
-events. Its default policy is one candidate, two replay suites, at most one
-model call, and a 120-second wall-clock budget. It checks that the production
+events. Its default policy is one candidate, the static runner, preliminary
+statistics, two replay suites, at most one model call, and a 120-second
+wall-clock budget. A real runner and an adoptable profile are explicit inputs;
+even then Sleep only stages a passing candidate. It checks that the production
 target has not changed, writes only under its output directory until a human
 runs `adopt --yes`, and never commits, pushes, schedules itself, or uploads
 data. A scheduler may invoke it, but should pass explicit limits and keep the
 production repository read-only.
+
+## Feedback and experiences
+
+`aet learn feedback record` stores only accepted/rejected outcome, reason codes,
+run/task/candidate hashes, and corrected-behavior structure. It hashes optional
+human free text instead of retaining it. `harvest` may turn this compact record
+or an observed score into an Evidence Only experience. Mining records distinct
+task and runner counts; static-only records cannot establish HIGH confidence.

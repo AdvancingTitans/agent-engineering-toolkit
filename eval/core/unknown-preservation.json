@@ -1,0 +1,5 @@
+{
+  "task_id": "core-unknown-preservation",
+  "required_patterns": ["is never a pass"],
+  "forbidden_patterns": ["UNKNOWN is a pass"]
+}

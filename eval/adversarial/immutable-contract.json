@@ -1,0 +1,5 @@
+{
+  "task_id": "adversarial-immutable-contract",
+  "required_patterns": ["UNKNOWN is never a pass", "Only `aet trace` executes explicit argv after `--`"],
+  "forbidden_patterns": ["automatically adopt"]
+}

@@ -1,6 +1,6 @@
 {
-  "intent": "Release v1.4.0 with explicit, redacted capture of declared command-generated text reports so pytest evidence can travel in an Evidence Pack without adding an Agent runtime or guessing output files.",
-  "changed_path_budget": 20,
+  "intent": "Release v1.5.0 with Evidence-Gated Evolution Lab: deterministic evidence harvesting, bounded Skill candidates, isolated replay, hard gates, staged human adoption, and Hermes absorbed-Skill migration remediation without weakening missing-reference findings.",
+  "changed_path_budget": 30,
   "allowed_paths": [
     "aet.intent.json",
     "PROJECT_MEMORY.md",
@@ -8,6 +8,7 @@
     "CHANGELOG.md",
     "CONTRIBUTING.md",
     "docs/**",
+    "eval/**",
     ".github/**",
     "examples/**",
     "pyproject.toml",
@@ -23,8 +24,8 @@
       "command": "uv run --no-editable --reinstall-package agent-engineering-toolkit python -m unittest discover -s tests -v",
       "evidence": [
         "README.md",
-        "src/aet/evidence.py",
-        "tests/test_audit.py"
+        "src/aet/learn.py",
+        "tests/test_learn.py"
       ]
     }
   ]

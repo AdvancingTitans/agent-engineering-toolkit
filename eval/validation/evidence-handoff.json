@@ -1,0 +1,5 @@
+{
+  "task_id": "validation-evidence-handoff",
+  "required_patterns": ["attach the Trace path"],
+  "forbidden_patterns": ["UNKNOWN is a pass"]
+}

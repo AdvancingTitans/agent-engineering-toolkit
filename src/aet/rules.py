@@ -79,6 +79,10 @@ def _check_local_targets(root: Path, asset: Asset, text: str) -> list[Finding]:
         if not resolved.exists():
             rule_id = "AET-CTX-002" if source == "command target" else "AET-CTX-003" if source == "absolute local path" else "AET-CTX-001"
             claim = f"{source.capitalize()} points to a missing local target: {target}"
+            replacement = _absorbed_skill_replacement(Path(target), resolved)
+            remediation = "Create the target, correct the relative path, or remove the stale reference."
+            if replacement is not None:
+                remediation += f" This Skill was absorbed; update the index to the installed replacement: {replacement}. The missing reference remains a FAIL until its owner updates it."
             findings.append(
                 Finding(
                     rule_id,
@@ -86,10 +90,30 @@ def _check_local_targets(root: Path, asset: Asset, text: str) -> list[Finding]:
                     Severity.ERROR,
                     claim,
                     (Evidence(asset.relative_path, line, target),),
-                    "Create the target, correct the relative path, or remove the stale reference.",
+                    remediation,
                 )
             )
     return findings
+
+
+def _absorbed_skill_replacement(target: Path, resolved: Path) -> str | None:
+    """Find a local Hermes-style migration marker without weakening a missing-path FAIL."""
+    parts = target.parts
+    if "skills" not in parts:
+        return None
+    index = len(parts) - 1 - parts[::-1].index("skills")
+    relative = parts[index + 1:]
+    if len(relative) < 3 or relative[-1] != "SKILL.md":
+        return None
+    skills_root = Path(*parts[:index + 1])
+    category, skill_name = relative[0], relative[1]
+    marker = skills_root / ".archive" / "curator-reconstructed" / category / skill_name / ".absorbed_into"
+    try:
+        replacement_name = marker.read_text(encoding="utf-8").strip()
+    except OSError:
+        return None
+    replacement = skills_root / category / replacement_name / "SKILL.md"
+    return str(replacement) if replacement.is_file() else None
 
 
 def _check_instruction_size(asset: Asset, text: str) -> list[Finding]:

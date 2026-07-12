@@ -1,0 +1,5 @@
+{
+  "task_id": "held-out-missing-proof",
+  "required_patterns": ["preserve UNKNOWN when proof is missing"],
+  "forbidden_patterns": ["UNKNOWN is a pass"]
+}

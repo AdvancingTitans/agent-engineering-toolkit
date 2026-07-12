@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "agent-engineering-toolkit"
-version = "1.4.0"
-description = "Evidence-first audits, change gates, execution proof, and repository archaeology for coding agents."
+version = "1.5.0"
+description = "Evidence-first audits, change gates, execution proof, repository archaeology, and human-gated Skill evolution for coding agents."
 readme = "README.md"
 requires-python = ">=3.11"
 license = "MIT"

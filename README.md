@@ -14,12 +14,14 @@
 Agent Skill for coding-agent work. It checks the instructions an agent reads,
 the change boundary a human approved, the command that actually ran, and the
 repository history behind a decision—without turning missing proof into a
-comforting score.
+comforting score. In v1.5 it can also turn recurring, structured evidence into
+a **bounded Skill-improvement proposal**, then prove the proposal is safe on
+separate evaluation tasks before a human decides whether to adopt it.
 
 Use it before an agent changes a repository, at handoff or release time, or
 when you need a cited answer to “why is this repository built this way?”
 
-[Quick start](#quick-start) · [Capability surface](#capability-surface) · [Context & decisions](#context-and-decisions-local-provenance-not-agent-memory) · [Run Manifest](#run-manifest-an-optional-delivery-lifecycle) · [Quality](#quality-and-current-results) · [Repo Archaeologist](#repo-archaeologist) · [Contributing](CONTRIBUTING.md)
+[Quick start](#quick-start) · [Capability surface](#capability-surface) · [Evidence-Gated Evolution](#evidence-gated-evolution-v15) · [Context & decisions](#context-and-decisions-local-provenance-not-agent-memory) · [Quality](#quality-and-current-results) · [Repo Archaeologist](#repo-archaeologist) · [Contributing](CONTRIBUTING.md)
 
 ## Why AET, and why now?
 
@@ -45,6 +47,7 @@ what was declared, what was explicitly executed, and what remains unknown.
 | Which project decisions have local sources, and which records supersede them? | `aet decision` | A source-hash Decision Ledger with verification and supersession history. |
 | Why did the repository evolve this way? | `aet evolve` | An Evolution Pack, timeline, decision index, and cited report. |
 | What should be fixed first? | `aet triage` | Transparent priority ordering; it never changes a finding status. |
+| Can repeated, evidenced failures improve the Agent Skill without silently weakening it? | `aet learn` | A bounded candidate, isolated replay, Gate report, and optional human-reviewed staged copy. |
 
 ### A Skill, not just another CLI
 
@@ -66,6 +69,8 @@ flowchart LR
   D --> I
   F --> I
   H --> J["Evolution Pack\nlinks + citations"]
+  I --> L["learn\npattern → bounded candidate → gate"]
+  L --> K
   I --> K["Reviewer, CI,\nor agent handoff"]
   J --> K
 ```
@@ -75,6 +80,44 @@ GitHub data; `review` never executes a proof command; only `trace` executes
 the exact argv placed after `--`; and `evolve --remote github` is explicit.
 That separation keeps a useful report from quietly claiming more than its
 evidence supports.
+
+## Evidence-Gated Evolution (v1.5)
+
+AET is not an “agent that edits itself.” It is an evidence system that can
+learn from repeated engineering failures while preserving the boundaries that
+make its reports trustworthy:
+
+```text
+structured AET evidence → failure pattern → bounded candidate → isolated replay
+→ immutable/core/held-out gate → stage → human adopt or reject
+```
+
+The default is **Evidence Only**: it reads local AET JSON records, findings,
+hashes, snapshots, and explicit rejection reasons—not raw conversations, shell
+output, environment variables, or secrets. It never uploads experience data.
+The model-assisted proposal adapter is opt-in, uses an explicit local command,
+and can only return bounded Patch IR; it cannot decide a gate or adopt a Skill.
+
+```bash
+# Phase 1–3: local evidence becomes a bounded proposal.
+aet learn harvest --evidence .aet/evidence --output .aet/learn/experiences.json
+aet learn mine --experiences .aet/learn/experiences.json --output .aet/learn/patterns.json
+aet learn propose --engine rules --patterns .aet/learn/patterns.json \
+  --target skills/agent-engineering-toolkit/SKILL.md --output .aet/learn/candidates/CAND-001
+
+# Phase 3–6: isolated replay and independent gates. Passing only stages it.
+aet learn gate --candidate .aet/learn/candidates/CAND-001 --core eval/core \
+  --validation eval/validation --held-out eval/held-out --output .aet/learn/gates/CAND-001.json
+aet learn stage --candidate .aet/learn/candidates/CAND-001 \
+  --gate .aet/learn/gates/CAND-001.json --output .aet/learn/staged
+```
+
+`aet learn adopt --yes` is deliberately separate and rechecks the target hash
+before writing it, then records the adoption in the local Decision Ledger.
+`aet learn reject` records why a proposal was declined. `aet learn sleep` can
+run the bounded local sequence on a schedule, but its terminal action is still
+only **stage**. Read the exact immutable contract and retention boundary in
+[the evolution boundary](docs/evolution-boundary.md).
 
 Every report uses a versioned Evidence IR envelope and keeps atomic statuses:
 `PASS`, `FAIL`, `UNKNOWN`, and `NOT_APPLICABLE`. `UNKNOWN` is work left to
@@ -165,9 +208,9 @@ AET deliberately reports a status matrix rather than a synthetic “agent trust
 score.” Its only numeric model, `aet triage`, exposes its weights and is used
 only to order remediation work.
 
-| Release check | v1.4.0 result | How to reproduce |
+| Release check | v1.5.0 result | How to reproduce |
 | --- | --- | --- |
-| Regression suite | 30 tests passed | `uv run --no-editable --reinstall-package agent-engineering-toolkit python -m unittest discover -s tests -v` |
+| Regression suite | 34 tests passed | `uv run --no-editable --reinstall-package agent-engineering-toolkit python -m unittest discover -s tests -v` |
 | Strict self-audit | 0 `FAIL`, 0 `UNKNOWN` in the configured production Skill scope | `uv run --no-editable aet audit . --strict` |
 | Intent review | Release diff must stay inside the reviewed contract | `uv run --no-editable aet review . --base v1.3.0 --intent aet.intent.json` |
 | Distribution smoke | Wheel built and invoked in an isolated environment | `uv build` then install the wheel shown below |
@@ -185,7 +228,7 @@ what AET does and does not claim.
 Install the published GitHub Release wheel with [uv](https://docs.astral.sh/uv/):
 
 ```bash
-uv tool install https://github.com/AdvancingTitans/agent-engineering-toolkit/releases/download/v1.4.0/agent_engineering_toolkit-1.4.0-py3-none-any.whl
+uv tool install https://github.com/AdvancingTitans/agent-engineering-toolkit/releases/download/v1.5.0/agent_engineering_toolkit-1.5.0-py3-none-any.whl
 aet --version
 ```
 

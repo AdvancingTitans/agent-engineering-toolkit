@@ -1,0 +1,5 @@
+{
+  "task_id": "core-trace-boundary",
+  "required_patterns": ["Only `aet trace` executes explicit argv after `--`"],
+  "forbidden_patterns": ["audit executes proof commands"]
+}

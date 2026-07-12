@@ -2,6 +2,23 @@
 
 ## Unreleased
 
+## 1.5.0 — 2026-07-12
+
+- Added **Evidence-Gated Evolution Lab** (`aet learn`): evidence-only harvest,
+  deterministic failure-pattern mining, bounded rule or opt-in model Patch IR,
+  isolated replay, immutable-contract/self-audit/held-out gates, stage, human
+  adoption with a Decision Ledger entry, rejection memory, and a bounded local
+  `sleep` cycle that can stage but never adopt, commit, push, or upload.
+- Added the Phase 0 evolution boundary, named editable blocks in the canonical
+  Skill, core/validation/held-out/adversarial evaluation fixtures, and a metric
+  vector acceptance policy rather than a synthetic trust score.
+- `aet audit` now preserves a stale Hermes Skill reference as a `FAIL` while
+  detecting its local `.absorbed_into` marker and emitting the installed
+  replacement path in JSON/SARIF/Markdown remediation. This fixes the practical
+  failure mode where a stale Skill Index was actionable only as a missing file.
+- Added regression coverage for the full rules proposal pipeline and the
+  absorbed-Skill migration diagnostic.
+
 ## 1.4.0 — 2026-07-12
 
 - Added repeatable `aet trace --artifact <relative-path>` for explicitly

@@ -14,6 +14,7 @@ from .decision import DecisionError, add_decision, init_ledger, list_decisions, 
 from .discovery import discover_assets
 from .evidence import EvidenceError, bind_proof, compile_evidence_pack, render_evidence_viewer, trace_command, workspace_snapshot
 from .evolve import EvolveError, build_evolution, collect_evolution, query_evolution, write_evolution_plan, write_evolution_report
+from .learn import LearnError, adopt, gate, harvest, mine, propose, reject, replay, sleep, stage
 from .reporters import render_json, render_markdown, render_sarif, report_data
 from .review import ReviewError, review
 from .run import RunError, attach_artifact, close_run, init_run, render_run_status, run_status, verify_run
@@ -59,6 +60,54 @@ def build_parser() -> argparse.ArgumentParser:
     triage_parser = commands.add_parser("triage", help="Explainably rank findings; this never changes PASS/FAIL/UNKNOWN.")
     triage_parser.add_argument("--report", required=True, type=Path, help="Audit or review JSON report.")
     triage_parser.add_argument("--output", required=True, type=Path, help="Write triage JSON to this path.")
+    learn_parser = commands.add_parser("learn", help="Evidence-gated local Skill evolution; proposals never auto-adopt.")
+    learn_commands = learn_parser.add_subparsers(dest="learn_command", required=True)
+    learn_harvest = learn_commands.add_parser("harvest", help="Normalize structured AET evidence without reading transcripts.")
+    learn_harvest.add_argument("--runs", type=Path)
+    learn_harvest.add_argument("--evidence", type=Path)
+    learn_harvest.add_argument("--output", required=True, type=Path)
+    learn_mine = learn_commands.add_parser("mine", help="Deterministically group recurring evidence deviations.")
+    learn_mine.add_argument("--experiences", required=True, type=Path)
+    learn_mine.add_argument("--output", required=True, type=Path)
+    learn_propose = learn_commands.add_parser("propose", help="Create a bounded candidate in marked editable Skill blocks.")
+    learn_propose.add_argument("--patterns", required=True, type=Path)
+    learn_propose.add_argument("--target", required=True, type=Path)
+    learn_propose.add_argument("--output", required=True, type=Path)
+    learn_propose.add_argument("--engine", choices=("rules", "model"), default="rules")
+    learn_propose.add_argument("--model-command", nargs="+", help="Explicit argv for an opt-in model adapter; it receives JSON on stdin.")
+    learn_replay = learn_commands.add_parser("replay", help="Replay deterministic evaluation suites without changing the target Skill.")
+    learn_replay.add_argument("--candidate", required=True, type=Path)
+    learn_replay.add_argument("--suite", action="append", required=True, type=Path)
+    learn_replay.add_argument("--output", required=True, type=Path)
+    learn_gate = learn_commands.add_parser("gate", help="Run immutable-contract, audit, validation, and held-out gates.")
+    learn_gate.add_argument("--candidate", required=True, type=Path)
+    learn_gate.add_argument("--validation", required=True, type=Path)
+    learn_gate.add_argument("--held-out", required=True, type=Path)
+    learn_gate.add_argument("--core", type=Path, help="Optional immutable core task suite; it may not regress.")
+    learn_gate.add_argument("--output", required=True, type=Path)
+    learn_stage = learn_commands.add_parser("stage", help="Copy a passing candidate for human review; never adopts it.")
+    learn_stage.add_argument("--candidate", required=True, type=Path)
+    learn_stage.add_argument("--gate", required=True, type=Path)
+    learn_stage.add_argument("--output", required=True, type=Path)
+    learn_adopt = learn_commands.add_parser("adopt", help="Human-authorized adoption of a passing staged candidate.")
+    learn_adopt.add_argument("--candidate", required=True, type=Path)
+    learn_adopt.add_argument("--gate", required=True, type=Path)
+    learn_adopt.add_argument("--ledger", type=Path)
+    learn_adopt.add_argument("--yes", action="store_true", help="Required acknowledgement that adoption writes the target Skill.")
+    learn_reject = learn_commands.add_parser("reject", help="Record an auditable rejected candidate.")
+    learn_reject.add_argument("--candidate", required=True, type=Path)
+    learn_reject.add_argument("--reason", required=True)
+    learn_reject.add_argument("--output", required=True, type=Path)
+    learn_sleep = learn_commands.add_parser("sleep", help="Run harvest→mine→propose→replay→gate→stage; it never adopts.")
+    learn_sleep.add_argument("--runs", type=Path)
+    learn_sleep.add_argument("--evidence", type=Path)
+    learn_sleep.add_argument("--target", required=True, type=Path)
+    learn_sleep.add_argument("--validation", required=True, type=Path)
+    learn_sleep.add_argument("--held-out", required=True, type=Path)
+    learn_sleep.add_argument("--core", type=Path)
+    learn_sleep.add_argument("--output", required=True, type=Path)
+    learn_sleep.add_argument("--engine", choices=("rules", "model"), default="rules")
+    learn_sleep.add_argument("--model-command", nargs="+")
     evolve_parser = commands.add_parser("evolve", help="Evidence-linked repository archaeology (Repo Archaeologist).")
     evolve_commands = evolve_parser.add_subparsers(dest="evolve_command", required=True)
     plan = evolve_commands.add_parser("plan", help="Write a read-only evolution collection plan.")
@@ -234,6 +283,38 @@ def main(argv: Sequence[str] | None = None) -> int:
         except TriageError as error:
             raise SystemExit(f"aet: triage failed: {error}") from error
         return 0
+    if args.command == "learn":
+        try:
+            if args.learn_command == "harvest":
+                harvest(runs=args.runs, evidence=args.evidence, output=args.output)
+                return 0
+            if args.learn_command == "mine":
+                mine(experiences=args.experiences, output=args.output)
+                return 0
+            if args.learn_command == "propose":
+                propose(patterns=args.patterns, target=args.target, output=args.output, engine=args.engine, model_command=args.model_command)
+                return 0
+            if args.learn_command == "replay":
+                replay(candidate=args.candidate, suite=args.suite, output=args.output)
+                return 0
+            if args.learn_command == "gate":
+                result = gate(candidate=args.candidate, validation=args.validation, held_out=args.held_out, core=args.core, output=args.output)
+                return 0 if result["status"] == "PASS" else 1
+            if args.learn_command == "stage":
+                stage(candidate=args.candidate, gate=args.gate, output=args.output)
+                return 0
+            if args.learn_command == "adopt":
+                if not args.yes:
+                    raise LearnError("adopt requires --yes; stage is the safe default")
+                adopt(candidate=args.candidate, gate=args.gate, ledger=args.ledger)
+                return 0
+            if args.learn_command == "sleep":
+                result = sleep(runs=args.runs, evidence=args.evidence, target=args.target, validation=args.validation, held_out=args.held_out, core=args.core, output=args.output, engine=args.engine, model_command=args.model_command)
+                return 0 if result["status"] in {"PASS", "NOT_APPLICABLE"} else 1
+            reject(candidate=args.candidate, reason=args.reason, output=args.output)
+            return 0
+        except LearnError as error:
+            raise SystemExit(f"aet: learn failed: {error}") from error
     if args.command == "evolve":
         try:
             if args.evolve_command == "plan":

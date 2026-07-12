@@ -307,3 +307,24 @@ deterministic core.
   path, as well as direct supersession. The v1.3 release gate requires 27 unit
   tests, strict self-audit, reviewed intent, a proof-bound Trace/Evidence Pack,
   and an isolated wheel smoke test.
+
+## v1.4.0 implementation and release candidate — 2026-07-12
+
+- Invest-Vault dogfood confirmed that v1.3 Trace successfully ran its complete
+  pytest process; the gap was report portability, not subprocess execution.
+  Trace held stdout/stderr but not a test framework's generated report.
+- Added explicit `trace --artifact <relative-path>` capture. It is not a
+  report-file guesser: only a declared regular UTF-8 file under the workspace
+  is captured, redacted, hashed, and embedded into Trace plus Evidence Pack.
+- A missing, outside-root, non-regular, undecodable, or unredactable declared
+  artifact is `UNKNOWN`. AET returns non-zero after an otherwise successful
+  child command, while preserving the child's `execution: PASS` fact.
+- A real pytest dogfood trace initially exposed unrelated collection of nested
+  `work/dogfood` repositories. `pyproject.toml` now limits optional pytest
+  discovery to AET's own `tests/` directory.
+- This adopts the useful Harness Engineering idea of durable, inspectable
+  filesystem artifacts and failure traces. It explicitly rejects the article's
+  broader runtime, autonomous optimization, and generic-memory directions.
+- The v1.4 release gate requires 30 unit tests, a real pytest JUnit artifact
+  dogfood trace/pack, strict self-audit, reviewed intent, a proof-bound release
+  Evidence Pack, and an isolated wheel smoke test.

@@ -482,3 +482,24 @@ Evidence IR。
 不采用 LangGraph、XState、工作流引擎、embedding、向量数据库、RAG、后台记忆 Agent 或
 宿主控制器。状态机文章提供的是白名单迁移和显式状态的表达法；这里以小型命令和 JSON
 ledger 吸收该思想，绝不将 AET 变成 Runtime。
+
+## v1.4 决策：显式 Trace 产物捕获（2026-07-12）
+
+Invest-Vault 的真实 dogfood 证明了一个缺口：`aet trace` 可以执行完整 pytest 子进程，
+但 v1.3 只带回 stdout/stderr，无法让 Evidence Pack 携带 pytest 生成的 JUnit、HTML 或
+JSON 报告。命令成功不等于报告已生成、仍在原路径、且可安全复核。
+
+Harness Engineering 对 AET 的可取之处是“把长期运行的可检查产物保留在文件系统，并把
+失败轨迹也留为可读状态”；不应因此把 AET 改造成自我改进 Agent 或工作流调度器。于是采用
+最小、显式的 `aet trace --artifact <relative-path>`：命令结束后才读取声明的工作区内 UTF-8
+文本文件，先脱敏，再将完整脱敏文本与 SHA-256 嵌入 Trace 和 Pack。
+
+| 情况 | Trace 中的事实 | CLI 退出码 |
+| --- | --- | --- |
+| 命令成功，声明报告安全捕获 | execution `PASS`，artifact `PASS` | 0 |
+| 命令成功，报告缺失/越界/非文件/无法安全读取 | execution `PASS`，artifact `UNKNOWN` | 非 0 |
+| 命令失败 | execution `FAIL` | 子进程的非 0 |
+
+不自动猜测 pytest 输出文件、不解析具体测试框架格式、不捕获目录或二进制文件，也不把
+未经显式请求的完整 stdout/stderr 放入 Pack。这既提供端到端的报告证据，又维持 Trace 的
+副作用边界、最小采集和隐私默认值。

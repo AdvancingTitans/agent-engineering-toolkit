@@ -100,6 +100,63 @@ class AuditTests(unittest.TestCase):
             self.assertEqual(trace["trace"]["execution"], {"status": "FAIL", "exit_code": 7})
             self.assertEqual(trace["summary"]["FAIL"], 1)
 
+    def test_trace_captures_declared_report_artifact_and_portable_pack(self) -> None:
+        with TemporaryDirectory() as directory:
+            root = Path(directory)
+            output = root / "trace.json"
+            report = root / "reports" / "junit.xml"
+            command = [sys.executable, "-c", "from pathlib import Path; Path('reports').mkdir(); Path('reports/junit.xml').write_text('<testsuite token=supersecret/>')"]
+            previous = Path.cwd()
+            try:
+                os.chdir(root)
+                self.assertEqual(main(["trace", "--artifact", "reports/junit.xml", "--output", str(output), "--", *command]), 0)
+                pack = root / "pack.json"
+                self.assertEqual(main(["evidence", "pack", "--trace", str(output), "--output", str(pack)]), 0)
+            finally:
+                os.chdir(previous)
+            trace = json.loads(output.read_text(encoding="utf-8"))
+            artifact = trace["trace"]["artifacts"][0]
+            self.assertEqual(artifact["requested_path"], "reports/junit.xml")
+            self.assertEqual(artifact["status"], "PASS")
+            self.assertNotIn("supersecret", output.read_text(encoding="utf-8"))
+            self.assertEqual(artifact["sha256"], _sha256_text(artifact["content"]))
+            portable = json.loads(pack.read_text(encoding="utf-8"))["components"]["trace"]["report"]["artifacts"][0]
+            self.assertEqual(portable["content"], artifact["content"])
+            self.assertEqual(portable["sha256"], artifact["sha256"])
+
+    def test_trace_fails_closed_for_missing_or_outside_declared_artifact(self) -> None:
+        with TemporaryDirectory() as directory:
+            root = Path(directory)
+            output = root / "trace.json"
+            previous = Path.cwd()
+            try:
+                os.chdir(root)
+                self.assertEqual(main(["trace", "--artifact", "reports/missing.xml", "--output", str(output), "--", sys.executable, "-c", "pass"]), 1)
+                with self.assertRaises(SystemExit):
+                    main(["trace", "--artifact", "../outside.xml", "--output", str(root / "outside.json"), "--", sys.executable, "-c", "raise SystemExit(99)"])
+            finally:
+                os.chdir(previous)
+            trace = json.loads(output.read_text(encoding="utf-8"))
+            self.assertEqual(trace["trace"]["execution"], {"status": "PASS", "exit_code": 0})
+            self.assertEqual(trace["trace"]["artifacts"][0]["status"], "UNKNOWN")
+            self.assertEqual(trace["summary"]["UNKNOWN"], 1)
+
+    def test_missing_declared_artifact_keeps_a_bound_proof_unknown(self) -> None:
+        with _review_repository() as (root, base):
+            _write_contract(root, budget=1, evidence=["aet.intent.json"])
+            review_output = root / "review.json"
+            trace = root / "trace.json"
+            pack = root / "pack.json"
+            previous = Path.cwd()
+            try:
+                os.chdir(root)
+                self.assertEqual(main(["review", ".", "--base", base, "--format", "json", "--output", str(review_output)]), 0)
+                self.assertEqual(main(["trace", "--proof", "unit-tests", "--intent", "aet.intent.json", "--artifact", "reports/missing.xml", "--output", str(trace), "--", sys.executable, "-c", "pass"]), 1)
+                self.assertEqual(main(["evidence", "pack", "--review", str(review_output), "--trace", str(trace), "--output", str(pack)]), 0)
+            finally:
+                os.chdir(previous)
+            self.assertEqual(json.loads(pack.read_text(encoding="utf-8"))["proof_binding"]["status"], "UNKNOWN")
+
     def test_evidence_pack_marks_missing_inputs_unknown_and_replaces_output_atomically(self) -> None:
         with TemporaryDirectory() as directory:
             output = Path(directory) / "evidence-pack.json"
@@ -250,6 +307,12 @@ def _sha256(path: Path) -> str:
     import hashlib
 
     return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def _sha256_text(value: str) -> str:
+    import hashlib
+
+    return hashlib.sha256(value.encode("utf-8")).hexdigest()
 
 
 if __name__ == "__main__":

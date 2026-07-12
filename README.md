@@ -39,7 +39,7 @@ what was declared, what was explicitly executed, and what remains unknown.
 | --- | --- | --- |
 | Can this agent safely follow the repository instructions and Skills? | `aet audit` | Markdown, JSON, or SARIF findings with locations and fixes. |
 | Is the diff inside the human-approved intent? | `aet review` | An intent-gate report for path budget, allowed paths, and declared proofs. |
-| Did the command run against the reviewed workspace? | `aet trace` + `aet evidence pack` | A redacted execution record plus proof and workspace-snapshot bindings. |
+| Did the command run against the reviewed workspace, and did it produce its declared test report? | `aet trace --artifact` + `aet evidence pack` | A redacted execution record, explicitly captured report, plus proof and workspace-snapshot bindings. |
 | What delivery stage is this evidence chain in, and did it become stale? | `aet run` | An optional append-only Run Manifest with explicit lifecycle states. |
 | Which local instructions/references were available, and what was only claimed as read? | `aet context` | A hash-bound Context Manifest; read declarations are explicit attestations. |
 | Which project decisions have local sources, and which records supersede them? | `aet decision` | A source-hash Decision Ledger with verification and supersession history. |
@@ -165,11 +165,11 @@ AET deliberately reports a status matrix rather than a synthetic “agent trust
 score.” Its only numeric model, `aet triage`, exposes its weights and is used
 only to order remediation work.
 
-| Release check | v1.3.0 result | How to reproduce |
+| Release check | v1.4.0 result | How to reproduce |
 | --- | --- | --- |
-| Regression suite | 27 tests passed | `uv run --no-editable --reinstall-package agent-engineering-toolkit python -m unittest discover -s tests -v` |
+| Regression suite | 30 tests passed | `uv run --no-editable --reinstall-package agent-engineering-toolkit python -m unittest discover -s tests -v` |
 | Strict self-audit | 0 `FAIL`, 0 `UNKNOWN` in the configured production Skill scope | `uv run --no-editable aet audit . --strict` |
-| Intent review | Release diff must stay inside the reviewed contract | `uv run --no-editable aet review . --base v1.1.0 --intent aet.intent.json` |
+| Intent review | Release diff must stay inside the reviewed contract | `uv run --no-editable aet review . --base v1.3.0 --intent aet.intent.json` |
 | Distribution smoke | Wheel built and invoked in an isolated environment | `uv build` then install the wheel shown below |
 | Delivery automation | CI on `main`, plus tag-driven GitHub Release workflow | [Actions](https://github.com/AdvancingTitans/agent-engineering-toolkit/actions) |
 
@@ -185,7 +185,7 @@ what AET does and does not claim.
 Install the published GitHub Release wheel with [uv](https://docs.astral.sh/uv/):
 
 ```bash
-uv tool install https://github.com/AdvancingTitans/agent-engineering-toolkit/releases/download/v1.3.0/agent_engineering_toolkit-1.3.0-py3-none-any.whl
+uv tool install https://github.com/AdvancingTitans/agent-engineering-toolkit/releases/download/v1.4.0/agent_engineering_toolkit-1.4.0-py3-none-any.whl
 aet --version
 ```
 
@@ -264,6 +264,28 @@ aet evidence viewer --pack .aet/evidence/evidence-pack.json \
 Trace is opt-in, requires `--`, records only the explicit command, and stores
 redacted excerpts plus hashes. The static viewer needs no server or external
 assets.
+
+### Capture a declared pytest report
+
+`trace` never guesses which files a command wrote. When a test report matters
+to the delivery claim, declare the workspace-relative path explicitly. AET
+captures the completed UTF-8 text report only after the command exits, redacts
+it before persistence, and embeds it in the portable Evidence Pack.
+
+```bash
+aet trace --artifact reports/junit.xml --output .aet/evidence/pytest-trace.json -- \
+  pytest --junitxml=reports/junit.xml
+aet evidence pack --trace .aet/evidence/pytest-trace.json \
+  --output .aet/evidence/evidence-pack.json
+```
+
+Absolute, outside-workspace, missing, non-regular, undecodable, or
+unredactable artifacts are `UNKNOWN`; if one was explicitly requested, Trace
+returns non-zero even when pytest itself exited zero. This preserves the two
+facts separately: the command ran, but its requested report was not safely
+captured. A bound proof with that artifact gap remains `UNKNOWN` and cannot
+advance a Run to `PROVEN`. Stdout and stderr remain excerpt-and-digest only; full report content
+enters a pack solely through this explicit opt-in.
 
 ### 4. Optionally record a delivery lifecycle
 

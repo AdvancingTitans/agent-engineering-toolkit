@@ -5,7 +5,7 @@ description: Produce evidence-backed audits and intent-to-diff reviews for codin
 
 # Agent Engineering Toolkit
 
-Current Skill version: `1.3.0` (Evidence Plane: audit, review, trace, evidence, evolve, optional Run Manifest, Context Manifest, and Decision Ledger)
+Current Skill version: `1.4.0` (Evidence Plane: audit, review, trace artifacts, evidence, evolve, optional Run Manifest, Context Manifest, and Decision Ledger)
 
 Use the `aet` CLI as the source of truth. The host agent may choose its own
 shell or package runner, but must preserve the commands' exit status and attach
@@ -19,7 +19,7 @@ Choose one initial surface. If the request is ambiguous, default to read-only `a
 | --- | --- | --- |
 | Trust current instructions / Skills | `aet audit . --strict` | Audit report |
 | Check a proposed or completed diff | `aet review . --base <base>` | Review report |
-| Prove a command actually ran | `aet trace --proof <id> … -- <argv>` | Trace + pack |
+| Prove a command ran and retain a declared text report | `aet trace --proof <id> --artifact <path> … -- <argv>` | Trace + pack |
 | Understand why a repo changed | `aet evolve plan/collect/build/report` | Evolution Pack |
 | Record which local context was available | `aet context discover/record/verify` | Context Manifest |
 | Preserve a source-backed project decision | `aet decision init/add/verify` | Decision Ledger |
@@ -48,7 +48,7 @@ Repo Archaeologist example: “Explain why this repository adopted a plugin arch
    then compile the available reports into a portable pack:
 
    ```bash
-   aet trace --proof <proof-id> --intent aet.intent.json --output .aet/evidence/trace.json -- <command> [args...]
+   aet trace --proof <proof-id> --intent aet.intent.json --artifact reports/junit.xml --output .aet/evidence/trace.json -- <command> [args...]
    aet evidence pack \
      --audit .aet/evidence/audit.json \
      --review .aet/evidence/review.json \
@@ -56,8 +56,10 @@ Repo Archaeologist example: “Explain why this repository adopted a plugin arch
      --output .aet/evidence/evidence-pack.json
    ```
 
-   `--` is required. Trace is opt-in; neither audit nor review may execute a
-   declared proof command. Attach the generated JSON to the handoff.
+   `--` is required. `--artifact` is optional but must be a relative UTF-8
+   report generated under the workspace; it is redacted and embedded only when
+   explicitly requested. Trace is opt-in; neither audit nor review may execute
+   a declared proof command. Attach the generated JSON to the handoff.
 
 6. For archaeology, use:
 
@@ -126,5 +128,6 @@ For compatibility rules and output contracts, read
 Audit, review, and Evidence Pack compilation are deterministic and local.
 Only `aet trace` executes a command, and only the explicit argv after `--`.
 Trace redacts configured secret patterns before persistence; undecodable or
-unredactable fields remain `UNKNOWN`. No command, MCP server, or model output
-is verified unless Trace records it.
+unredactable fields remain `UNKNOWN`. A missing declared artifact makes Trace
+return non-zero even if its child command passed. No command, MCP server, or
+model output is verified unless Trace records it.

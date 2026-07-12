@@ -198,7 +198,14 @@ def _report_passes(report: dict[str, Any]) -> bool:
 
 
 def _trace_passes(report: dict[str, Any]) -> bool:
-    return report.get("trace", {}).get("execution", {}).get("status") == Status.PASS.value
+    trace = report.get("trace", {})
+    artifacts = trace.get("artifacts", []) if isinstance(trace, dict) else []
+    return (
+        isinstance(trace, dict)
+        and trace.get("execution", {}).get("status") == Status.PASS.value
+        and isinstance(artifacts, list)
+        and all(isinstance(item, dict) and item.get("status") == Status.PASS.value for item in artifacts)
+    )
 
 
 def _transition(state: RunState, event: str) -> RunState:

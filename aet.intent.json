@@ -1,5 +1,5 @@
 {
-  "intent": "Release v1.3.0 with deterministic Context Manifests, explicit read-attestation boundaries, and source-backed Decision Ledgers without adding an Agent runtime or generic memory system.",
+  "intent": "Release v1.4.0 with explicit, redacted capture of declared command-generated text reports so pytest evidence can travel in an Evidence Pack without adding an Agent runtime or guessing output files.",
   "changed_path_budget": 20,
   "allowed_paths": [
     "aet.intent.json",
@@ -23,9 +23,8 @@
       "command": "uv run --no-editable --reinstall-package agent-engineering-toolkit python -m unittest discover -s tests -v",
       "evidence": [
         "README.md",
-        "src/aet/context.py",
-        "src/aet/decision.py",
-        "tests/test_productization.py"
+        "src/aet/evidence.py",
+        "tests/test_audit.py"
       ]
     }
   ]

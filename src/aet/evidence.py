@@ -31,13 +31,20 @@ _DEFAULT_SECRET_PATTERNS = (
 )
 
 
-def trace_command(argv: list[str], output: Path, redaction_patterns: Iterable[str] = (), proof: dict[str, Any] | None = None) -> tuple[dict[str, Any], int]:
+def trace_command(
+    argv: list[str],
+    output: Path,
+    redaction_patterns: Iterable[str] = (),
+    proof: dict[str, Any] | None = None,
+    artifact_paths: Iterable[str] = (),
+) -> tuple[dict[str, Any], int]:
     """Run one explicit argv command and persist only redacted command evidence."""
     if not argv:
         raise EvidenceError("trace requires an explicit command after --")
     patterns = _compile_patterns(redaction_patterns)
     output = output.resolve()
     cwd = Path.cwd().resolve()
+    artifacts_to_capture = _declared_artifact_paths(artifact_paths, cwd)
     started_at = _timestamp()
     try:
         completed = subprocess.run(argv, cwd=cwd, capture_output=True, check=False)
@@ -56,11 +63,13 @@ def trace_command(argv: list[str], output: Path, redaction_patterns: Iterable[st
     stderr_path = _log_path(output, "stderr")
     _atomic_write_text(stdout_path, stdout["content"])
     _atomic_write_text(stderr_path, stderr["content"])
+    artifacts = [_capture_artifact(path, cwd, patterns) for path in artifacts_to_capture]
 
     execution_status = Status.PASS.value if exit_code == 0 else Status.FAIL.value
     unknowns = sum(item["status"] == Status.UNKNOWN.value for item in (stdout, stderr))
     if argv_status == Status.UNKNOWN.value:
         unknowns += 1
+    unknowns += sum(item["status"] == Status.UNKNOWN.value for item in artifacts)
     data = {
         "schema_version": __version__,
         "report_kind": "trace",
@@ -90,11 +99,15 @@ def trace_command(argv: list[str], output: Path, redaction_patterns: Iterable[st
             "git": _git_metadata(cwd),
             "stdout": _artifact_record(stdout_path, stdout),
             "stderr": _artifact_record(stderr_path, stderr),
+            "artifacts": artifacts,
             **({"proof": proof} if proof else {}),
         },
     }
     _atomic_write_json(output, data)
-    return data, exit_code
+    # A command result and its explicitly requested evidence are separate facts.
+    # A missing report must fail a CI invocation without rewriting a successful
+    # child exit status as though the command itself failed.
+    return data, exit_code if exit_code else (1 if any(item["status"] != Status.PASS.value for item in artifacts) else 0)
 
 
 def compile_evidence_pack(*, audit: Path | None, review: Path | None, trace: Path | None, output: Path) -> dict[str, Any]:
@@ -210,6 +223,9 @@ def _proof_binding(components: dict[str, dict[str, Any]]) -> dict[str, Any]:
     execution = trace["report"].get("execution", {})
     if execution.get("status") != Status.PASS.value:
         return {"status": Status.FAIL.value, "reason": "bound proof command did not exit successfully"}
+    artifacts = trace["report"].get("artifacts", [])
+    if not isinstance(artifacts, list) or any(not isinstance(item, dict) or item.get("status") != Status.PASS.value for item in artifacts):
+        return {"status": Status.UNKNOWN.value, "reason": "a declared trace artifact was not safely captured"}
     return {"status": Status.PASS.value, "proof_id": trace_proof["id"], "contract_sha256": trace_proof["intent_sha256"]}
 
 
@@ -353,11 +369,13 @@ def _portable_report(kind: str, report: dict[str, Any]) -> dict[str, Any]:
     if kind == "review":
         portable["review"] = report["review"]
     if kind == "trace":
-        # The trace references only redacted excerpts and artifact digests; raw logs never enter the pack.
+        # Raw stdout/stderr never enter the pack. Explicitly requested text
+        # artifacts are already redacted and are portable by user choice.
         portable["execution"] = report["trace"]["execution"]
         portable["git"] = report["trace"].get("git")
         portable["stdout"] = _portable_artifact(report["trace"].get("stdout"))
         portable["stderr"] = _portable_artifact(report["trace"].get("stderr"))
+        portable["artifacts"] = [_portable_captured_artifact(item) for item in report["trace"].get("artifacts", []) if isinstance(item, dict)]
         if "proof" in report["trace"]:
             portable["proof"] = report["trace"]["proof"]
     return portable
@@ -367,6 +385,10 @@ def _portable_artifact(artifact: Any) -> dict[str, Any] | None:
     if not isinstance(artifact, dict):
         return None
     return {key: artifact.get(key) for key in ("status", "sha256", "excerpt")}
+
+
+def _portable_captured_artifact(artifact: dict[str, Any]) -> dict[str, Any]:
+    return {key: artifact.get(key) for key in ("requested_path", "status", "reason", "sha256", "content") if key in artifact}
 
 
 def _compile_patterns(custom_patterns: Iterable[str]) -> tuple[re.Pattern[str], ...]:
@@ -395,6 +417,49 @@ def _redacted_log(raw: bytes, patterns: tuple[re.Pattern[str], ...]) -> dict[str
     if redacted is None:
         return {"status": Status.UNKNOWN.value, "content": "[UNKNOWN: log could not be redacted safely]\n", "excerpt": None}
     return {"status": Status.PASS.value, "content": redacted, "excerpt": redacted[:1000]}
+
+
+def _declared_artifact_paths(paths: Iterable[str], cwd: Path) -> list[Path]:
+    declared: list[Path] = []
+    for value in paths:
+        candidate = Path(value)
+        if candidate.is_absolute():
+            raise EvidenceError("trace artifact paths must be relative to the working directory")
+        resolved = (cwd / candidate).resolve()
+        if not _is_within(resolved, cwd):
+            raise EvidenceError("trace artifact paths must remain inside the working directory")
+        declared.append(resolved)
+    return declared
+
+
+def _capture_artifact(path: Path, cwd: Path, patterns: tuple[re.Pattern[str], ...]) -> dict[str, Any]:
+    resolved = path.resolve()
+    requested_path = resolved.relative_to(cwd).as_posix() if _is_within(resolved, cwd) else path.name
+    if not _is_within(resolved, cwd):
+        return {"requested_path": requested_path, "status": Status.UNKNOWN.value, "reason": "artifact resolved outside the working directory"}
+    if not resolved.is_file():
+        return {"requested_path": requested_path, "status": Status.UNKNOWN.value, "reason": "declared artifact was not created as a regular file"}
+    try:
+        redacted = _redacted_log(resolved.read_bytes(), patterns)
+    except OSError as error:
+        return {"requested_path": requested_path, "status": Status.UNKNOWN.value, "reason": f"artifact could not be read safely: {error}"}
+    if redacted["status"] != Status.PASS.value:
+        return {"requested_path": requested_path, "status": Status.UNKNOWN.value, "reason": "artifact could not be decoded or redacted safely"}
+    content = redacted["content"]
+    return {
+        "requested_path": requested_path,
+        "status": Status.PASS.value,
+        "sha256": hashlib.sha256(content.encode("utf-8")).hexdigest(),
+        "content": content,
+    }
+
+
+def _is_within(path: Path, root: Path) -> bool:
+    try:
+        path.relative_to(root)
+    except ValueError:
+        return False
+    return True
 
 
 def _redact_text(value: str, patterns: tuple[re.Pattern[str], ...]) -> str | None:

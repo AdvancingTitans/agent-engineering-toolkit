@@ -16,7 +16,7 @@ from collections import Counter
 from pathlib import Path
 from unittest import mock
 
-from aet.learn import harvest, replay_observed, verify_suite
+from aet.learn import _editable_edit_budget, harvest, replay_observed, verify_suite
 from aet.learn_statistics import summarize_reliability
 
 
@@ -216,16 +216,20 @@ class BusinessQualityFlowsTests(unittest.TestCase):
                 "\\ -- python3 bin/run_proof.py"
             )
             for required in (
-                "the task prompt already provides the proof id, proof command, report artifact, and evidence path",
-                "Do not read, list, search, count, check, or otherwise inspect any file",
-                "Run no command before or after that exact trusted Trace command",
-                "do not inspect its output or any file",
-                "only the relative `.aet/evidence/trace.json` path, with no success claim",
-                "`pwd`, `ls`, `find`, `rg`, `grep`, `jq`, `cat`",
-                "`head`, `tail`, `wc`, `sed`, `aet audit`, or `aet review`",
+                "the prompt supplies proof id, command, artifact, and evidence path",
+                "Do not inspect files (read/list/search/check)",
+                "pre/postflight commands",
+                "Run exactly one command: this trusted Trace",
+                "Run nothing before or after it",
+                "Reply only `.aet/evidence/trace.json`",
+                "If Trace cannot run, report UNKNOWN; do not try another command",
                 exact_trace,
             ):
                 self.assertIn(required, normalized)
+            baseline = (ROOT / "skills/agent-engineering-toolkit/SKILL.md").read_text(encoding="utf-8")
+            added, _deleted = _editable_edit_budget(baseline, candidate_text)
+            self.assertLessEqual(added, 800)
+            self.assertLessEqual(added, 700, "release guidance must retain edit-budget headroom")
 
     def test_tracked_candidate_builder_and_release_gate_recompute_content(self) -> None:
         builder = REAL_AGENT / "build_candidate.py"
@@ -243,8 +247,8 @@ class BusinessQualityFlowsTests(unittest.TestCase):
             for instruction in (
                 "aet.intent.json", "./.aet-rollout/bin/aet trace", "--proof", "--intent",
                 "--artifact", ".aet/evidence/trace.json", "python3 bin/run_proof.py",
-                "the task prompt already provides the",
-                "Run no command before or after that exact trusted Trace command",
+                "the prompt supplies proof id",
+                "trusted Trace",
             ):
                 self.assertIn(instruction, candidate_text)
             self.assertNotIn("read `aet.intent.json`", candidate_text)

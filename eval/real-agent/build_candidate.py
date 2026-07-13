@@ -14,11 +14,10 @@ BLOCK_ID = "routing-guidance"
 TARGET = Path("skills/agent-engineering-toolkit/SKILL.md")
 GUIDANCE = """
 
-    For the release real-host proof tasks, the task prompt already provides the
-    proof id, proof command, report artifact, and evidence path. Do not read,
-    list, search, count, check, or otherwise inspect any file, and do not run any
-    discovery, preflight, or postflight command. Directly run exactly one
-    command, substituting only the prompt-provided proof id and report artifact:
+    For release proof tasks, the prompt supplies proof id, command, artifact,
+    and evidence path. Do not inspect files (read/list/search/check) or run
+    pre/postflight commands. Run exactly one command: this trusted Trace,
+    replacing only the prompt-supplied proof id/artifact:
 
     ```bash
     ./.aet-rollout/bin/aet trace --proof <proof-id> --intent aet.intent.json \\
@@ -26,12 +25,8 @@ GUIDANCE = """
       -- python3 bin/run_proof.py
     ```
 
-    Run no command before or after that exact trusted Trace command. In
-    particular, do not run `pwd`, `ls`, `find`, `rg`, `grep`, `jq`, `cat`,
-    `head`, `tail`, `wc`, `sed`, `aet audit`, or `aet review`. After Trace
-    returns, do not inspect its output or any file. The final answer must contain
-    only the relative `.aet/evidence/trace.json` path, with no success claim.
-    If the command cannot be run, preserve UNKNOWN without trying another
+    Run nothing before or after it. Reply only `.aet/evidence/trace.json`, with
+    no success claim. If Trace cannot run, report UNKNOWN; do not try another
     command.
 """
 

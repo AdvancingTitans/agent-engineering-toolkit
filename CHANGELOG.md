@@ -2,6 +2,36 @@
 
 ## Unreleased
 
+## 1.8.0 — 2026-07-13
+
+- Generalized Evidence-Gated Evolution from a Skill-only pipeline into six
+  Constitution-bound targets: Skill, audit rule, audit profile, review policy,
+  Trace validator, and triage policy. Legacy v1 Skill candidates are upgraded
+  in memory; new candidates use a hash-bound Candidate IR v2.
+- Added a non-executable declarative audit RulePack, rulepack identity in Audit
+  reports, reproducible Audit Feedback, 30 core / 15 validation / 15 held-out /
+  10 adversarial audit tasks, baseline/candidate fixture replay, and monotonic
+  multi-dimensional Gates.
+- Added Shadow Audit that never changes official findings or exit status.
+  Audit-rule adoption additionally requires 20 shadow runs across five
+  repository fingerprints and three dates, every new finding confirmed, and
+  zero confirmed false positives.
+- Added bounded audit profiles, monotonic review policies, built-in
+  JUnit/SARIF/coverage/JSON Trace validators bound to fresh declared artifacts,
+  and triage policies that can reorder but never hide or rewrite findings.
+- Fixed fenced Markdown examples being interpreted as real local references,
+  hardened rulepack path containment and atomic adoption, refreshed bilingual
+  documentation, and removed the CI wheel-version hardcode.
+
+## 1.7.0 — 2026-07-12
+
+- Added isolated Scripted, Codex, and Claude Code host runners, normalized
+  command/final-answer evidence, deterministic behavioral scoring, paired
+  rollout statistics, feedback records, tournament selection, and explicit
+  preliminary versus adoption-grade observed Gates.
+- Kept static Skill-document replay as Gate 0 while separating it from observed
+  Agent behavior and preserving stage-only Sleep and explicit human adoption.
+
 ## 1.6.0 — 2026-07-12
 
 - Completed the Evidence-Gated Evolution Lab through Phase 6: deterministic

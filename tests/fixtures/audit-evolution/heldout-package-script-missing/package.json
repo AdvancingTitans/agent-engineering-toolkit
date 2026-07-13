@@ -1,0 +1,5 @@
+{
+  "scripts": {
+    "release:check": "node tooling/check-release.cjs"
+  }
+}

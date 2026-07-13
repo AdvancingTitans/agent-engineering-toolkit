@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://advancingtitans.github.io/aet/schemas/audit-task-v1.schema.json",
+  "title": "AET Audit Evolution Suite v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "suite_id", "partition", "defaults", "tasks"],
+  "properties": {
+    "schema_version": {"const": "audit-task/v1"},
+    "suite_id": {"type": "string", "minLength": 1},
+    "partition": {"enum": ["core", "validation", "held_out", "adversarial"]},
+    "defaults": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["command", "quality"],
+      "properties": {
+        "command": {"type": "object", "required": ["argv"], "properties": {"argv": {"type": "array", "minItems": 2, "items": {"type": "string"}}}, "additionalProperties": false},
+        "quality": {
+          "type": "object",
+          "required": ["max_unexpected_findings", "require_deterministic_output", "max_runtime_ms"],
+          "properties": {
+            "max_unexpected_findings": {"type": "integer", "minimum": 0},
+            "require_deterministic_output": {"type": "boolean"},
+            "max_runtime_ms": {"type": "number", "exclusiveMinimum": 0}
+          },
+          "additionalProperties": false
+        }
+      }
+    },
+    "tasks": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["task_id", "title", "fixture", "expected", "dimensions", "tags"],
+        "properties": {
+          "task_id": {"type": "string", "pattern": "^AUD-"},
+          "title": {"type": "string", "minLength": 1},
+          "fixture": {"type": "object", "required": ["source"], "properties": {"source": {"type": "string", "minLength": 1}}, "additionalProperties": false},
+          "expected": {
+            "type": "object",
+            "required": ["must_emit", "must_not_emit"],
+            "properties": {
+              "must_emit": {"type": "array", "items": {"$ref": "#/$defs/findingExpectation"}},
+              "must_not_emit": {"type": "array", "items": {"$ref": "#/$defs/findingExpectation"}}
+            },
+            "additionalProperties": false
+          },
+          "dimensions": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string"}},
+          "tags": {"type": "array", "uniqueItems": true, "items": {"type": "string"}}
+        }
+      }
+    }
+  },
+  "$defs": {
+    "findingExpectation": {
+      "type": "object",
+      "required": ["rule_id"],
+      "properties": {
+        "rule_id": {"type": "string", "minLength": 1},
+        "status": {"enum": ["PASS", "FAIL", "UNKNOWN", "NOT_APPLICABLE"]},
+        "severity": {"enum": ["INFO", "WARN", "ERROR"]},
+        "evidence_path": {"type": "string"},
+        "evidence_line_required": {"type": "boolean"},
+        "remediation_required": {"type": "boolean"}
+      },
+      "additionalProperties": false
+    }
+  }
+}

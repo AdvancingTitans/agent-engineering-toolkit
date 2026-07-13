@@ -14,3 +14,13 @@
 
 `UNKNOWN` is a verification gap, not a discounted PASS. Use `aet triage` only
 to order remediation; it is deliberately not a gate.
+
+The built-in catalog is loaded from a versioned, hash-reported, non-executable
+RulePack. Each entry declares its finding semantics and selects one detector
+from the trusted allowlist; candidates cannot add Python, shell, network, or
+module execution. `AET-GEN-001` is the immutable engine-level result for a
+repository with no discoverable context assets; it is intentionally outside
+the evolvable RulePack. `AET-PKG-001` (missing local script target referenced by
+`package.json`) is the first deterministic evolution proposal, not a rule in
+the built-in pack until its candidate passes fixture Gate, real Shadow evidence,
+and explicit human adoption.

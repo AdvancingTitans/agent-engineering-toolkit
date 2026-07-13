@@ -10,7 +10,7 @@ from . import __version__
 from .models import Asset, Finding, Severity, Status, finding_counts
 
 
-def report_data(root: Path, assets: list[Asset], findings: list[Finding], *, kind: str = "audit", review: dict | None = None, scope: dict | None = None, workspace_snapshot: dict | None = None) -> dict:
+def report_data(root: Path, assets: list[Asset], findings: list[Finding], *, kind: str = "audit", review: dict | None = None, scope: dict | None = None, workspace_snapshot: dict | None = None, audit_engine: dict | None = None) -> dict:
     data = {
         "schema_version": __version__,
         "report_kind": kind,
@@ -29,6 +29,8 @@ def report_data(root: Path, assets: list[Asset], findings: list[Finding], *, kin
         data["review"] = review
     if workspace_snapshot is not None:
         data["workspace_snapshot"] = workspace_snapshot
+    if audit_engine is not None:
+        data["audit_engine"] = audit_engine
     return data
 
 
@@ -50,8 +52,11 @@ def render_markdown(data: dict) -> str:
             f"- Intent contract: `{review['intent_contract']}`",
             f"- Changed paths: {len(review['changed_paths'])}/{review['changed_path_budget']}",
         ])
+    if data["report_kind"] == "audit" and isinstance(data.get("audit_engine"), dict):
+        engine = data["audit_engine"]
+        lines.extend([f"- Rule pack: `{engine.get('rulepack_id')}` revision {engine.get('rulepack_revision')}", f"- Rule pack SHA-256: `{engine.get('rulepack_sha256')}`"])
     if not data["findings"]:
-        lines.extend(["No findings. The discovered assets passed the v0.1 static rules.", ""])
+        lines.extend(["No findings. The discovered assets passed the active, hash-bound audit rule pack.", ""])
         return "\n".join(lines)
     lines.extend(["## Findings", "", "| Rule | Status | Severity | Evidence | Claim |", "|---|---|---|---|---|"])
     for finding in data["findings"]:

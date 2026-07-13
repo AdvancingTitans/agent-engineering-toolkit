@@ -1,0 +1,15 @@
+{
+  "schema_version": "audit-rulepack/v1",
+  "rulepack_id": "builtin",
+  "revision": 2,
+  "rules": [
+    {"rule_id":"AET-CTX-001","revision":1,"target_kinds":["instruction","skill"],"detector":{"type":"local_targets","match_rule_id":"AET-CTX-001"},"result":{"status":"FAIL","severity":"ERROR","claim":"A relative local reference points to a missing target.","remediation":"Create the target, correct the relative path, or remove the stale reference.","preserve_detector_detail":true}},
+    {"rule_id":"AET-CTX-002","revision":1,"target_kinds":["instruction","skill"],"detector":{"type":"local_targets","match_rule_id":"AET-CTX-002"},"result":{"status":"FAIL","severity":"ERROR","claim":"An explicit local command target is missing.","remediation":"Create the command target, correct its path, or remove the stale command.","preserve_detector_detail":true}},
+    {"rule_id":"AET-CTX-003","revision":1,"target_kinds":["instruction","skill"],"detector":{"type":"local_targets","match_rule_id":"AET-CTX-003"},"result":{"status":"FAIL","severity":"ERROR","claim":"An absolute local instruction path is missing.","remediation":"Correct or remove the stale absolute path; prefer a portable repository-relative reference.","preserve_detector_detail":true}},
+    {"rule_id":"AET-CTX-004","revision":1,"target_kinds":["instruction"],"detector":{"type":"instruction_size","match_rule_id":"AET-CTX-004"},"result":{"status":"UNKNOWN","severity":"WARN","claim":"Root-level instruction file risks always-on context bloat.","remediation":"Keep wayfinding in the root file and move task-specific procedures into on-demand Skills or references."}},
+    {"rule_id":"AET-SKL-001","revision":1,"target_kinds":["skill"],"detector":{"type":"skill_contract","match_rule_id":"AET-SKL-001"},"result":{"status":"FAIL","severity":"ERROR","claim":"Skill is missing required YAML frontmatter fields: name and description.","remediation":"Add a YAML frontmatter block with non-empty name and description fields."}},
+    {"rule_id":"AET-SKL-002","revision":1,"target_kinds":["skill"],"detector":{"type":"skill_contract","match_rule_id":"AET-SKL-002"},"result":{"status":"FAIL","severity":"ERROR","claim":"Skill frontmatter name does not match its directory name.","remediation":"Rename the directory or set name to the exact directory name."}},
+    {"rule_id":"AET-SKL-004","revision":1,"target_kinds":["skill"],"detector":{"type":"skill_contract","match_rule_id":"AET-SKL-004"},"result":{"status":"UNKNOWN","severity":"WARN","claim":"Skill does not state a verification or completion check.","remediation":"Add the concrete command, assertion, or observation required before the agent claims completion."}},
+    {"rule_id":"AET-CTX-005","revision":1,"target_kinds":["instruction","skill"],"detector":{"type":"duplicate_normalized_line","match_rule_id":"AET-CTX-005"},"result":{"status":"UNKNOWN","severity":"WARN","claim":"Long directive is duplicated across agent context assets.","remediation":"Keep shared policy in one canonical reference and link to it from local instructions."}}
+  ]
+}

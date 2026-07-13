@@ -24,6 +24,7 @@ from .rules import run_rules
 from .learn_runners import AgentRunRequest, RunnerError, create_runner, runner_names
 from .learn_scoring import score_rollout
 from .learn_statistics import compare_pairs
+from .evolution import constitution_sha256, load_candidate
 
 
 class LearnError(ValueError):
@@ -103,7 +104,7 @@ def inspect_experiences(*, experiences: Path, output: Path) -> dict[str, Any]:
     return result
 
 
-def mine(*, experiences: Path, output: Path) -> dict[str, Any]:
+def mine(*, experiences: Path, output: Path, target_type: str = "skill") -> dict[str, Any]:
     data = _read_json(experiences)
     rows = _experience_rows(data)
     grouped: dict[str, list[dict[str, Any]]] = {}
@@ -123,6 +124,7 @@ def mine(*, experiences: Path, output: Path) -> dict[str, Any]:
         confidence = "HIGH" if count >= 5 and len(repositories) >= 3 and len(tasks) >= 3 and len(dates) >= 2 and real_runner else "MEDIUM" if count >= 3 else "LOW"
         patterns.append({
             "pattern_id": f"PAT-{_sha(deviation.encode())[:8].upper()}", "kind": deviation,
+            "target_type": target_type,
             "support": {"experience_count": count, "repository_count": len(repositories), "task_count": len(tasks), "runner_count": len(runners), "date_count": len(dates)},
             "confidence": confidence, "evidence_refs": identifiers,
         })
@@ -131,7 +133,7 @@ def mine(*, experiences: Path, output: Path) -> dict[str, Any]:
     proof_components = {"MISSING_TRACE_PROOF", "UNSUPPORTED_SUCCESS_CLAIM", "MISSING_EVIDENCE_PATH"}
     if len(components & proof_components) >= 2:
         refs = sorted({reference for item in patterns if item["kind"] in proof_components for reference in item["evidence_refs"]})
-        patterns.append({"pattern_id": "PAT-PROOF-HANDOFF", "kind": "PROOF_HANDOFF_FAILURE", "components": sorted(components & proof_components), "support": {"experience_count": len(refs)}, "confidence": "LOW", "evidence_refs": refs})
+        patterns.append({"pattern_id": "PAT-PROOF-HANDOFF", "kind": "PROOF_HANDOFF_FAILURE", "target_type": target_type, "components": sorted(components & proof_components), "support": {"experience_count": len(refs)}, "confidence": "LOW", "evidence_refs": refs})
     result = {"schema_version": __version__, "report_kind": "learning_patterns", "generated_at": _time(), "patterns": patterns}
     _write_json(output, result)
     return result
@@ -183,14 +185,16 @@ def propose(*, patterns: Path, target: Path, output: Path, engine: str, model_co
     candidate_file = output / "candidate.SKILL.md"
     _atomic_text(candidate_file, candidate_text)
     result = {
-        "schema_version": __version__, "report_kind": "learning_candidate", "candidate_id": candidate_id, "created_at": _time(),
-        "engine": engine, "target_file": str(source), "baseline_sha256": _sha(text.encode()), "candidate_sha256": _sha(candidate_text.encode()),
-        "pattern_ids": [item.get("pattern_id") for item in source_patterns if isinstance(item, dict)], "operations": operations,
-        "edit_budget": {"max_operations": 3, "max_added_characters": 800, "max_deleted_characters": 400},
-        "adoption": "human_required", "privacy": {"profile": "evidence-only"},
+        "schema_version": "evolution-candidate/v2", "report_kind": "evolution_candidate", "candidate_id": candidate_id,
+        "target": {"type": "skill", "path": str(source), "baseline_sha256": _sha(text.encode())},
+        "candidate_artifact": "candidate.SKILL.md", "candidate_sha256": _sha(candidate_text.encode()),
+        "source_patterns": [item.get("pattern_id") for item in source_patterns if isinstance(item, dict) and item.get("pattern_id")],
+        "operations": [{"op": "replace", "path": f"/editable_blocks/{item['id']}", "before_sha256": item["before_sha256"], "value": item["new_text"]} for item in operations],
+        "budgets": {"max_operations": 3, "max_added_characters": 800, "max_deleted_characters": 400},
+        "adoption": "human_required", "constitution_sha256": constitution_sha256(),
     }
     _write_json(output / "candidate.json", result)
-    _write_json(output / "source-manifest.json", {"report_kind": "learning_candidate_sources", "patterns": result["pattern_ids"], "rejected_summary": rejected_summary})
+    _write_json(output / "source-manifest.json", {"report_kind": "learning_candidate_sources", "patterns": result["source_patterns"], "rejected_summary": rejected_summary})
     _atomic_text(output / "patch.diff", "".join(difflib.unified_diff(text.splitlines(keepends=True), candidate_text.splitlines(keepends=True), fromfile="baseline/SKILL.md", tofile="candidate/SKILL.md")))
     _atomic_text(output / "rationale.md", "# Candidate rationale\n\nGenerated from structured Evidence Only records. This candidate is bounded to editable blocks and awaits human adoption.\n")
     return result
@@ -566,6 +570,8 @@ def _rule_additions(patterns: list[Any]) -> list[str]:
 
 def _deviations(data: dict[str, Any]) -> list[str]:
     values: list[str] = []
+    if data.get("report_kind") == "audit_feedback" and data.get("adoption_grade") is True:
+        values.extend(str(item) for item in data.get("deviations", []) if isinstance(item, str))
     for finding in data.get("findings", []):
         if isinstance(finding, dict) and finding.get("status") in {Status.FAIL.value, Status.UNKNOWN.value}:
             values.append(str(finding.get("rule_id", "UNCLASSIFIED_FINDING")))
@@ -582,6 +588,21 @@ def _deviations(data: dict[str, Any]) -> list[str]:
 
 def _candidate_material(candidate: Path) -> tuple[dict[str, Any], str, str]:
     metadata = _read_json(candidate / "candidate.json")
+    if metadata.get("schema_version") == "evolution-candidate/v2":
+        loaded = load_candidate(candidate)
+        if loaded.target.target_type != "skill":
+            raise LearnError("legacy Skill pipeline received a non-Skill candidate")
+        legacy_operations = []
+        for operation in loaded.operations:
+            prefix = "/editable_blocks/"
+            if not str(operation.get("path", "")).startswith(prefix):
+                raise LearnError("Skill candidate contains an invalid v2 operation path")
+            legacy_operations.append({"type": "replace_editable_block", "id": str(operation["path"])[len(prefix):], "before_sha256": operation.get("before_sha256"), "new_text": operation.get("value")})
+        metadata = {
+            "candidate_id": loaded.candidate_id, "target_file": loaded.target.path,
+            "baseline_sha256": loaded.target.baseline_sha256, "candidate_sha256": loaded.candidate_sha256,
+            "operations": legacy_operations, "edit_budget": loaded.budgets,
+        }
     proposed = _read_text(candidate / "candidate.SKILL.md")
     target = Path(metadata.get("target_file", ""))
     if not target.is_file() or not isinstance(metadata.get("candidate_id"), str):

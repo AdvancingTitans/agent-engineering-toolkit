@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://advancingtitans.github.io/aet/schemas/evolution-constitution-v1.json",
+  "title": "AET Evolution Constitution v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "immutable_semantics", "forbidden_targets"],
+  "properties": {
+    "schema_version": {"const": "evolution-constitution/v1"},
+    "immutable_semantics": {
+      "type": "array",
+      "uniqueItems": true,
+      "allOf": [
+        {"contains": {"const": "unknown_is_not_pass"}},
+        {"contains": {"const": "candidate_cannot_modify_evaluator"}},
+        {"contains": {"const": "held_out_must_be_separate"}},
+        {"contains": {"const": "adoption_requires_human_authorization"}}
+      ],
+      "items": {"type": "string"}
+    },
+    "forbidden_targets": {
+      "type": "array",
+      "uniqueItems": true,
+      "allOf": [
+        {"contains": {"const": "src/aet/models.py::Status"}},
+        {"contains": {"const": "src/aet/learn_statistics.py"}},
+        {"contains": {"const": "src/aet/evolution/constitution.py"}},
+        {"contains": {"const": "src/aet/evolution/evaluators/**"}},
+        {"contains": {"const": "src/aet/evolution/gates.py"}},
+        {"contains": {"const": "schemas/evolution-constitution-v1.json"}},
+        {"contains": {"const": "held_out/**"}}
+      ],
+      "items": {"type": "string"}
+    }
+  }
+}

@@ -3,10 +3,13 @@
 from __future__ import annotations
 
 import re
+import json
+import shlex
 from collections import defaultdict
 from pathlib import Path
 
 from .models import Asset, Evidence, Finding, Severity, Status
+from .rulepacks import load_rulepack
 
 LINK_RE = re.compile(r"\[[^\]]*\]\(([^)]+)\)")
 INLINE_PATH_RE = re.compile(r"`([^`\n]+\.(?:md|py|sh|json|toml|yaml|yml))`")
@@ -20,7 +23,7 @@ VERIFY_RE = re.compile(
 )
 
 
-def run_rules(root: Path, assets: list[Asset]) -> list[Finding]:
+def run_rules(root: Path, assets: list[Asset], *, rulepack: dict | None = None) -> list[Finding]:
     findings: list[Finding] = []
     if not assets:
         findings.append(
@@ -33,33 +36,117 @@ def run_rules(root: Path, assets: list[Asset]) -> list[Finding]:
                 "Add agent instructions or run aet against the intended repository root.",
             )
         )
-        return findings
 
     texts: dict[Asset, str] = {asset: asset.path.read_text(encoding="utf-8") for asset in assets}
-    for asset, text in texts.items():
-        findings.extend(_check_local_targets(root, asset, text))
-        if asset.kind == "instruction":
-            findings.extend(_check_instruction_size(asset, text))
-        else:
-            findings.extend(_check_skill(asset, text))
-    findings.extend(_check_duplicate_directives(texts))
+    selected = rulepack or load_rulepack()
+    for rule in selected["rules"]:
+        detector = rule["detector"]["type"]
+        detected: list[Finding] = []
+        if detector == "local_targets":
+            for asset, text in texts.items():
+                detected.extend(_check_local_targets(root, asset, text))
+        elif detector == "instruction_size":
+            for asset, text in texts.items():
+                if asset.kind == "instruction":
+                    detected.extend(_check_instruction_size(asset, text))
+        elif detector == "skill_contract":
+            for asset, text in texts.items():
+                if asset.kind == "skill":
+                    detected.extend(_check_skill(asset, text))
+        elif detector == "duplicate_normalized_line":
+            detected.extend(_check_duplicate_directives(texts))
+        elif detector == "json_script_target_exists":
+            detected.extend(_check_json_script_targets(root, rule))
+        match_rule_id = rule["detector"].get("match_rule_id")
+        if match_rule_id:
+            detected = [item for item in detected if item.rule_id == match_rule_id]
+        findings.extend(_apply_declarative_result(item, rule) for item in detected)
     return sorted(findings, key=lambda item: (item.severity, item.rule_id, item.evidence[0].path))
+
+
+def _apply_declarative_result(finding: Finding, rule: dict) -> Finding:
+    result = rule.get("result")
+    if not result:
+        return finding
+    return Finding(
+        str(rule["rule_id"]), Status(result["status"]), Severity(result["severity"]),
+        finding.claim if result.get("preserve_detector_detail") else str(result["claim"]), finding.evidence,
+        finding.remediation if result.get("preserve_detector_detail") else str(result["remediation"]),
+        str(rule.get("revision", finding.rule_version)),
+    )
+
+
+def _check_json_script_targets(root: Path, rule: dict) -> list[Finding]:
+    findings: list[Finding] = []
+    for relative in rule["detector"].get("files", ["package.json"]):
+        source = (root / relative).resolve()
+        try:
+            source.relative_to(root.resolve())
+        except ValueError:
+            continue
+        if not source.is_file():
+            continue
+        try:
+            source_text = source.read_text(encoding="utf-8")
+            scripts = json.loads(source_text).get("scripts", {})
+        except (OSError, json.JSONDecodeError, AttributeError):
+            continue
+        if not isinstance(scripts, dict):
+            continue
+        for name, command in sorted(scripts.items()):
+            if not isinstance(command, str):
+                continue
+            try:
+                tokens = shlex.split(command)
+            except ValueError:
+                tokens = command.split()
+            for token in tokens:
+                cleaned = token.strip("'\"")
+                if "/" not in cleaned or not cleaned.endswith((".js", ".mjs", ".cjs", ".py", ".sh")):
+                    continue
+                candidate = (root / cleaned).resolve()
+                try:
+                    candidate.relative_to(root.resolve())
+                except ValueError:
+                    continue
+                if candidate.exists():
+                    continue
+                result = rule["result"]
+                findings.append(Finding(
+                    rule["rule_id"], Status(result["status"]), Severity(result["severity"]),
+                    result["claim"], (Evidence(Path(relative).as_posix(), _line_number(source_text, source_text.find(cleaned)), f"script={name}; target={cleaned}"),),
+                    result["remediation"], str(rule.get("revision", 1)),
+                ))
+    return findings
 
 
 def _check_local_targets(root: Path, asset: Asset, text: str) -> list[Finding]:
     findings: list[Finding] = []
     targets: list[tuple[str, int, str]] = []
+    fenced = [(match.start(), match.end()) for match in re.finditer(r"```.*?```", text, re.DOTALL)]
+
+    def is_example(index: int) -> bool:
+        return any(start <= index < end for start, end in fenced)
+
     for match in LINK_RE.finditer(text):
+        if is_example(match.start()):
+            continue
         target = match.group(1).split("#", 1)[0].strip()
         if target:
             targets.append((target, _line_number(text, match.start(1)), "Markdown link"))
     for match in INLINE_PATH_RE.finditer(text):
+        if is_example(match.start()):
+            continue
         target = match.group(1)
         if target.startswith(("./", "../")) and not any(char.isspace() for char in target):
             targets.append((target, _line_number(text, match.start(1)), "inline path"))
     for match in ABSOLUTE_PATH_RE.finditer(text):
+        if is_example(match.start()):
+            continue
         targets.append((match.group(1), _line_number(text, match.start(1)), "absolute local path"))
     for match in COMMAND_TARGET_RE.finditer(text):
+        if is_example(match.start()):
+            continue
         targets.append((match.group(1), _line_number(text, match.start(1)), "command target"))
 
     seen: set[tuple[str, int]] = set()

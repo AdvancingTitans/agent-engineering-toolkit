@@ -15,3 +15,13 @@
 - AET does not upload repository data or collect telemetry.
 - Evidence artifacts may contain paths, commit subjects, and redacted command
   excerpts. Keep `.aet/` private unless its content has been reviewed.
+- Real-host Skill replay provides isolated workspace copies, not a claim of
+  OS-level sandboxing. Network isolation and command enforcement remain
+  `PARTIAL` unless an external sandbox supplies and records those controls.
+- Shadow Audit artifacts can reveal candidate findings and repository
+  fingerprints. Keep them private until reviewed; Shadow never changes the
+  official report or exit code.
+- Candidate manifests, Gate reports, confirmations, and Decision Ledgers are
+  durable governance evidence. Retain them with the adopted asset; rejected
+  candidates may be retained locally as negative constraints or deleted under
+  the repository's normal retention policy.

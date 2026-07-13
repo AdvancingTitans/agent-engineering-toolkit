@@ -45,6 +45,7 @@ def trace_command(
     output = output.resolve()
     cwd = Path.cwd().resolve()
     artifacts_to_capture = _declared_artifact_paths(artifact_paths, cwd)
+    artifacts_before = [_capture_artifact(path, cwd, patterns) for path in artifacts_to_capture]
     started_at = _timestamp()
     try:
         completed = subprocess.run(argv, cwd=cwd, capture_output=True, check=False)
@@ -63,7 +64,19 @@ def trace_command(
     stderr_path = _log_path(output, "stderr")
     _atomic_write_text(stdout_path, stdout["content"])
     _atomic_write_text(stderr_path, stderr["content"])
-    artifacts = [_capture_artifact(path, cwd, patterns) for path in artifacts_to_capture]
+    artifacts = []
+    for path, before in zip(artifacts_to_capture, artifacts_before):
+        after = _capture_artifact(path, cwd, patterns)
+        if after.get("status") == Status.PASS.value:
+            if before.get("status") != Status.PASS.value:
+                after["freshness"] = "CREATED"
+            elif before.get("sha256") != after.get("sha256"):
+                after["freshness"] = "CHANGED"
+            else:
+                after["freshness"] = "UNCHANGED"
+        else:
+            after["freshness"] = Status.UNKNOWN.value
+        artifacts.append(after)
 
     execution_status = Status.PASS.value if exit_code == 0 else Status.FAIL.value
     unknowns = sum(item["status"] == Status.UNKNOWN.value for item in (stdout, stderr))
@@ -368,6 +381,8 @@ def _portable_report(kind: str, report: dict[str, Any]) -> dict[str, Any]:
         portable["workspace_snapshot"] = report["workspace_snapshot"]
     if kind == "review":
         portable["review"] = report["review"]
+    if kind == "audit" and "audit_engine" in report:
+        portable["audit_engine"] = report["audit_engine"]
     if kind == "trace":
         # Raw stdout/stderr never enter the pack. Explicitly requested text
         # artifacts are already redacted and are portable by user choice.
@@ -378,6 +393,8 @@ def _portable_report(kind: str, report: dict[str, Any]) -> dict[str, Any]:
         portable["artifacts"] = [_portable_captured_artifact(item) for item in report["trace"].get("artifacts", []) if isinstance(item, dict)]
         if "proof" in report["trace"]:
             portable["proof"] = report["trace"]["proof"]
+        if "validators" in report:
+            portable["validators"] = report["validators"]
     return portable
 
 
@@ -388,7 +405,7 @@ def _portable_artifact(artifact: Any) -> dict[str, Any] | None:
 
 
 def _portable_captured_artifact(artifact: dict[str, Any]) -> dict[str, Any]:
-    return {key: artifact.get(key) for key in ("requested_path", "status", "reason", "sha256", "content") if key in artifact}
+    return {key: artifact.get(key) for key in ("requested_path", "status", "reason", "sha256", "freshness", "content") if key in artifact}
 
 
 def _compile_patterns(custom_patterns: Iterable[str]) -> tuple[re.Pattern[str], ...]:

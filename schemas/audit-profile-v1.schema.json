@@ -1,0 +1,1 @@
+{"$schema":"https://json-schema.org/draft/2020-12/schema","title":"AET Audit Profile v1","type":"object","required":["schema_version","rules","path_policy"],"properties":{"schema_version":{"const":"audit-profile/v1"},"rules":{"type":"object"},"path_policy":{"type":"object"},"exclusions":{"type":"array"}},"additionalProperties":false}

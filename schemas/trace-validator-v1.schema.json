@@ -1,0 +1,1 @@
+{"$schema":"https://json-schema.org/draft/2020-12/schema","title":"AET Trace Validator v1","type":"object","required":["schema_version","validator","requirements"],"properties":{"schema_version":{"const":"trace-validator/v1"},"validator":{"enum":["junit","sarif","coverage","json"]},"requirements":{"type":"object"}},"additionalProperties":false}

@@ -1,6 +1,6 @@
 {
-  "intent": "Release v1.6.0 with complete evidence-gated evolution phases: schemas, Evidence Only cross-project experience store, bounded model adapter, isolated replay viewer, independent cost-aware Gates, bounded Sleep run history, refreshed portable Skill, and user-first bilingual documentation.",
-  "changed_path_budget": 36,
+  "intent": "Release v1.8.0 with Constitution-bound multi-target asset evolution, declarative audit RulePacks, reproducible audit feedback, fixture and shadow Gates, monotonic policy targets, refreshed documentation, and no automatic adoption.",
+  "changed_path_budget": 120,
   "allowed_paths": [
     "aet.intent.json",
     "PROJECT_MEMORY.md",
@@ -23,9 +23,21 @@
       "id": "regression-suite",
       "command": "uv run --no-editable --reinstall-package agent-engineering-toolkit python -m unittest discover -s tests -v",
       "evidence": [
-        "README.md",
-        "src/aet/learn.py",
-        "tests/test_learn.py"
+        ".aet/evidence/v1.8-tests.txt"
+      ]
+    },
+    {
+      "id": "package-build",
+      "command": "uv build",
+      "evidence": [
+        ".aet/evidence/v1.8-build.txt"
+      ]
+    },
+    {
+      "id": "business-flow",
+      "command": "uv run python -m unittest tests.test_audit_rule_evolution tests.test_policy_targets -v",
+      "evidence": [
+        ".aet/evidence/v1.8-business.txt"
       ]
     }
   ]

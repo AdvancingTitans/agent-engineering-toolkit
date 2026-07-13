@@ -5,7 +5,7 @@ description: Produce evidence-backed audits and intent-to-diff reviews for codin
 
 # Agent Engineering Toolkit
 
-Current Skill version: `1.7.0` (Evidence-Gated Evolution Lab)
+Current Skill version: `1.8.0` (Evidence-Gated Evolution Lab)
 
 Use the `aet` CLI as the source of truth. The host agent may choose its own
 shell or package runner, but must preserve the commands' exit status and attach
@@ -14,8 +14,8 @@ the emitted evidence instead of paraphrasing it as unverified fact.
 <!-- aet-learn:immutable -->
 `UNKNOWN` is never a pass. Only `aet trace` executes explicit argv after `--`.
 Audit, review, and Evidence Pack compilation stay deterministic and local. AET
-may propose, replay, gate, and stage a Skill candidate, but it never adopts a
-candidate, commits it, pushes it, or lowers an evidence contract automatically.
+may propose, replay, gate, and stage a Constitution-bound asset candidate, but
+it never adopts a candidate, commits it, pushes it, or lowers an evidence contract automatically.
 <!-- aet-learn:end -->
 
 ## Route the request
@@ -30,7 +30,7 @@ Choose one initial surface. If the request is ambiguous, default to read-only `a
 | Understand why a repo changed | `aet evolve plan/collect/build/report` | Evolution Pack |
 | Record which local context was available | `aet context discover/record/verify` | Context Manifest |
 | Preserve a source-backed project decision | `aet decision init/add/verify` | Decision Ledger |
-| Improve a marked Skill block from recurring evidence | `aet learn harvest/inspect/mine/propose/replay/gate/stage` | Staged candidate + Gate report |
+| Improve a bounded Skill or audit asset | `aet learn target list`, then `harvest/inspect/mine/propose/replay/gate/stage` | Staged candidate + target-specific Gate report |
 
 Repo Archaeologist example: “Explain why this repository adopted a plugin architecture; link releases, PRs, Issues, commits, and README changes, and separate direct evidence from candidates.” Use `aet evolve`; never invent author intent.
 
@@ -160,6 +160,14 @@ Repo Archaeologist example: “Explain why this repository adopted a plugin arch
     samples as `INFRASTRUCTURE_ERROR` or `INCONCLUSIVE`, never as a candidate
     pass. Codex/Claude workspace copies protect the production repository but
     do not prove OS-level network denial; report that boundary as PARTIAL.
+
+    For non-Skill targets, always pass an explicit `--target-type`. Audit Rules
+    use the four partitioned audit-fixture suites and must later accumulate a
+    candidate-bound Shadow aggregate; only Skill candidates use real Agent
+    runners. Audit Profile, Review Policy, Trace Validator, and Triage Policy
+    use deterministic policy suites and bounded JSON Patch operations. Never
+    describe a policy Gate as observed Agent behavior or a synthetic Shadow
+    aggregate as real multi-repository validation.
 <!-- aet-learn:end -->
 
 ## Portable use

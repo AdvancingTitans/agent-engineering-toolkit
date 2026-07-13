@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "agent-engineering-toolkit"
-version = "1.7.0"
-description = "Evidence-first audits, change gates, execution proof, repository archaeology, and evidence-gated Skill evolution with isolated real-host rollouts."
+version = "1.8.0"
+description = "Evidence-first audits, change gates, execution proof, repository archaeology, and evidence-gated evolution for Skills and bounded audit assets."
 readme = "README.md"
 requires-python = ">=3.11"
 license = "MIT"
@@ -24,6 +24,38 @@ aet = "aet.cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.setuptools.package-data]
+aet = ["rulepacks_builtin.json"]
+
+[tool.setuptools.data-files]
+"share/aet/schemas" = ["schemas/*.json"]
+"share/aet/evolution/audit/core" = ["tests/evolution/audit/core/*.json"]
+"share/aet/evolution/audit/validation" = ["tests/evolution/audit/validation/*.json"]
+"share/aet/evolution/audit/held_out" = ["tests/evolution/audit/held_out/*.json"]
+"share/aet/evolution/audit/adversarial" = ["tests/evolution/audit/adversarial/*.json"]
+"share/aet/fixtures/audit-evolution/duplicate" = ["tests/fixtures/audit-evolution/duplicate/*"]
+"share/aet/fixtures/audit-evolution/empty" = ["tests/fixtures/audit-evolution/empty/*"]
+"share/aet/fixtures/audit-evolution/example-block" = ["tests/fixtures/audit-evolution/example-block/*"]
+"share/aet/fixtures/audit-evolution/heldout-duplicate" = ["tests/fixtures/audit-evolution/heldout-duplicate/*"]
+"share/aet/fixtures/audit-evolution/heldout-empty" = ["tests/fixtures/audit-evolution/heldout-empty/*"]
+"share/aet/fixtures/audit-evolution/heldout-missing-absolute" = ["tests/fixtures/audit-evolution/heldout-missing-absolute/*"]
+"share/aet/fixtures/audit-evolution/heldout-missing-command" = ["tests/fixtures/audit-evolution/heldout-missing-command/*"]
+"share/aet/fixtures/audit-evolution/heldout-missing-link" = ["tests/fixtures/audit-evolution/heldout-missing-link/*"]
+"share/aet/fixtures/audit-evolution/heldout-package-script-missing" = ["tests/fixtures/audit-evolution/heldout-package-script-missing/*"]
+"share/aet/fixtures/audit-evolution/heldout-valid" = ["tests/fixtures/audit-evolution/heldout-valid/*"]
+"share/aet/fixtures/audit-evolution/large-root" = ["tests/fixtures/audit-evolution/large-root/*"]
+"share/aet/fixtures/audit-evolution/missing-absolute" = ["tests/fixtures/audit-evolution/missing-absolute/*"]
+"share/aet/fixtures/audit-evolution/missing-command" = ["tests/fixtures/audit-evolution/missing-command/*"]
+"share/aet/fixtures/audit-evolution/missing-link" = ["tests/fixtures/audit-evolution/missing-link/*"]
+"share/aet/fixtures/audit-evolution/package-script-missing" = ["tests/fixtures/audit-evolution/package-script-missing/*"]
+"share/aet/fixtures/audit-evolution/valid" = ["tests/fixtures/audit-evolution/valid/*"]
+"share/aet/fixtures/audit-evolution/skill-missing-frontmatter/skills/example" = ["tests/fixtures/audit-evolution/skill-missing-frontmatter/skills/example/*"]
+"share/aet/fixtures/audit-evolution/skill-name-mismatch/skills/example" = ["tests/fixtures/audit-evolution/skill-name-mismatch/skills/example/*"]
+"share/aet/fixtures/audit-evolution/skill-no-verification/skills/example" = ["tests/fixtures/audit-evolution/skill-no-verification/skills/example/*"]
+"share/aet/fixtures/audit-evolution/heldout-skill-missing-frontmatter/skills/heldout" = ["tests/fixtures/audit-evolution/heldout-skill-missing-frontmatter/skills/heldout/*"]
+"share/aet/fixtures/audit-evolution/heldout-skill-name-mismatch/skills/heldout" = ["tests/fixtures/audit-evolution/heldout-skill-name-mismatch/skills/heldout/*"]
+"share/aet/fixtures/audit-evolution/heldout-skill-no-verification/skills/heldout" = ["tests/fixtures/audit-evolution/heldout-skill-no-verification/skills/heldout/*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

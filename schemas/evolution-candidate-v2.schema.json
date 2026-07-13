@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://advancingtitans.github.io/aet/schemas/evolution-candidate-v2.schema.json",
+  "title": "AET Evolution Candidate v2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "report_kind", "candidate_id", "target", "candidate_sha256", "operations", "budgets", "adoption", "constitution_sha256"],
+  "properties": {
+    "schema_version": {"const": "evolution-candidate/v2"},
+    "report_kind": {"const": "evolution_candidate"},
+    "candidate_id": {"type": "string", "pattern": "^CAND-"},
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "path", "baseline_sha256"],
+      "properties": {
+        "type": {"enum": ["skill", "audit-rule", "audit-profile", "review-policy", "trace-validator", "triage-policy"]},
+        "path": {"type": "string", "minLength": 1},
+        "baseline_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+      }
+    },
+    "candidate_artifact": {"type": "string", "minLength": 1},
+    "candidate_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "source_patterns": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "operations": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["op", "path"],
+        "properties": {
+          "op": {"enum": ["add", "replace"]},
+          "path": {"type": "string", "pattern": "^/"},
+          "before_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+          "value": {}
+        },
+        "additionalProperties": false
+      }
+    },
+    "budgets": {
+      "type": "object",
+      "required": ["max_operations"],
+      "properties": {
+        "max_operations": {"type": "integer", "minimum": 1},
+        "max_rules_added": {"type": "integer", "minimum": 0},
+        "max_severity_reductions": {"const": 0},
+        "max_added_characters": {"type": "integer", "minimum": 0},
+        "max_deleted_characters": {"type": "integer", "minimum": 0}
+      },
+      "additionalProperties": false
+    },
+    "adoption": {"const": "human_required"},
+    "constitution_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+  }
+}

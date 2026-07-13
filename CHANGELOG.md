@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+- Reworked the English and Chinese project entrypoints around AET's current
+  position as an evidence-driven control plane for Agent-engineered
+  repositories. The new narrative leads with the verified v1.9 real-host Gate,
+  makes the Evidence → Quality → bounded Evolution → human-authority model
+  explicit, sharpens toolchain differentiation and trust boundaries, and
+  replaces the previous Mermaid renders with bilingual, editable dark-console
+  architecture diagrams.
+
 ## 1.9.0 — 2026-07-14
 
 - Added a deterministic Quality layer: `aet quality diagnose` maps structured
@@ -31,8 +39,10 @@
 - Added deterministic business-flow fixtures and separated core, validation,
   and held-out real-host proof suites. A manual Codex workflow can produce a
   commit-, version-, candidate-, task-, fixture-, and raw-gate-bound release
-  artifact; the release workflow reconstructs and verifies it. This changelog
-  does not claim that an external real-host run has already passed.
+  artifact; the release workflow reconstructs and verifies it. The v1.9 tag was
+  locally gated with authenticated Codex CLI 0.144.1: core, validation and
+  held-out each produced 6/6 candidate successes, 0/6 baseline successes, zero
+  infrastructure failures and exact paired p=0.03125.
 - Pinned the release runner to `@openai/codex@0.144.1`; process runners now
   capture and cache the canonical `--version` output, bind runner name/version
   through raw manifests, observed replays, observed Gates, and release

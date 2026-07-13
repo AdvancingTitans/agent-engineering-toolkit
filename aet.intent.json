@@ -1,31 +1,19 @@
 {
-  "intent": "Release v1.9.0 with a truthful evidence-to-quality loop: normalized Evidence Pack, Run, feedback, and real-host ingestion; fail-closed external evaluator contracts; deterministic quality diagnostics and regression-candidate promotion; reliability statistics; fresh business-flow evidence; aligned documentation; and human-only adoption.",
-  "changed_path_budget": 120,
+  "intent": "Reposition the English and Chinese README around AET's implemented evidence-driven control-plane architecture, replace both architecture diagrams with accurate editable dark-console visuals, and publish only reproducible v1.9 real-host comparison evidence without changing runtime behavior.",
+  "changed_path_budget": 12,
   "allowed_paths": [
     "aet.intent.json",
-    "PROJECT_MEMORY.md",
-    "README.md",
     "CHANGELOG.md",
-    "CONTRIBUTING.md",
-    "docs/**",
-    "eval/**",
-    ".github/**",
-    "examples/**",
-    "pyproject.toml",
-    "uv.lock",
-    "src/aet/**",
-    "tests/**",
-    "schemas/**",
-    "skills/agent-engineering-toolkit/**"
+    "README.md",
+    "docs/README.zh-CN.md",
+    "docs/assets/aet-architecture-en.html",
+    "docs/assets/aet-architecture-en.mmd",
+    "docs/assets/aet-architecture-en.png",
+    "docs/assets/aet-architecture-zh-cn.html",
+    "docs/assets/aet-architecture-zh-cn.mmd",
+    "docs/assets/aet-architecture-zh-cn.png"
   ],
   "required_proofs": [
-    {
-      "id": "regression-suite",
-      "command": ".venv/bin/python -m pytest -q",
-      "evidence": [
-        ".aet/evidence/v1.9-tests.json"
-      ]
-    },
     {
       "id": "business-flow",
       "command": ".venv/bin/python -m pytest tests/test_business_quality_flows.py tests/test_quality_loop.py tests/test_learn_observed.py -q",
@@ -34,25 +22,18 @@
       ]
     },
     {
-      "id": "package-build",
-      "command": "uv build",
-      "evidence": [
-        ".aet/evidence/v1.9-build.json"
-      ]
-    },
-    {
-      "id": "wheel-smoke",
-      "command": "uv run --isolated --with dist/agent_engineering_toolkit-1.9.0-py3-none-any.whl aet --version",
-      "evidence": [
-        ".aet/evidence/v1.9-wheel.json"
-      ]
-    },
-    {
       "id": "real-host-gate",
       "command": ".venv/bin/python eval/real-agent/run_real_host_gate.py --root . --release-dir .aet/release/v1.9 --expected-version 1.9.0",
       "evidence": [
         ".aet/release/v1.9/real-host-gate.json",
         ".aet/release/v1.9/raw-gate.json"
+      ]
+    },
+    {
+      "id": "readme-regression",
+      "command": ".venv/bin/python -m pytest -q",
+      "evidence": [
+        ".aet/evidence/readme-regression.json"
       ]
     }
   ]

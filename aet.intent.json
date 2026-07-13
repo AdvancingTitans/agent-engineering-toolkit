@@ -1,5 +1,5 @@
 {
-  "intent": "Release v1.8.0 with Constitution-bound multi-target asset evolution, declarative audit RulePacks, reproducible audit feedback, fixture and shadow Gates, monotonic policy targets, refreshed documentation, and no automatic adoption.",
+  "intent": "Release v1.9.0 with a truthful evidence-to-quality loop: normalized Evidence Pack, Run, feedback, and real-host ingestion; fail-closed external evaluator contracts; deterministic quality diagnostics and regression-candidate promotion; reliability statistics; fresh business-flow evidence; aligned documentation; and human-only adoption.",
   "changed_path_budget": 120,
   "allowed_paths": [
     "aet.intent.json",
@@ -21,23 +21,38 @@
   "required_proofs": [
     {
       "id": "regression-suite",
-      "command": "uv run --no-editable --reinstall-package agent-engineering-toolkit python -m unittest discover -s tests -v",
+      "command": ".venv/bin/python -m pytest -q",
       "evidence": [
-        ".aet/evidence/v1.8-tests.txt"
+        ".aet/evidence/v1.9-tests.json"
+      ]
+    },
+    {
+      "id": "business-flow",
+      "command": ".venv/bin/python -m pytest tests/test_business_quality_flows.py tests/test_quality_loop.py tests/test_learn_observed.py -q",
+      "evidence": [
+        ".aet/evidence/v1.9-business.json"
       ]
     },
     {
       "id": "package-build",
       "command": "uv build",
       "evidence": [
-        ".aet/evidence/v1.8-build.txt"
+        ".aet/evidence/v1.9-build.json"
       ]
     },
     {
-      "id": "business-flow",
-      "command": "uv run python -m unittest tests.test_audit_rule_evolution tests.test_policy_targets -v",
+      "id": "wheel-smoke",
+      "command": "uv run --isolated --with dist/agent_engineering_toolkit-1.9.0-py3-none-any.whl aet --version",
       "evidence": [
-        ".aet/evidence/v1.8-business.txt"
+        ".aet/evidence/v1.9-wheel.json"
+      ]
+    },
+    {
+      "id": "real-host-gate",
+      "command": ".venv/bin/python eval/real-agent/run_real_host_gate.py --root . --release-dir .aet/release/v1.9 --expected-version 1.9.0",
+      "evidence": [
+        ".aet/release/v1.9/real-host-gate.json",
+        ".aet/release/v1.9/raw-gate.json"
       ]
     }
   ]

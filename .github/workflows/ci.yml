@@ -10,7 +10,23 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v5
-      - run: uv run --no-editable --reinstall-package agent-engineering-toolkit python -m unittest discover -s tests -v
+      - name: Full test suite
+        run: uv run --with pytest python -m pytest -q
+      - name: Deterministic business quality flows
+        run: uv run --with pytest python -m pytest tests/test_business_quality_flows.py -q
+      - name: Schema and contract verification
+        run: uv run --with pytest python -m pytest tests/test_learn_contracts.py tests/test_quality_loop.py -q
+      - name: Verify real-agent suites
+        run: |
+          mkdir -p .aet/evidence/suites
+          uv run aet learn suite verify --suite eval/real-agent/core --output .aet/evidence/suites/core.json
+          uv run aet learn suite verify --suite eval/real-agent/validation --output .aet/evidence/suites/validation.json
+          uv run aet learn suite verify --suite eval/real-agent/held-out --output .aet/evidence/suites/held-out.json
+          uv run aet learn suite verify --suite eval/real-agent/deterministic --output .aet/evidence/suites/deterministic.json
       - run: uv run --no-editable --reinstall-package agent-engineering-toolkit aet audit . --strict --format json --output .aet/evidence/audit.json
-      - run: uv build
-      - run: uv run --isolated --with "$(find dist -name '*.whl' -print -quit)" aet --version
+      - name: Build and smoke-test the exact wheel version
+        run: |
+          source_version="$(uv run python -c 'import aet; print(aet.__version__)')"
+          uv build
+          wheel_version="$(uv run --isolated --with "$(find dist -name '*.whl' -print -quit)" aet --version)"
+          test "$wheel_version" = "$source_version"

@@ -1,0 +1,12 @@
+{
+  "intent": "Run the deterministic unit-test proof and retain its report.",
+  "changed_path_budget": 6,
+  "allowed_paths": [".aet/**", "reports/**"],
+  "required_proofs": [
+    {
+      "id": "unit-tests",
+      "command": "python3 bin/run_proof.py",
+      "evidence": ["reports/unit-tests.txt"]
+    }
+  ]
+}

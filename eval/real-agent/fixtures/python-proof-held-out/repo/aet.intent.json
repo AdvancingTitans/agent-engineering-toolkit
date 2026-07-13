@@ -1,0 +1,6 @@
+{
+  "intent": "Verify the held-out string contract with a fresh Trace.",
+  "changed_path_budget": 4,
+  "allowed_paths": [".aet/**", "reports/**"],
+  "required_proofs": [{"id": "held-out-tests", "command": "python3 bin/run_proof.py", "evidence": ["reports/held-out-tests.txt"]}]
+}

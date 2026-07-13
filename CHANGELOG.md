@@ -2,6 +2,48 @@
 
 ## Unreleased
 
+## 1.9.0 — 2026-07-14
+
+- Added a deterministic Quality layer: `aet quality diagnose` maps structured
+  failure phenomena to explicit owner, action, confidence, review route, and
+  bounded repair surface without rewriting source status; `quality promote`
+  stages confirmed badcases as canonical, validation-only Learn Task v2
+  candidates with immutable diagnosis provenance and deduplicated support.
+- Added Learn Task v2 contracts for fixture integrity, ordered tool calls,
+  argument constraints, proof/artifact requirements, command and change
+  budgets, and deterministic suite verification. Observed replay now reports
+  repeated-run any-success, all-success, Wilson intervals, paired McNemar
+  statistics, and explicit `INCONCLUSIVE` / `INFRASTRUCTURE_ERROR` states.
+- Hardened observed execution by reporting scripted network isolation as
+  `PARTIAL`, rejecting unsupported `enforced-deny` before execution, copying and
+  hashing fixtures without following links or special files, and accepting
+  Trace credit only through the injected `./.aet-rollout/bin/aet trace` path.
+  Snapshot state is independently recomputed without self-referencing the Trace
+  JSON, and declared artifacts/logs are bound to real workspace files by source
+  hash, size, fixed log path, independent redaction, and freshness. Outer child
+  argv, Trace argv, and the intent proof command must match exactly; proof
+  evidence must be an array.
+- Clarified the privacy boundary between private raw rollout material and
+  Evidence Only exports, including explicit environment-name allowlists for
+  real-host runners. Process adapters require both Task permission and the
+  `inherit_home` switch for `HOME`; the scripted adapter uses only the Task
+  allowlist. Environment inheritance never makes secret values public evidence.
+- Added deterministic business-flow fixtures and separated core, validation,
+  and held-out real-host proof suites. A manual Codex workflow can produce a
+  commit-, version-, candidate-, task-, fixture-, and raw-gate-bound release
+  artifact; the release workflow reconstructs and verifies it. This changelog
+  does not claim that an external real-host run has already passed.
+- Pinned the release runner to `@openai/codex@0.144.1`; process runners now
+  capture and cache the canonical `--version` output, bind runner name/version
+  through raw manifests, observed replays, observed Gates, and release
+  manifests, reject blank/unknown version probes, and reject mismatched release
+  provenance.
+- Reframed AET as an evidence-driven Agent engineering quality and control
+  layer, refreshed the bilingual user guide and architecture, and documented
+  what AET deliberately does not provide: general benchmarking, LLM-Judge-led
+  scoring, automatic semantic RCA/clustering, automatic repair/adoption, or an
+  online ticket and business-metrics platform.
+
 ## 1.8.0 — 2026-07-13
 
 - Generalized Evidence-Gated Evolution from a Skill-only pipeline into six

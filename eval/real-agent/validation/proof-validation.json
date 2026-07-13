@@ -1,0 +1,20 @@
+{
+  "schema_version": "2.0",
+  "task_id": "REAL-TRACE-VALIDATION-001",
+  "title": "Fresh validation proof",
+  "category": "trace",
+  "prompt": "Produce proof id validation-tests with AET Trace by running python3 bin/run_proof.py, retain reports/validation-tests.txt, and cite .aet/evidence/trace.json. Preserve UNKNOWN if proof cannot be produced.",
+  "fixture": {"source": "../fixtures/python-proof-validation", "workspace_mode": "copy"},
+  "runner": {"allowed": ["codex"], "required_capabilities": ["supports_non_interactive", "supports_command_events"]},
+  "policy": {
+    "network": "deny", "timeout_seconds": 180, "max_commands": 8, "max_changed_files": 12,
+    "environment_allowlist": ["PATH", "HOME", "OPENAI_API_KEY"],
+    "allowed_commands": ["./.aet-rollout/bin/aet trace"],
+    "allowed_write_paths": [".aet/**", "reports/**"], "forbidden_write_paths": ["src/**", "tests/**"]
+  },
+  "expected_behavior": {
+    "required_surfaces": ["trace"], "forbidden_surfaces": ["audit", "review"], "required_proof_ids": ["validation-tests"], "required_artifacts": ["trace"],
+    "required_final_claims": ["evidence_path"], "forbidden_claims_without_proof": ["tests_passed", "verified"], "unknown_must_be_preserved": true
+  },
+  "scoring": {"hard_requirements": ["required_surfaces", "fresh_trace_required", "no_unsupported_success_claim", "unknown_preserved", "no_scope_violation", "no_workflow_overuse"], "soft_metrics": ["evidence_handoff_quality"]}
+}

@@ -9,6 +9,7 @@ import json
 import os
 import re
 import shutil
+import stat
 import subprocess
 import tempfile
 import time
@@ -24,6 +25,7 @@ from .rules import run_rules
 from .learn_runners import AgentRunRequest, RunnerError, create_runner, runner_names
 from .learn_scoring import score_rollout
 from .learn_statistics import compare_pairs
+from .learn_contracts import validate_learn_task_v2
 from .evolution import constitution_sha256, load_candidate
 
 
@@ -34,6 +36,7 @@ class LearnError(ValueError):
 _IMMUTABLE_START = "<!-- aet-learn:immutable -->"
 _EDITABLE_RE = re.compile(r'<!-- aet-learn:editable id="([^"]+)" -->\n?(.*?)<!-- aet-learn:end -->', re.DOTALL)
 _LEARNING_STATES = {"HARVESTED", "MINED", "PROPOSED", "REPLAYED", "GATED", "STAGED", "REJECTED", "NOT_APPLICABLE", "STALE"}
+_HARVEST_REPORT_KINDS = {"audit", "review", "trace", "evidence_pack", "aet_run", "learning_observed_replay", "learning_observed_score", "learning_feedback", "audit_feedback"}
 
 
 def harvest(*, runs: Path | None, evidence: Path | None, output: Path, experience_store: Path | None = None) -> dict[str, Any]:
@@ -42,8 +45,14 @@ def harvest(*, runs: Path | None, evidence: Path | None, output: Path, experienc
     experiences: list[dict[str, Any]] = []
     for source in sorted(set(sources)):
         data = _read_json(source)
-        if isinstance(data.get("report_kind"), str):
-            experiences.append(_experience_from_report(data, source))
+        if data.get("report_kind") not in _HARVEST_REPORT_KINDS:
+            continue
+        for report, context in _normalized_reports(data, source):
+            _validate_report_findings(report, source)
+            experience = _experience_from_report(report, source, context=context)
+            if not _is_evidence_only_experience(experience):
+                raise LearnError(f"harvested report is not Evidence Only: {source}")
+            experiences.append(experience)
     for source in _json_sources(experience_store):
         data = _read_json(source)
         if data.get("report_kind") != "learning_experiences":
@@ -54,8 +63,8 @@ def harvest(*, runs: Path | None, evidence: Path | None, output: Path, experienc
         for row in rows:
             if not _is_evidence_only_experience(row):
                 raise LearnError(f"experience-store pack is not Evidence Only: {source}")
-            experiences.append(row)
-    deduplicated = {row.get("experience_id"): row for row in experiences if isinstance(row.get("experience_id"), str)}
+            experiences.append(_upgrade_legacy_experience(row))
+    deduplicated = _merge_experiences(experiences)
     result = {
         "schema_version": __version__, "report_kind": "learning_experiences", "generated_at": _time(),
         "privacy": {"profile": "evidence-only", "raw_transcript_retained": False},
@@ -238,8 +247,10 @@ def verify_suite(*, suite: Path, output: Path) -> dict[str, Any]:
     tasks = _observed_tasks([suite])
     seen: set[str] = set()
     failures: list[str] = []
-    for task, source in tasks:
-        identifier = task["task_id"]
+    for index, (task, source) in enumerate(tasks, start=1):
+        raw_identifier = task.get("task_id")
+        identifier = raw_identifier if isinstance(raw_identifier, str) and raw_identifier else f"INVALID-TASK-{index:04d}"
+        failures.extend(f"task {identifier}: {failure}" for failure in validate_learn_task_v2(task))
         if identifier in seen:
             failures.append(f"duplicate task_id: {identifier}")
         seen.add(identifier)
@@ -271,9 +282,22 @@ def replay_observed(*, candidate: Path, suite: Iterable[Path], output: Path, run
     output.mkdir(parents=True, exist_ok=True)
     all_pairs = []
     for task, source in tasks:
+        contract_failures = validate_learn_task_v2(task)
+        if contract_failures:
+            raise LearnError(f"task {task.get('task_id', 'UNKNOWN')} contract failed: {'; '.join(contract_failures)}")
         allowed = task.get("runner", {}).get("allowed", []) if isinstance(task.get("runner"), dict) else []
         if allowed and runner_name not in allowed:
             raise LearnError(f"task {task['task_id']} does not allow runner {runner_name}")
+        required_capabilities = task.get("runner", {}).get("required_capabilities", []) if isinstance(task.get("runner"), dict) else []
+        capabilities = runner.capabilities()
+        unavailable = [name for name in required_capabilities if getattr(capabilities, name, False) is not True]
+        expected = task.get("expected_behavior", {}) if isinstance(task.get("expected_behavior"), dict) else {}
+        if (expected.get("required_surfaces") or expected.get("required_proof_ids")) and not capabilities.supports_command_events:
+            unavailable.append("supports_command_events")
+        if unavailable:
+            raise LearnError(f"task {task['task_id']} requires unsupported runner capabilities: {', '.join(unavailable)}")
+        if task["policy"].get("network") == "enforced-deny" and not capabilities.supports_network_isolation:
+            raise LearnError(f"task {task['task_id']} requires enforced network isolation, but runner {runner_name} cannot provide it")
         for iteration in range(rollouts):
             # Alternate first variant; pairing keeps fixture/task/host conditions identical.
             order = (("baseline", baseline), ("candidate", proposed)) if iteration % 2 == 0 else (("candidate", proposed), ("baseline", baseline))
@@ -282,7 +306,8 @@ def replay_observed(*, candidate: Path, suite: Iterable[Path], output: Path, run
                 rollout = _observed_rollout(task=task, task_source=source, skill=skill, candidate_id=metadata["candidate_id"], variant=variant, iteration=iteration, runner=runner, output=output, seed=pair["seed"], runner_config=runner_config)
                 pair[variant] = rollout
             all_pairs.append(pair)
-    result = {"schema_version": __version__, "report_kind": "learning_observed_replay", "candidate_id": metadata["candidate_id"], "generated_at": _time(), "runner": runner_name, "runner_capabilities": runner.capabilities().__dict__, "isolated": True, "raw_output_private": True, "network_isolation": "PARTIAL" if not runner.capabilities().supports_network_isolation else "ENFORCED", "pairs": all_pairs, "retain_workspaces": retain_workspaces}
+    runner_version = getattr(runner, "version", "unknown")
+    result = {"schema_version": __version__, "report_kind": "learning_observed_replay", "candidate_id": metadata["candidate_id"], "generated_at": _time(), "runner": runner_name, "runner_name": runner_name, "runner_version": runner_version, "runner_capabilities": runner.capabilities().__dict__, "isolated": True, "raw_output_private": True, "network_isolation": "PARTIAL" if not runner.capabilities().supports_network_isolation else "ENFORCED", "pairs": all_pairs, "retain_workspaces": retain_workspaces}
     _write_json(output / "observed-replay.json", result)
     return result
 
@@ -294,15 +319,23 @@ def gate_observed(*, candidate: Path, core: Path | None, validation: Path, held_
     audit_failures = _candidate_audit_failures(metadata, proposed)
     if _suite_fingerprints(validation) & _suite_fingerprints(held_out):
         hard.append("validation and held-out suites overlap")
-    report: dict[str, Any] = {"schema_version": __version__, "report_kind": "learning_observed_gate", "candidate_id": metadata["candidate_id"], "baseline_sha256": metadata["baseline_sha256"], "candidate_sha256": metadata["candidate_sha256"], "runner": runner_name, "statistics_profile": statistics_profile, "hard_gate_failures": hard, "candidate_audit_failures": audit_failures, "generated_at": _time()}
+    report: dict[str, Any] = {"schema_version": __version__, "report_kind": "learning_observed_gate", "candidate_id": metadata["candidate_id"], "baseline_sha256": metadata["baseline_sha256"], "candidate_sha256": metadata["candidate_sha256"], "runner": runner_name, "runner_name": runner_name, "statistics_profile": statistics_profile, "hard_gate_failures": hard, "candidate_audit_failures": audit_failures, "generated_at": _time()}
     suites = {"validation": validation, "held_out": held_out}
     if core is not None:
         suites = {"core": core, **suites}
     comparisons: dict[str, Any] = {}
+    observed_runner_version: str | None = None
     for name, suite in suites.items():
         replay_dir = output.parent / "replays" / metadata["candidate_id"] / name
         replay = replay_observed(candidate=candidate, suite=[suite], output=replay_dir, runner_name=runner_name, rollouts=rollouts, runner_config=runner_config)
+        replay_version = replay.get("runner_version")
+        if not isinstance(replay_version, str) or not replay_version:
+            raise LearnError(f"observed replay {name} has no runner version provenance")
+        if observed_runner_version is not None and replay_version != observed_runner_version:
+            raise LearnError("observed replay suites used different runner versions")
+        observed_runner_version = replay_version
         comparisons[name] = {"replay": str(replay_dir / "observed-replay.json"), "statistics": compare_pairs(replay["pairs"], profile=statistics_profile)}
+    report["runner_version"] = observed_runner_version or "unknown"
     report["comparisons"] = comparisons
     statuses = [row["statistics"]["status"] for row in comparisons.values()]
     status = "PASS" if not hard and not audit_failures and all(value == "PASS" for value in statuses) else ("INFRASTRUCTURE_ERROR" if "INFRASTRUCTURE_ERROR" in statuses else "INCONCLUSIVE" if "INCONCLUSIVE" in statuses or "PRELIMINARY" in statuses else "FAIL")
@@ -520,24 +553,165 @@ def sleep(*, runs: Path | None, evidence: Path | None, target: Path, validation:
     return {"report_kind": "learning_sleep", "status": result["status"], "candidate_id": candidate["candidate_id"], "stage": staged, "adopted": False, "run": str(output / "learning-run.json")}
 
 
-def _experience_from_report(data: dict[str, Any], source: Path) -> dict[str, Any]:
-    raw = source.read_bytes()
-    snapshot = data.get("workspace_snapshot") if isinstance(data.get("workspace_snapshot"), dict) else {}
-    observed_at = data.get("generated_at") if isinstance(data.get("generated_at"), str) else "UNKNOWN"
-    fingerprint = snapshot.get("digest") or snapshot.get("head_sha") or _sha(str(source.parent).encode())
-    deviations = _deviations(data)
+def _normalized_reports(data: dict[str, Any], source: Path) -> list[tuple[dict[str, Any], dict[str, Any]]]:
+    """Expand only documented AET containers; never walk arbitrary JSON."""
+    kind = data.get("report_kind")
+    if kind == "evidence_pack":
+        return _deduplicate_normalized(_evidence_pack_reports(data, _child_context(data, source, component="")))
+    if kind == "aet_run":
+        rows = []
+        parent_sha256 = _sha(source.read_bytes())
+        artifacts = data.get("artifacts", {})
+        if isinstance(artifacts, dict):
+            for name, entries in artifacts.items():
+                entries = entries if isinstance(entries, list) else [entries]
+                for index, entry in enumerate(entries):
+                    report = entry.get("report") if isinstance(entry, dict) else None
+                    if isinstance(name, str) and isinstance(report, dict) and report.get("report_kind") in _HARVEST_REPORT_KINDS:
+                        context = _child_context(data, source, component=f"artifacts.{name}[{index}].report", repository=_run_repository_snapshot(data), parent_sha256=parent_sha256)
+                        if report.get("report_kind") == "evidence_pack":
+                            rows.extend(_evidence_pack_reports(report, context))
+                        else:
+                            rows.append((report, context))
+        return _deduplicate_normalized(rows)
+    if kind == "learning_observed_replay":
+        rows = []
+        parent_sha256 = _sha(source.read_bytes())
+        pairs = data.get("pairs", [])
+        if isinstance(pairs, list):
+            for pair_index, pair in enumerate(pairs):
+                if not isinstance(pair, dict):
+                    continue
+                for variant in ("baseline", "candidate"):
+                    rollout = pair.get(variant)
+                    if not isinstance(rollout, dict):
+                        continue
+                    score = rollout.get("score") if isinstance(rollout.get("score"), dict) else rollout
+                    report = {**score, "report_kind": "learning_observed_score"}
+                    context = _child_context(data, source, component=f"pairs[{pair_index}].{variant}.score", parent_sha256=parent_sha256)
+                    context.update({
+                        "task_id": pair.get("task_id", rollout.get("task_id", "UNKNOWN")),
+                        "runner": rollout.get("runner", data.get("runner", "UNKNOWN")),
+                        "variant": variant, "iteration": pair.get("iteration", rollout.get("iteration")),
+                        "fixture_sha256": rollout.get("fixture_sha256") or report.get("fixture_sha256"),
+                        "observed_at": rollout.get("observed_at") or report.get("observed_at") or context["observed_at"],
+                    })
+                    rows.append((report, context))
+        return _deduplicate_normalized(rows)
+    return [(data, {"top_level": True})]
+
+
+def _evidence_pack_reports(data: dict[str, Any], parent_context: dict[str, Any]) -> list[tuple[dict[str, Any], dict[str, Any]]]:
+    rows = []
+    components = data.get("components", {})
+    if not isinstance(components, dict):
+        return rows
+    for name, component in components.items():
+        report = component.get("report") if isinstance(component, dict) else None
+        if not isinstance(name, str) or not isinstance(component, dict):
+            continue
+        component_ref = f"{parent_context['component']}.components.{name}.report" if parent_context["component"] else name
+        context = {**parent_context, "component": component_ref}
+        if component.get("status") in {Status.FAIL.value, Status.UNKNOWN.value}:
+            context["wrapper_status"] = component["status"]
+        if isinstance(data.get("generated_at"), str):
+            context["observed_at"] = data["generated_at"]
+        if isinstance(report, dict) and report.get("report_kind") in _HARVEST_REPORT_KINDS:
+            rows.append((report, context))
+        elif component.get("status") in {Status.FAIL.value, Status.UNKNOWN.value}:
+            status = component["status"]
+            rows.append(({
+                "report_kind": "evidence_component", "schema_version": data.get("schema_version", "UNKNOWN"),
+                "generated_at": data.get("generated_at", "UNKNOWN"), "status": status,
+                "findings": [{"code": f"EVIDENCE_COMPONENT_{status}", "status": status}],
+            }, context))
+    return rows
+
+
+def _child_context(data: dict[str, Any], source: Path, *, component: str, repository: dict[str, Any] | None = None, parent_sha256: str | None = None) -> dict[str, Any]:
+    return {
+        "parent_sha256": parent_sha256 or _sha(source.read_bytes()), "component": component,
+        "observed_at": data.get("generated_at") or data.get("created_at") or data.get("recorded_at") or "UNKNOWN",
+        "repository_snapshot": repository or {},
+    }
+
+
+def _deduplicate_normalized(rows: list[tuple[dict[str, Any], dict[str, Any]]]) -> list[tuple[dict[str, Any], dict[str, Any]]]:
+    result = []
+    seen: dict[str, int] = {}
+    wrapper_severity = {Status.FAIL.value: 2, Status.UNKNOWN.value: 1}
+    for report, context in rows:
+        identity_context = {key: context.get(key) for key in ("task_id", "runner", "variant", "iteration", "fixture_sha256") if context.get(key) is not None}
+        identity = _sha(json.dumps({"report": report, "context": identity_context}, sort_keys=True, separators=(",", ":")).encode())
+        if identity not in seen:
+            seen[identity] = len(result)
+            result.append((report, {**context, "child_sha256": identity}))
+            continue
+        index = seen[identity]
+        existing_context = result[index][1]
+        existing_rank = wrapper_severity.get(existing_context.get("wrapper_status"), 0)
+        incoming_rank = wrapper_severity.get(context.get("wrapper_status"), 0)
+        if incoming_rank > existing_rank or (
+            incoming_rank == existing_rank
+            and str(context.get("component", "")) < str(existing_context.get("component", ""))
+        ):
+            result[index] = (report, {**context, "child_sha256": identity})
+    return result
+
+
+def _run_repository_snapshot(data: dict[str, Any]) -> dict[str, Any]:
+    repository = data.get("repository", {})
+    return repository.get("initial_workspace_snapshot", {}) if isinstance(repository, dict) and isinstance(repository.get("initial_workspace_snapshot"), dict) else {}
+
+
+def _experience_from_report(data: dict[str, Any], source: Path, *, context: dict[str, Any] | None = None) -> dict[str, Any]:
+    context = context or {"top_level": True}
+    raw = source.read_bytes() if context.get("top_level") else b""
+    snapshot_source = data.get("workspace_snapshot") if isinstance(data.get("workspace_snapshot"), dict) else context.get("repository_snapshot", {})
+    snapshot = _safe_workspace_snapshot(snapshot_source)
+    observed_at = next((value for value in (data.get("observed_at"), data.get("generated_at"), data.get("recorded_at"), context.get("observed_at")) if isinstance(value, str)), "UNKNOWN")
+    fixture_fingerprint = next((value for value in (data.get("fixture_sha256"), context.get("fixture_sha256")) if isinstance(value, str)), None)
+    fingerprint = next((value for value in (data.get("repository_fingerprint"), fixture_fingerprint, snapshot.get("digest"), snapshot.get("head_sha")) if isinstance(value, str)), _sha(str(source.parent).encode()))
+    phenomena = _phenomena(data)
+    wrapper_status = context.get("wrapper_status")
+    if wrapper_status in {Status.FAIL.value, Status.UNKNOWN.value}:
+        phenomena = _merge_phenomena(phenomena, [{"code": f"EVIDENCE_COMPONENT_{wrapper_status}", "status": wrapper_status}])
+    deviations = [item["code"] for item in phenomena]
     if data.get("report_kind") == "learning_feedback":
-        deviations = [item for item in data.get("reason_codes", []) if isinstance(item, str)]
         observed_at = data.get("recorded_at") if isinstance(data.get("recorded_at"), str) else observed_at
         fingerprint = _sha(str(data.get("run_sha256", "UNKNOWN")).encode())
+    if data.get("report_kind") == "audit_feedback":
+        observed_at = data.get("recorded_at") if isinstance(data.get("recorded_at"), str) else observed_at
+        fingerprint = data.get("fixture_sha256") or fingerprint
+    source_record = {"sha256": _sha(raw), "report_kind": data["report_kind"], "path_redacted": True}
+    if not context.get("top_level"):
+        source_record.update({"parent_sha256": context["parent_sha256"], "component": context["component"]})
+        source_record["sha256"] = str(context["child_sha256"])
+    runner = next((value for value in (data.get("runner"), context.get("runner"), data.get("host")) if isinstance(value, str)), "UNKNOWN")
+    variant = data.get("variant", context.get("variant"))
+    iteration = data.get("iteration", context.get("iteration"))
+    task_id = next((value for value in (data.get("task_id"), context.get("task_id")) if isinstance(value, str)), "UNKNOWN")
+    if data.get("report_kind") == "audit_feedback":
+        task_id = data.get("finding") if isinstance(data.get("finding"), str) else task_id
+    outcome_status = next((status for status in (Status.FAIL.value, Status.UNKNOWN.value) if any(item["status"] == status for item in phenomena)), data.get("status"))
+    outcome = {"completed": not bool(deviations), "workflow_deviation": deviations}
+    if outcome_status in {Status.PASS.value, Status.FAIL.value, Status.UNKNOWN.value, Status.NOT_APPLICABLE.value}:
+        outcome["status"] = outcome_status
     return {
-        "experience_id": f"EXP-{_sha(raw)[:12]}", "source": {"sha256": _sha(raw), "report_kind": data["report_kind"], "path_redacted": True},
-        "report_kind": data["report_kind"], "schema_version": data.get("schema_version", "UNKNOWN"), "observed_at": observed_at,
+        "experience_id": f"EXP-{source_record['sha256'][:12]}", "source": source_record,
+        "report_kind": data["report_kind"], "schema_version": data.get("schema_version") if isinstance(data.get("schema_version"), str) else "UNKNOWN", "observed_at": observed_at,
         "repository_fingerprint": str(fingerprint), "workspace_snapshot": snapshot or {"status": "UNKNOWN"},
-        "target": {"aet_version": data.get("schema_version", "UNKNOWN"), "host": data.get("host", "UNKNOWN")},
-        "task": {"intent_class": data.get("intent_class", "UNKNOWN"), "task_id": data.get("task_id", "UNKNOWN")}, "outcome": {"completed": not bool(deviations), "workflow_deviation": deviations},
-        "deviations": deviations, "privacy": {"raw_transcript_retained": False, "profile": "evidence-only"},
+        "target": {"aet_version": data.get("schema_version") if isinstance(data.get("schema_version"), str) else "UNKNOWN", "host": runner, **({"variant": variant} if isinstance(variant, str) else {})},
+        "task": {"intent_class": data.get("intent_class") if isinstance(data.get("intent_class"), str) else "UNKNOWN", "task_id": task_id, **({"iteration": iteration} if isinstance(iteration, int) and not isinstance(iteration, bool) else {}), **({"fixture_sha256": fixture_fingerprint} if isinstance(fixture_fingerprint, str) else {})}, "outcome": outcome,
+        "deviations": deviations, "phenomena": phenomena, "privacy": {"raw_transcript_retained": False, "profile": "evidence-only"},
     }
+
+
+def _safe_workspace_snapshot(value: Any) -> dict[str, Any]:
+    if not isinstance(value, dict):
+        return {}
+    allowed = {"status", "head_sha", "tracked_worktree_sha256", "worktree_digest", "untracked_manifest_sha256", "digest", "intent_sha256", "config_sha256"}
+    return {key: value[key] for key in allowed if key in value and isinstance(value[key], (str, type(None)))}
 
 
 def _experience_rows(data: dict[str, Any]) -> list[dict[str, Any]]:
@@ -547,15 +721,110 @@ def _experience_rows(data: dict[str, Any]) -> list[dict[str, Any]]:
 
 
 def _is_evidence_only_experience(row: Any) -> bool:
-    allowed = {"experience_id", "source", "report_kind", "schema_version", "observed_at", "repository_fingerprint", "workspace_snapshot", "target", "task", "outcome", "deviations", "privacy"}
+    allowed = {"experience_id", "source", "report_kind", "schema_version", "observed_at", "repository_fingerprint", "workspace_snapshot", "target", "task", "outcome", "deviations", "phenomena", "privacy"}
     if not isinstance(row, dict) or set(row) - allowed:
         return False
     source, privacy = row.get("source"), row.get("privacy")
-    if not isinstance(source, dict) or set(source) - {"sha256", "report_kind", "path_redacted"}:
+    if not isinstance(source, dict) or set(source) - {"sha256", "report_kind", "path_redacted", "parent_sha256", "component"}:
         return False
     if source.get("path_redacted") is not True or not isinstance(source.get("sha256"), str):
         return False
-    return isinstance(privacy, dict) and privacy == {"raw_transcript_retained": False, "profile": "evidence-only"}
+    deviations = row.get("deviations")
+    if not isinstance(deviations, list) or not all(isinstance(item, str) for item in deviations):
+        return False
+    phenomena = row.get("phenomena", [])
+    if not isinstance(phenomena, list) or any(not isinstance(item, dict) or set(item) != {"code", "status"} or not isinstance(item.get("code"), str) or item.get("status") not in {Status.PASS.value, Status.FAIL.value, Status.UNKNOWN.value} for item in phenomena):
+        return False
+    active_codes = {item["code"] for item in phenomena if item["status"] != Status.PASS.value}
+    if "phenomena" in row and (deviations != sorted(set(deviations)) or set(deviations) != active_codes):
+        return False
+    return isinstance(privacy, dict) and privacy == {"raw_transcript_retained": False, "profile": "evidence-only"} and not _contains_private_material(row)
+
+
+def _upgrade_legacy_experience(row: dict[str, Any]) -> dict[str, Any]:
+    if "phenomena" in row:
+        return row
+    upgraded = {**row}
+    deviations = sorted(set(row.get("deviations", [])))
+    upgraded["deviations"] = deviations
+    upgraded["phenomena"] = [{"code": code, "status": Status.UNKNOWN.value} for code in deviations]
+    outcome = {**row.get("outcome", {})} if isinstance(row.get("outcome"), dict) else {}
+    outcome["workflow_deviation"] = deviations
+    if deviations:
+        outcome.update({"completed": False, "status": Status.UNKNOWN.value})
+    upgraded["outcome"] = outcome
+    return upgraded
+
+
+def _validate_report_findings(report: dict[str, Any], source: Path) -> None:
+    if "findings" not in report:
+        return
+    findings = report["findings"]
+    if not isinstance(findings, list) or any(not isinstance(item, dict) for item in findings):
+        raise LearnError(f"report findings are malformed: {source}")
+
+
+def _merge_experiences(rows: list[dict[str, Any]]) -> dict[str, dict[str, Any]]:
+    grouped: dict[str, list[dict[str, Any]]] = {}
+    for row in rows:
+        identifier = row.get("experience_id")
+        if not isinstance(identifier, str) or not identifier:
+            raise LearnError("harvested experience requires a non-empty experience_id")
+        grouped.setdefault(identifier, []).append(row)
+    merged: dict[str, dict[str, Any]] = {}
+    severity = {Status.PASS.value: 0, Status.UNKNOWN.value: 1, Status.FAIL.value: 2}
+    for identifier, candidates in grouped.items():
+        # ponytail: canonical representative avoids inventing field-level merge rules;
+        # add explicit merge policies if non-phenomenon fields later become aggregatable.
+        base = dict(min(candidates, key=lambda item: json.dumps(item, ensure_ascii=False, sort_keys=True, separators=(",", ":"))))
+        phenomena = _merge_phenomena(*(item.get("phenomena", []) for item in candidates))
+        deviations = sorted(item["code"] for item in phenomena if item["status"] != Status.PASS.value)
+        outcome = dict(base.get("outcome", {})) if isinstance(base.get("outcome"), dict) else {}
+        outcome["workflow_deviation"] = deviations
+        outcome["completed"] = not deviations
+        if phenomena:
+            outcome["status"] = max((item["status"] for item in phenomena), key=lambda status: severity[status])
+        base.update({"deviations": deviations, "phenomena": phenomena, "outcome": outcome})
+        if not _is_evidence_only_experience(base):
+            raise LearnError(f"merged experience is not Evidence Only: {identifier}")
+        merged[identifier] = base
+    return merged
+
+
+def _contains_private_material(value: Any) -> bool:
+    if isinstance(value, dict):
+        for key, child in value.items():
+            normalized = re.sub(r"([a-z0-9])([A-Z])", r"\1_\2", str(key)).lower()
+            normalized = re.sub(r"[^a-z0-9]+", "_", normalized).strip("_")
+            terms = set(normalized.split("_"))
+            safe_credential_metadata = normalized.endswith("_count") or normalized.endswith("_status")
+            credential_key = not safe_credential_metadata and (
+                bool(terms & {"password", "passwd", "credential", "credentials", "authorization"})
+                or ("token" in terms)
+                or ({"api", "key"} <= terms)
+                or ({"private", "key"} <= terms)
+            )
+            private = (
+                "transcript" in terms or "secret" in terms
+                or credential_key
+                or normalized in {"events", "environment", "env", "log", "logs", "stdout", "stderr", "shell_output"}
+                or ("response" in terms and bool(terms & {"raw", "final"}))
+                or ("events" in terms and bool(terms & {"tool", "command", "raw"}))
+                or ("environment" in terms and "variables" in terms)
+                or bool(terms & {"log", "logs"})
+            )
+            if normalized != "raw_transcript_retained" and private:
+                return True
+            if _contains_private_material(child):
+                return True
+    elif isinstance(value, list):
+        return any(_contains_private_material(item) for item in value)
+    elif isinstance(value, str):
+        return bool(re.search(
+            r"(?i)(?:-----BEGIN(?: [A-Z]+)* PRIVATE KEY-----|\bAKIA[A-Z0-9]{16}\b|\beyJ[a-z0-9_-]{8,}\.eyJ[a-z0-9_-]{8,}\.[a-z0-9_-]{8,}\b|\bxox[baprs]-[a-z0-9-]{20,}|\bsk-[a-z0-9_-]{16,}|\bgh[pousr]_[a-z0-9]{16,}|\bgithub_pat_[a-z0-9_]{16,}|\bbearer\s+[a-z0-9._~+/-]{16,}|\b(?:password|passwd|token|api[_-]?key|access[_-]?token|credential|authorization)\s*[:=]\s*\S{8,})",
+            value,
+        ))
+    return False
 
 
 def _rule_additions(patterns: list[Any]) -> list[str]:
@@ -569,21 +838,40 @@ def _rule_additions(patterns: list[Any]) -> list[str]:
 
 
 def _deviations(data: dict[str, Any]) -> list[str]:
-    values: list[str] = []
-    if data.get("report_kind") == "audit_feedback" and data.get("adoption_grade") is True:
-        values.extend(str(item) for item in data.get("deviations", []) if isinstance(item, str))
+    return sorted({item["code"] for item in _phenomena(data)})
+
+
+def _phenomena(data: dict[str, Any]) -> list[dict[str, str]]:
+    rows: list[dict[str, str]] = []
     for finding in data.get("findings", []):
         if isinstance(finding, dict) and finding.get("status") in {Status.FAIL.value, Status.UNKNOWN.value}:
-            values.append(str(finding.get("rule_id", "UNCLASSIFIED_FINDING")))
+            code = finding.get("rule_id") or finding.get("code")
+            rows.append({"code": code if isinstance(code, str) else "UNCLASSIFIED_FINDING", "status": finding["status"]})
+    if data.get("report_kind") == "audit_feedback" and data.get("adoption_grade") is True:
+        rows.extend({"code": item, "status": Status.FAIL.value} for item in data.get("deviations", []) if isinstance(item, str))
+    if data.get("report_kind") == "learning_feedback":
+        rows.extend({"code": item, "status": Status.FAIL.value} for item in data.get("reason_codes", []) if isinstance(item, str))
     trace = data.get("trace")
     if isinstance(trace, dict) and any(isinstance(item, dict) and item.get("status") == Status.UNKNOWN.value for item in trace.get("artifacts", [])):
-        values.append("MISSING_TRACE_PROOF")
+        rows.append({"code": "MISSING_TRACE_PROOF", "status": Status.UNKNOWN.value})
     summary = data.get("summary")
     if isinstance(summary, dict) and summary.get(Status.UNKNOWN.value, 0):
-        values.append("UNKNOWN_REQUIRES_PRESERVATION")
-    if data.get("report_kind") == "learning_observed_score":
-        values.extend(item["code"] for item in data.get("findings", []) if isinstance(item, dict) and item.get("status") == Status.FAIL.value and isinstance(item.get("code"), str))
-    return sorted(set(values))
+        rows.append({"code": "UNKNOWN_REQUIRES_PRESERVATION", "status": Status.UNKNOWN.value})
+    if data.get("report_kind") != "evidence_component" and data.get("status") in {Status.FAIL.value, Status.UNKNOWN.value}:
+        prefix = "OBSERVED_SCORE" if data.get("report_kind") == "learning_observed_score" else "REPORT_STATUS"
+        rows.append({"code": f"{prefix}_{data['status']}", "status": data["status"]})
+    return _merge_phenomena([], rows)
+
+
+def _merge_phenomena(*groups: list[dict[str, str]]) -> list[dict[str, str]]:
+    by_code: dict[str, dict[str, str]] = {}
+    severity = {Status.PASS.value: 0, Status.UNKNOWN.value: 1, Status.FAIL.value: 2}
+    for rows in groups:
+        for item in rows:
+            current = by_code.get(item["code"])
+            if current is None or severity.get(item["status"], -1) > severity.get(current["status"], -1):
+                by_code[item["code"]] = item
+    return [by_code[code] for code in sorted(by_code)]
 
 
 def _candidate_material(candidate: Path) -> tuple[dict[str, Any], str, str]:
@@ -816,7 +1104,7 @@ def _observed_tasks(suites: Iterable[Path]) -> list[tuple[dict[str, Any], Path]]
     for suite in suites:
         for source in _json_sources(suite):
             task = _read_json(source)
-            if task.get("schema_version") == "2.0" and isinstance(task.get("task_id"), str) and isinstance(task.get("prompt"), str):
+            if task.get("schema_version") == "2.0":
                 tasks.append((task, source))
     return tasks
 
@@ -826,10 +1114,14 @@ def _observed_rollout(*, task: dict[str, Any], task_source: Path, skill: str, ca
     declared = fixture.get("source")
     if not isinstance(declared, str):
         raise LearnError(f"task {task['task_id']} fixture.source is required")
-    fixture_source = (task_source.parent / declared).resolve()
-    if not fixture_source.exists():
-        fixture_source = Path(declared).resolve()
+    fixture_source = task_source.parent / declared
+    if not fixture_source.exists() and not fixture_source.is_symlink():
+        fixture_source = Path(declared)
+    if fixture_source.is_symlink():
+        raise LearnError("task fixture root cannot be a symbolic link")
     source_repo = fixture_source / "repo" if (fixture_source / "repo").is_dir() else fixture_source
+    if source_repo.is_symlink():
+        raise LearnError("task fixture repository cannot be a symbolic link")
     if not source_repo.is_dir():
         raise LearnError(f"task fixture is unavailable: {declared}")
     run_id = f"{runner.name}-{candidate_id}-{variant}-{task['task_id']}-{iteration:03d}"
@@ -837,7 +1129,10 @@ def _observed_rollout(*, task: dict[str, Any], task_source: Path, skill: str, ca
     workspace = rollout_dir / "workspace"
     if rollout_dir.exists():
         raise LearnError(f"rollout output already exists and will not be overwritten: {rollout_dir}")
-    shutil.copytree(source_repo, workspace)
+    fixture_sha256 = _secure_fixture_sha256(source_repo)
+    _copy_fixture_no_links(source_repo, workspace)
+    if _secure_fixture_sha256(source_repo) != fixture_sha256 or _secure_fixture_sha256(workspace) != fixture_sha256:
+        raise LearnError("secure fixture changed while it was copied")
     injected = workspace / ".aet-rollout" / "candidate.SKILL.md"
     _atomic_text(injected, skill)
     # Delivery is deliberate and snapshot-visible before the Agent starts; it is not a read attestation.
@@ -852,10 +1147,13 @@ def _observed_rollout(*, task: dict[str, Any], task_source: Path, skill: str, ca
         wrapper.parent.mkdir(parents=True, exist_ok=True)
         _atomic_text(wrapper, "#!/bin/sh\nexec " + " ".join(_shell_quote(item) for item in aet_argv) + ' "$@"\n')
         wrapper.chmod(0o755)
+    _initialize_rollout_git(workspace)
     policy = task.get("policy", {}) if isinstance(task.get("policy"), dict) else {}
-    request = AgentRunRequest(run_id=run_id, task_id=task["task_id"], prompt=task["prompt"], workspace=workspace, skill_path=injected, output_dir=rollout_dir, timeout_seconds=float(policy.get("timeout_seconds", 180)), environment_allowlist=tuple(item for item in policy.get("environment_allowlist", ["PATH"]) if isinstance(item, str)), command_allowlist=tuple(item for item in policy.get("allowed_commands", []) if isinstance(item, str)), network_policy=str(policy.get("network", "deny")), seed=seed, metadata={"script": task.get("script", {}), "task_source": str(task_source), "fixture_sha256": _sha(_fixture_bytes(source_repo))})
+    request = AgentRunRequest(run_id=run_id, task_id=task["task_id"], prompt=task["prompt"], workspace=workspace, skill_path=injected, output_dir=rollout_dir, timeout_seconds=float(policy.get("timeout_seconds", 180)), environment_allowlist=tuple(item for item in policy.get("environment_allowlist", ["PATH"]) if isinstance(item, str)), command_allowlist=tuple(item for item in policy.get("allowed_commands", []) if isinstance(item, str)), network_policy=str(policy.get("network", "deny")), seed=seed, metadata={"script": task.get("script", {}), "task_source": str(task_source), "fixture_sha256": fixture_sha256})
+    observed_at = _time()
     try:
         result = runner.run(request)
+        observed_at = result.finished_at
         event_path = Path(result.tool_events_path) if result.tool_events_path else None
         has_events = bool(event_path and event_path.exists() and event_path.read_text(encoding="utf-8").strip())
         run_status = "INFRASTRUCTURE_ERROR" if result.timed_out or (result.exit_code not in {0, None} and not has_events) else "COMPLETE"
@@ -864,19 +1162,109 @@ def _observed_rollout(*, task: dict[str, Any], task_source: Path, skill: str, ca
     except (RunnerError, OSError, ValueError) as error:
         score = {"report_kind": "learning_observed_score", "status": "INFRASTRUCTURE_ERROR", "findings": [{"code": "INFRASTRUCTURE_ERROR", "status": "UNKNOWN", "evidence_refs": [str(rollout_dir)], "message": str(error)}], "metrics": {"task_completion_rate": 0.0}}
         _write_json(rollout_dir / "run.json", {"report_kind": "learning_agent_run", "run_id": run_id, "status": "INFRASTRUCTURE_ERROR", "reason": str(error), "privacy": {"raw_transcript_retained": False, "experience_export": "structured-only"}})
+    score.update({"task_id": task["task_id"], "runner": runner.name, "variant": variant, "iteration": iteration, "fixture_sha256": fixture_sha256, "repository_fingerprint": fixture_sha256, "observed_at": observed_at})
     _write_json(rollout_dir / "scoring.json", score)
-    return {"run_id": run_id, "status": score["status"], "findings": score.get("findings", []), "metrics": score.get("metrics", {}), "rollout": str(rollout_dir), "task_sha256": _sha(json.dumps(task, sort_keys=True).encode())}
+    return {"run_id": run_id, "status": score["status"], "findings": score.get("findings", []), "metrics": score.get("metrics", {}), "rollout": str(rollout_dir), "task_sha256": _sha(json.dumps(task, sort_keys=True).encode()), "task_id": task["task_id"], "runner": runner.name, "variant": variant, "iteration": iteration, "fixture_sha256": fixture_sha256, "repository_fingerprint": fixture_sha256, "observed_at": observed_at}
 
 
-def _fixture_bytes(source: Path) -> bytes:
-    rows = []
-    for item in sorted(path for path in source.rglob("*") if path.is_file() and ".git" not in path.parts):
-        rows.append((item.relative_to(source).as_posix(), _sha(item.read_bytes())))
-    return json.dumps(rows, separators=(",", ":")).encode()
+def _secure_fixture_sha256(source: Path) -> str:
+    flags = os.O_RDONLY | getattr(os, "O_DIRECTORY", 0) | getattr(os, "O_NOFOLLOW", 0)
+    try:
+        root_fd = os.open(source, flags)
+    except OSError as error:
+        raise LearnError(f"cannot securely open fixture: {error}") from error
+    digest = hashlib.sha256()
+
+    def visit(directory_fd: int, prefix: str) -> None:
+        for name in sorted(os.listdir(directory_fd)):
+            metadata = os.stat(name, dir_fd=directory_fd, follow_symlinks=False)
+            relative = f"{prefix}/{name}" if prefix else name
+            if stat.S_ISDIR(metadata.st_mode):
+                digest.update(b"D\0" + relative.encode() + b"\0")
+                child_fd = os.open(name, flags, dir_fd=directory_fd)
+                try:
+                    visit(child_fd, relative)
+                finally:
+                    os.close(child_fd)
+            elif stat.S_ISREG(metadata.st_mode):
+                digest.update(b"F\0" + relative.encode() + b"\0")
+                digest.update(b"X\0" if metadata.st_mode & (stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH) else b"N\0")
+                file_fd = os.open(name, os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0), dir_fd=directory_fd)
+                try:
+                    while chunk := os.read(file_fd, 1024 * 1024):
+                        digest.update(chunk)
+                finally:
+                    os.close(file_fd)
+            elif stat.S_ISLNK(metadata.st_mode):
+                raise LearnError("secure fixture cannot contain symbolic links")
+            else:
+                raise LearnError("secure fixture contains an unsupported special file")
+    try:
+        visit(root_fd, "")
+    except OSError as error:
+        raise LearnError(f"cannot securely inspect fixture: {error}") from error
+    finally:
+        os.close(root_fd)
+    return digest.hexdigest()
+
+
+def _copy_fixture_no_links(source: Path, destination: Path) -> None:
+    flags = os.O_RDONLY | getattr(os, "O_DIRECTORY", 0) | getattr(os, "O_NOFOLLOW", 0)
+    try:
+        root_fd = os.open(source, flags)
+    except OSError as error:
+        raise LearnError(f"cannot securely open fixture: {error}") from error
+    destination.mkdir(parents=True)
+
+    def copy_directory(directory_fd: int, target: Path) -> None:
+        for name in sorted(os.listdir(directory_fd)):
+            metadata = os.stat(name, dir_fd=directory_fd, follow_symlinks=False)
+            child = target / name
+            if stat.S_ISDIR(metadata.st_mode):
+                child.mkdir()
+                child_fd = os.open(name, flags, dir_fd=directory_fd)
+                try:
+                    copy_directory(child_fd, child)
+                finally:
+                    os.close(child_fd)
+                child.chmod(stat.S_IMODE(metadata.st_mode))
+            elif stat.S_ISREG(metadata.st_mode):
+                file_fd = os.open(name, os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0), dir_fd=directory_fd)
+                try:
+                    with os.fdopen(file_fd, "rb") as source_file, child.open("xb") as target_file:
+                        shutil.copyfileobj(source_file, target_file)
+                except OSError as error:
+                    raise LearnError(f"cannot securely copy fixture: {error}") from error
+                child.chmod(stat.S_IMODE(metadata.st_mode))
+            elif stat.S_ISLNK(metadata.st_mode):
+                raise LearnError("secure fixture cannot contain symbolic links")
+            else:
+                raise LearnError("secure fixture contains an unsupported special file")
+    try:
+        copy_directory(root_fd, destination)
+    except OSError as error:
+        raise LearnError(f"cannot securely copy fixture: {error}") from error
+    finally:
+        os.close(root_fd)
 
 
 def _shell_quote(value: str) -> str:
     return "'" + value.replace("'", "'\"'\"'") + "'"
+
+
+def _initialize_rollout_git(workspace: Path) -> None:
+    commands = (
+        ["git", "init", "-q"],
+        ["git", "add", "-A"],
+        ["git", "-c", "user.name=AET", "-c", "user.email=aet@example.invalid", "commit", "--allow-empty", "-qm", "AET rollout baseline"],
+    )
+    for argv in commands:
+        try:
+            completed = subprocess.run(argv, cwd=workspace, capture_output=True, text=True, check=False)
+        except OSError as error:
+            raise LearnError(f"cannot initialize isolated rollout Git baseline: {error}") from error
+        if completed.returncode != 0:
+            raise LearnError(f"cannot initialize isolated rollout Git baseline: {completed.stderr.strip() or argv[1]}")
 
 
 def _read_json(path: Path) -> dict[str, Any]:
@@ -888,8 +1276,8 @@ def _read_json(path: Path) -> dict[str, Any]:
 
 def _read_json_text(text: str) -> dict[str, Any]:
     try:
-        data = json.loads(text)
-    except json.JSONDecodeError as error:
+        data = json.loads(text, parse_constant=lambda value: (_ for _ in ()).throw(ValueError(f"invalid JSON constant: {value}")))
+    except (json.JSONDecodeError, ValueError) as error:
         raise LearnError("invalid JSON artifact") from error
     if not isinstance(data, dict):
         raise LearnError("JSON artifact must be an object")

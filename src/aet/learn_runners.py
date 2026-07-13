@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import math
 import os
 import shlex
 import shutil
@@ -28,6 +29,7 @@ class RunnerError(ValueError):
 @dataclass(frozen=True)
 class RunnerCapabilities:
     supports_tool_events: bool
+    supports_command_events: bool
     supports_structured_output: bool
     supports_session_resume: bool
     supports_non_interactive: bool
@@ -72,6 +74,9 @@ class AgentRunResult:
 class AgentRunner(Protocol):
     name: str
 
+    @property
+    def version(self) -> str: ...
+
     def capabilities(self) -> RunnerCapabilities: ...
 
     def validate(self) -> None: ...
@@ -102,8 +107,12 @@ class StaticSkillRunner:
 
     name = "static"
 
+    @property
+    def version(self) -> str:
+        return "builtin"
+
     def capabilities(self) -> RunnerCapabilities:
-        return RunnerCapabilities(False, True, False, True, True)
+        return RunnerCapabilities(False, False, True, False, True, True)
 
     def validate(self) -> None:
         return None
@@ -117,8 +126,14 @@ class ScriptedAgentRunner:
 
     name = "scripted"
 
+    @property
+    def version(self) -> str:
+        return "builtin"
+
     def capabilities(self) -> RunnerCapabilities:
-        return RunnerCapabilities(True, True, False, True, True)
+        # Script execution is bounded, but this adapter does not create an
+        # OS-level network namespace or firewall boundary.
+        return RunnerCapabilities(True, True, True, False, True, False)
 
     def validate(self) -> None:
         return None
@@ -142,17 +157,32 @@ class _ProcessRunner:
         self.command = tuple(configured) if isinstance(configured, list) and all(isinstance(item, str) for item in configured) else self.default_command()
         self.max_output_bytes = int(config.get("max_output_bytes", 1_000_000))
         self.inherit_home = bool(config.get("inherit_home", False))
+        self._validated_version: str | None = None
+
+    @property
+    def version(self) -> str:
+        return self._validated_version or "unknown"
 
     def default_command(self) -> tuple[str, ...]:
         raise NotImplementedError
 
     def capabilities(self) -> RunnerCapabilities:
-        return RunnerCapabilities(True, True, False, True, False)
+        return RunnerCapabilities(False, False, False, False, True, False)
 
     def validate(self) -> None:
         if not self.command or shutil.which(self.command[0]) is None:
             raise RunnerError(f"{self.name} executable is unavailable: {self.command[0] if self.command else 'UNKNOWN'}")
-        _execute([*self.command, "--version"], cwd=Path.cwd(), output_dir=Path(tempfile.mkdtemp(prefix="aet-runner-version-")), timeout_seconds=15, environment_allowlist=("PATH", "HOME"), max_output_bytes=8192)
+        if self._validated_version is not None:
+            return
+        with tempfile.TemporaryDirectory(prefix="aet-runner-version-") as temporary:
+            result = _execute([self.command[0], "--version"], cwd=Path.cwd(), output_dir=Path(temporary), timeout_seconds=15, environment_allowlist=("PATH",), max_output_bytes=8192)
+        if result["timed_out"] or result["exit_code"] != 0:
+            raise RunnerError(f"{self.name} --version failed")
+        raw_version = result["stdout_text"].strip() or result["stderr_text"].strip()
+        normalized_version = " ".join(raw_version.split())
+        if not normalized_version or normalized_version.casefold() == "unknown":
+            raise RunnerError(f"{self.name} --version returned no usable provenance")
+        self._validated_version = normalized_version
 
     def _prompt(self, request: AgentRunRequest) -> str:
         skill = request.skill_path.read_text(encoding="utf-8")
@@ -166,12 +196,17 @@ class _ProcessRunner:
         )
 
     def run(self, request: AgentRunRequest) -> AgentRunResult:
+        self.validate()
         request.output_dir.mkdir(parents=True, exist_ok=True)
         _atomic_json(request.output_dir / "request.json", _request_data(request))
         before = _snapshot(request.workspace)
         _atomic_json(request.output_dir / "before-snapshot.json", before)
         argv, stdin = self._argv_and_input(request, self._prompt(request))
-        process = _execute(argv, cwd=request.workspace, output_dir=request.output_dir, timeout_seconds=request.timeout_seconds, environment_allowlist=request.environment_allowlist + (("HOME",) if self.inherit_home and "HOME" not in request.environment_allowlist else ()), max_output_bytes=self.max_output_bytes, stdin=stdin)
+        environment_allowlist = tuple(
+            name for name in request.environment_allowlist
+            if name != "HOME" or self.inherit_home
+        )
+        process = _execute(argv, cwd=request.workspace, output_dir=request.output_dir, timeout_seconds=request.timeout_seconds, environment_allowlist=environment_allowlist, max_output_bytes=self.max_output_bytes, stdin=stdin)
         events, final = self._normalize_output(process["stdout_text"], request)
         final_path = request.output_dir / "final-response.txt"
         if final_path.exists():
@@ -181,9 +216,9 @@ class _ProcessRunner:
             _atomic_text(final_path, final)
         after = _snapshot(request.workspace)
         _atomic_json(request.output_dir / "after-snapshot.json", after)
-        manifest = _raw_manifest(request, argv, process, before, after)
+        manifest = _raw_manifest(request, self.name, self.version, argv, process, before, after)
         _atomic_json(request.output_dir / "raw-artifact-manifest.json", manifest)
-        return AgentRunResult(self.name, process["version"], process["exit_code"], process["timed_out"], process["started_at"], process["finished_at"], str(request.output_dir / "stdout.txt"), str(request.output_dir / "stderr.txt"), str(final_path) if final else None, str(request.output_dir / "events.jsonl"), str(request.output_dir / "events.jsonl"), str(request.output_dir / "before-snapshot.json"), str(request.output_dir / "after-snapshot.json"), str(request.output_dir / "raw-artifact-manifest.json"), "TIMEOUT" if process["timed_out"] else "COMPLETE")
+        return AgentRunResult(self.name, self.version, process["exit_code"], process["timed_out"], process["started_at"], process["finished_at"], str(request.output_dir / "stdout.txt"), str(request.output_dir / "stderr.txt"), str(final_path) if final else None, str(request.output_dir / "events.jsonl"), str(request.output_dir / "events.jsonl"), str(request.output_dir / "before-snapshot.json"), str(request.output_dir / "after-snapshot.json"), str(request.output_dir / "raw-artifact-manifest.json"), "TIMEOUT" if process["timed_out"] else "COMPLETE")
 
     def _argv_and_input(self, request: AgentRunRequest, prompt: str) -> tuple[list[str], str | None]:
         raise NotImplementedError
@@ -198,6 +233,9 @@ class CodexExecRunner(_ProcessRunner):
     def default_command(self) -> tuple[str, ...]:
         return ("codex", "exec", "--json", "--ephemeral", "--sandbox", "workspace-write", "--skip-git-repo-check")
 
+    def capabilities(self) -> RunnerCapabilities:
+        return RunnerCapabilities(True, True, True, False, True, False)
+
     def _argv_and_input(self, request: AgentRunRequest, prompt: str) -> tuple[list[str], str | None]:
         # Codex supports '-' for stdin and JSONL event output. No host state is read by AET.
         return [*self.command, "-C", str(request.workspace), "--output-last-message", str(request.output_dir / "final-response.txt"), "-"], prompt
@@ -205,27 +243,40 @@ class CodexExecRunner(_ProcessRunner):
     def _normalize_output(self, stdout: str, request: AgentRunRequest) -> tuple[list[dict[str, Any]], str]:
         events: list[dict[str, Any]] = []
         final = ""
+        completed_ids: set[str] = set()
         for sequence, line in enumerate(stdout.splitlines(), start=1):
             try:
-                event = json.loads(line)
+                event = json.loads(line, parse_constant=_reject_json_constant)
             except json.JSONDecodeError:
                 continue
             if not isinstance(event, dict):
                 continue
             item = event.get("item") if isinstance(event.get("item"), dict) else {}
-            if item.get("type") == "command_execution" and isinstance(item.get("command"), str):
+            item_type = item.get("type")
+            if item_type in {"command_execution", "mcp_tool_call", "tool_call", "agent_message"}:
+                if event.get("type") != "item.completed":
+                    continue
+                identifier = item.get("id")
+                if isinstance(identifier, str):
+                    if identifier in completed_ids:
+                        continue
+                    completed_ids.add(identifier)
+            if item_type == "command_execution" and isinstance(item.get("command"), str):
                 try:
                     argv = shlex.split(item["command"])
                 except ValueError:
                     argv = []
                 events.append(_event(request.run_id, sequence, "command", {"argv": argv, "cwd": ".", "exit_code": item.get("exit_code"), "stdout_sha256": _sha(str(item.get("aggregated_output", "")).encode()), "host_event_type": event.get("type")}))
-            elif item.get("type") == "agent_message":
+            elif item_type in {"mcp_tool_call", "tool_call"}:
+                name = item.get("tool") or item.get("name")
+                arguments = item.get("arguments")
+                if isinstance(name, str) and isinstance(arguments, dict):
+                    events.append(_event(request.run_id, sequence, "tool_call", {"tool": name, "arguments": arguments, "host_event_type": event.get("type")}))
+            elif item_type == "agent_message":
                 final = str(item.get("text", final))
                 events.append(_event(request.run_id, sequence, "final_response", {"sha256": _sha(final.encode()), "host_event_type": event.get("type")}))
             elif event.get("type") in {"error", "turn.failed"}:
                 events.append(_event(request.run_id, sequence, "runner_error", {"host_event_type": event.get("type"), "message": str(event.get("message") or event.get("error") or "host error")}))
-            else:
-                events.append(_event(request.run_id, sequence, "tool_call", {"host_event_type": event.get("type"), "item_type": item.get("type")}))
         return events, final
 
 
@@ -235,15 +286,20 @@ class ClaudeCodeRunner(_ProcessRunner):
     def default_command(self) -> tuple[str, ...]:
         return ("claude", "--print", "--output-format", "stream-json", "--verbose", "--no-session-persistence", "--bare")
 
+    def capabilities(self) -> RunnerCapabilities:
+        return RunnerCapabilities(True, True, True, False, True, False)
+
     def _argv_and_input(self, request: AgentRunRequest, prompt: str) -> tuple[list[str], str | None]:
         return [*self.command, prompt], None
 
     def _normalize_output(self, stdout: str, request: AgentRunRequest) -> tuple[list[dict[str, Any]], str]:
         events: list[dict[str, Any]] = []
         final = ""
-        for sequence, line in enumerate(stdout.splitlines(), start=1):
+        commands_by_tool_id: dict[str, dict[str, Any]] = {}
+        sequence = 0
+        for line in stdout.splitlines():
             try:
-                event = json.loads(line)
+                event = json.loads(line, parse_constant=_reject_json_constant)
             except json.JSONDecodeError:
                 continue
             if not isinstance(event, dict):
@@ -252,19 +308,33 @@ class ClaudeCodeRunner(_ProcessRunner):
             for block in content if isinstance(content, list) else []:
                 if not isinstance(block, dict):
                     continue
-                if block.get("type") == "tool_use" and isinstance(block.get("input"), dict) and isinstance(block["input"].get("command"), str):
-                    try:
-                        argv = shlex.split(block["input"]["command"])
-                    except ValueError:
-                        argv = []
-                    events.append(_event(request.run_id, sequence, "command", {"argv": argv, "cwd": ".", "exit_code": None, "host_event_type": event.get("type")}))
+                if block.get("type") == "tool_use" and isinstance(block.get("name"), str) and isinstance(block.get("input"), dict):
+                    sequence += 1
+                    events.append(_event(request.run_id, sequence, "tool_call", {"tool": block["name"], "arguments": block["input"], "host_event_type": event.get("type")}))
+                    if block["name"] in {"Bash", "bash", "shell"} and isinstance(block["input"].get("command"), str):
+                        try:
+                            argv = shlex.split(block["input"]["command"])
+                        except ValueError:
+                            argv = []
+                        sequence += 1
+                        command_event = _event(request.run_id, sequence, "command", {"argv": argv, "cwd": ".", "exit_code": None, "host_event_type": event.get("type")})
+                        events.append(command_event)
+                        if isinstance(block.get("id"), str):
+                            commands_by_tool_id[block["id"]] = command_event
+                elif block.get("type") == "tool_result" and isinstance(block.get("tool_use_id"), str):
+                    command_event = commands_by_tool_id.get(block["tool_use_id"])
+                    if command_event is not None:
+                        command_event["payload"]["exit_code"] = 1 if block.get("is_error") is True else 0
+                        command_event["payload"]["stdout_sha256"] = _sha(json.dumps(block.get("content", ""), ensure_ascii=False, sort_keys=True).encode())
                 elif block.get("type") == "text":
                     final += str(block.get("text", ""))
             if event.get("type") == "result" and isinstance(event.get("result"), str):
                 final = event["result"]
+                sequence += 1
                 events.append(_event(request.run_id, sequence, "final_response", {"sha256": _sha(final.encode()), "host_event_type": "result"}))
                 if event.get("is_error") is True:
-                    events.append(_event(request.run_id, sequence + 10_000, "runner_error", {"host_event_type": "result", "message": final}))
+                    sequence += 1
+                    events.append(_event(request.run_id, sequence, "runner_error", {"host_event_type": "result", "message": final}))
         return events, final
 
 
@@ -309,14 +379,14 @@ def _run_scripted(request: AgentRunRequest, script: list[Any]) -> AgentRunResult
     _atomic_text(request.output_dir / "stderr.txt", "")
     after = _snapshot(request.workspace)
     _atomic_json(request.output_dir / "after-snapshot.json", after)
-    manifest = {"report_kind": "learning_raw_rollout", "runner": "scripted", "private_raw_output": True, "before_snapshot": before["sha256"], "after_snapshot": after["sha256"], "event_count": len(events)}
+    manifest = {"report_kind": "learning_raw_rollout", "runner": "scripted", "runner_name": "scripted", "runner_version": "builtin", "private_raw_output": True, "before_snapshot": before["sha256"], "after_snapshot": after["sha256"], "event_count": len(events)}
     _atomic_json(request.output_dir / "raw-artifact-manifest.json", manifest)
     return AgentRunResult("scripted", "builtin", exit_code, timed_out, started, _now(), str(request.output_dir / "stdout.txt"), str(request.output_dir / "stderr.txt"), str(request.output_dir / "final-response.txt"), str(request.output_dir / "events.jsonl"), str(request.output_dir / "events.jsonl"), str(request.output_dir / "before-snapshot.json"), str(request.output_dir / "after-snapshot.json"), str(request.output_dir / "raw-artifact-manifest.json"), "TIMEOUT" if timed_out else "COMPLETE")
 
 
 def _execute(argv: list[str], *, cwd: Path, output_dir: Path, timeout_seconds: float, environment_allowlist: tuple[str, ...], max_output_bytes: int, stdin: str | None = None) -> dict[str, Any]:
-    if not argv or timeout_seconds <= 0:
-        raise RunnerError("runner requires a non-empty argv and positive timeout")
+    if not argv or isinstance(timeout_seconds, bool) or not isinstance(timeout_seconds, (int, float)) or not math.isfinite(timeout_seconds) or timeout_seconds <= 0:
+        raise RunnerError("runner requires a non-empty argv and positive finite timeout")
     output_dir.mkdir(parents=True, exist_ok=True)
     environment = {key: os.environ[key] for key in environment_allowlist if key in os.environ}
     started = _now()
@@ -342,12 +412,16 @@ def _jsonl_events(stdout: str, run_id: str) -> list[dict[str, Any]]:
     events: list[dict[str, Any]] = []
     for sequence, line in enumerate(stdout.splitlines(), start=1):
         try:
-            payload = json.loads(line)
+            payload = json.loads(line, parse_constant=_reject_json_constant)
         except json.JSONDecodeError:
             continue
         if isinstance(payload, dict):
             events.append(_event(run_id, sequence, "tool_call" if payload.get("type") not in {"item.completed", "task_complete"} else "session_end", {"host_event": payload}))
     return events
+
+
+def _reject_json_constant(value: str) -> Any:
+    raise RunnerError(f"host output contains invalid JSON constant: {value}")
 
 
 def _snapshot(workspace: Path) -> dict[str, Any]:
@@ -390,8 +464,8 @@ def _request_data(request: AgentRunRequest) -> dict[str, Any]:
     return data
 
 
-def _raw_manifest(request: AgentRunRequest, argv: list[str], process: dict[str, Any], before: dict[str, Any], after: dict[str, Any]) -> dict[str, Any]:
-    return {"report_kind": "learning_raw_rollout", "runner": request.run_id.split("-")[0], "argv_sha256": _sha(json.dumps(argv).encode()), "private_raw_output": True, "before_snapshot": before["sha256"], "after_snapshot": after["sha256"], "exit_code": process["exit_code"], "timed_out": process["timed_out"], "output_truncated": process["truncated"]}
+def _raw_manifest(request: AgentRunRequest, runner_name: str, runner_version: str, argv: list[str], process: dict[str, Any], before: dict[str, Any], after: dict[str, Any]) -> dict[str, Any]:
+    return {"report_kind": "learning_raw_rollout", "runner": runner_name, "runner_name": runner_name, "runner_version": runner_version, "argv_sha256": _sha(json.dumps(argv).encode()), "private_raw_output": True, "before_snapshot": before["sha256"], "after_snapshot": after["sha256"], "exit_code": process["exit_code"], "timed_out": process["timed_out"], "output_truncated": process["truncated"]}
 
 
 def _atomic_json(path: Path, value: dict[str, Any]) -> None:

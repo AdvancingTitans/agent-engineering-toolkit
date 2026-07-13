@@ -4,17 +4,488 @@ from __future__ import annotations
 
 import json
 import os
+import hashlib
+import re
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 from aet.cli import main
 from aet.discovery import discover_assets
-from aet.learn import LearnError, gate, propose
+from aet.learn import LearnError, gate, harvest, propose, replay_observed
 from aet.rules import run_rules
 
 
 class LearningPipelineTests(unittest.TestCase):
+    def test_direct_report_harvest_enforces_evidence_only_privacy(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            evidence = root / "evidence"
+            evidence.mkdir()
+            safe = evidence / "safe.json"
+            safe.write_text(json.dumps({
+                "report_kind": "audit", "runner": "codex",
+                "findings": [{"rule_id": "SAFE_RULE", "status": "FAIL", "message": "password=discard-this-value"}],
+            }), encoding="utf-8")
+            result = harvest(runs=None, evidence=safe, output=root / "safe-out.json")
+            self.assertNotIn("discard-this-value", json.dumps(result))
+
+            for name, report in (
+                ("runner", {"report_kind": "audit", "runner": "sk-" + "abcdefghijklmnop", "findings": []}),
+                ("rule", {"report_kind": "audit", "findings": [{"rule_id": "password=supersecret", "status": "FAIL"}]}),
+            ):
+                source = evidence / f"{name}.json"
+                source.write_text(json.dumps(report), encoding="utf-8")
+                with self.subTest(name=name), self.assertRaisesRegex(LearnError, re.escape(str(source))):
+                    harvest(runs=None, evidence=source, output=root / f"{name}-out.json")
+
+    def test_harvest_globally_merges_duplicate_experience_status_order_independently(self) -> None:
+        def row(status: str) -> dict[str, object]:
+            deviations = [] if status == "PASS" else ["SHARED"]
+            return {
+                "experience_id": "EXP-SHARED", "source": {"sha256": "a" * 64, "report_kind": "audit", "path_redacted": True},
+                "report_kind": "audit", "deviations": deviations,
+                "phenomena": [{"code": "SHARED", "status": status}],
+                "outcome": {"completed": not deviations, "workflow_deviation": deviations, "status": status},
+                "privacy": {"raw_transcript_retained": False, "profile": "evidence-only"},
+            }
+
+        results = []
+        for label, statuses in (("forward", ["PASS", "UNKNOWN", "FAIL"]), ("reverse", ["FAIL", "UNKNOWN", "PASS"])):
+            with self.subTest(label=label), tempfile.TemporaryDirectory() as temporary:
+                root = Path(temporary)
+                store = root / "store"
+                store.mkdir()
+                for index, status in enumerate(statuses):
+                    (store / f"{index}.json").write_text(json.dumps({
+                        "report_kind": "learning_experiences",
+                        "privacy": {"profile": "evidence-only", "raw_transcript_retained": False},
+                        "experiences": [row(status)],
+                    }), encoding="utf-8")
+                merged = harvest(runs=None, evidence=None, experience_store=store, output=root / "out.json")["experiences"]
+                self.assertEqual(len(merged), 1)
+                self.assertEqual(merged[0]["phenomena"], [{"code": "SHARED", "status": "FAIL"}])
+                self.assertEqual(merged[0]["deviations"], ["SHARED"])
+                self.assertEqual(merged[0]["outcome"]["status"], "FAIL")
+                results.append(merged)
+        self.assertEqual(results[0], results[1])
+
+    def test_harvest_rejects_malformed_findings_with_source(self) -> None:
+        for findings in (None, {}, ["not-an-object"]):
+            with self.subTest(findings=findings), tempfile.TemporaryDirectory() as temporary:
+                root = Path(temporary)
+                source = root / "report.json"
+                source.write_text(json.dumps({"report_kind": "audit", "findings": findings}), encoding="utf-8")
+                with self.assertRaisesRegex(LearnError, re.escape(str(source))):
+                    harvest(runs=None, evidence=source, output=root / "out.json")
+
+    def test_aet_run_parent_hash_is_read_once_for_multiple_artifacts(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            source = root / "run.json"
+            source.write_text(json.dumps({
+                "report_kind": "aet_run", "artifacts": {"audit": [
+                    {"report": {"report_kind": "audit", "findings": []}},
+                    {"report": {"report_kind": "audit", "findings": [{"rule_id": "X", "status": "UNKNOWN"}]}},
+                ]},
+            }), encoding="utf-8")
+            original = Path.read_bytes
+            reads = 0
+
+            def counting(path: Path) -> bytes:
+                nonlocal reads
+                if path == source:
+                    reads += 1
+                return original(path)
+
+            with mock.patch.object(Path, "read_bytes", counting):
+                harvest(runs=None, evidence=source, output=root / "out.json")
+            self.assertEqual(reads, 1)
+
+    def test_harvest_normalizes_only_allowlisted_pack_and_run_children(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            evidence = root / "evidence"
+            evidence.mkdir()
+            failed = {
+                "schema_version": "1.8.0", "report_kind": "audit", "generated_at": "2026-07-13T01:00:00+00:00",
+                "workspace_snapshot": {"digest": "repo-digest"},
+                "findings": [{"rule_id": "AET-NESTED", "status": "FAIL"}],
+            }
+            (evidence / "pack.json").write_text(json.dumps({
+                "report_kind": "evidence_pack", "generated_at": "2026-07-13T02:00:00+00:00",
+                "components": {"audit": {"report": failed}, "duplicate": {"report": failed}, "pass": {"report": {
+                    "report_kind": "review", "findings": [{"rule_id": "OK", "status": "PASS"}],
+                }}},
+                "arbitrary": {"report": {"report_kind": "audit", "findings": [{"rule_id": "MUST_NOT_RECURSE", "status": "FAIL"}]}},
+            }), encoding="utf-8")
+            (evidence / "run.json").write_text(json.dumps({
+                "report_kind": "aet_run", "created_at": "2026-07-13T03:00:00+00:00",
+                "repository": {"initial_workspace_snapshot": {"digest": "run-repo"}},
+                "artifacts": {"evidence_pack": [{"report": {"report_kind": "evidence_pack", "components": {
+                    "audit": {"report": {"report_kind": "audit", "findings": [{"rule_id": "RUN_UNKNOWN", "status": "UNKNOWN"}]}},
+                }}}]},
+            }), encoding="utf-8")
+            output = root / "experiences.json"
+
+            result = harvest(runs=None, evidence=evidence, output=output)
+
+            rows = result["experiences"]
+            self.assertEqual(sum("AET-NESTED" in row["deviations"] for row in rows), 1)
+            self.assertEqual(sum("RUN_UNKNOWN" in row["deviations"] for row in rows), 1)
+            self.assertFalse(any("MUST_NOT_RECURSE" in row["deviations"] for row in rows))
+            nested = next(row for row in rows if "AET-NESTED" in row["deviations"])
+            self.assertEqual(nested["source"]["component"], "audit")
+            self.assertRegex(nested["source"]["parent_sha256"], r"^[0-9a-f]{64}$")
+            passed = next(row for row in rows if row["report_kind"] == "review")
+            self.assertEqual(passed["deviations"], [])
+
+    def test_harvest_observed_replay_scores_keep_pair_context_and_deduplicate(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            evidence = root / "evidence"
+            evidence.mkdir()
+            score = {"status": "FAIL", "findings": [{"code": "BAD_TOOL_ARGUMENT", "status": "FAIL"}]}
+            (evidence / "replay.json").write_text(json.dumps({
+                "report_kind": "learning_observed_replay", "generated_at": "2026-07-13T04:00:00+00:00", "runner": "codex",
+                "pairs": [{"task_id": "refund", "iteration": 2, "baseline": {**score, "fixture_sha256": "fixture-one"}, "candidate": {**score, "fixture_sha256": "fixture-one"}}],
+            }), encoding="utf-8")
+            (evidence / "score.json").write_text(json.dumps({
+                "report_kind": "learning_observed_score", "observed_at": "2026-07-13T05:00:00+00:00",
+                "task_id": "direct", "runner": "claude-code", "variant": "candidate", "iteration": 3,
+                "fixture_sha256": "fixture-two", "status": "UNKNOWN",
+                "findings": [{"code": "INFRASTRUCTURE_ERROR", "status": "UNKNOWN"}],
+            }), encoding="utf-8")
+
+            rows = harvest(runs=None, evidence=evidence, output=root / "out.json")["experiences"]
+
+            paired = [row for row in rows if row["task"]["task_id"] == "refund"]
+            self.assertEqual({row["target"]["variant"] for row in paired}, {"baseline", "candidate"})
+            self.assertTrue(all(row["target"]["host"] == "codex" and row["task"]["iteration"] == 2 for row in paired))
+            self.assertTrue(all(row["repository_fingerprint"] == "fixture-one" for row in paired))
+            direct = next(row for row in rows if row["task"]["task_id"] == "direct")
+            self.assertEqual((direct["target"]["host"], direct["target"]["variant"], direct["task"]["iteration"]), ("claude-code", "candidate", 3))
+            self.assertEqual(direct["observed_at"], "2026-07-13T05:00:00+00:00")
+
+    def test_harvest_preserves_missing_unknown_component_and_status_only_scores(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            evidence = root / "evidence"
+            evidence.mkdir()
+            (evidence / "pack.json").write_text(json.dumps({
+                "report_kind": "evidence_pack", "components": {
+                    "trace": {"status": "UNKNOWN", "reason": "trace was not supplied"},
+                },
+            }), encoding="utf-8")
+            (evidence / "failed-score.json").write_text(json.dumps({
+                "report_kind": "learning_observed_score", "status": "FAIL", "findings": [], "task_id": "failed",
+            }), encoding="utf-8")
+            (evidence / "unknown-score.json").write_text(json.dumps({
+                "report_kind": "learning_observed_score", "status": "UNKNOWN", "findings": [], "task_id": "unknown",
+            }), encoding="utf-8")
+
+            rows = harvest(runs=None, evidence=evidence, output=root / "out.json")["experiences"]
+
+            missing = next(row for row in rows if row["source"].get("component") == "trace")
+            self.assertEqual(missing["outcome"]["status"], "UNKNOWN")
+            self.assertFalse(missing["outcome"]["completed"])
+            self.assertIn("EVIDENCE_COMPONENT_UNKNOWN", missing["deviations"])
+            self.assertEqual(missing["phenomena"], [{"code": "EVIDENCE_COMPONENT_UNKNOWN", "status": "UNKNOWN"}])
+            failed = next(row for row in rows if row["task"]["task_id"] == "failed")
+            unknown = next(row for row in rows if row["task"]["task_id"] == "unknown")
+            self.assertEqual(failed["deviations"], ["OBSERVED_SCORE_FAIL"])
+            self.assertEqual(unknown["deviations"], ["OBSERVED_SCORE_UNKNOWN"])
+            self.assertEqual((failed["outcome"]["completed"], unknown["outcome"]["completed"]), (False, False))
+            self.assertEqual((failed["outcome"]["status"], unknown["outcome"]["status"]), ("FAIL", "UNKNOWN"))
+            self.assertEqual(failed["phenomena"], [{"code": "OBSERVED_SCORE_FAIL", "status": "FAIL"}])
+            self.assertEqual(unknown["phenomena"], [{"code": "OBSERVED_SCORE_UNKNOWN", "status": "UNKNOWN"}])
+
+    def test_harvest_phenomena_cover_portable_trace_feedback_and_missing_fail_component(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            evidence = root / "evidence"
+            evidence.mkdir()
+            trace = {
+                "report_kind": "trace", "summary": {"UNKNOWN": 1},
+                "trace": {"artifacts": [{"status": "UNKNOWN"}]},
+            }
+            (evidence / "trace.json").write_text(json.dumps(trace), encoding="utf-8")
+            (evidence / "pack.json").write_text(json.dumps({
+                "report_kind": "evidence_pack", "components": {
+                    "trace": {"status": "UNKNOWN", "report": trace},
+                    "review": {"status": "FAIL", "reason": "not supplied"},
+                },
+            }), encoding="utf-8")
+            (evidence / "feedback.json").write_text(json.dumps({
+                "report_kind": "audit_feedback", "adoption_grade": True, "recorded_at": "2026-07-13T07:00:00+00:00",
+                "fixture_sha256": "fixture", "finding": "AET-X", "deviations": ["FALSE_NEGATIVE", "MISSING_RULE"],
+            }), encoding="utf-8")
+
+            rows = harvest(runs=None, evidence=evidence, output=root / "out.json")["experiences"]
+
+            traces = [row for row in rows if row["report_kind"] == "trace"]
+            self.assertEqual(len(traces), 2)
+            for row in traces:
+                self.assertEqual(set(row["deviations"]), {item["code"] for item in row["phenomena"]})
+                self.assertIn({"code": "MISSING_TRACE_PROOF", "status": "UNKNOWN"}, row["phenomena"])
+                self.assertIn({"code": "UNKNOWN_REQUIRES_PRESERVATION", "status": "UNKNOWN"}, row["phenomena"])
+                self.assertEqual(row["outcome"]["status"], "UNKNOWN")
+            feedback = next(row for row in rows if row["report_kind"] == "audit_feedback")
+            self.assertEqual(set(feedback["deviations"]), {item["code"] for item in feedback["phenomena"]})
+            self.assertTrue(all(item["status"] == "FAIL" for item in feedback["phenomena"]))
+            missing_fail = next(row for row in rows if row["source"].get("component") == "review")
+            self.assertEqual(missing_fail["deviations"], ["EVIDENCE_COMPONENT_FAIL"])
+            self.assertEqual(missing_fail["phenomena"], [{"code": "EVIDENCE_COMPONENT_FAIL", "status": "FAIL"}])
+            self.assertEqual(missing_fail["outcome"]["status"], "FAIL")
+            self.assertFalse(missing_fail["outcome"]["completed"])
+
+    def test_harvest_preserves_generic_report_and_component_wrapper_statuses(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            evidence = root / "evidence"
+            evidence.mkdir()
+            (evidence / "audit.json").write_text(json.dumps({"report_kind": "audit", "status": "FAIL", "findings": []}), encoding="utf-8")
+            (evidence / "feedback.json").write_text(json.dumps({"report_kind": "audit_feedback", "status": "UNKNOWN", "adoption_grade": False}), encoding="utf-8")
+            (evidence / "pack.json").write_text(json.dumps({
+                "report_kind": "evidence_pack", "components": {
+                    "audit": {"status": "UNKNOWN", "report": {"report_kind": "audit", "status": "PASS", "findings": []}},
+                    "review": {"status": "FAIL", "report": {"report_kind": "review", "status": "PASS", "findings": []}},
+                },
+            }), encoding="utf-8")
+
+            rows = harvest(runs=None, evidence=evidence, output=root / "out.json")["experiences"]
+
+            audit = next(row for row in rows if row["report_kind"] == "audit" and "component" not in row["source"])
+            feedback = next(row for row in rows if row["report_kind"] == "audit_feedback")
+            wrapped_unknown = next(row for row in rows if row["source"].get("component") == "audit")
+            wrapped_fail = next(row for row in rows if row["source"].get("component") == "review")
+            self.assertIn({"code": "REPORT_STATUS_FAIL", "status": "FAIL"}, audit["phenomena"])
+            self.assertIn({"code": "REPORT_STATUS_UNKNOWN", "status": "UNKNOWN"}, feedback["phenomena"])
+            self.assertIn({"code": "EVIDENCE_COMPONENT_UNKNOWN", "status": "UNKNOWN"}, wrapped_unknown["phenomena"])
+            self.assertIn({"code": "EVIDENCE_COMPONENT_FAIL", "status": "FAIL"}, wrapped_fail["phenomena"])
+            for row in (audit, feedback, wrapped_unknown, wrapped_fail):
+                self.assertFalse(row["outcome"]["completed"])
+                self.assertEqual(set(row["deviations"]), {item["code"] for item in row["phenomena"]})
+
+    def test_harvest_duplicate_children_merge_wrapper_severity_order_independently(self) -> None:
+        report = {"report_kind": "audit", "status": "PASS", "findings": []}
+        cases = {
+            "pass_then_fail": [("passed", "PASS"), ("failed", "FAIL")],
+            "fail_then_pass": [("failed", "FAIL"), ("passed", "PASS")],
+            "unknown_then_fail": [("unknown", "UNKNOWN"), ("failed", "FAIL")],
+            "fail_then_unknown": [("failed", "FAIL"), ("unknown", "UNKNOWN")],
+        }
+        for label, wrappers in cases.items():
+            with self.subTest(label=label), tempfile.TemporaryDirectory() as temporary:
+                root = Path(temporary)
+                evidence = root / "evidence"
+                evidence.mkdir()
+                components = {name: {"status": status, "report": report} for name, status in wrappers}
+                (evidence / "pack.json").write_text(json.dumps({
+                    "report_kind": "evidence_pack", "components": components,
+                }), encoding="utf-8")
+
+                rows = harvest(runs=None, evidence=evidence, output=root / "out.json")["experiences"]
+
+                self.assertEqual(1, len(rows))
+                self.assertEqual("failed", rows[0]["source"]["component"])
+                self.assertIn({"code": "EVIDENCE_COMPONENT_FAIL", "status": "FAIL"}, rows[0]["phenomena"])
+                self.assertNotIn({"code": "EVIDENCE_COMPONENT_UNKNOWN", "status": "UNKNOWN"}, rows[0]["phenomena"])
+                self.assertEqual("FAIL", rows[0]["outcome"]["status"])
+
+    def test_learning_feedback_and_legacy_store_upgrade_have_consistent_phenomena(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            evidence = root / "evidence"
+            evidence.mkdir()
+            (evidence / "feedback.json").write_text(json.dumps({
+                "report_kind": "learning_feedback", "recorded_at": "2026-07-13T08:00:00+00:00",
+                "run_sha256": "run", "reason_codes": ["Z_REASON", "A_REASON", "Z_REASON"],
+            }), encoding="utf-8")
+            feedback = harvest(runs=None, evidence=evidence, output=root / "feedback-out.json")["experiences"][0]
+            self.assertEqual(feedback["deviations"], ["A_REASON", "Z_REASON"])
+            self.assertEqual(feedback["phenomena"], [{"code": "A_REASON", "status": "FAIL"}, {"code": "Z_REASON", "status": "FAIL"}])
+
+            legacy = {**feedback}
+            legacy.pop("phenomena")
+            legacy["deviations"] = ["OLD_B", "OLD_A", "OLD_B"]
+            legacy["outcome"] = {"completed": False, "workflow_deviation": legacy["deviations"]}
+            store = root / "store.json"
+            store.write_text(json.dumps({
+                "schema_version": "1.8.0", "report_kind": "learning_experiences", "generated_at": "now",
+                "privacy": {"profile": "evidence-only", "raw_transcript_retained": False}, "experiences": [legacy],
+            }), encoding="utf-8")
+            upgraded = harvest(runs=None, evidence=None, experience_store=store, output=root / "upgraded.json")["experiences"][0]
+            self.assertEqual(upgraded["deviations"], ["OLD_A", "OLD_B"])
+            self.assertEqual(upgraded["phenomena"], [{"code": "OLD_A", "status": "UNKNOWN"}, {"code": "OLD_B", "status": "UNKNOWN"}])
+            self.assertEqual(upgraded["outcome"]["status"], "UNKNOWN")
+
+    def test_harvest_audit_feedback_uses_reproducible_context_and_keeps_legacy_id(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            evidence = root / "evidence"
+            evidence.mkdir()
+            feedback = {
+                "schema_version": "audit-feedback/v1", "report_kind": "audit_feedback",
+                "recorded_at": "2026-07-13T06:00:00+00:00", "fixture_sha256": "fixture-feedback",
+                "finding": "AET-CTX-003", "adoption_grade": True, "deviations": ["FALSE_NEGATIVE"],
+            }
+            feedback_path = evidence / "feedback.json"
+            feedback_path.write_text(json.dumps(feedback), encoding="utf-8")
+            legacy = {"report_kind": "audit", "findings": [{"rule_id": "OLD", "status": "FAIL"}]}
+            legacy_path = evidence / "legacy.json"
+            legacy_path.write_text(json.dumps(legacy), encoding="utf-8")
+
+            rows = harvest(runs=None, evidence=evidence, output=root / "out.json")["experiences"]
+
+            row = next(item for item in rows if item["report_kind"] == "audit_feedback")
+            self.assertEqual(row["observed_at"], feedback["recorded_at"])
+            self.assertEqual(row["repository_fingerprint"], "fixture-feedback")
+            self.assertEqual(row["task"]["task_id"], "AET-CTX-003")
+            old = next(item for item in rows if item["report_kind"] == "audit")
+            self.assertEqual(old["experience_id"], f"EXP-{hashlib.sha256(legacy_path.read_bytes()).hexdigest()[:12]}")
+
+    def test_experience_store_rejects_nested_private_or_secret_material(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            pack = {
+                "schema_version": "1.8.0", "report_kind": "learning_experiences", "generated_at": "now",
+                "privacy": {"profile": "evidence-only", "raw_transcript_retained": False},
+                "experiences": [{
+                    "experience_id": "EXP-X", "source": {"sha256": "a" * 64, "report_kind": "audit", "path_redacted": True},
+                    "report_kind": "audit", "schema_version": "1", "observed_at": "now", "repository_fingerprint": "repo",
+                    "workspace_snapshot": {"status": "UNKNOWN"}, "target": {"host": "UNKNOWN"},
+                    "task": {"task_id": "x", "final_response": "token=secret"}, "outcome": {"completed": False},
+                    "deviations": ["X"], "privacy": {"raw_transcript_retained": False, "profile": "evidence-only"},
+                }],
+            }
+            source = root / "pack.json"
+            source.write_text(json.dumps(pack), encoding="utf-8")
+            with self.assertRaises(LearnError):
+                harvest(runs=None, evidence=None, experience_store=source, output=root / "out.json")
+
+    def test_experience_store_rejects_private_key_segments_without_false_positives(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+
+            def pack(task: dict[str, object]) -> dict[str, object]:
+                return {
+                    "schema_version": "1.8.0", "report_kind": "learning_experiences", "generated_at": "now",
+                    "privacy": {"profile": "evidence-only", "raw_transcript_retained": False},
+                    "experiences": [{
+                        "experience_id": "EXP-X", "source": {"sha256": "a" * 64, "report_kind": "audit", "path_redacted": True},
+                        "report_kind": "audit", "schema_version": "1", "observed_at": "now", "repository_fingerprint": "repo",
+                        "workspace_snapshot": {"status": "UNKNOWN"}, "target": {"host": "UNKNOWN"}, "task": task,
+                        "outcome": {"completed": False}, "deviations": ["X"],
+                        "privacy": {"raw_transcript_retained": False, "profile": "evidence-only"},
+                    }],
+                }
+
+            for index, key in enumerate(("raw_response", "toolEvents", "environment_variables", "command-logs", "api_secret_value")):
+                source = root / f"private-{index}.json"
+                source.write_text(json.dumps(pack({"task_id": "x", "nested": {key: "private"}})), encoding="utf-8")
+                with self.subTest(key=key), self.assertRaises(LearnError):
+                    harvest(runs=None, evidence=None, experience_store=source, output=root / f"out-{index}.json")
+
+            allowed = root / "allowed.json"
+            allowed.write_text(json.dumps(pack({"task_id": "x", "response_time_ms": 2, "eventual_status": "FAIL", "catalog": "safe", "secretary_role": "reviewer"})), encoding="utf-8")
+            result = harvest(runs=None, evidence=None, experience_store=allowed, output=root / "allowed-out.json")
+            self.assertEqual(len(result["experiences"]), 1)
+
+    def test_experience_store_rejects_credentials_in_keys_and_high_confidence_values(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+
+            def pack(detail: dict[str, object]) -> dict[str, object]:
+                return {
+                    "schema_version": "1.8.0", "report_kind": "learning_experiences", "generated_at": "now",
+                    "privacy": {"profile": "evidence-only", "raw_transcript_retained": False},
+                    "experiences": [{
+                        "experience_id": "EXP-X", "source": {"sha256": "a" * 64, "report_kind": "audit", "path_redacted": True},
+                        "report_kind": "audit", "schema_version": "1", "observed_at": "now", "repository_fingerprint": "repo",
+                        "workspace_snapshot": {"status": "UNKNOWN"}, "target": {"host": "UNKNOWN"},
+                        "task": {"task_id": "x", "detail": detail}, "outcome": {"completed": False}, "deviations": ["X"],
+                        "privacy": {"raw_transcript_retained": False, "profile": "evidence-only"},
+                    }],
+                }
+
+            private = (
+                {"apiKey": "redacted"}, {"access-token": "redacted"}, {"authorization": "redacted"},
+                {"nested": {"passwd": "redacted"}}, {"note": "sk-" + "1234567890abcdefghijkl"},
+                {"note": "github_pat_1234567890abcdefghijkl"}, {"note": "Bearer abcdefghijklmnopqrstuvwxyz"},
+                {"note": "password=hunter2-secret"},
+            )
+            for index, detail in enumerate(private):
+                source = root / f"credential-{index}.json"
+                source.write_text(json.dumps(pack(detail)), encoding="utf-8")
+                with self.subTest(detail=detail), self.assertRaises(LearnError):
+                    harvest(runs=None, evidence=None, experience_store=source, output=root / f"credential-out-{index}.json")
+
+            allowed = root / "credential-allowed.json"
+            allowed.write_text(json.dumps(pack({"token_count": 42, "secretary": "reviewer", "note": "sk-short"})), encoding="utf-8")
+            result = harvest(runs=None, evidence=None, experience_store=allowed, output=root / "credential-allowed-out.json")
+            self.assertEqual(len(result["experiences"]), 1)
+
+    def test_experience_store_rejects_private_keys_and_provider_credentials_without_metadata_false_positives(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+
+            def pack(detail: dict[str, object]) -> dict[str, object]:
+                base = {
+                    "experience_id": "EXP-X", "source": {"sha256": "a" * 64, "report_kind": "audit", "path_redacted": True},
+                    "report_kind": "audit", "schema_version": "1", "observed_at": "now", "repository_fingerprint": "repo",
+                    "workspace_snapshot": {"status": "UNKNOWN"}, "target": {"host": "UNKNOWN"}, "task": {"task_id": "x", "detail": detail},
+                    "outcome": {"completed": False}, "deviations": ["X"], "privacy": {"raw_transcript_retained": False, "profile": "evidence-only"},
+                }
+                return {"schema_version": "1.8.0", "report_kind": "learning_experiences", "generated_at": "now", "privacy": {"profile": "evidence-only", "raw_transcript_retained": False}, "experiences": [base]}
+
+            private = (
+                {"privateKey": "redacted"}, {"note": "-----BEGIN PRIVATE KEY-----\nabc\n-----END PRIVATE KEY-----"},
+                {"note": "AKIA" + "1234567890ABCDEF"}, {"note": "eyJhbGciOiJIUzI1NiJ9." + "eyJzdWIiOiIxMjM0NTY3ODkwIn0.abcdefghijklmnop"},
+                {"note": "xoxb-" + "123456789012-123456789012-abcdefghijklmnopqrstuvwx"},
+            )
+            for index, detail in enumerate(private):
+                source = root / f"provider-{index}.json"
+                source.write_text(json.dumps(pack(detail)), encoding="utf-8")
+                with self.subTest(detail=detail), self.assertRaises(LearnError):
+                    harvest(runs=None, evidence=None, experience_store=source, output=root / f"provider-out-{index}.json")
+
+            allowed = root / "provider-allowed.json"
+            allowed.write_text(json.dumps(pack({"api_key_count": 2, "credential_count": 1, "authorization_status": "UNKNOWN", "token_count": 9})), encoding="utf-8")
+            self.assertEqual(1, len(harvest(runs=None, evidence=None, experience_store=allowed, output=root / "provider-allowed-out.json")["experiences"]))
+
+    def test_observed_scoring_json_records_ingestion_context(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            skill = root / "skills" / "demo" / "SKILL.md"
+            skill.parent.mkdir(parents=True)
+            baseline = "<!-- aet-learn:immutable -->\nUNKNOWN.\n<!-- aet-learn:end -->\n<!-- aet-learn:editable id=\"x\" -->\nDo it.\n<!-- aet-learn:end -->\n"
+            skill.write_text(baseline, encoding="utf-8")
+            candidate = root / "candidate"
+            candidate.mkdir()
+            proposed = baseline.replace("Do it.", "Do it safely.")
+            (candidate / "candidate.SKILL.md").write_text(proposed, encoding="utf-8")
+            (candidate / "candidate.json").write_text(json.dumps({"candidate_id": "CAND-CONTEXT", "target_file": str(skill), "baseline_sha256": hashlib.sha256(baseline.encode()).hexdigest(), "candidate_sha256": hashlib.sha256(proposed.encode()).hexdigest(), "operations": [{"type": "replace_editable_block", "id": "x", "before_sha256": hashlib.sha256(b"Do it.\n").hexdigest(), "new_text": "Do it safely.\n"}]}), encoding="utf-8")
+            fixture = root / "fixture" / "repo"
+            fixture.mkdir(parents=True)
+            suite = root / "suite"
+            suite.mkdir()
+            (suite / "task.json").write_text(json.dumps({
+                "schema_version": "2.0", "task_id": "context-task", "prompt": "Report unknown.",
+                "fixture": {"source": str(root / "fixture")}, "runner": {"allowed": ["scripted"]},
+                "policy": {"network": "deny", "timeout_seconds": 10, "allowed_commands": []},
+                "expected_behavior": {}, "script": {"events": [{"type": "final_response", "text": "UNKNOWN"}]},
+            }), encoding="utf-8")
+
+            replay = replay_observed(candidate=candidate, suite=[suite], output=root / "out", runner_name="scripted", rollouts=1)
+
+            rollout = Path(replay["pairs"][0]["baseline"]["rollout"])
+            score = json.loads((rollout / "scoring.json").read_text(encoding="utf-8"))
+            self.assertEqual((score["task_id"], score["runner"], score["variant"], score["iteration"]), ("context-task", "scripted", "baseline", 0))
+            self.assertRegex(score["fixture_sha256"], r"^[0-9a-f]{64}$")
+            self.assertIsInstance(score["observed_at"], str)
+
     def test_experience_store_inspect_and_cross_project_mining_are_evidence_only(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)

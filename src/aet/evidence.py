@@ -31,6 +31,11 @@ _DEFAULT_SECRET_PATTERNS = (
 )
 
 
+def redact_artifact_content(raw: bytes, redaction_patterns: Iterable[str] = ()) -> dict[str, Any]:
+    """Return the canonical redacted content record used by Trace artifacts."""
+    return _redacted_log(raw, _compile_patterns(redaction_patterns))
+
+
 def trace_command(
     argv: list[str],
     output: Path,
@@ -242,11 +247,13 @@ def _proof_binding(components: dict[str, dict[str, Any]]) -> dict[str, Any]:
     return {"status": Status.PASS.value, "proof_id": trace_proof["id"], "contract_sha256": trace_proof["intent_sha256"]}
 
 
-def workspace_snapshot(cwd: Path) -> dict[str, Any]:
+def workspace_snapshot(cwd: Path, exclude_paths: Iterable[str] = ()) -> dict[str, Any]:
     """Capture the Git state that an artifact can actually support."""
     root = cwd.resolve()
+    excluded = {Path(value).as_posix() for value in exclude_paths}
     head = _git(root, "rev-parse", "HEAD")
-    diff = _git(root, "diff", "--binary", "HEAD", "--")
+    pathspec = [".", *(f":(exclude){value}" for value in sorted(excluded))]
+    diff = _git(root, "diff", "--binary", "HEAD", "--", *pathspec)
     untracked = _git(root, "ls-files", "--others", "--exclude-standard")
     if head is None or diff is None or untracked is None:
         return {"status": Status.UNKNOWN.value, "reason": "Git workspace state could not be captured"}
@@ -254,7 +261,7 @@ def workspace_snapshot(cwd: Path) -> dict[str, Any]:
     worktree = hashlib.sha256()
     worktree.update(b"tracked\\0" + diff.encode("utf-8"))
     untracked_manifest = hashlib.sha256()
-    for relative in sorted(line for line in untracked.splitlines() if line):
+    for relative in sorted(line for line in untracked.splitlines() if line and line not in excluded):
         candidate = root / relative
         untracked_manifest.update(relative.encode("utf-8") + b"\\0")
         if candidate.is_file():
@@ -405,7 +412,7 @@ def _portable_artifact(artifact: Any) -> dict[str, Any] | None:
 
 
 def _portable_captured_artifact(artifact: dict[str, Any]) -> dict[str, Any]:
-    return {key: artifact.get(key) for key in ("requested_path", "status", "reason", "sha256", "freshness", "content") if key in artifact}
+    return {key: artifact.get(key) for key in ("requested_path", "status", "reason", "sha256", "size_bytes", "source_sha256", "source_size_bytes", "freshness", "content") if key in artifact}
 
 
 def _compile_patterns(custom_patterns: Iterable[str]) -> tuple[re.Pattern[str], ...]:
@@ -457,7 +464,8 @@ def _capture_artifact(path: Path, cwd: Path, patterns: tuple[re.Pattern[str], ..
     if not resolved.is_file():
         return {"requested_path": requested_path, "status": Status.UNKNOWN.value, "reason": "declared artifact was not created as a regular file"}
     try:
-        redacted = _redacted_log(resolved.read_bytes(), patterns)
+        raw = resolved.read_bytes()
+        redacted = _redacted_log(raw, patterns)
     except OSError as error:
         return {"requested_path": requested_path, "status": Status.UNKNOWN.value, "reason": f"artifact could not be read safely: {error}"}
     if redacted["status"] != Status.PASS.value:
@@ -467,6 +475,9 @@ def _capture_artifact(path: Path, cwd: Path, patterns: tuple[re.Pattern[str], ..
         "requested_path": requested_path,
         "status": Status.PASS.value,
         "sha256": hashlib.sha256(content.encode("utf-8")).hexdigest(),
+        "size_bytes": len(content.encode("utf-8")),
+        "source_sha256": hashlib.sha256(raw).hexdigest(),
+        "source_size_bytes": len(raw),
         "content": content,
     }
 
@@ -501,6 +512,7 @@ def _artifact_record(path: Path, log: dict[str, Any]) -> dict[str, Any]:
         "status": log["status"],
         "path": str(path),
         "sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+        "size_bytes": path.stat().st_size,
         "excerpt": log["excerpt"],
     }
 

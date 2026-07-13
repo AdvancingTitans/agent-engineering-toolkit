@@ -1,23 +1,77 @@
 name: GitHub Release
 
 on:
-  push:
-    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing v-prefixed tag to publish
+        required: true
+        type: string
+      gate_run_id:
+        description: Successful Real Host Gate run for the release commit
+        required: true
+        type: string
 
 permissions:
   contents: write
+  actions: read
 
 jobs:
   release:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.tag }}
+          fetch-depth: 0
       - uses: astral-sh/setup-uv@v5
-      - run: test "${GITHUB_REF_NAME#v}" = "$(uv run python -c 'import aet; print(aet.__version__)')"
-      - run: uv run --no-editable --reinstall-package agent-engineering-toolkit python -m unittest discover -s tests -v
+      - name: Verify tag and gate workflow-run provenance
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ inputs.tag }}
+          GATE_RUN_ID: ${{ inputs.gate_run_id }}
+        run: |
+          [[ "$RELEASE_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]
+          git show-ref --verify "refs/tags/$RELEASE_TAG"
+          test "${RELEASE_TAG#v}" = "$(uv run python -c 'import aet; print(aet.__version__)')"
+          test "$(git rev-list -n 1 "$RELEASE_TAG")" = "$GITHUB_SHA"
+          run_json="$(gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${GATE_RUN_ID}")"
+          test "$(jq -r .head_sha <<<"$run_json")" = "$GITHUB_SHA"
+          test "$(jq -r .conclusion <<<"$run_json")" = "success"
+          test "$(jq -r .event <<<"$run_json")" = "workflow_dispatch"
+          test "$(jq -r .path <<<"$run_json")" = ".github/workflows/real-host-gate.yml"
+      - name: Download commit-bound real host gate
+        uses: actions/download-artifact@v4
+        with:
+          name: real-host-gate
+          path: .aet/release/v1.9
+          run-id: ${{ inputs.gate_run_id }}
+          github-token: ${{ github.token }}
+      - name: Reconstruct candidate and verify every bound byte
+        env:
+          RELEASE_TAG: ${{ inputs.tag }}
+        run: |
+          uv run python eval/real-agent/build_candidate.py \
+            --root . --output .aet/release/v1.9/reconstructed-candidate
+          uv run python eval/real-agent/release_gate.py verify \
+            --root . \
+            --candidate .aet/release/v1.9/reconstructed-candidate \
+            --raw-gate .aet/release/v1.9/raw-gate.json \
+            --commit "$GITHUB_SHA" --version "${RELEASE_TAG#v}" \
+            --manifest .aet/release/v1.9/real-host-gate.json
+      - run: uv run --with pytest python -m pytest -q
+      - run: uv run --with pytest python -m pytest tests/test_business_quality_flows.py -q
       - run: uv run --no-editable --reinstall-package agent-engineering-toolkit aet audit . --strict --format json --output .aet/evidence/release-audit.json
-      - run: uv build
-      - run: uv run --isolated --with "$(find dist -name '*.whl' -print -quit)" aet --version
+      - name: Build and smoke-test tag, source, and wheel versions
+        env:
+          RELEASE_TAG: ${{ inputs.tag }}
+        run: |
+          source_version="$(uv run python -c 'import aet; print(aet.__version__)')"
+          uv build
+          wheel_version="$(uv run --isolated --with "$(find dist -name '*.whl' -print -quit)" aet --version)"
+          test "$wheel_version" = "$source_version"
+          test "$wheel_version" = "${RELEASE_TAG#v}"
       - env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release create "$GITHUB_REF_NAME" dist/* --generate-notes --title "AET $GITHUB_REF_NAME"
+          RELEASE_TAG: ${{ inputs.tag }}
+        run: gh release create "$RELEASE_TAG" dist/* --generate-notes --title "AET $RELEASE_TAG"

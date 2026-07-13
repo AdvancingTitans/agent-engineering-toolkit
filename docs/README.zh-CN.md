@@ -134,6 +134,11 @@ aet audit . --strict --format json --output .aet/evidence/audit.json
 
 ## 架构
 
+![Agent Engineering Toolkit 中文架构图](assets/aet-architecture-zh-cn.png)
+
+<details>
+<summary>文本版 Mermaid 备用图</summary>
+
 ```mermaid
 flowchart TB
   subgraph delivery["交付证据平面"]
@@ -167,6 +172,8 @@ flowchart TB
 
   P --> A
 ```
+
+</details>
 
 学习支路是可选的：AET 不会把每份证据都当成训练数据；静态文本检查不会被描述为已观测
 Agent 行为；Gate 通过也不会修改生产资产。Audit Rule 还必须满足真实仓库 Shadow 门禁。

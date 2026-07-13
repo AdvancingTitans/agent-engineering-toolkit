@@ -170,6 +170,11 @@ not a claim that one should replace the others.
 
 ## Architecture
 
+![Agent Engineering Toolkit architecture](docs/assets/aet-architecture-en.png)
+
+<details>
+<summary>Text-rendered Mermaid fallback</summary>
+
 ```mermaid
 flowchart TB
   subgraph delivery["Delivery evidence plane"]
@@ -203,6 +208,8 @@ flowchart TB
 
   P --> A
 ```
+
+</details>
 
 The learning path is deliberately optional. AET does not treat every artifact
 as training data; static text checks are not presented as observed behavior;

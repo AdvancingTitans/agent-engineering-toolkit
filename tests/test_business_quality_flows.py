@@ -200,6 +200,33 @@ class BusinessQualityFlowsTests(unittest.TestCase):
             self.assertTrue(proof_runner.is_file())
             self.assertIn("PYTHONDONTWRITEBYTECODE", proof_runner.read_text(encoding="utf-8"))
 
+    def test_release_candidate_guidance_is_a_single_command_content_contract(self) -> None:
+        builder = REAL_AGENT / "build_candidate.py"
+        with tempfile.TemporaryDirectory() as temporary:
+            output = Path(temporary) / "candidate"
+            subprocess.run(
+                [sys.executable, str(builder), "--root", str(ROOT), "--output", str(output)],
+                check=True,
+            )
+            candidate_text = (output / "candidate.SKILL.md").read_text(encoding="utf-8")
+            normalized = " ".join(candidate_text.split())
+            exact_trace = (
+                "./.aet-rollout/bin/aet trace --proof <proof-id> --intent aet.intent.json "
+                "\\ --artifact <reports/relative-proof.txt> --output .aet/evidence/trace.json "
+                "\\ -- python3 bin/run_proof.py"
+            )
+            for required in (
+                "the task prompt already provides the proof id, proof command, report artifact, and evidence path",
+                "Do not read, list, search, count, check, or otherwise inspect any file",
+                "Run no command before or after that exact trusted Trace command",
+                "do not inspect its output or any file",
+                "only the relative `.aet/evidence/trace.json` path, with no success claim",
+                "`pwd`, `ls`, `find`, `rg`, `grep`, `jq`, `cat`",
+                "`head`, `tail`, `wc`, `sed`, `aet audit`, or `aet review`",
+                exact_trace,
+            ):
+                self.assertIn(required, normalized)
+
     def test_tracked_candidate_builder_and_release_gate_recompute_content(self) -> None:
         builder = REAL_AGENT / "build_candidate.py"
         helper = REAL_AGENT / "release_gate.py"
@@ -216,8 +243,8 @@ class BusinessQualityFlowsTests(unittest.TestCase):
             for instruction in (
                 "aet.intent.json", "./.aet-rollout/bin/aet trace", "--proof", "--intent",
                 "--artifact", ".aet/evidence/trace.json", "python3 bin/run_proof.py",
-                "use the proof id and report artifact named in the task prompt",
-                "Do not run extra `aet audit` or `aet review` commands",
+                "the task prompt already provides the",
+                "Run no command before or after that exact trusted Trace command",
             ):
                 self.assertIn(instruction, candidate_text)
             self.assertNotIn("read `aet.intent.json`", candidate_text)

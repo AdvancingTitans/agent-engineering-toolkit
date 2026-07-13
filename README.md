@@ -8,14 +8,15 @@
 
 **[English](README.md) · [简体中文](docs/README.zh-CN.md)**
 
-> AET is the local evidence layer between an agent’s work and a claim that the work is ready.
+> AET is the local evidence and control layer between agent work, delivery
+> claims, and bounded improvement of the assets that govern that work.
 
 **Agent Engineering Toolkit (AET)** makes coding-agent work inspectable before
 it is trusted, and improvable only when the improvement is itself evidenced.
 It records the instructions available to an agent, the human-approved change
 boundary, explicit command execution, produced artifacts, and any verification
 gap. Those records can travel with a delivery—or, when failures repeat, become
-the input to a bounded evolution experiment for a Skill or declared audit asset.
+the input to a bounded evolution experiment for a registered governance asset.
 
 This answers two different engineering questions with one evidence model:
 
@@ -34,6 +35,12 @@ Coding agents make it inexpensive to change a repository, but not necessarily
 easy to answer the questions that matter at handoff: *Which instructions were
 in scope? Was this command really run? Does the output still describe this
 workspace? What is verified, and what remains unknown?*
+
+They also do not make governance improve by itself. A repeated false negative,
+misrouted proof workflow, or weak policy may be visible in production evidence,
+yet changing the Skill or audit rule without an independent evaluator simply
+moves the trust problem. AET exists to close both loops: evidence for the work,
+and evidence for a bounded change to the assets governing the work.
 
 Most teams solve fragments of this with chat transcripts, CI logs, prompt
 edits, or manual checklists. AET gives those fragments a local, structured,
@@ -54,12 +61,30 @@ agent session should become training data tomorrow.
 - **Learning is constrained.** Candidate Skills and audit assets are bound to
   their baseline hash, bounded Patch IR, and Evolution Constitution; independent
   Gate evidence and an explicit human action are still required.
-- **Behavior can be observed.** Static Skill-document checks remain Gate 0;
-  opt-in Scripted, Codex, and Claude Code runners can evaluate actual isolated
-  task executions with deterministic scoring.
+- **The evaluator follows the target.** Skills use static or opt-in real-host
+  behavior replay; Audit Rules use deterministic fixtures and real-repository
+  Shadow; bounded policies use policy-specific suites. A generic LLM judge does
+  not decide adoption.
+- **Production evidence cannot be gamed by the candidate.** The Constitution,
+  evaluator, held-out cases, evidence-state meanings, and human-adoption rule
+  are outside candidate authority.
+- **Audit evolution has a real-world brake.** A fixture-passing Audit Rule still
+  needs candidate-bound Shadow evidence, confirmed findings, and zero confirmed
+  false positives before adoption.
 
 AET is **not** an agent runtime, a general autonomous coding framework, a
 hosted monitoring product, or a system that rewrites arbitrary production code.
+
+## Core concepts
+
+| Concept | Meaning in AET |
+| --- | --- |
+| **Evidence Plane** | `audit`, `review`, `trace`, `context`, `decision`, `evolve`, and `run` record narrow facts about instructions, intent, execution, artifacts, freshness, and history. |
+| **Evidence Only** | Learning defaults to structured deviations and hashes, not raw transcripts, complete shell output, secrets, or an unbounded telemetry archive. |
+| **Evidence-Gated Asset Evolution** | Repeated failures may produce a bounded candidate for one registered target; the candidate is replayed by an evaluator it cannot modify. |
+| **Evolution Constitution** | Immutable cross-target rules: `UNKNOWN` is not PASS, held-out stays separate, candidates cannot change evaluators or evidence semantics, and adoption remains human-authorized. |
+| **Stage vs. Adopt** | A passing candidate is copied for review. Only a later explicit `adopt --yes` may replace the hash-matching target and write a Decision Ledger record. |
+| **Shadow Audit** | A candidate RulePack runs beside the official Audit. Its findings are private comparison evidence and never affect official output or exit code. |
 
 ## Start here
 
@@ -81,14 +106,14 @@ found a problem,” not “no audit JSON was produced.”
 
 | Question | Command | Result |
 | --- | --- | --- |
-| Are instructions, local references, and Skills usable? | `aet audit` | Markdown, JSON, or SARIF findings with evidence and remediation. |
-| Is a diff inside the human-approved contract? | `aet review` | Intent, path-budget, and proof-declaration report. |
-| Did an explicit command run and produce its declared report? | `aet trace -- <argv>` | Redacted execution record; optional captured artifact. |
+| Are instructions, local references, and Skills usable? | `aet audit` | Markdown, JSON, or SARIF findings, versioned RulePack identity, evidence, and remediation; optional Profile and candidate Shadow. |
+| Is a diff inside the human-approved contract? | `aet review` | Intent, path-budget, proof-declaration, and optional stricter Review Policy report. |
+| Did an explicit command run and produce its declared report? | `aet trace -- <argv>` | Redacted execution record, fresh declared artifact, and optional safe validator result. |
 | Can these records travel with a handoff or release? | `aet evidence pack` | Portable Evidence Pack and optional static Viewer. |
 | Did a delivery become stale after review or proof? | `aet run` | Optional append-only delivery lifecycle. |
 | What context and decisions were locally recorded? | `aet context`, `aet decision` | Hash-bound Context Manifest and Decision Ledger. |
 | Why did this repository change? | `aet evolve` | Cited local/explicit-remote evolution report. |
-| Which existing findings should be handled first? | `aet triage` | Explainable ordering; never a changed finding status. |
+| Which existing findings should be handled first? | `aet triage` | Explainable default or policy-driven ordering; never a changed finding status. |
 | Can repeated failures improve a bounded asset safely? | `aet learn` | Evidence-only experience, target-specific candidate and Gate, optional Shadow evidence, and staged review copy. |
 
 ## Where AET fits
@@ -103,6 +128,8 @@ not a claim that one should replace the others.
 | Skill authoring / governance system ([Yao Meta Skill](https://github.com/yaojingang/yao-meta-skill)) | Creating, packaging, compiling, evaluating, and governing reusable cross-platform Skill assets. | AET focuses on delivery evidence and independently gated improvement of in-use Skills and audit assets. Use Yao to engineer the Skill product; use AET to prove what happened and constrain what may evolve. |
 | Skill optimizer ([SkillOpt](https://github.com/microsoft/SkillOpt)) | Training a Skill document from scored rollouts and held-out validation. | AET provides local engineering evidence semantics—intent boundaries, explicit command proof, artifact handling, freshness, and human adoption—rather than a general benchmark optimizer. |
 | Transcript analytics / agent observability | Searching broad session history, dashboards, or fleet telemetry. | AET defaults to structured Evidence Only records and local storage; it intentionally does not ingest an unbounded transcript archive. |
+| Policy engines (for example OPA) | Enforcing a broad, pre-authored policy language across systems. | AET is not a general policy engine. It evolves only six registered AET assets through monotonic, target-specific operations and evidence gates. |
+| Evaluation frameworks / LLM judges | Measuring model or Agent quality across broad task sets. | AET evaluates engineering claims and bounded asset changes from commands, artifacts, diffs, fixtures, and explicit states; an LLM may propose, but never decides the Gate. |
 
 ### Choose AET when
 
@@ -110,8 +137,20 @@ not a claim that one should replace the others.
   but the command, exit status, declared artifact, approved scope, and freshness.
 - You need to preserve the difference between **PASS**, **FAIL**, and
   **UNKNOWN** instead of collapsing uncertainty into a score.
-- You want to improve a Skill from repeated engineering failures without letting
-  an optimizer silently weaken safety semantics or overwrite production guidance.
+- Repeated Agent behavior failures should improve a marked Skill region, with
+  optional real Codex/Claude Code rollout rather than text matching presented as
+  behavior evidence.
+- Audit false negatives, false positives, wrong status/severity/location,
+  incomplete remediation, duplicate findings, non-determinism, performance
+  regressions, or requested policy exceptions need a reproducible fixture and
+  an auditable Rule candidate.
+- Different repository classes need stricter Audit Profiles or Review Policies,
+  but a candidate must not disable rules, lower severity, expand scope, or remove
+  proof requirements.
+- JUnit, SARIF, coverage, or JSON artifacts need deterministic assertions bound
+  to the exact Trace run that freshly created or changed them.
+- Finding priority should adapt to critical paths without hiding findings or
+  rewriting their original PASS/FAIL/UNKNOWN state.
 - You need a local, portable evidence format that works alongside—not inside—an
   existing agent runtime and CI system.
 
@@ -124,6 +163,10 @@ not a claim that one should replace the others.
   attested as read; or
 - an automatic self-modification daemon. `propose`, `gate`, `stage`, and
   `adopt` are intentionally separate actions.
+- a way to generate or execute arbitrary Python audit plugins: Audit Rule
+  candidates select only allowlisted, non-executable detectors; or
+- proof that a released Audit Rule has accumulated real multi-repository Shadow
+  evidence merely because the repository tests its Shadow threshold logic.
 
 ## Architecture
 
@@ -145,10 +188,16 @@ flowchart TB
     I -. "structured Evidence Only\nrepeated failures" .-> K["harvest + mine\npattern support"]
     K --> L["classify target\nSkill / rule / bounded policy"]
     L --> M["propose\nCandidate v2 + Constitution"]
-    M --> R["target evaluator\nSkill rollout / audit fixture / policy fixture"]
-    R --> N["gate\ncore + validation + held-out + adversarial"]
+    M --> S["Skill evaluator\nstatic or real-host rollout"]
+    M --> R["Audit Rule evaluator\nfixture replay"]
+    M --> U["Policy evaluator\ntarget-specific suite"]
+    S --> N["independent Gate"]
+    R --> N
+    U --> N
     N --> O["stage\nhuman review copy"]
-    O -. "explicit --yes" .-> P["adopt\nasset + Decision Ledger"]
+    O -. "Skill / Policy\nexplicit --yes" .-> P["adopt\nasset + Decision Ledger"]
+    O --> V["Audit Rule Shadow\nreal repositories + confirmations"]
+    V -. "threshold met +\nexplicit --yes" .-> P
     N -. "fail / inconclusive" .-> Q["reject record\nnegative constraint"]
   end
 
@@ -169,7 +218,9 @@ Start with the job, not the biggest workflow:
 | Check whether an Agent’s local guidance is usable | `aet audit` | `context` when you need a hash-bound record of discovered/read assets. |
 | Deliver an Agent-authored change | `audit` + `review` + `trace` | `evidence pack` for a portable handoff; `run` when the delivery has multiple lifecycle steps. |
 | Explain why a repository looks this way | `aet evolve plan` | `collect/build/report` after reviewing the collection plan. |
-| Improve a recurring Skill failure | `learn harvest` + `mine` | `propose/replay/gate/stage`; use a real host runner only when explicitly configured. |
+| Improve recurring Agent behavior | `learn harvest` + `mine --target-type skill` | `propose/replay/gate/stage`; use a real host runner only when explicitly configured. |
+| Improve an Audit false negative or false positive | `aet audit feedback record` | Mine as `audit-rule`, run four fixture partitions, then accumulate candidate-bound Shadow evidence. |
+| Tighten Audit, Review, Trace, or Triage policy | `learn target list` | Supply a bounded JSON Patch, run the target-specific policy suites, stage, then explicitly adopt. |
 
 ### Recipe: evidence-backed delivery
 
@@ -324,8 +375,8 @@ aet learn replay --candidate .aet/learn/candidates/CAND-001 \
 # Only an adoptable profile can produce an observed PASS. A small sample is
 # INCONCLUSIVE rather than a pass, and stage/adopt remain separate.
 aet learn gate --candidate .aet/learn/candidates/CAND-001 \
-  --core eval/real-agent/core --validation eval/real-agent/validation \
-  --held-out eval/real-agent/held-out --runner codex --rollouts 6 \
+  --core <core-suite> --validation <validation-suite> \
+  --held-out <held-out-suite> --runner codex --rollouts 6 \
   --statistics-profile adoptable --runner-config runner.json \
   --output .aet/learn/gates/CAND-001-observed.json
 ```

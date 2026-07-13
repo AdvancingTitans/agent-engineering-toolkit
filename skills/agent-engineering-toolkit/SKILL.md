@@ -1,11 +1,11 @@
 ---
 name: agent-engineering-toolkit
-description: Produce evidence-backed audits and intent-to-diff reviews for coding-agent work with the aet CLI. Use before an agent changes a repository, before merging an agent-authored diff, when AGENTS.md/CLAUDE.md/SKILL.md may have drifted, or when a handoff needs portable JSON or SARIF evidence. Works with any agent that can read instructions and run a local CLI.
+description: Use the aet CLI as an evidence-driven Agent engineering quality and control layer. Audit instructions, review intent against diffs, trace explicit proofs, diagnose structured failures, stage regression candidates, or run bounded evidence-gated asset evolution. Works with any Agent that can read instructions and run a local CLI.
 ---
 
 # Agent Engineering Toolkit
 
-Current Skill version: `1.8.0` (Evidence-Gated Evolution Lab)
+Current Skill version: `1.9.0` (Evidence → Quality → bounded Evolution)
 
 Use the `aet` CLI as the source of truth. The host agent may choose its own
 shell or package runner, but must preserve the commands' exit status and attach
@@ -30,6 +30,8 @@ Choose one initial surface. If the request is ambiguous, default to read-only `a
 | Understand why a repo changed | `aet evolve plan/collect/build/report` | Evolution Pack |
 | Record which local context was available | `aet context discover/record/verify` | Context Manifest |
 | Preserve a source-backed project decision | `aet decision init/add/verify` | Decision Ledger |
+| Map structured failures to an owner and repair surface | `aet quality diagnose` | Deterministic diagnosis; source status is unchanged |
+| Stage a confirmed badcase as a regression candidate | `aet quality promote` | Validation-only Task v2 bundle for human review |
 | Improve a bounded Skill or audit asset | `aet learn target list`, then `harvest/inspect/mine/propose/replay/gate/stage` | Staged candidate + target-specific Gate report |
 
 Repo Archaeologist example: “Explain why this repository adopted a plugin architecture; link releases, PRs, Issues, commits, and README changes, and separate direct evidence from candidates.” Use `aet evolve`; never invent author intent.
@@ -170,6 +172,23 @@ Repo Archaeologist example: “Explain why this repository adopted a plugin arch
     aggregate as real multi-repository validation.
 <!-- aet-learn:end -->
 
+11. For a confirmed failure with an explicit local mapping policy, diagnose it
+    before proposing a repair or regression:
+
+    ```bash
+    aet quality diagnose --report <evidence.json> --policy <quality-mapping.json> \
+      --output .aet/quality/diagnosis.json
+    aet quality promote --badcase <confirmed-badcase.json> \
+      --diagnosis .aet/quality/diagnosis.json --policy <quality-mapping.json> \
+      --output .aet/quality/staged-regressions
+    ```
+
+    Diagnosis is deterministic policy lookup, not semantic RCA or an LLM Judge.
+    It preserves the source `FAIL`/`UNKNOWN`, records review routing, and requires
+    explicit owner/action/repair-surface mappings. Promotion writes only a
+    validation candidate bundle; it does not edit formal suites, production
+    assets, prompts, Skills, source code, tickets, or releases.
+
 ## Portable use
 
 This folder is the canonical, tool-neutral Skill. Install or load the complete
@@ -190,5 +209,29 @@ Audit, review, and Evidence Pack compilation are deterministic and local.
 Only `aet trace` executes a command, and only the explicit argv after `--`.
 Trace redacts configured secret patterns before persistence; undecodable or
 unredactable fields remain `UNKNOWN`. A missing declared artifact makes Trace
-return non-zero even if its child command passed. No command, MCP server, or
-model output is verified unless Trace records it.
+return non-zero even if its child command passed. Raw runner output remains
+private to its rollout; Evidence Only export excludes transcripts, shell output,
+secrets, and environment values. Real-host tasks must explicitly allow each
+required environment name (for example `PATH`, `HOME`, or `OPENAI_API_KEY`);
+for process adapters such as Codex and Claude Code, credentials require that
+Task allowlist, while `HOME` requires both the Task allowlist and runner
+`inherit_home: true`. Runner configuration can restrict Task permission but
+cannot expand it. The scripted adapter ignores `inherit_home` and other
+runner-config environment permissions and passes only the Task
+`environment_allowlist`. Environment authorization controls process
+inheritance, not evidence export. No
+command, MCP server, or model output is verified unless Trace records it.
+Scripted and host adapters remain `PARTIAL` unless they provide real OS-level
+network isolation; `enforced-deny` Tasks fail before execution otherwise.
+Observed fixtures reject root/nested links and special files, and Trace credit
+requires exact structured `./.aet-rollout/bin/aet trace` argv. The scorer
+independently recomputes the Git snapshot excluding the Trace JSON, rejects
+`UNKNOWN`, and verifies every declared artifact and stdout/stderr log against a
+real non-link workspace file, source hash, size, fixed derived log path, and
+fresh state. It independently reapplies declared redaction patterns; outer
+child argv, Trace argv, and the intent proof command must match exactly, and
+proof `evidence` must be an array. Command-shaped text or arbitrary JSON is not evidence.
+
+AET is not a general benchmark, LLM-Judge platform, automatic semantic RCA or
+Evidence Graph engine, clustering service, Skill-quality YAML standard,
+auto-repair daemon, release bot, or online ticket/metrics platform.

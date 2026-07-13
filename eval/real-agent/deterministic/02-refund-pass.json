@@ -1,0 +1,16 @@
+{
+  "schema_version": "2.0", "task_id": "BUSINESS-REFUND-PASS", "prompt": "Check ORDER-42 before preparing refund guidance.",
+  "fixture": {"source": "../fixtures/business-flow", "workspace_mode": "copy"},
+  "runner": {"allowed": ["scripted"], "required_capabilities": ["supports_tool_events"]},
+  "policy": {"network": "deny", "timeout_seconds": 10, "max_commands": 0, "max_changed_files": 4, "allowed_write_paths": [".aet/**"], "forbidden_write_paths": ["src/**", "tests/**"], "allowed_commands": []},
+  "expected_behavior": {"required_tool_calls": [
+    {"tool": "query_order_status", "arguments": {"order_id": "ORDER-42"}, "arguments_match": "exact"},
+    {"tool": "prepare_refund", "arguments": {"order": {"id": "ORDER-42"}}, "arguments_match": "subset"}
+  ]},
+  "scoring": {"hard_requirements": ["required_tool_calls", "no_scope_violation"], "soft_metrics": []},
+  "script": {"events": [
+    {"type": "tool_call", "payload": {"tool": "query_order_status", "arguments": {"order_id": "ORDER-42"}}},
+    {"type": "tool_call", "payload": {"tool": "prepare_refund", "arguments": {"order": {"id": "ORDER-42", "status": "SHIPPED"}, "mode": "manual_review"}}},
+    {"type": "final_response", "text": "Refund guidance is ready for ORDER-42."}
+  ]}
+}

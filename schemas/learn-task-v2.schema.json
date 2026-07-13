@@ -2,16 +2,68 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "AET Learn Task v2",
   "type": "object",
+  "additionalProperties": false,
   "required": ["schema_version", "task_id", "prompt", "fixture", "policy", "expected_behavior"],
   "properties": {
     "schema_version": {"const": "2.0"},
     "task_id": {"type": "string", "minLength": 1},
     "prompt": {"type": "string", "minLength": 1},
-    "fixture": {"type": "object", "required": ["source"], "properties": {"source": {"type": "string"}}},
-    "policy": {"type": "object"},
-    "expected_behavior": {"type": "object"},
-    "runner": {"type": "object"},
+    "title": {"type": "string"},
+    "category": {"type": "string"},
+    "fixture": {
+      "type": "object", "additionalProperties": false, "required": ["source"],
+      "properties": {"source": {"type": "string", "minLength": 1}, "workspace_mode": {"const": "copy"}}
+    },
+    "policy": {
+      "type": "object", "additionalProperties": false, "required": ["network", "timeout_seconds"],
+      "properties": {
+        "network": {"enum": ["allow", "deny", "enforced-deny"]},
+        "timeout_seconds": {"type": "number", "exclusiveMinimum": 0},
+        "max_commands": {"type": "integer", "minimum": 0},
+        "max_changed_files": {"type": "integer", "minimum": 0},
+        "allowed_write_paths": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+        "forbidden_write_paths": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+        "allowed_commands": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+        "environment_allowlist": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true}
+      }
+    },
+    "budgets": {
+      "type": "object", "additionalProperties": false,
+      "properties": {"max_commands": {"type": "integer", "minimum": 0}, "max_changed_files": {"type": "integer", "minimum": 0}}
+    },
+    "expected_behavior": {
+      "type": "object", "additionalProperties": false,
+      "properties": {
+        "required_surfaces": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+        "forbidden_surfaces": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+        "required_proof_ids": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+        "required_artifacts": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+        "required_final_claims": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+        "forbidden_claims_without_proof": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+        "unknown_must_be_preserved": {"type": "boolean"},
+        "required_tool_calls": {
+          "type": "array",
+          "items": {
+            "type": "object", "additionalProperties": false, "required": ["tool", "arguments", "arguments_match"],
+            "properties": {"tool": {"type": "string", "minLength": 1}, "arguments": {"type": "object"}, "arguments_match": {"enum": ["exact", "subset"]}}
+          }
+        }
+      }
+    },
+    "runner": {
+      "type": "object", "additionalProperties": false,
+      "properties": {
+        "allowed": {"type": "array", "items": {"enum": ["scripted", "codex", "claude-code"]}, "uniqueItems": true},
+        "required_capabilities": {"type": "array", "items": {"enum": ["supports_tool_events", "supports_command_events", "supports_structured_output", "supports_session_resume", "supports_non_interactive", "supports_network_isolation"]}, "uniqueItems": true}
+      }
+    },
+    "scoring": {
+      "type": "object", "additionalProperties": false,
+      "properties": {
+        "hard_requirements": {"type": "array", "uniqueItems": true, "items": {"enum": ["no_scope_violation", "no_unauthorized_command", "no_unsupported_success_claim", "unknown_preserved", "fresh_trace_required", "required_surfaces", "no_workflow_overuse", "command_budget", "changed_file_budget", "required_tool_calls"]}},
+        "soft_metrics": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true}
+      }
+    },
     "script": {"type": ["array", "object"]}
-  },
-  "additionalProperties": true
+  }
 }

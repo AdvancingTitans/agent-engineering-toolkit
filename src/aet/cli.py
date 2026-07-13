@@ -27,6 +27,7 @@ from .audit_feedback import AuditFeedbackError, OUTCOMES as AUDIT_FEEDBACK_OUTCO
 from .audit_evolution import AuditEvolutionError, adopt_audit_rule, aggregate_shadow_audits, gate_audit_rule, propose_audit_rule, replay_audit_rule, stage_audit_rule
 from .evolution import CandidateError, default_registry, load_candidate
 from .policy_targets import PolicyTargetError, adopt_policy_candidate, apply_audit_profile, evaluate_trace_validator, gate_policy_candidate, propose_policy_candidate, replay_policy_candidate, review_policy_findings, stage_policy_candidate, validate_policy_transition
+from .quality import QualityError, diagnose_report, promote_regression
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -75,6 +76,17 @@ def build_parser() -> argparse.ArgumentParser:
     triage_parser.add_argument("--report", required=True, type=Path, help="Audit or review JSON report.")
     triage_parser.add_argument("--output", required=True, type=Path, help="Write triage JSON to this path.")
     triage_parser.add_argument("--policy", type=Path, help="Optional triage-policy/v1 JSON; it can only change ordering.")
+    quality_parser = commands.add_parser("quality", help="Diagnose evidence findings and stage human-reviewed regression candidates.")
+    quality_commands = quality_parser.add_subparsers(dest="quality_command", required=True)
+    quality_diagnose = quality_commands.add_parser("diagnose", help="Create a deterministic diagnosis without changing finding status.")
+    quality_diagnose.add_argument("--report", required=True, type=Path)
+    quality_diagnose.add_argument("--policy", required=True, type=Path, help="Explicit local quality-mapping/v1 owner and repair policy.")
+    quality_diagnose.add_argument("--output", required=True, type=Path)
+    quality_promote = quality_commands.add_parser("promote", help="Promote one confirmed badcase into a staging-only regression candidate.")
+    quality_promote.add_argument("--badcase", required=True, type=Path)
+    quality_promote.add_argument("--diagnosis", required=True, type=Path)
+    quality_promote.add_argument("--policy", required=True, type=Path, help="The same quality-mapping/v1 policy used for diagnosis.")
+    quality_promote.add_argument("--output", required=True, type=Path)
     learn_parser = commands.add_parser("learn", help="Evidence-gated local asset evolution; proposals never auto-adopt.")
     learn_commands = learn_parser.add_subparsers(dest="learn_command", required=True)
     learn_harvest = learn_commands.add_parser("harvest", help="Normalize structured AET evidence without reading transcripts.")
@@ -396,6 +408,15 @@ def main(argv: Sequence[str] | None = None) -> int:
             triage_report(args.report, args.output, policy)
         except (TriageError, PolicyTargetError) as error:
             raise SystemExit(f"aet: triage failed: {error}") from error
+        return 0
+    if args.command == "quality":
+        try:
+            if args.quality_command == "diagnose":
+                diagnose_report(args.report, args.policy, args.output)
+            else:
+                promote_regression(badcase=args.badcase, diagnosis=args.diagnosis, policy=args.policy, output=args.output)
+        except QualityError as error:
+            raise SystemExit(f"aet: quality failed: {error}") from error
         return 0
     if args.command == "learn":
         try:

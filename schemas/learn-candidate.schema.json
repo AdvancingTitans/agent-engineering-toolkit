@@ -1,31 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "AET Evidence-Gated Learning Candidate",
-  "type": "object",
-  "required": ["schema_version", "report_kind", "candidate_id", "target_file", "baseline_sha256", "candidate_sha256", "operations", "edit_budget", "adoption"],
-  "properties": {
-    "schema_version": {"type": "string"},
-    "report_kind": {"const": "learning_candidate"},
-    "candidate_id": {"type": "string", "pattern": "^CAND-"},
-    "target_file": {"type": "string"},
-    "baseline_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
-    "candidate_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
-    "pattern_ids": {"type": "array", "items": {"type": "string"}},
-    "operations": {
-      "type": "array", "minItems": 1, "maxItems": 3,
-      "items": {
-        "type": "object", "required": ["type", "id", "before_sha256", "new_text"],
-        "properties": {
-          "type": {"const": "replace_editable_block"},
-          "id": {"type": "string"},
-          "before_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
-          "new_text": {"type": "string"}
-        }
-      }
-    },
-    "edit_budget": {
-      "type": "object", "required": ["max_operations", "max_added_characters", "max_deleted_characters"]
-    },
-    "adoption": {"const": "human_required"}
-  }
+  "title": "Deprecated AET Learn Candidate alias",
+  "description": "Use evolution-candidate-v2.schema.json. This alias exists only so older integrations fail toward the canonical contract rather than a second schema source.",
+  "deprecated": true,
+  "$ref": "evolution-candidate-v2.schema.json"
 }

@@ -102,8 +102,13 @@ itself evidence, redefine `PASS`, replace the evaluator, or authorize adoption.
 Editable, offline source: [English HTML](docs/assets/aet-architecture-en.html) ·
 [Chinese HTML](docs/assets/aet-architecture-zh-cn.html).
 
-The architecture separates three flows that must not be collapsed into one
-autonomous loop, plus independent local provenance stores:
+Read the diagram from top to bottom: humans retain scope and adoption authority;
+an external coding Agent works in the repository through the project's existing
+tools; AET is the local control plane that records and evaluates the resulting
+evidence. It is not another Agent runtime or a replacement for tests and CI.
+
+The architecture then separates three flows that must not be collapsed into one
+autonomous loop, plus independent local provenance records:
 
 1. **Delivery evidence.** Audit, Review and Trace reports are projected into
    Evidence IR and may be compiled into an Evidence Pack. Component ingestion,

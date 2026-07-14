@@ -1,34 +1,166 @@
 <!doctype html>
-<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>AET 架构</title>
-<style>*{box-sizing:border-box}body{margin:0;background:#020617;color:#e2e8f0;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}.wrap{width:1600px;margin:auto;padding:42px}.head{display:flex;align-items:center;gap:14px}.dot{width:13px;height:13px;border-radius:50%;background:#22d3ee;box-shadow:0 0 24px #22d3ee}h1{font:700 30px system-ui;margin:0}.sub{margin:8px 0 26px 27px;color:#94a3b8}.frame{background:linear-gradient(145deg,#071329,#020617);border:1px solid #1e3a5f;border-radius:20px;padding:20px}svg{display:block;width:100%}.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:18px}.card{border:1px solid #1e293b;border-radius:12px;padding:14px;background:#0f172a80}.card b{font-size:13px}.card p{color:#94a3b8;font-size:11px;line-height:1.6;margin:7px 0 0}</style></head>
-<body><main class="wrap"><div class="head"><span class="dot"></span><h1>Agent Engineering Toolkit — 证据控制架构</h1></div>
-<p class="sub">连接 Agent 工作、交付声明与人工治理资产演进的本地控制平面</p>
-<div class="frame"><svg viewBox="0 0 1510 940" role="img" aria-label="AET 架构">
-<defs><pattern id="g" width="36" height="36" patternUnits="userSpaceOnUse"><path d="M36 0H0V36" fill="none" stroke="#172554" stroke-width=".55"/></pattern><marker id="a" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4 0 8Z" fill="#67e8f9"/></marker><marker id="v" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4 0 8Z" fill="#c4b5fd"/></marker><marker id="r" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4 0 8Z" fill="#fb7185"/></marker></defs>
-<rect width="1510" height="940" rx="14" fill="url(#g)"/>
-<!-- arrows behind -->
-<g fill="none" stroke-width="2"><path d="M225 135H305" stroke="#67e8f9" marker-end="url(#a)"/><path d="M485 135H565" stroke="#67e8f9" marker-end="url(#a)"/><path d="M745 135H825" stroke="#67e8f9" marker-end="url(#a)"/><path d="M1010 135H1090" stroke="#67e8f9" marker-end="url(#a)"/>
-<path d="M920 175V270H215V326" stroke="#a78bfa" marker-end="url(#v)"/><path d="M420 366H500" stroke="#c4b5fd" marker-end="url(#v)"/><path d="M710 366H790" stroke="#c4b5fd" marker-end="url(#v)"/><path d="M1000 366H1080" stroke="#c4b5fd" marker-end="url(#v)"/><path d="M1290 366V445H200V506" stroke="#c4b5fd" marker-end="url(#v)"/>
-<path d="M370 546H430" stroke="#c4b5fd" marker-end="url(#v)"/><path d="M625 546H685" stroke="#c4b5fd" marker-end="url(#v)"/><path d="M880 546H940" stroke="#c4b5fd" marker-end="url(#v)"/><path d="M1135 546H1195" stroke="#c4b5fd" marker-end="url(#v)"/>
-<path d="M1360 586V710H1140" stroke="#67e8f9" marker-end="url(#a)"/><path d="M965 750H890" stroke="#67e8f9" marker-end="url(#a)"/>
-<path d="M785 586V620" stroke="#fb7185" marker-end="url(#r)"/><path d="M1040 586V620" stroke="#fb7185" marker-end="url(#r)"/>
-<path d="M315 760H430" stroke="#a78bfa" stroke-dasharray="7 6" marker-end="url(#v)"/></g>
-<!-- boundaries -->
-<rect x="25" y="35" width="1460" height="175" rx="16" fill="#08334455" stroke="#22d3ee"/><text x="48" y="62" fill="#67e8f9" font-size="15" font-weight="700">交付证据平面</text>
-<rect x="25" y="240" width="1460" height="565" rx="16" fill="#2e106555" stroke="#a78bfa"/><text x="48" y="268" fill="#c4b5fd" font-size="15" font-weight="700">质量闭环 + 证据门控演进</text>
-<!-- box helper manual -->
-<g text-anchor="middle"><g fill="#0f172a" stroke="#22d3ee"><rect x="55" y="92" width="170" height="84" rx="10"/><rect x="305" y="92" width="180" height="84" rx="10"/><rect x="565" y="92" width="180" height="84" rx="10"/><rect x="825" y="92" width="185" height="84" rx="10"/><rect x="1090" y="92" width="190" height="84" rx="10"/></g>
-<g fill="#f8fafc" font-size="13" font-weight="700"><text x="140" y="122">Agent 工作</text><text x="395" y="122">Audit · Review</text><text x="655" y="122">Trace</text><text x="917" y="122">Evidence IR</text><text x="1185" y="122">Pack · Receipt · Run</text></g>
-<g fill="#94a3b8" font-size="10"><text x="140" y="144">任务 · Skill · Diff</text><text x="395" y="144">确定性契约</text><text x="655" y="144">精确 argv + 产物</text><text x="917" y="144">状态 + Proof + 快照</text><text x="1185" y="144">可携带交接</text></g>
-<g fill="#0f172a" stroke="#a78bfa"><rect x="55" y="326" width="365" height="80" rx="10"/><rect x="500" y="326" width="210" height="80" rx="10"/><rect x="790" y="326" width="210" height="80" rx="10"/><rect x="1080" y="326" width="210" height="80" rx="10"/></g>
-<g fill="#f8fafc" font-size="13" font-weight="700"><text x="237" y="355">Evidence Only + Quality 入口</text><text x="605" y="355">挖掘 / 提案</text><text x="895" y="355">Candidate IR v2</text><text x="1185" y="355">Gate Plan v2</text></g>
-<g fill="#94a3b8" font-size="10"><text x="237" y="378">确认 Badcase · 重复模式</text><text x="605" y="378">受限修复面</text><text x="895" y="378">Baseline + Patch 哈希</text><text x="1185" y="378">声明 · 风险 · 功效 · 字节</text></g>
-<g fill="#0f172a" stroke="#a78bfa"><rect x="55" y="506" width="315" height="80" rx="10"/><rect x="430" y="506" width="195" height="80" rx="10"/><rect x="685" y="506" width="195" height="80" rx="10"/><rect x="940" y="506" width="195" height="80" rx="10"/><rect x="1195" y="506" width="165" height="80" rx="10"/></g>
-<g fill="#f8fafc" font-size="12" font-weight="700"><text x="212" y="535">确定性预检</text><text x="527" y="535">Core 契约保留</text><text x="782" y="535">Validation 序贯 Look</text><text x="1037" y="535">Held-out 确认</text><text x="1277" y="535">Gate 决策</text></g>
-<g fill="#94a3b8" font-size="9"><text x="212" y="558">Schema · Fixture · Policy · Audit</text><text x="527" y="558">所有任务成功</text><text x="782" y="558">预分配 Alpha</text><text x="1037" y="558">仅最终候选</text><text x="1277" y="558">仅新鲜配对</text></g>
-<g fill="#3f0d20" stroke="#fb7185"><rect x="675" y="620" width="220" height="62" rx="9"/><rect x="930" y="620" width="220" height="62" rx="9"/></g><g fill="#fecdd3" font-size="11" font-weight="700"><text x="785" y="646">FAIL / 硬回归</text><text x="1040" y="646">INCONCLUSIVE / 无效边界</text></g><g fill="#fda4af" font-size="9"><text x="785" y="664">立即停止</text><text x="1040" y="664">永不转为 PASS</text></g>
-<g fill="#0f172a" stroke="#22d3ee"><rect x="965" y="710" width="175" height="80" rx="10"/><rect x="715" y="710" width="175" height="80" rx="10"/></g><text x="1052" y="741" fill="#f8fafc" font-size="12" font-weight="700">Stage</text><text x="802" y="741" fill="#f8fafc" font-size="12" font-weight="700">人工 Adopt --yes</text><text x="1052" y="763" fill="#94a3b8" font-size="9">可审阅副本</text><text x="802" y="763" fill="#94a3b8" font-size="9">唯一目标写入权限</text>
-<g fill="#0f172a" stroke="#a78bfa" stroke-dasharray="7 6"><rect x="55" y="720" width="260" height="80" rx="10"/><rect x="430" y="720" width="230" height="80" rx="10"/></g><text x="185" y="750" fill="#ddd6fe" font-size="12" font-weight="700">已验证历史 Registry</text><text x="545" y="750" fill="#ddd6fe" font-size="12" font-weight="700">仅用于规划敏感性</text><text x="185" y="773" fill="#94a3b8" font-size="9">精确身份 · 去重</text><text x="545" y="773" fill="#94a3b8" font-size="9">永不进入 PASS 统计</text></g>
-<rect x="25" y="830" width="1460" height="80" rx="12" fill="#0f172a" stroke="#334155"/><g fill="#cbd5e1" font-size="12" font-weight="700"><text x="70" y="864">UNKNOWN ≠ PASS</text><text x="350" y="864">仅 Trace 执行</text><text x="650" y="864">Held-out 最后开启</text><text x="950" y="864">历史辅助规划，新鲜配对决策</text><text x="1280" y="864">不自动 Adopt / Commit / Push</text></g>
-</svg></div>
-<div class="cards"><div class="card"><b>条件化证据预算</b><p>风险、声明、覆盖、效应、功效和精确字节共同决定上限，不存在通用“36 次”定律。</p></div><div class="card"><b>无损削减优先</b><p>预检、失败即停、精确续跑/复用、合法序贯边界与一次构建消除可避免成本。</p></div><div class="card"><b>权限保持非对称</b><p>Candidate 不能改写 Evaluator、提前打开 Held-out、把 UNKNOWN 变成 PASS，或批准自身 Adoption；仅行为改进/采纳使用配对真实宿主。</p></div></div></main></body></html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>AET 中文架构图</title>
+  <style>
+    *{box-sizing:border-box}body{margin:0;background:#020617;color:#e5edf8;font-family:"PingFang SC","Microsoft YaHei",system-ui,sans-serif}.wrap{width:1920px;margin:auto;padding:42px 50px 32px}.head{display:flex;align-items:center;gap:14px}.pulse{width:13px;height:13px;border-radius:50%;background:#22d3ee;box-shadow:0 0 28px #22d3ee;animation:p 2s infinite}@keyframes p{50%{opacity:.45}}h1{font-size:34px;margin:0;letter-spacing:-.5px}.sub{margin:10px 0 26px 28px;color:#94a3b8;font-size:16px}.frame{padding:18px;border:1px solid #1e3a5f;border-radius:22px;background:linear-gradient(145deg,#071329,#020617)}svg{width:100%;display:block}.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:18px}.card{min-height:128px;padding:18px;border:1px solid #24344f;border-radius:14px;background:#0f172acc}.card b{font-size:15px}.card p{font-size:12px;line-height:1.75;color:#9fb0c8;margin:8px 0 0}.foot{text-align:center;color:#52627a;font-size:11px;margin-top:14px}
+    .t{font-family:"PingFang SC","Microsoft YaHei",system-ui,sans-serif}.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}.title{fill:#f8fafc;font-size:15px;font-weight:700}.desc{fill:#9fb0c8;font-size:11px}.tiny{fill:#8392aa;font-size:9px}.lane{font-size:18px;font-weight:700}.tag{font-size:10px;font-weight:700}.center{text-anchor:middle}.box{fill:#101a2f;stroke-width:1.4}.cyan{stroke:#22d3ee}.green{stroke:#34d399}.violet{stroke:#a78bfa}.amber{stroke:#fbbf24}.rose{stroke:#fb7185}.slate{stroke:#64748b}.dash{stroke-dasharray:7 6}.arrow{fill:none;stroke-width:2}.note{fill:#0b1427;stroke-width:1}.pill{fill:#111c31;stroke-width:1}
+  </style>
+</head>
+<body><main class="wrap">
+  <div class="head"><span class="pulse"></span><h1>Agent Engineering Toolkit（AET）— 中文架构全景</h1></div>
+  <p class="sub">Agent 负责完成工作；AET 负责留下证据、守住边界，并让长期改进经过独立评测与人工批准。</p>
+  <div class="frame">
+  <svg viewBox="0 0 1820 1480" role="img" aria-label="AET 中文架构图：角色、交付证据、质量回归暂存、受控治理资产优化与权限边界">
+    <defs>
+      <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="#16233b" stroke-width=".55"/></pattern>
+      <marker id="ac" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0 0L9 4.5 0 9Z" fill="#67e8f9"/></marker>
+      <marker id="ag" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0 0L9 4.5 0 9Z" fill="#6ee7b7"/></marker>
+      <marker id="av" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0 0L9 4.5 0 9Z" fill="#c4b5fd"/></marker>
+      <marker id="aa" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0 0L9 4.5 0 9Z" fill="#fcd34d"/></marker>
+      <marker id="ar" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0 0L9 4.5 0 9Z" fill="#fda4af"/></marker>
+    </defs>
+    <rect width="1820" height="1480" rx="18" fill="url(#grid)"/>
+
+    <!-- arrows first -->
+    <g class="arrow">
+      <path d="M320 95H385" stroke="#67e8f9" marker-end="url(#ac)"/><path d="M685 95H750" stroke="#67e8f9" marker-end="url(#ac)"/>
+      <path d="M1050 95H1115" stroke="#67e8f9" marker-end="url(#ac)"/><path d="M1435 95H1500" stroke="#67e8f9" marker-end="url(#ac)"/>
+      <path d="M182 130V170H470V223" stroke="#67e8f9" marker-end="url(#ac)"/><path d="M900 130V180H180V223" stroke="#67e8f9" marker-end="url(#ac)"/><path d="M1275 130V190H740V223" stroke="#67e8f9" marker-end="url(#ac)"/>
+      <path d="M180 305V320H980V307" stroke="#67e8f9" marker-end="url(#ac)"/><path d="M470 305V330H1057V307" stroke="#67e8f9" marker-end="url(#ac)"/><path d="M740 305V340H1135V307" stroke="#67e8f9" marker-end="url(#ac)"/>
+      <path d="M1195 260H1245" stroke="#67e8f9" marker-end="url(#ac)"/><path d="M1485 260H1530" stroke="#67e8f9" marker-end="url(#ac)"/>
+      <path d="M1070 305V365H500" stroke="#67e8f9" marker-end="url(#ac)"/>
+      <path d="M1070 305V365H730" stroke="#64748b" stroke-dasharray="6 5" marker-end="url(#ac)"/>
+      <path d="M1070 305V365H960" stroke="#64748b" stroke-dasharray="6 5" marker-end="url(#ac)"/>
+      <path d="M1070 305V365H1190" stroke="#64748b" stroke-dasharray="6 5" marker-end="url(#ac)"/>
+      <path d="M1070 305V450H250" stroke="#67e8f9" marker-end="url(#ac)"/>
+      <path d="M1070 305V520H185V578" stroke="#6ee7b7" stroke-dasharray="7 6" marker-end="url(#ag)"/>
+      <path d="M1365 305V505H30V865H43" stroke="#c4b5fd" stroke-dasharray="7 6" marker-end="url(#av)"/>
+
+      <path d="M325 620H365" stroke="#6ee7b7" marker-end="url(#ag)"/><path d="M620 620H660" stroke="#6ee7b7" marker-end="url(#ag)"/>
+      <path d="M940 620H980" stroke="#6ee7b7" marker-end="url(#ag)"/><path d="M1260 620H1300" stroke="#6ee7b7" marker-end="url(#ag)"/>
+      <path d="M1570 620H1605" stroke="#6ee7b7" marker-end="url(#ag)"/>
+      <path d="M280 865H315" stroke="#c4b5fd" marker-end="url(#av)"/><path d="M510 865H545" stroke="#c4b5fd" marker-end="url(#av)"/>
+      <path d="M750 865H785" stroke="#c4b5fd" marker-end="url(#av)"/><path d="M1020 865H1055" stroke="#c4b5fd" marker-end="url(#av)"/>
+      <path d="M1305 865H1345" stroke="#c4b5fd" marker-end="url(#av)"/>
+      <path d="M1180 915V975H965" stroke="#c4b5fd" marker-end="url(#av)"/>
+      <path d="M1465 923V950H965V978" stroke="#fcd34d" marker-end="url(#aa)"/>
+      <path d="M1615 875H1588" stroke="#fcd34d" stroke-dasharray="7 6" marker-end="url(#aa)"/>
+      <path d="M1090 1040H1135" stroke="#c4b5fd" marker-end="url(#av)"/><path d="M1310 1040H1350" stroke="#c4b5fd" marker-end="url(#av)"/>
+      <path d="M1535 1040H1575" stroke="#c4b5fd" marker-end="url(#av)"/>
+      <path d="M1230 1085V1138" stroke="#fda4af" marker-end="url(#ar)"/><path d="M1440 1085V1138" stroke="#fda4af" marker-end="url(#ar)"/>
+      <path d="M1665 1085V1188H1450" stroke="#6ee7b7" marker-end="url(#ag)"/><path d="M1670 1085V1105" stroke="#c4b5fd" stroke-dasharray="6 5" marker-end="url(#av)"/>
+      <path d="M1575 1230H1615" stroke="#6ee7b7" marker-end="url(#ag)"/>
+      <path d="M1670 1160V1175H1590V1230H1577" stroke="#c4b5fd" stroke-dasharray="6 5" marker-end="url(#av)"/>
+      <path d="M1450 1274V1280" stroke="#c4b5fd" stroke-dasharray="7 6" marker-end="url(#av)"/><path d="M1575 1300H1692V1276" stroke="#c4b5fd" stroke-dasharray="7 6" marker-end="url(#av)"/>
+    </g>
+
+    <!-- role boundary -->
+    <rect x="18" y="18" width="1784" height="145" rx="16" fill="#0b1325cc" stroke="#334155"/>
+    <text x="40" y="46" class="t tag" fill="#94a3b8">角色与责任：AET 是本地控制层，不是新的编程 Agent</text>
+    <g>
+      <rect x="45" y="60" width="275" height="70" rx="10" class="box cyan"/><text x="182" y="86" class="t title center">人：任务发起者 / 审核者</text><text x="182" y="108" class="t desc center">约定范围 · 决定是否启用 · 保留最终批准权</text>
+      <rect x="385" y="60" width="300" height="70" rx="10" class="box cyan"/><text x="535" y="86" class="t title center">外部编程 Agent</text><text x="535" y="108" class="t desc center">Codex / Claude Code 等：读仓库、改代码、调用工具</text>
+      <rect x="750" y="60" width="300" height="70" rx="10" class="box cyan"/><text x="900" y="86" class="t title center">项目仓库与工作区</text><text x="900" y="108" class="t desc center">代码 · 配置 · Agent 说明 · Skill · Git Diff</text>
+      <rect x="1115" y="60" width="320" height="70" rx="10" class="box amber"/><text x="1275" y="86" class="t title center">项目原有检查工具</text><text x="1275" y="108" class="t desc center">测试 / CI / Lint / 构建 / 安全扫描</text>
+      <rect x="1500" y="60" width="275" height="70" rx="10" class="box violet"/><text x="1637" y="86" class="t title center">AET 本地控制层</text><text x="1637" y="108" class="t desc center">记录证据 · 检查边界 · 约束资产改进</text>
+    </g>
+
+    <!-- delivery lane -->
+    <rect x="18" y="180" width="1784" height="335" rx="18" fill="#06364a33" stroke="#22d3ee"/>
+    <text x="40" y="210" class="t lane" fill="#67e8f9">① 日常交付证据：把“Agent 说做过”变成可检查的事实</text>
+    <text x="1775" y="208" class="t tiny" text-anchor="end">前三项可单独使用；只有 Trace 会执行明确的证明命令</text>
+    <g>
+      <rect x="45" y="225" width="270" height="80" rx="10" class="box cyan"/><text x="180" y="252" class="t title center">Audit｜检查说明与 Skill</text><text x="180" y="275" class="t desc center">结构、链接、命名、验证说明、RulePack</text><text x="180" y="292" class="t tiny center">静态检查，不运行测试</text>
+      <rect x="355" y="225" width="230" height="80" rx="10" class="box cyan"/><text x="470" y="252" class="t title center">Review｜检查改动边界</text><text x="470" y="275" class="t desc center">人工约定 + Git Diff + 证明要求</text><text x="470" y="292" class="t tiny center">回答“有没有做过头”</text>
+      <rect x="625" y="225" width="230" height="80" rx="10" class="box cyan"/><text x="740" y="252" class="t title center">Trace｜执行并留证</text><text x="740" y="275" class="t desc center">精确命令 · 退出码 · 日志 · 产物 · 脱敏</text><text x="740" y="292" class="t tiny center">前后工作区快照 + 完整性封印</text>
+      <rect x="920" y="215" width="275" height="90" rx="10" class="box cyan"/><text x="1057" y="244" class="t title center">Evidence IR｜分开保存事实</text><text x="1057" y="267" class="t desc center">发现项状态 · 证明绑定 · 产物绑定 · 快照绑定</text><text x="1057" y="286" class="t tiny center">命令成功 ≠ 产物完整 ≠ 当前仍有效</text>
+      <rect x="1245" y="225" width="240" height="80" rx="10" class="box cyan"/><text x="1365" y="252" class="t title center">Evidence Pack｜交付证据包</text><text x="1365" y="275" class="t desc center">合并 Audit / Review / Trace</text><text x="1365" y="292" class="t tiny center">不吞掉 FAIL / UNKNOWN</text>
+      <rect x="1530" y="215" width="240" height="42" rx="9" class="box cyan"/><text x="1650" y="241" class="t title center">静态查看页｜离线审阅</text>
+      <rect x="1530" y="267" width="240" height="42" rx="9" class="box cyan"/><text x="1650" y="293" class="t title center">证据收据｜给 Agent 的精简索引</text>
+    </g>
+    <rect x="380" y="340" width="935" height="72" rx="11" class="note cyan"/>
+    <text x="400" y="365" class="t title">可选的任务运行记录（Run Manifest）｜只挂接已经生成的证据，不替用户执行命令</text>
+    <text x="400" y="392" class="mono desc">约定已绑定 →（Audit 可选）→ 已评审 → 已证明 → 已打包 → 已关闭　　工作区变化 → STALE（过期）</text>
+    <rect x="1370" y="335" width="400" height="92" rx="11" class="note slate dash"/>
+    <text x="1390" y="360" class="t title">独立的本地项目记录｜不是证据包的隐藏输入</text>
+    <text x="1390" y="383" class="t desc">上下文清单：发现 / 记录 / 校验；“已读”声明只是记录，不等于理解</text>
+    <text x="1390" y="403" class="t desc">有来源的决策记录 · 基于 Git / 文档的仓库演变梳理</text>
+    <rect x="45" y="438" width="1260" height="57" rx="10" class="note cyan"/>
+    <text x="65" y="462" class="t title">交付给人、其他 Agent、CI 或发布流程</text><text x="65" y="483" class="t desc">接手者可直接检查：做了什么、是否越界、证据是否完整、工作区是否变化、还有哪些 FAIL / UNKNOWN。</text>
+
+    <!-- quality lane -->
+    <rect x="18" y="530" width="1784" height="245" rx="18" fill="#064e3b30" stroke="#34d399"/>
+    <text x="40" y="560" class="t lane" fill="#6ee7b7">② 质量问题沉淀：先按规则定位，再把确认过的坏案例放入待审核回归区</text>
+    <g>
+      <rect x="45" y="580" width="280" height="85" rx="10" class="box green"/><text x="185" y="606" class="t title center">结构化问题输入</text><text x="185" y="629" class="t desc center">AET 报告中的 FAIL / UNKNOWN</text><text x="185" y="647" class="t tiny center">+ 已确认 Badcase + 明确映射规则</text>
+      <rect x="365" y="580" width="255" height="85" rx="10" class="box green"/><text x="492" y="606" class="t title center">确定性定位（Diagnose）</text><text x="492" y="629" class="t desc center">现象 → 责任人 / 动作 / 可修复范围</text><text x="492" y="647" class="t tiny center">保留原始状态，不把 UNKNOWN 改成 FAIL/PASS</text>
+      <rect x="660" y="570" width="280" height="105" rx="10" class="box green"/><text x="800" y="597" class="t title center">进入回归区前的资格检查</text><text x="800" y="621" class="t desc center">已确认 · 可复现 · 已脱敏 · 有代表性</text><text x="800" y="641" class="t desc center">策略版本一致 · Fixture 完整 · 内容去重</text><text x="800" y="659" class="t tiny center">不合格就停止，不让偶然故障污染回归资产</text>
+      <rect x="980" y="580" width="280" height="85" rx="10" class="box green"/><text x="1120" y="606" class="t title center">规范化回归候选包</text><text x="1120" y="629" class="t desc center">Learn Task v2 + Fixture + 质量侧车</text><text x="1120" y="647" class="t tiny center">内容寻址；目标分区仅为 Validation</text>
+      <rect x="1300" y="580" width="270" height="85" rx="10" class="box green"/><text x="1435" y="606" class="t title center">人工复核路由</text><text x="1435" y="629" class="t desc center">高风险 / 低置信 / 规则冲突 / 新格式</text><text x="1435" y="647" class="t tiny center">只附加元数据，不改问题状态</text>
+      <rect x="1605" y="570" width="165" height="105" rx="10" class="box rose"/><text x="1687" y="600" class="t title center">只暂存，不采用</text><text x="1687" y="624" class="t desc center">不写正式 Suite</text><text x="1687" y="643" class="t desc center">不改生产 Skill</text><text x="1687" y="661" class="t tiny center">Promotion ≠ Adoption</text>
+    </g>
+    <text x="45" y="720" class="t desc">这条链路不做“自动语义根因分析”：能稳定写成规则的先确定性处理；复杂业务原因仍需人或领域工具判断。</text>
+
+    <!-- evolution lane -->
+    <rect x="18" y="790" width="1784" height="540" rx="18" fill="#2e10654a" stroke="#a78bfa"/>
+    <text x="40" y="820" class="t lane" fill="#c4b5fd">③ 受控的工程资产优化：候选可以被生成和测试，但不能自己改考卷、判分或批准上线</text>
+    <text x="1775" y="818" class="t tiny" text-anchor="end">适用于 Skill、审计规则、审计配置、改动评审策略、Trace 校验策略、问题排序策略</text>
+    <g>
+      <rect x="45" y="835" width="235" height="78" rx="10" class="box violet"/><text x="162" y="861" class="t title center">收集 / 过滤（Harvest）</text><text x="162" y="884" class="t desc center">只读取结构化 AET 证据与人工反馈</text><text x="162" y="901" class="t tiny center">不默认读取原始对话</text>
+      <rect x="315" y="835" width="195" height="78" rx="10" class="box violet"/><text x="412" y="861" class="t title center">本地经验库（可选）</text><text x="412" y="884" class="t desc center">去敏记录 · 合并 · 去重</text><text x="412" y="901" class="t tiny center">用户控制，可跨项目保存</text>
+      <rect x="545" y="835" width="205" height="78" rx="10" class="box violet"/><text x="647" y="861" class="t title center">整理重复模式（Mine）</text><text x="647" y="884" class="t desc center">按目标分类 · 支持度 · 置信度</text><text x="647" y="901" class="t tiny center">确定性归组，不凭空猜根因</text>
+      <rect x="785" y="825" width="235" height="98" rx="10" class="box violet"/><text x="902" y="852" class="t title center">目标适配器 + 不可越过的约束</text><text x="902" y="875" class="t desc center">限制能改哪些字段 / 可编辑区块</text><text x="902" y="895" class="t desc center">检查操作数量、路径与安全单调性</text><text x="902" y="912" class="t tiny center">规则或显式授权的模型只负责提候选</text>
+      <rect x="1055" y="835" width="250" height="78" rx="10" class="box violet"/><text x="1180" y="861" class="t title center">Candidate IR v2｜候选变更包</text><text x="1180" y="884" class="t desc center">基线哈希 + Patch + 候选哈希</text><text x="1180" y="901" class="t tiny center">预算与约束哈希绑定，目标文件尚未改变</text>
+      <rect x="1345" y="825" width="240" height="98" rx="10" class="box amber"/><text x="1465" y="850" class="t title center">真实行为评测计划（Gate Plan）</text><text x="1465" y="871" class="t tiny center">用于真实 Host 的 Skill 基线/候选对比</text><text x="1465" y="890" class="t tiny center">先冻结声明、风险、样本上下限和停止规则</text><text x="1465" y="907" class="t tiny center">R0/R1：不适用且 0 Host；R2：初步</text><text x="1465" y="920" class="t tiny center">R3/R4：需达到声明功效；不是固定 36 次</text>
+      <rect x="1615" y="825" width="155" height="98" rx="10" class="box slate dash"/><text x="1692" y="850" class="t title center">已验证历史</text><text x="1692" y="873" class="t desc center">身份一致才可参考</text><text x="1692" y="894" class="t tiny center">仅规划敏感性</text><text x="1692" y="910" class="t tiny center">绝不进入 PASS</text>
+    </g>
+
+    <rect x="825" y="980" width="265" height="105" rx="10" class="box violet"/>
+    <text x="957" y="1007" class="t title center">预检 + 目标专属 Replay</text><text x="957" y="1030" class="t desc center">先检查候选、任务、Fixture、Runner 与隔离能力</text><text x="957" y="1051" class="t desc center">静态 Replay：只证明契约；真实 Host：成对跑基线/候选</text><text x="957" y="1069" class="t tiny center">精确续跑/复用；绑定漂移就拒绝，不自动降级</text>
+    <rect x="1135" y="995" width="175" height="90" rx="10" class="box violet"/>
+    <text x="1222" y="1023" class="t title center">Core｜守住原有能力*</text><text x="1222" y="1047" class="t desc center">候选所有核心任务成功</text><text x="1222" y="1066" class="t tiny center">* 可选；提供时必须全过且无新增严重问题</text>
+    <rect x="1350" y="995" width="185" height="90" rx="10" class="box violet"/>
+    <text x="1442" y="1023" class="t title center">Validation｜验证改进</text><text x="1442" y="1047" class="t desc center">预注册方向 + 最小有效改进</text><text x="1442" y="1066" class="t tiny center">分批看结果时分配 Alpha</text>
+    <rect x="1575" y="995" width="190" height="90" rx="10" class="box violet"/>
+    <text x="1670" y="1023" class="t title center">Held-out｜最后确认</text><text x="1670" y="1047" class="t desc center">只对最终候选开启</text><text x="1670" y="1066" class="t tiny center">部分目标另加对抗 / 安全用例</text>
+    <rect x="1580" y="1105" width="180" height="55" rx="9" class="box violet dash"/><text x="1670" y="1128" class="t desc center">按目标追加检查（如需）</text><text x="1670" y="1147" class="t tiny center">审计规则 / Policy：Adversarial 对抗用例</text>
+
+    <rect x="1120" y="1138" width="220" height="62" rx="10" class="box rose"/><text x="1230" y="1164" class="t title center">FAIL｜确认回归或硬错误</text><text x="1230" y="1184" class="t tiny center">立即停止，记录证据</text>
+    <rect x="1350" y="1138" width="220" height="62" rx="10" class="box rose"/><text x="1460" y="1164" class="t title center">无法下结论｜证据不足 / 无效边界</text><text x="1460" y="1184" class="t tiny center">INCONCLUSIVE 绝不变成 PASS</text>
+    <rect x="1325" y="1188" width="250" height="86" rx="10" class="box green"/><text x="1450" y="1216" class="t title center">Stage｜复制到待审核区</text><text x="1450" y="1240" class="t desc center">重新核对 Gate 与候选哈希</text><text x="1450" y="1259" class="t tiny center">通过评测仍不等于正式采用</text>
+    <rect x="1615" y="1188" width="155" height="86" rx="10" class="box green"/><text x="1692" y="1216" class="t title center">人工 Adopt --yes</text><text x="1692" y="1240" class="t desc center">重验实时基线</text><text x="1692" y="1259" class="t tiny center">写目标 + 记入决策记录</text>
+    <rect x="1325" y="1280" width="250" height="42" rx="9" class="box violet dash"/><text x="1450" y="1298" class="t desc center">仅审计规则：旁路 Shadow 达到门槛</text><text x="1450" y="1315" class="t tiny center">默认 20 次 / 5 仓库 / 3 日期；新增发现均确认且无误报</text>
+    <rect x="45" y="1210" width="650" height="88" rx="11" class="note slate"/>
+    <text x="65" y="1235" class="t title">快捷编排不会扩大权限</text><text x="65" y="1258" class="t desc">Tournament：比较多个候选，只选一个最终候选，不自动 Stage/Adopt。</text><text x="65" y="1278" class="t desc">Sleep：可串联收集→整理→候选→评测→Stage，最多到待审核区，不 Adopt/Commit/Push/上传。</text>
+    <rect x="715" y="1210" width="555" height="88" rx="11" class="note amber" data-contract="仅行为改进/采纳使用配对真实宿主"/>
+    <text x="735" y="1235" class="t title">真实 Agent 评测只在必要时启用</text><text x="735" y="1258" class="t desc">普通编码、文档、打包和确定性发布：模型 Gate 记为 NOT_APPLICABLE；使用项目测试/CI。</text><text x="735" y="1278" class="t desc">治理资产采纳或行为改进声明才需真实 Host Gate；Release 提升同一 CI 构建产物。</text>
+
+    <!-- bottom invariants -->
+    <rect x="18" y="1345" width="1784" height="112" rx="16" fill="#0f172ae6" stroke="#3b82f6"/>
+    <text x="40" y="1372" class="t tag" fill="#93c5fd">贯穿全部流程的六条底线</text>
+    <g class="t center">
+      <text x="165" y="1402" class="title">默认关闭，按任务显式启用</text><text x="165" y="1425" class="tiny">安装不等于授权</text>
+      <line x1="315" y1="1385" x2="315" y2="1440" stroke="#334155"/>
+      <text x="455" y="1402" class="title">只有 Trace 执行证明命令</text><text x="455" y="1425" class="tiny">Audit / Review / Pack 不执行</text>
+      <line x1="605" y1="1385" x2="605" y2="1440" stroke="#334155"/>
+      <text x="750" y="1402" class="title">UNKNOWN ≠ PASS</text><text x="750" y="1425" class="tiny">NOT_APPLICABLE 也不是通过</text>
+      <line x1="900" y1="1385" x2="900" y2="1440" stroke="#334155"/>
+      <text x="1050" y="1402" class="title">原始 Rollout 默认留在私有目录</text><text x="1050" y="1425" class="tiny">只导出脱敏的 Evidence Only 记录</text>
+      <line x1="1205" y1="1385" x2="1205" y2="1440" stroke="#334155"/>
+      <text x="1355" y="1402" class="title">候选不能改评测器和保留用例</text><text x="1355" y="1425" class="tiny">约束、状态语义与采用权独立</text>
+      <line x1="1510" y1="1385" x2="1510" y2="1440" stroke="#334155"/>
+      <text x="1645" y="1402" class="title">绝不自动 Commit / Push / Release</text><text x="1645" y="1425" class="tiny">最终写入必须由人明确批准</text>
+    </g>
+  </svg>
+  </div>
+  <section class="cards">
+    <div class="card"><b>最小使用原则</b><p>先问你需要证明什么。只担心修改越界就用 Review；只想确认测试真跑过就用 Trace。普通小任务继续使用项目自己的测试和 CI。</p></div>
+    <div class="card"><b>状态不混写</b><p>命令成功、报告存在、当前仍有效、改动未越界，是四个不同事实。缺证据就保留 UNKNOWN，不靠总分把问题盖住。</p></div>
+    <div class="card"><b>无损节省成本</b><p>先做确定性预检；可精确续跑和复用；前序目标失败就不打开 Held-out；评测次数由风险和声明决定，而不是固定数字。</p></div>
+    <div class="card"><b>权限保持不对称</b><p>Agent 可以工作，候选可以参加评测；但候选不能修改裁判、保留题或批准自己上线。Stage 之后仍必须由人明确 Adopt。</p></div>
+  </section>
+  <p class="foot">AET v1.11.0 · 根据仓库 CLI、README、Schema 与核心实现绘制 · 可离线打开与编辑</p>
+</main></body></html>

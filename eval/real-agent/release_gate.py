@@ -76,13 +76,13 @@ def expected(args: argparse.Namespace) -> dict[str, Any]:
     if metadata.get("candidate_sha256") != candidate_sha:
         raise ValueError("candidate content does not match candidate.json")
     raw = read_json(args.raw_gate)
+    plan = read_json(args.gate_plan) if getattr(args, "gate_plan", None) else None
     required = {
         "report_kind": "learning_observed_gate",
         "status": "PASS",
         "runner": "codex",
         "runner_name": RELEASE_RUNNER_NAME,
         "runner_version": RELEASE_RUNNER_VERSION,
-        "statistics_profile": "adoptable",
         "candidate_sha256": candidate_sha,
     }
     for key, value in required.items():
@@ -93,10 +93,20 @@ def expected(args: argparse.Namespace) -> dict[str, Any]:
     comparisons = raw.get("comparisons")
     if not isinstance(comparisons, dict) or set(comparisons) != {"core", "validation", "held_out"}:
         raise ValueError("raw gate comparisons must be exactly core, validation, and held_out")
+    planned = isinstance(plan, dict)
+    if planned:
+        body = {key: value for key, value in plan.items() if key != "plan_sha256"}
+        canonical = hashlib.sha256(json.dumps(body, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+        if plan.get("schema_version") != "gate-plan/v2" or plan.get("plan_sha256") != canonical or raw.get("gate_plan_sha256") != canonical:
+            raise ValueError("raw Gate and Gate Plan hashes must match canonical gate-plan/v2 bytes")
     for name, comparison in comparisons.items():
-        if not isinstance(comparison, dict) or set(comparison) != {"replay", "statistics"}:
+        expected_keys = {"objective", "replays", "statistics", "planned_pairs", "actual_pairs"} if planned else {"replay", "statistics"}
+        if not isinstance(comparison, dict) or set(comparison) != expected_keys:
             raise ValueError(f"raw gate comparison {name} has an invalid contract")
-        if not isinstance(comparison.get("replay"), str) or not comparison["replay"]:
+        replay_value = comparison.get("replays") if planned else comparison.get("replay")
+        if planned and (not isinstance(replay_value, list) or not replay_value or not all(isinstance(item, str) and item for item in replay_value)):
+            raise ValueError(f"raw gate comparison {name} requires replay references")
+        if not planned and (not isinstance(replay_value, str) or not replay_value):
             raise ValueError(f"raw gate comparison {name} requires a replay reference")
         statistics = comparison.get("statistics")
         if not isinstance(statistics, dict):
@@ -105,13 +115,19 @@ def expected(args: argparse.Namespace) -> dict[str, Any]:
             "report_kind": "learning_paired_statistics",
             "profile": "adoptable",
             "status": "PASS",
-            "pair_count": 6,
-            "usable_pair_count": 6,
             "infrastructure_pair_count": 0,
         }
         for key, value in statistics_required.items():
             if statistics.get(key) != value:
                 raise ValueError(f"raw gate comparison {name} statistics {key} must equal {value!r}")
+        if planned:
+            actual = comparison.get("actual_pairs")
+            if not isinstance(actual, int) or actual < 1 or statistics.get("pair_count") != actual or statistics.get("usable_pair_count") != actual:
+                raise ValueError(f"raw gate comparison {name} actual fresh pairs are inconsistent")
+            if statistics.get("stop_reason") != "SUCCESS_BOUNDARY":
+                raise ValueError(f"raw gate comparison {name} did not cross a success boundary")
+        elif statistics.get("pair_count") != 6 or statistics.get("usable_pair_count") != 6:
+            raise ValueError(f"legacy raw gate comparison {name} must preserve its six-pair v1 contract")
     if not re.fullmatch(r"[0-9a-f]{40}", args.commit):
         raise ValueError("commit must be a lowercase 40-character Git SHA")
     raw_gate_path = args.raw_gate.resolve()
@@ -120,7 +136,7 @@ def expected(args: argparse.Namespace) -> dict[str, Any]:
     except ValueError:
         raw_gate_label = str(raw_gate_path)
     return {
-        "schema_version": "real-host-release-gate/v1",
+        "schema_version": "real-host-release-gate/v2" if planned else "real-host-release-gate/v1",
         "report_kind": "real_host_release_gate",
         "release_commit": args.commit,
         "version": args.version,
@@ -136,7 +152,11 @@ def expected(args: argparse.Namespace) -> dict[str, Any]:
             "statistics_profile": raw["statistics_profile"],
             "comparisons": {
                 name: {
-                    "replay": comparisons[name]["replay"],
+                    "replay": comparisons[name].get("replay"),
+                    "replays": comparisons[name].get("replays"),
+                    "objective": comparisons[name].get("objective"),
+                    "planned_pairs": comparisons[name].get("planned_pairs"),
+                    "actual_pairs": comparisons[name].get("actual_pairs"),
                     "statistics": {
                         key: comparisons[name]["statistics"][key]
                         for key in ("profile", "status", "pair_count", "usable_pair_count", "infrastructure_pair_count")
@@ -145,6 +165,7 @@ def expected(args: argparse.Namespace) -> dict[str, Any]:
                 for name in ("core", "validation", "held_out")
             },
         },
+        "gate_plan": None if not planned else {"path": str(args.gate_plan), "sha256": sha256(args.gate_plan), "plan_sha256": plan["plan_sha256"], "risk_class": plan["risk_class"], "claims": plan["claims"]},
         "suites": {name: suite_hashes(root, name) for name in SUITES},
     }
 
@@ -157,6 +178,7 @@ def main() -> None:
         sub.add_argument("--root", type=Path, required=True)
         sub.add_argument("--candidate", type=Path, required=True)
         sub.add_argument("--raw-gate", type=Path, required=True)
+        sub.add_argument("--gate-plan", type=Path)
         sub.add_argument("--commit", required=True)
         sub.add_argument("--version", required=True)
         if action == "create":

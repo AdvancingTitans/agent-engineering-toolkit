@@ -14,13 +14,21 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from aet.learn import LearnError, replay_observed
+from aet.learn import LearnError, gate_observed, plan_observed_gate, replay_observed
 from aet.learn_scoring import score_rollout
 from aet.learn_runners import AgentRunRequest, ClaudeCodeRunner, CodexExecRunner, RunnerError, _snapshot
 from aet.evidence import seal_trace
 
 
 class ObservedLearningTests(unittest.TestCase):
+    def _named_task(self, root: Path, task_id: str, *, with_trace: bool = True) -> Path:
+        suite = self._task(root, with_trace=with_trace)
+        path = suite / "task.json"
+        task = json.loads(path.read_text(encoding="utf-8"))
+        task["task_id"] = task_id
+        path.write_text(json.dumps(task), encoding="utf-8")
+        (root / "fixture" / "repo" / "suite-marker.txt").write_text(task_id + "\n", encoding="utf-8")
+        return suite
     def _versioned_executable(self, root: Path, version: str = "codex-cli 0.144.1") -> Path:
         executable = root / "versioned-runner"
         executable.write_text(f"#!/bin/sh\nprintf '%s\\n' '{version}'\n", encoding="utf-8")
@@ -71,6 +79,63 @@ class ObservedLearningTests(unittest.TestCase):
                 self.assertTrue((run / "before-snapshot.json").exists())
                 self.assertTrue((run / "after-snapshot.json").exists())
                 self.assertTrue((run / "workspace" / ".aet" / "evidence" / "trace.json").exists())
+
+    def test_gate_plan_is_hash_bound_and_stops_before_held_out_when_validation_is_inconclusive(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            candidate = self._candidate(root)
+            core = self._named_task(root / "core", "CORE-1")
+            validation = self._named_task(root / "validation", "VAL-1")
+            held_out = self._named_task(root / "held", "HELD-1")
+            plan_path = root / "gate-plan.json"
+            plan = plan_observed_gate(candidate=candidate, core=core, validation=validation, held_out=held_out, runner_name="scripted", runner_config=None, risk_class="R2", claims=["TRACE.ROUTING"], output=plan_path, min_pairs=1, max_pairs=2, batch_size=1)
+            self.assertEqual("gate-plan/v2", plan["schema_version"])
+            with patch("aet.learn._candidate_audit_failures", return_value=[]):
+                result = gate_observed(candidate=candidate, core=core, validation=validation, held_out=held_out, output=root / "gate.json", runner_name="scripted", rollouts=99, statistics_profile="adoptable", gate_plan=plan_path)
+            self.assertEqual("INCONCLUSIVE", result["status"])
+            self.assertEqual({"core", "validation"}, set(result["comparisons"]))
+            self.assertEqual(1, result["comparisons"]["core"]["actual_pairs"])
+            self.assertEqual(1, result["comparisons"]["validation"]["actual_pairs"])
+            self.assertEqual("FUTILITY_BOUNDARY", result["comparisons"]["validation"]["statistics"]["stop_reason"])
+
+    def test_gate_plan_rejects_candidate_drift_before_runner_execution(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            candidate = self._candidate(root)
+            validation = self._named_task(root / "validation", "VAL-1")
+            held_out = self._named_task(root / "held", "HELD-1")
+            plan_path = root / "gate-plan.json"
+            plan_observed_gate(candidate=candidate, core=None, validation=validation, held_out=held_out, runner_name="scripted", runner_config=None, risk_class="R2", claims=["TRACE.ROUTING"], output=plan_path, min_pairs=1, max_pairs=2, batch_size=1)
+            target = root / "skills" / "demo" / "SKILL.md"
+            target.write_text(target.read_text(encoding="utf-8") + "\nDRIFT\n", encoding="utf-8")
+            with patch("aet.learn.replay_observed") as replay:
+                result = gate_observed(candidate=candidate, core=None, validation=validation, held_out=held_out, output=root / "gate.json", runner_name="scripted", rollouts=1, statistics_profile="adoptable", gate_plan=plan_path)
+            self.assertEqual("FAIL", result["status"])
+            replay.assert_not_called()
+
+    def test_explicit_resume_reuses_only_an_exact_complete_replay(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            candidate = self._candidate(root)
+            suite = self._task(root, with_trace=True)
+            output = root / "out"
+            first = replay_observed(candidate=candidate, suite=[suite], output=output, runner_name="scripted", rollouts=1)
+            self.assertTrue(first["complete"])
+            with patch("aet.learn._observed_rollout") as rollout:
+                second = replay_observed(candidate=candidate, suite=[suite], output=output, runner_name="scripted", rollouts=1, resume=True)
+            rollout.assert_not_called()
+            self.assertEqual(first["binding"], second["binding"])
+
+    def test_resume_binding_drift_fails_without_fallback_execution(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            candidate = self._candidate(root)
+            suite = self._task(root, with_trace=True)
+            output = root / "out"
+            replay_observed(candidate=candidate, suite=[suite], output=output, runner_name="scripted", rollouts=1)
+            with patch("aet.learn._observed_rollout") as rollout, self.assertRaisesRegex(LearnError, "resume binding drifted"):
+                replay_observed(candidate=candidate, suite=[suite], output=output, runner_name="scripted", rollouts=2, resume=True)
+            rollout.assert_not_called()
 
     def test_scripted_runner_refuses_an_unsupported_success_claim(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:

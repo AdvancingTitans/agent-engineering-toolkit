@@ -43,19 +43,31 @@ def orchestrate(
         raise ValueError(f"checkout commit {commit} does not match expected commit {expected_commit}")
     if expected_version is not None and expected_version != version:
         raise ValueError(f"source version {version} does not match expected version {expected_version}")
-    if any((release_dir / name).exists() for name in ("candidate", "runner.json", "raw-gate.json", "real-host-gate.json")):
+    if any((release_dir / name).exists() for name in ("candidate", "runner.json", "gate-plan.json", "raw-gate.json", "real-host-gate.json")):
         raise ValueError(f"release output already exists: {release_dir}")
     release_dir.mkdir(parents=True, exist_ok=True)
     candidate = release_dir / "candidate"
     raw_gate = release_dir / "raw-gate.json"
     manifest = release_dir / "real-host-gate.json"
     runner_config = release_dir / "runner.json"
+    gate_plan = release_dir / "gate-plan.json"
 
     load_local("build_candidate").build(root, candidate)
     runner_config.write_text(json.dumps({
         "aet_argv": [sys.executable, "-m", "aet.cli"],
         "inherit_home": True,
+        "model_fingerprint": "codex-default@0.144.1",
     }, indent=2) + "\n", encoding="utf-8")
+    plan_command = [
+        sys.executable, "-m", "aet.cli", "learn", "plan",
+        "--candidate", str(candidate), "--core", str(root / "eval/real-agent/core"),
+        "--validation", str(root / "eval/real-agent/validation"),
+        "--held-out", str(root / "eval/real-agent/held-out"),
+        "--runner", "codex", "--runner-config", str(runner_config),
+        "--risk-class", "R3", "--claim", "AET.REAL-HOST.TRACE-ROUTING",
+        "--output", str(gate_plan),
+    ]
+    subprocess.run(plan_command, cwd=root, check=True)
     command = [
         sys.executable, "-m", "aet.cli", "learn", "gate",
         "--candidate", str(candidate),
@@ -63,9 +75,9 @@ def orchestrate(
         "--validation", str(root / "eval/real-agent/validation"),
         "--held-out", str(root / "eval/real-agent/held-out"),
         "--output", str(raw_gate),
-        "--runner", "codex", "--rollouts", "6",
-        "--statistics-profile", "adoptable",
-        "--runner-config", str(runner_config), "--target-type", "skill",
+        "--runner", "codex", "--gate-plan", str(gate_plan),
+        "--runner-config", str(runner_config), "--statistics-profile", "adoptable",
+        "--target-type", "skill",
     ]
     subprocess.run(command, cwd=root, check=True)
     observed = json.loads(raw_gate.read_text(encoding="utf-8"))
@@ -80,7 +92,7 @@ def orchestrate(
         raise ValueError(f"real-host gate runner provenance must equal {expected_runner!r}")
 
     arguments = argparse.Namespace(
-        root=root, candidate=candidate, raw_gate=raw_gate, commit=commit, version=version
+        root=root, candidate=candidate, raw_gate=raw_gate, gate_plan=gate_plan, commit=commit, version=version
     )
     document = release_gate.expected(arguments)
     manifest.write_text(json.dumps(document, indent=2, sort_keys=True) + "\n", encoding="utf-8")

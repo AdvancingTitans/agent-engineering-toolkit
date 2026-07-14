@@ -7,6 +7,10 @@ on:
         description: Existing v-prefixed tag to publish
         required: true
         type: string
+      ci_run_id:
+        description: Successful CI workflow run for the exact release commit
+        required: true
+        type: string
       release_class:
         description: Use governance-adoption only when this release adopts or claims improved Agent behavior
         required: true
@@ -62,6 +66,34 @@ jobs:
             --root . --manifest release-classification.json \
             --release-tag "$RELEASE_TAG" --expected-class "$RELEASE_CLASS" \
             --output "$RELEASE_DIR/classification-verification.json"
+      - name: Verify CI workflow-run provenance
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CI_RUN_ID: ${{ inputs.ci_run_id }}
+        run: |
+          [[ "$CI_RUN_ID" =~ ^[0-9]+$ ]]
+          run_json="$(gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${CI_RUN_ID}")"
+          test "$(jq -r .head_sha <<<"$run_json")" = "$GITHUB_SHA"
+          test "$(jq -r .conclusion <<<"$run_json")" = "success"
+          test "$(jq -r .path <<<"$run_json")" = ".github/workflows/ci.yml"
+      - name: Download exact CI release candidate
+        uses: actions/download-artifact@v4
+        with:
+          name: release-candidate-${{ github.sha }}
+          path: .aet/ci-download
+          run-id: ${{ inputs.ci_run_id }}
+          github-token: ${{ github.token }}
+      - name: Verify and smoke-test the promoted artifact
+        env:
+          RELEASE_TAG: ${{ inputs.tag }}
+        run: |
+          manifest=.aet/ci-download/ci/manifest.json
+          test "$(jq -r .schema_version "$manifest")" = "aet-ci-release-candidate/v1"
+          test "$(jq -r .commit "$manifest")" = "$GITHUB_SHA"
+          test "$(jq -r .version "$manifest")" = "${RELEASE_TAG#v}"
+          wheel=".aet/ci-download/ci/dist/$(jq -r .wheel "$manifest")"
+          test "$(sha256sum "$wheel" | cut -d' ' -f1)" = "$(jq -r .wheel_sha256 "$manifest")"
+          test "$(uv run --isolated --with "$wheel" aet --version)" = "${RELEASE_TAG#v}"
       - name: Verify gate workflow-run provenance
         if: inputs.release_class == 'governance-adoption'
         env:
@@ -92,6 +124,7 @@ jobs:
             --root . \
             --candidate "$RELEASE_DIR/reconstructed-candidate" \
             --raw-gate "$RELEASE_DIR/raw-gate.json" \
+            --gate-plan "$RELEASE_DIR/gate-plan.json" \
             --commit "$GITHUB_SHA" --version "${RELEASE_TAG#v}" \
             --manifest "$RELEASE_DIR/real-host-gate.json"
           jq -e --slurpfile classification "$RELEASE_DIR/classification-verification.json" '
@@ -121,24 +154,12 @@ jobs:
             --arg gate_manifest_sha256 "$gate_manifest_sha256" \
             '{schema_version:"release-evidence/v1",version:$version,release_commit:$commit,release_class:$release_class,classification:$classification[0],real_host_gate:({status:$gate_status,reason:$reason} + (if $gate_run_id == "" then {} else {workflow_run_id:$gate_run_id,manifest_sha256:$gate_manifest_sha256} end))}' \
             > "$RELEASE_DIR/release-evidence.json"
-      - run: uv run --with pytest python -m pytest -q
-      - run: uv run --with pytest python -m pytest tests/test_business_quality_flows.py -q
-      - run: uv run --no-editable --reinstall-package agent-engineering-toolkit aet audit . --strict --format json --output .aet/evidence/release-audit.json
-      - name: Build and smoke-test tag, source, and wheel versions
-        env:
-          RELEASE_TAG: ${{ inputs.tag }}
-        run: |
-          source_version="$(uv run python -c 'import aet; print(aet.__version__)')"
-          uv build
-          wheel_version="$(uv run --isolated --with "$(find dist -name '*.whl' -print -quit)" aet --version)"
-          test "$wheel_version" = "$source_version"
-          test "$wheel_version" = "${RELEASE_TAG#v}"
       - env:
           GH_TOKEN: ${{ github.token }}
           RELEASE_TAG: ${{ inputs.tag }}
           RELEASE_CLASS: ${{ inputs.release_class }}
         run: |
-          assets=(dist/* release-classification.json "$RELEASE_DIR/classification-verification.json" "$RELEASE_DIR/release-evidence.json")
+          assets=(.aet/ci-download/ci/dist/* release-classification.json "$RELEASE_DIR/classification-verification.json" "$RELEASE_DIR/release-evidence.json" .aet/ci-download/ci/manifest.json)
           if test "$RELEASE_CLASS" = governance-adoption; then
             assets+=("$RELEASE_DIR/real-host-gate.json")
           fi

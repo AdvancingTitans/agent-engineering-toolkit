@@ -1,5 +1,38 @@
 # Changelog
 
+## 1.11.0 — 2026-07-14
+
+- Replaced the universal six-pair Real Host release constant with a
+  pre-registered `gate-plan/v2`. Plans bind Claim, risk, Candidate, Runner,
+  configuration, Scorer, Task and Fixture bytes; R3/R4 plans include an exact
+  directional power analysis and risk-declared effect assumptions.
+- Split observed Suite semantics: Core is a zero-hard-regression,
+  all-candidate-tasks-pass retention contract; Validation and Held-out use
+  explicit one-sided exact paired objectives plus MCID. Legacy commands retain
+  their historical two-sided McNemar behavior.
+- Added dependency-free Bonferroni group-sequential alpha spending, efficacy,
+  hard-regression, infrastructure, mathematically safe futility and maximum-N
+  stopping reasons. Ordinary fixed-sample p-values cannot be repeatedly peeked.
+- Added full observed-task preflight before the first Host call, append-safe
+  replay checkpoints, explicit exact `--resume`, and same-run replay reuse for
+  Tournament. Sleep no longer performs a duplicate Replay before Gate, and
+  Held-out is not opened after a preceding objective fails.
+- Added strict `gate-history-registry/v1` and planning-only history assessment.
+  Entries require verified PASS provenance, exact identity, count consistency
+  and deduplication. Drift, discount caps and leave-one-release-out sensitivity
+  are reported; historical observations never enter PASS and never lower the
+  fresh-pair planned maximum.
+- Reduced the portable root Skill from 262 lines / 14,401 bytes to 99 lines /
+  5,926 bytes by routing to on-demand delivery, provenance, quality, evolution
+  and security references while preserving default-off activation and immutable
+  authority boundaries.
+- Removed repeated CI test subsets, added concurrency cancellation, and changed
+  Release to verify and promote the exact commit-bound CI wheel instead of
+  retesting and rebuilding a different artifact.
+- Reworked both READMEs and bilingual architecture diagrams around conditional
+  evidence budgets, fresh-only Gate decisions, planning-only history and the
+  asymmetric human Adoption boundary.
+
 ## 1.10.0 — 2026-07-14
 
 - Added explicit lossless Trace reuse with `aet trace --reuse-if-fresh`. Reuse

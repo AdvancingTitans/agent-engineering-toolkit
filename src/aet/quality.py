@@ -276,12 +276,16 @@ def _diagnose(observation: dict[str, Any], mapping: dict[str, Any] | None) -> di
     declared = observation.get("confidence")
     if declared is not None and declared not in _CONFIDENCE:
         raise QualityError("phenomenon confidence is invalid")
-    confidence = declared or (mapping["confidence"] if mapping else "LOW")
+    confidence_rank = {"LOW": 0, "MEDIUM": 1, "HIGH": 2}
+    policy_confidence = mapping["confidence"] if mapping else "LOW"
+    confidence = min((declared or policy_confidence, policy_confidence), key=confidence_rank.__getitem__)
     facts = {}
     for key in ("high_risk", "rule_conflict", "new_schema"):
-        value = observation.get(key, mapping[key] if mapping else False)
-        if not isinstance(value, bool):
+        observed_value = observation.get(key, False)
+        policy_value = mapping[key] if mapping else False
+        if not isinstance(observed_value, bool) or not isinstance(policy_value, bool):
             raise QualityError(f"{key} must be an explicit boolean fact")
+        value = observed_value or policy_value
         facts[key] = value
     reasons = []
     if facts["high_risk"]:

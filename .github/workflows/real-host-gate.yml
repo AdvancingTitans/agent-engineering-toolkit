@@ -53,4 +53,5 @@ jobs:
           retention-days: 30
           path: |
             ${{ env.RELEASE_DIR }}/raw-gate.json
+            ${{ env.RELEASE_DIR }}/gate-plan.json
             ${{ env.RELEASE_DIR }}/real-host-gate.json

@@ -23,7 +23,7 @@ modify.
 
 ```text
 External execution → Evidence IR → Deterministic Quality → Bounded Evolution
-                   → Independent Gates → Human Adoption
+                   → Conditional Gate Plan → Fresh-pair Decision → Human Adoption
 ```
 
 It is not another Agent runtime or score dashboard. It is the engineering layer
@@ -57,6 +57,24 @@ It is also historical evidence for that bounded candidate, not a universal
 prerequisite for every AET package release. Runtime and deterministic-evidence
 changes use deterministic CI; a full paired Real Host Gate is reserved for
 governance-asset adoption or a new claim about observed Agent behavior.
+
+v1.11 removes avoidable cost without weakening that boundary. The changes are
+directly enforced by tests and workflow contracts:
+
+| Cost surface | v1.10 | v1.11 |
+| --- | ---: | ---: |
+| Universal release rollout constant | 3 suites × 6 pairs × 2 = 36 | None; risk/claim/power-bound Gate Plan |
+| Invalid candidate before Host calls | Suites could still execute | **0 Host calls** |
+| Exact completed observed replay | Re-executed | **0 repeated Host calls with explicit `--resume`** |
+| Finalist Core/Validation in Tournament | Executed twice | **Reused once with exact binding** |
+| CI pytest invocations | 3 | **1 full suite** |
+| Release rebuild/retest | Separate build + repeated tests | **Promotes the exact CI Artifact** |
+| Portable root Skill | 262 lines / 14,401 bytes | **99 lines / 5,926 bytes**, references loaded on demand |
+
+The successful-candidate sample requirement is not blindly reduced. A planned
+Gate may require more than 36 executions when the declared effect or risk needs
+it; savings come from `NOT_APPLICABLE`, preflight, exact reuse, safe efficacy or
+futility stopping, and removing duplicate engineering work.
 
 ## Why AET is different
 
@@ -106,6 +124,11 @@ autonomous loop, plus independent local provenance stores:
 5. **Human authority.** Stage rechecks exact Gate and candidate bindings;
    adoption rechecks the live baseline and requires explicit authorization.
    `sleep` can stop at Stage but cannot adopt, commit, push or release.
+6. **Conditional evidence budget.** `gate-plan/v2` binds Claim, risk, power,
+   Candidate, Runner, Scorer, Task and Fixture bytes before execution. Core
+   retains the contract; Validation and Held-out use pre-registered directional
+   paired objectives with alpha-spent sequential looks. Verified history is
+   planning-only: fresh pairs alone can produce PASS.
 
 The output is not merely a report. It is a growing set of reusable engineering
 assets: Evidence Packs, regression candidates, diagnosis records, Gate and
@@ -128,6 +151,8 @@ Start with the smallest surface that answers the question.
 | Which bounded route matches a structured failure? | `aet quality diagnose` | Status-preserving owner/action/repair mapping and review routing. |
 | Can a confirmed failure become a regression asset? | `aet quality promote` | Validation-only Task v2 staging bundle; no production write. |
 | Can recurring failures improve a governance asset? | `aet learn` | Evidence Only mining, target-specific replay/Gate, stage and human adoption. |
+| How much observed evidence is required for this claim? | `aet learn plan` | A hash-bound risk, coverage, effect, power and stopping contract. |
+| Can comparable historical Gates inform planning? | `aet learn history assess` | Drift-explicit sensitivity only; history never enters PASS. |
 
 ## Quick start: trustworthy delivery
 
@@ -145,32 +170,28 @@ into later tasks.
 | Release, regulated, security-sensitive, or high-blast-radius Agent change | Use the relevant full delivery contract and fresh declared proofs. |
 | Governance-asset optimization | Explicitly opt into `aet learn`; reserve real-host Gate/Shadow for adoption decisions. |
 
-This boundary is also a cost boundary. Deterministic Audit, Review and Pack are
-local, but repeated repository snapshots and large JSON reports still add
-latency and Agent-context tokens. Real-host evaluation is inherently expensive:
-an adoption-grade Gate runs both baseline and candidate for every task and
-rollout. The v1.9 case study above required **36 real Agent runs** (3 suites × 6
-pairs × 2 variants). v1.10 turns the safe reductions into explicit contracts:
+This boundary is also a cost boundary. Real-host evaluation is inherently
+expensive because every fresh pair executes both baseline and candidate. The
+v1.9 case study required **36 real Agent runs**, but 36 was a Release profile,
+not a statistical law. v1.10 introduced exact Trace reuse and compact Receipts;
+v1.11 turns the remaining safe reductions into explicit contracts:
 `trace --reuse-if-fresh` skips execution only after exact command, proof,
 artifact, validator, sealed-report, log and workspace verification; `evidence
 receipt` provides a compact hash-bound index with a live freshness check;
-duplicate Run attachments are idempotent; and identical
-snapshots are reused within one unchanged state. Explicit freshness checks still
-recompute them. Reuse failure never falls back to execution.
-Reducing suite coverage or rollout count is still not lossless: it lowers
-statistical power and must be reported as preliminary or inconclusive. The
-cost-safe choice is to classify an unrelated deterministic release as
-`NOT_APPLICABLE`, not to run a weakened Gate. When a release adopts the exact
-governance candidate evaluated by the suites, or makes a changed-behavior claim
-those suites cover, the complete Gate remains mandatory. A declarative
-Skill/API contract may be deterministic only when every behavior-sensitive path
-has a reviewed exception and cited deterministic proof; that classification
-makes no observed-behavior claim.
+observed replay resume/reuse is explicit and byte-bound; deterministic failures
+stop before a Host call; Tournament/Sleep do not repeat the same Replay; and
+Release promotes the exact CI-built Artifact. A Gate Plan freezes applicability,
+suite objectives, coverage, alpha, power, effect assumption, sample bounds and
+stopping looks before execution. Ordinary fixed-sample p-values may not be
+repeatedly peeked. `FAIL`, infrastructure failure, safe mathematical futility,
+and a pre-registered efficacy boundary may stop early. Reaching the maximum
+without evidence remains `INCONCLUSIVE`. Historical evidence can only produce a
+planning sensitivity report and never reduces the fresh-pair PASS statistic.
 
 Install the current release:
 
 ```bash
-uv tool install https://github.com/AdvancingTitans/agent-engineering-toolkit/releases/download/v1.10.0/agent_engineering_toolkit-1.10.0-py3-none-any.whl
+uv tool install https://github.com/AdvancingTitans/agent-engineering-toolkit/releases/download/v1.11.0/agent_engineering_toolkit-1.11.0-py3-none-any.whl
 aet --version
 ```
 
@@ -291,14 +312,39 @@ aet learn replay --candidate .aet/learn/candidates/CAND-001 \
   --runner-config runner.json \
   --output .aet/learn/replays/CAND-001
 
+aet learn plan --candidate .aet/learn/candidates/CAND-001 \
+  --core eval/real-agent/core --validation eval/real-agent/validation \
+  --held-out eval/real-agent/held-out --runner codex \
+  --runner-config runner.json --risk-class R3 \
+  --claim TRACE.ROUTING.EXACT-COMMAND --output .aet/learn/gate-plan.json
+
 aet learn gate --candidate .aet/learn/candidates/CAND-001 \
-  --core eval/real-agent/core \
-  --validation eval/real-agent/validation \
-  --held-out eval/real-agent/held-out \
-  --runner codex --rollouts 6 --statistics-profile adoptable \
-  --runner-config runner.json \
+  --core eval/real-agent/core --validation eval/real-agent/validation \
+  --held-out eval/real-agent/held-out --runner codex \
+  --runner-config runner.json --gate-plan .aet/learn/gate-plan.json \
   --output .aet/learn/gates/CAND-001.json
 ```
+
+Core is a contract-retention check, not a claim of statistical
+non-inferiority: every candidate Task must succeed and no new hard finding may
+appear. Validation and Held-out use the pre-registered candidate-better,
+one-sided exact paired objective plus MCID. The overall adoption Gate is an
+intersection-union decision—all declared objectives must pass. Each sequential
+look spends a fixed share of family alpha, so optional stopping cannot reuse the
+legacy fixed-sample p-value.
+
+Verified history is deliberately weaker:
+
+```bash
+aet learn history assess --registry gate-history.json \
+  --gate-plan .aet/learn/gate-plan.json --suite validation \
+  --output .aet/learn/history-assessment.json
+```
+
+The registry rejects unverified, duplicate or identity-drifted entries. Its
+discounted effective sample and leave-one-release-out sensitivity are planning
+metadata only; the planned maximum is never lowered and fresh pairs alone enter
+the Gate statistic.
 
 Host startup, authentication failure, timeout, empty structured events and
 unsupported isolation remain `INFRASTRUCTURE_ERROR`, `UNKNOWN` or
@@ -316,14 +362,15 @@ class:
 
 | Class | Real Host Gate | Release evidence |
 | --- | --- | --- |
-| `deterministic` | Must be omitted | `NOT_APPLICABLE` with a reason; full tests, business fixtures, Audit, build and wheel smoke-test still run. |
+| `deterministic` | Must be omitted | `NOT_APPLICABLE` with a reason; CI binds full tests, suites, Audit, wheel and hashes to the release commit. |
 | `governance-adoption` | Required | A successful workflow Run ID, commit, runner, candidate and suite bytes are all reverified before release. |
 
 The dispatch choice cannot override the tag contract. The workflow also rejects
 a Gate Run ID on a deterministic release, a governance-adoption release without
 one, a Gate whose Candidate SHA or covered Suite IDs differ from its structured
 claim binding, an unacknowledged sensitive path, or a stale Diff digest. Every Release
-publishes the contract, its commit-bound verification, and
+publishes the contract, its commit-bound verification, the exact CI candidate
+Artifact manifest, and
 `release-evidence.json`; governance releases additionally retain the verified
 Real Host Gate manifest as a durable Release asset. Absence of a model Gate is
 therefore reviewable `NOT_APPLICABLE`, never silently treated as `PASS`.
@@ -413,7 +460,7 @@ uv run --with pytest python -m pytest tests/test_business_quality_flows.py -q
 uv run --no-editable --reinstall-package agent-engineering-toolkit \
   aet audit . --strict --format json --output .aet/evidence/release-audit.json
 uv build
-uv run --isolated --with dist/agent_engineering_toolkit-1.10.0-py3-none-any.whl \
+uv run --isolated --with dist/agent_engineering_toolkit-1.11.0-py3-none-any.whl \
   aet --version
 ```
 

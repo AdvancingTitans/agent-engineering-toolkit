@@ -120,6 +120,14 @@ class QualityLoopTests(unittest.TestCase):
             self.assertEqual(item["status"], "UNKNOWN")
             self.assertEqual(item["review_route"]["reasons"], ["HIGH_RISK", "LOW_CONFIDENCE", "RULE_CONFLICT"])
 
+    def test_source_facts_cannot_weaken_policy_risk_or_confidence(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            output = self._diagnosis(root, confidence="HIGH", high_risk=False, policy_updates={"confidence": "LOW", "high_risk": True})
+            item = json.loads(output.read_text(encoding="utf-8"))["diagnoses"][0]
+            self.assertEqual("LOW", item["confidence"])
+            self.assertEqual(["HIGH_RISK", "LOW_CONFIDENCE"], item["review_route"]["reasons"])
+
     def test_unknown_phenomenon_routes_new_schema_without_guessing_owner(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)

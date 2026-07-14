@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://advancingtitans.github.io/aet/schemas/gate-history-registry-v1.schema.json",
+  "title": "AET Gate History Registry v1",
+  "type": "object",
+  "required": ["schema_version", "entries"],
+  "properties": {
+    "schema_version": {"const": "gate-history-registry/v1"},
+    "registry_id": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "entries": {"type": "array", "items": {"type": "object"}}
+  },
+  "additionalProperties": false
+}

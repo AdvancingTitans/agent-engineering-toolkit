@@ -12,10 +12,12 @@ from pathlib import Path
 from typing import Any
 
 
-SENSITIVE_PREFIXES = ("skills/", "eval/real-agent/", "src/aet/learn")
+SENSITIVE_PREFIXES = ("skills/", "eval/real-agent/", "schemas/", "src/aet/")
 SENSITIVE_PATHS = {
+    ".github/workflows/ci.yml",
     ".github/workflows/real-host-gate.yml",
     ".github/workflows/release.yml",
+    "aet.intent.json",
     "release-classification.json",
 }
 

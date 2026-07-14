@@ -22,6 +22,11 @@ class ProductizationTests(unittest.TestCase):
         self.assertIn("only when the user explicitly asks", skill)
         self.assertIn("Do not carry opt-in\nacross tasks.", skill)
         self.assertIn("only because I explicitly opted in", metadata)
+        self.assertLessEqual(len(skill.splitlines()), 110)
+        self.assertLessEqual(len(skill.encode()), 6500)
+        self.assertIn('aet-learn:editable id="routing-guidance"', skill)
+        for name in ("delivery-workflow.md", "provenance-workflow.md", "quality-workflow.md", "evolution-workflow.md", "security-boundaries.md"):
+            self.assertTrue((root / "skills" / "agent-engineering-toolkit" / "references" / name).is_file())
 
     def test_audit_config_excludes_fixture_with_a_visible_reason(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

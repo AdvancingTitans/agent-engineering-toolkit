@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://advancingtitans.github.io/aet/schemas/gate-history-assessment-v1.schema.json",
+  "title": "AET Gate History Assessment v1",
+  "type": "object",
+  "required": ["schema_version", "mode", "registry_sha256", "gate_plan_sha256", "suite", "entry_decisions", "sensitivity", "final_decision_uses_fresh_pairs_only"],
+  "properties": {
+    "schema_version": {"const": "gate-history-assessment/v1"},
+    "mode": {"const": "planning_only"},
+    "registry_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "gate_plan_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "suite": {"type": "string"},
+    "entry_decisions": {"type": "array"},
+    "sensitivity": {"type": "object"},
+    "final_decision_uses_fresh_pairs_only": {"const": true}
+  },
+  "additionalProperties": true
+}

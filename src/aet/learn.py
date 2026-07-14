@@ -25,6 +25,8 @@ from .rules import run_rules
 from .learn_runners import AgentRunRequest, RunnerError, create_runner, runner_names
 from .learn_scoring import score_rollout
 from .learn_statistics import compare_pairs
+from .learn_statistics import sequential_decision
+from .gate_plan import GatePlanError, assess_history_for_plan, build_gate_plan, load_gate_plan, plan_sha256, validate_gate_plan
 from .learn_contracts import validate_learn_task_v2
 from .evolution import constitution_sha256, load_candidate
 
@@ -263,12 +265,66 @@ def verify_suite(*, suite: Path, output: Path) -> dict[str, Any]:
     return result
 
 
-def replay_observed(*, candidate: Path, suite: Iterable[Path], output: Path, runner_name: str, rollouts: int = 1, runner_config: dict[str, Any] | None = None, retain_workspaces: bool = True, seed: int | None = None) -> dict[str, Any]:
+def plan_observed_gate(
+    *, candidate: Path, core: Path | None, validation: Path, held_out: Path,
+    runner_name: str, runner_config: dict[str, Any] | None, risk_class: str,
+    claims: list[str], output: Path, min_pairs: int | None = None,
+    max_pairs: int | None = None, batch_size: int | None = None,
+) -> dict[str, Any]:
+    """Freeze execution identity and conditional evidence bounds before rollout."""
+    metadata, _, _ = _candidate_material(candidate)
+    runner = create_runner(runner_name, runner_config)
+    try:
+        runner.validate()
+    except RunnerError as error:
+        raise LearnError(f"runner validation failed: {error}") from error
+    suite_paths = {"validation": validation, "held_out": held_out}
+    if core is not None:
+        suite_paths = {"core": core, **suite_paths}
+    _reject_suite_overlap(suite_paths)
+    bindings = {name: _observed_suite_binding(path) for name, path in suite_paths.items()}
+    plan = build_gate_plan(
+        risk_class=risk_class,
+        claims=claims,
+        suites={name: binding["task_count"] for name, binding in bindings.items()},
+        min_pairs=min_pairs,
+        max_pairs=max_pairs,
+        batch_size=batch_size,
+        candidate={
+            "candidate_id": metadata["candidate_id"],
+            "baseline_sha256": metadata["baseline_sha256"],
+            "candidate_sha256": metadata["candidate_sha256"],
+        },
+        runner={
+            "name": runner_name,
+            "version": getattr(runner, "version", "unknown"),
+            "config_sha256": _sha(json.dumps(runner_config or {}, sort_keys=True, separators=(",", ":")).encode()),
+            "model_fingerprint": str((runner_config or {}).get("model_fingerprint", "UNDECLARED")),
+            "network_isolation": "ENFORCED" if runner.capabilities().supports_network_isolation else "PARTIAL",
+            "evidence_schema": __version__,
+        },
+        suite_bindings=bindings,
+        scorer_sha256=_scorer_sha256(),
+    )
+    plan["plan_sha256"] = plan_sha256(plan)
+    _write_json(output, plan)
+    return plan
+
+
+def assess_gate_history(*, registry: Path, gate_plan: Path, suite: str, output: Path) -> dict[str, Any]:
+    """Write a drift-explicit planning-only assessment for verified history."""
+    result = assess_history_for_plan(_read_json(registry), plan=load_gate_plan(gate_plan), suite=suite)
+    _write_json(output, result)
+    return result
+
+
+def replay_observed(*, candidate: Path, suite: Iterable[Path], output: Path, runner_name: str, rollouts: int = 1, runner_config: dict[str, Any] | None = None, retain_workspaces: bool = True, seed: int | None = None, iteration_offset: int = 0, resume: bool = False) -> dict[str, Any]:
     """Run baseline and candidate Skills in separate fixture copies and score evidence."""
     if runner_name == "static":
         raise LearnError("static runner has no observed behavior; use replay for static contract checks")
     if rollouts < 1:
         raise LearnError("observed replay requires at least one rollout")
+    suite = list(suite)
     metadata, baseline, proposed = _candidate_material(candidate)
     runner = create_runner(runner_name, runner_config)
     try:
@@ -278,56 +334,99 @@ def replay_observed(*, candidate: Path, suite: Iterable[Path], output: Path, run
     tasks = _observed_tasks(suite)
     if not tasks:
         raise LearnError("observed replay suite has no Learn Task v2 tasks")
+    _preflight_observed_tasks(tasks, runner_name=runner_name, runner=runner)
     output = output.resolve()
     output.mkdir(parents=True, exist_ok=True)
-    all_pairs = []
+    runner_version = getattr(runner, "version", "unknown")
+    binding = {
+        "candidate_id": metadata["candidate_id"],
+        "baseline_sha256": metadata["baseline_sha256"],
+        "candidate_sha256": metadata["candidate_sha256"],
+        "suite_bindings": [_observed_suite_binding(path) for path in suite],
+        "runner": runner_name,
+        "runner_version": runner_version,
+        "runner_config_sha256": _sha(json.dumps(runner_config or {}, sort_keys=True, separators=(",", ":")).encode()),
+        "rollouts": rollouts,
+        "iteration_offset": iteration_offset,
+        "seed": seed,
+        "scorer_sha256": _scorer_sha256(),
+    }
+    manifest = output / "observed-replay.json"
+    all_pairs: list[dict[str, Any]] = []
+    if manifest.exists():
+        if not resume:
+            raise LearnError(f"observed replay output already exists; use explicit resume after reviewing it: {manifest}")
+        prior = _read_json(manifest)
+        if prior.get("binding") != binding:
+            raise LearnError("observed replay resume binding drifted")
+        if not isinstance(prior.get("pairs"), list):
+            raise LearnError("observed replay resume manifest is malformed")
+        all_pairs = prior["pairs"]
+        if prior.get("complete") is True:
+            return prior
+    completed = {(pair.get("task_id"), pair.get("iteration")) for pair in all_pairs if isinstance(pair, dict) and isinstance(pair.get("baseline"), dict) and isinstance(pair.get("candidate"), dict)}
+    result = {"schema_version": __version__, "report_kind": "learning_observed_replay", "candidate_id": metadata["candidate_id"], "generated_at": _time(), "runner": runner_name, "runner_name": runner_name, "runner_version": runner_version, "runner_capabilities": runner.capabilities().__dict__, "isolated": True, "raw_output_private": True, "network_isolation": "PARTIAL" if not runner.capabilities().supports_network_isolation else "ENFORCED", "pairs": all_pairs, "retain_workspaces": retain_workspaces, "binding": binding, "complete": False}
     for task, source in tasks:
-        contract_failures = validate_learn_task_v2(task)
-        if contract_failures:
-            raise LearnError(f"task {task.get('task_id', 'UNKNOWN')} contract failed: {'; '.join(contract_failures)}")
-        allowed = task.get("runner", {}).get("allowed", []) if isinstance(task.get("runner"), dict) else []
-        if allowed and runner_name not in allowed:
-            raise LearnError(f"task {task['task_id']} does not allow runner {runner_name}")
-        required_capabilities = task.get("runner", {}).get("required_capabilities", []) if isinstance(task.get("runner"), dict) else []
-        capabilities = runner.capabilities()
-        unavailable = [name for name in required_capabilities if getattr(capabilities, name, False) is not True]
-        expected = task.get("expected_behavior", {}) if isinstance(task.get("expected_behavior"), dict) else {}
-        if (expected.get("required_surfaces") or expected.get("required_proof_ids")) and not capabilities.supports_command_events:
-            unavailable.append("supports_command_events")
-        if unavailable:
-            raise LearnError(f"task {task['task_id']} requires unsupported runner capabilities: {', '.join(unavailable)}")
-        if task["policy"].get("network") == "enforced-deny" and not capabilities.supports_network_isolation:
-            raise LearnError(f"task {task['task_id']} requires enforced network isolation, but runner {runner_name} cannot provide it")
-        for iteration in range(rollouts):
+        for local_iteration in range(rollouts):
+            iteration = iteration_offset + local_iteration
+            if (task["task_id"], iteration) in completed:
+                continue
             # Alternate first variant; pairing keeps fixture/task/host conditions identical.
             order = (("baseline", baseline), ("candidate", proposed)) if iteration % 2 == 0 else (("candidate", proposed), ("baseline", baseline))
             pair: dict[str, Any] = {"task_id": task["task_id"], "iteration": iteration, "seed": None if seed is None else seed + iteration}
+            for variant in ("baseline", "candidate"):
+                incomplete = output / "rollouts" / f"{runner.name}-{metadata['candidate_id']}-{variant}-{task['task_id']}-{iteration:03d}"
+                if incomplete.exists():
+                    shutil.rmtree(incomplete)
             for variant, skill in order:
                 rollout = _observed_rollout(task=task, task_source=source, skill=skill, candidate_id=metadata["candidate_id"], variant=variant, iteration=iteration, runner=runner, output=output, seed=pair["seed"], runner_config=runner_config)
                 pair[variant] = rollout
             all_pairs.append(pair)
-    runner_version = getattr(runner, "version", "unknown")
-    result = {"schema_version": __version__, "report_kind": "learning_observed_replay", "candidate_id": metadata["candidate_id"], "generated_at": _time(), "runner": runner_name, "runner_name": runner_name, "runner_version": runner_version, "runner_capabilities": runner.capabilities().__dict__, "isolated": True, "raw_output_private": True, "network_isolation": "PARTIAL" if not runner.capabilities().supports_network_isolation else "ENFORCED", "pairs": all_pairs, "retain_workspaces": retain_workspaces}
-    _write_json(output / "observed-replay.json", result)
+            _write_json(manifest, result)
+    result["complete"] = True
+    _write_json(manifest, result)
     return result
 
 
-def gate_observed(*, candidate: Path, core: Path | None, validation: Path, held_out: Path, output: Path, runner_name: str, rollouts: int, statistics_profile: str, runner_config: dict[str, Any] | None = None) -> dict[str, Any]:
+def gate_observed(*, candidate: Path, core: Path | None, validation: Path, held_out: Path, output: Path, runner_name: str, rollouts: int, statistics_profile: str, runner_config: dict[str, Any] | None = None, gate_plan: dict[str, Any] | Path | None = None, precomputed_replays: dict[str, dict[str, Any]] | None = None) -> dict[str, Any]:
     """Gate real host behavior. INCONCLUSIVE and infrastructure errors cannot stage."""
     metadata, baseline, proposed = _candidate_material(candidate)
     hard = _hard_gate_failures(metadata, baseline, proposed)
     audit_failures = _candidate_audit_failures(metadata, proposed)
-    if _suite_fingerprints(validation) & _suite_fingerprints(held_out):
-        hard.append("validation and held-out suites overlap")
-    report: dict[str, Any] = {"schema_version": __version__, "report_kind": "learning_observed_gate", "candidate_id": metadata["candidate_id"], "baseline_sha256": metadata["baseline_sha256"], "candidate_sha256": metadata["candidate_sha256"], "runner": runner_name, "runner_name": runner_name, "statistics_profile": statistics_profile, "hard_gate_failures": hard, "candidate_audit_failures": audit_failures, "generated_at": _time()}
-    suites = {"validation": validation, "held_out": held_out}
+    suite_paths = {"validation": validation, "held_out": held_out}
     if core is not None:
-        suites = {"core": core, **suites}
+        suite_paths = {"core": core, **suite_paths}
+    try:
+        _reject_suite_overlap(suite_paths)
+    except LearnError as error:
+        hard.append(str(error))
+    report: dict[str, Any] = {"schema_version": __version__, "report_kind": "learning_observed_gate", "candidate_id": metadata["candidate_id"], "baseline_sha256": metadata["baseline_sha256"], "candidate_sha256": metadata["candidate_sha256"], "runner": runner_name, "runner_name": runner_name, "statistics_profile": statistics_profile, "hard_gate_failures": hard, "candidate_audit_failures": audit_failures, "generated_at": _time()}
+    if hard or audit_failures:
+        report.update(status="FAIL", comparisons={}, execution={"status": "SKIPPED", "reason": "DETERMINISTIC_PREFLIGHT_FAILED"})
+        _write_json(output, report)
+        return report
+    suites = suite_paths
+    if gate_plan is not None:
+        plan = load_gate_plan(gate_plan) if isinstance(gate_plan, Path) else dict(gate_plan)
+        validate_gate_plan(plan)
+        _verify_plan_runtime(plan=plan, metadata=metadata, suites=suites, runner_name=runner_name, runner_config=runner_config)
+        report["gate_plan_sha256"] = plan_sha256({key: value for key, value in plan.items() if key != "plan_sha256"})
+        report["risk_class"] = plan["risk_class"]
+        report["claims"] = plan["claims"]
+        if plan["applicability"] == "NOT_APPLICABLE":
+            report.update(status="NOT_APPLICABLE", comparisons={}, execution={"status": "SKIPPED", "reason": "PLAN_NOT_APPLICABLE"})
+            _write_json(output, report)
+            return report
+        return _execute_planned_gate(report=report, candidate=candidate, suites=suites, output=output, runner_name=runner_name, runner_config=runner_config, plan=plan)
     comparisons: dict[str, Any] = {}
     observed_runner_version: str | None = None
     for name, suite in suites.items():
         replay_dir = output.parent / "replays" / metadata["candidate_id"] / name
-        replay = replay_observed(candidate=candidate, suite=[suite], output=replay_dir, runner_name=runner_name, rollouts=rollouts, runner_config=runner_config)
+        replay = (precomputed_replays or {}).get(name)
+        if replay is None:
+            replay = replay_observed(candidate=candidate, suite=[suite], output=replay_dir, runner_name=runner_name, rollouts=rollouts, runner_config=runner_config)
+        else:
+            _verify_precomputed_replay(replay, metadata=metadata, suite=suite, runner_name=runner_name, runner_config=runner_config, rollouts=rollouts)
         replay_version = replay.get("runner_version")
         if not isinstance(replay_version, str) or not replay_version:
             raise LearnError(f"observed replay {name} has no runner version provenance")
@@ -353,6 +452,7 @@ def tournament(*, candidates: Iterable[Path], validation: Path, held_out: Path, 
     output.mkdir(parents=True, exist_ok=True)
     exposure = {"validation_sha256": sorted(_suite_fingerprints(validation)), "held_out_sha256": sorted(_suite_fingerprints(held_out)), "held_out_exposure_count": 1}
     preliminary: list[dict[str, Any]] = []
+    replay_cache: dict[str, dict[str, dict[str, Any]]] = {}
     for candidate in candidates:
         metadata, baseline, proposed = _candidate_material(candidate)
         failures = _hard_gate_failures(metadata, baseline, proposed) + _candidate_audit_failures(metadata, proposed)
@@ -360,13 +460,17 @@ def tournament(*, candidates: Iterable[Path], validation: Path, held_out: Path, 
             preliminary.append({"candidate": str(candidate), "candidate_id": metadata["candidate_id"], "status": "FAIL", "reason": failures})
             continue
         core_stats = None
+        candidate_replays: dict[str, dict[str, Any]] = {}
         if core is not None:
             core_replay = replay_observed(candidate=candidate, suite=[core], output=output / "core" / metadata["candidate_id"], runner_name=runner_name, rollouts=rollouts, runner_config=runner_config)
+            candidate_replays["core"] = core_replay
             core_stats = compare_pairs(core_replay["pairs"], profile=statistics_profile)
             if core_stats["status"] not in {"PASS", "PRELIMINARY"}:
                 preliminary.append({"candidate": str(candidate), "candidate_id": metadata["candidate_id"], "status": core_stats["status"], "core": core_stats})
                 continue
         validation_replay = replay_observed(candidate=candidate, suite=[validation], output=output / "validation" / metadata["candidate_id"], runner_name=runner_name, rollouts=rollouts, runner_config=runner_config)
+        candidate_replays["validation"] = validation_replay
+        replay_cache[metadata["candidate_id"]] = candidate_replays
         stats = compare_pairs(validation_replay["pairs"], profile=statistics_profile)
         preliminary.append({"candidate": str(candidate), "candidate_id": metadata["candidate_id"], "status": stats["status"], "validation": stats, "core": core_stats, "added_tokens": _token_estimate(proposed) - _token_estimate(baseline), "operations": len(metadata.get("operations", [])), "engine": metadata.get("engine", "rules")})
     finalists = [item for item in preliminary if item["status"] in {"PASS", "PRELIMINARY"}]
@@ -375,7 +479,7 @@ def tournament(*, candidates: Iterable[Path], validation: Path, held_out: Path, 
     if finalists:
         winner = finalists[0]
         gate_path = output / "gates" / f"{winner['candidate_id']}.json"
-        gate_result = gate_observed(candidate=Path(winner["candidate"]), core=core, validation=validation, held_out=held_out, output=gate_path, runner_name=runner_name, rollouts=rollouts, statistics_profile=statistics_profile, runner_config=runner_config)
+        gate_result = gate_observed(candidate=Path(winner["candidate"]), core=core, validation=validation, held_out=held_out, output=gate_path, runner_name=runner_name, rollouts=rollouts, statistics_profile=statistics_profile, runner_config=runner_config, precomputed_replays=replay_cache.get(winner["candidate_id"]))
         final = {"candidate_id": winner["candidate_id"], "candidate": winner["candidate"], "gate": str(gate_path), "status": gate_result["status"]}
     result = {"report_kind": "learning_tournament", "generated_at": _time(), "runner": runner_name, "statistics_profile": statistics_profile, "exposure": exposure, "preliminary": preliminary, "finalist": final, "stage": None, "adopted": False}
     _write_json(output / "tournament.json", result)
@@ -523,12 +627,7 @@ def sleep(*, runs: Path | None, evidence: Path | None, target: Path, validation:
     candidate_dir = output / "candidates" / "candidate"
     candidate = propose(patterns=patterns, target=target, output=candidate_dir, engine=engine, model_command=model_command, model_timeout_seconds=max(0.01, timeout_seconds - (time.monotonic() - started)), rejected=rejected)
     _record_learning_event(run, "PROPOSED", candidate_id=candidate["candidate_id"])
-    if runner_name == "static":
-        replay(candidate=candidate_dir, suite=[validation, held_out], output=output / "replays" / f"{candidate['candidate_id']}.json")
-        _record_learning_event(run, "REPLAYED", replay_count=2, runner="static", observed=False)
-    else:
-        replay_observed(candidate=candidate_dir, suite=[validation, held_out], output=output / "replays" / candidate["candidate_id"], runner_name=runner_name, rollouts=rollouts, runner_config=runner_config)
-        _record_learning_event(run, "REPLAYED", replay_count=rollouts * 2, runner=runner_name, observed=True)
+    _record_learning_event(run, "REPLAYED", replay_count=0, runner=runner_name, observed=runner_name != "static", deduplicated_into_gate=True)
     _ensure_within_timeout(started, timeout_seconds)
     gate_path = output / "gates" / f"{candidate['candidate_id']}.json"
     result = gate(candidate=candidate_dir, validation=validation, held_out=held_out, core=core, output=gate_path) if runner_name == "static" else gate_observed(candidate=candidate_dir, validation=validation, held_out=held_out, core=core, output=gate_path, runner_name=runner_name, rollouts=rollouts, statistics_profile=statistics_profile, runner_config=runner_config)
@@ -1107,6 +1206,182 @@ def _observed_tasks(suites: Iterable[Path]) -> list[tuple[dict[str, Any], Path]]
             if task.get("schema_version") == "2.0":
                 tasks.append((task, source))
     return tasks
+
+
+def _preflight_observed_tasks(tasks: list[tuple[dict[str, Any], Path]], *, runner_name: str, runner: Any) -> None:
+    """Validate every task and fixture before the first paid host execution."""
+    seen: set[str] = set()
+    for task, source in tasks:
+        failures = validate_learn_task_v2(task)
+        if failures:
+            raise LearnError(f"task {task.get('task_id', 'UNKNOWN')} contract failed: {'; '.join(failures)}")
+        task_id = task["task_id"]
+        if task_id in seen:
+            raise LearnError(f"duplicate task_id: {task_id}")
+        seen.add(task_id)
+        allowed = task.get("runner", {}).get("allowed", []) if isinstance(task.get("runner"), dict) else []
+        if allowed and runner_name not in allowed:
+            raise LearnError(f"task {task_id} does not allow runner {runner_name}")
+        required = task.get("runner", {}).get("required_capabilities", []) if isinstance(task.get("runner"), dict) else []
+        capabilities = runner.capabilities()
+        unavailable = [name for name in required if getattr(capabilities, name, False) is not True]
+        expected = task.get("expected_behavior", {}) if isinstance(task.get("expected_behavior"), dict) else {}
+        if (expected.get("required_surfaces") or expected.get("required_proof_ids")) and not capabilities.supports_command_events:
+            unavailable.append("supports_command_events")
+        if unavailable:
+            raise LearnError(f"task {task_id} requires unsupported runner capabilities: {', '.join(sorted(set(unavailable)))}")
+        if task["policy"].get("network") == "enforced-deny" and not capabilities.supports_network_isolation:
+            raise LearnError(f"task {task_id} requires enforced network isolation, but runner {runner_name} cannot provide it")
+        fixture = task.get("fixture", {}).get("source") if isinstance(task.get("fixture"), dict) else None
+        fixture_path = source.parent / fixture if isinstance(fixture, str) else None
+        if fixture_path is None or not fixture_path.exists() or fixture_path.is_symlink():
+            raise LearnError(f"task {task_id} secure fixture is unavailable or is a symbolic link")
+        repository = fixture_path / "repo" if (fixture_path / "repo").is_dir() else fixture_path
+        _secure_fixture_sha256(repository)
+
+
+def _observed_suite_binding(suite: Path) -> dict[str, Any]:
+    tasks = _observed_tasks([suite])
+    if not tasks:
+        raise LearnError(f"observed suite has no Learn Task v2 tasks: {suite}")
+    hashes: list[str] = []
+    task_ids: list[str] = []
+    for task, source in tasks:
+        failures = validate_learn_task_v2(task)
+        if failures:
+            raise LearnError(f"task {task.get('task_id', 'UNKNOWN')} contract failed: {'; '.join(failures)}")
+        fixture = task.get("fixture", {}).get("source") if isinstance(task.get("fixture"), dict) else None
+        fixture_path = source.parent / fixture if isinstance(fixture, str) else None
+        if fixture_path is None or not fixture_path.exists() or fixture_path.is_symlink():
+            raise LearnError(f"task {task['task_id']} fixture is unavailable or unsafe")
+        repository = fixture_path / "repo" if (fixture_path / "repo").is_dir() else fixture_path
+        hashes.extend((_sha(source.read_bytes()), _secure_fixture_sha256(repository)))
+        task_ids.append(task["task_id"])
+    if len(task_ids) != len(set(task_ids)):
+        raise LearnError("observed suite contains duplicate task IDs")
+    return {"task_count": len(tasks), "task_ids": sorted(task_ids), "suite_sha256": sorted(hashes)}
+
+
+def _reject_suite_overlap(suites: dict[str, Path]) -> None:
+    fingerprints = {name: _suite_fingerprints(path) for name, path in suites.items()}
+    task_ids = {name: {task["task_id"] for task, _ in _observed_tasks([path])} for name, path in suites.items()}
+    names = list(fingerprints)
+    for index, left in enumerate(names):
+        for right in names[index + 1:]:
+            if fingerprints[left] & fingerprints[right]:
+                raise LearnError(f"{left} and {right} suites overlap")
+            if task_ids[left] & task_ids[right]:
+                raise LearnError(f"{left} and {right} suites reuse task IDs")
+
+
+def _scorer_sha256() -> str:
+    digest = hashlib.sha256()
+    for name in ("learn_contracts.py", "learn_scoring.py", "learn_statistics.py"):
+        digest.update(name.encode() + b"\0" + Path(__file__).with_name(name).read_bytes() + b"\0")
+    return digest.hexdigest()
+
+
+def _verify_plan_runtime(*, plan: dict[str, Any], metadata: dict[str, Any], suites: dict[str, Path], runner_name: str, runner_config: dict[str, Any] | None) -> None:
+    declared_sha = plan.get("plan_sha256")
+    body = {key: value for key, value in plan.items() if key != "plan_sha256"}
+    actual_sha = plan_sha256(body)
+    if declared_sha is not None and declared_sha != actual_sha:
+        raise LearnError("Gate Plan declared hash does not match its canonical bytes")
+    expected_candidate = {"candidate_id": metadata["candidate_id"], "baseline_sha256": metadata["baseline_sha256"], "candidate_sha256": metadata["candidate_sha256"]}
+    if plan.get("candidate") != expected_candidate:
+        raise LearnError("Gate Plan candidate binding drifted")
+    runner = create_runner(runner_name, runner_config)
+    try:
+        runner.validate()
+    except RunnerError as error:
+        raise LearnError(f"runner validation failed: {error}") from error
+    expected_runner = {"name": runner_name, "version": getattr(runner, "version", "unknown"), "config_sha256": _sha(json.dumps(runner_config or {}, sort_keys=True, separators=(",", ":")).encode()), "model_fingerprint": str((runner_config or {}).get("model_fingerprint", "UNDECLARED")), "network_isolation": "ENFORCED" if runner.capabilities().supports_network_isolation else "PARTIAL", "evidence_schema": __version__}
+    if plan.get("runner") != expected_runner:
+        raise LearnError("Gate Plan runner binding drifted")
+    expected_bindings = {name: _observed_suite_binding(path) for name, path in suites.items()}
+    if plan.get("suite_bindings") != expected_bindings:
+        raise LearnError("Gate Plan suite or fixture binding drifted")
+    if plan.get("scorer_sha256") != _scorer_sha256():
+        raise LearnError("Gate Plan scorer binding drifted")
+
+
+def _verify_precomputed_replay(replay: dict[str, Any], *, metadata: dict[str, Any], suite: Path, runner_name: str, runner_config: dict[str, Any] | None, rollouts: int) -> None:
+    if replay.get("complete") is not True or not isinstance(replay.get("binding"), dict):
+        raise LearnError("precomputed replay is incomplete or not hash-bound")
+    runner = create_runner(runner_name, runner_config)
+    try:
+        runner.validate()
+    except RunnerError as error:
+        raise LearnError(f"runner validation failed: {error}") from error
+    expected = {
+        "candidate_id": metadata["candidate_id"],
+        "baseline_sha256": metadata["baseline_sha256"],
+        "candidate_sha256": metadata["candidate_sha256"],
+        "suite_bindings": [_observed_suite_binding(suite)],
+        "runner": runner_name,
+        "runner_version": getattr(runner, "version", "unknown"),
+        "runner_config_sha256": _sha(json.dumps(runner_config or {}, sort_keys=True, separators=(",", ":")).encode()),
+        "rollouts": rollouts,
+        "iteration_offset": 0,
+        "seed": None,
+        "scorer_sha256": _scorer_sha256(),
+    }
+    if replay["binding"] != expected:
+        raise LearnError("precomputed replay binding drifted")
+
+
+def _execute_planned_gate(*, report: dict[str, Any], candidate: Path, suites: dict[str, Path], output: Path, runner_name: str, runner_config: dict[str, Any] | None, plan: dict[str, Any]) -> dict[str, Any]:
+    comparisons: dict[str, Any] = {}
+    final_status = "PASS"
+    observed_runner_version: str | None = None
+    for name, suite in suites.items():
+        objective = plan["suite_objectives"][name]
+        design = plan["suite_designs"][name]
+        task_count = plan["suite_bindings"][name]["task_count"]
+        accumulated: list[dict[str, Any]] = []
+        replay_paths: list[str] = []
+        stats: dict[str, Any] | None = None
+        pair_offset = 0
+        look = 0
+        while pair_offset < design["max_pairs"]:
+            look += 1
+            delta_pairs = min(design["batch_size"], design["max_pairs"] - pair_offset)
+            rollouts = max(1, delta_pairs // task_count)
+            replay_dir = output.parent / "replays" / report["candidate_id"] / name / f"look-{look:03d}"
+            replay = replay_observed(candidate=candidate, suite=[suite], output=replay_dir, runner_name=runner_name, rollouts=rollouts, runner_config=runner_config, iteration_offset=pair_offset // task_count)
+            replay_version = replay.get("runner_version")
+            if observed_runner_version is not None and replay_version != observed_runner_version:
+                raise LearnError("observed replay looks used different runner versions")
+            observed_runner_version = replay_version
+            accumulated.extend(replay["pairs"])
+            pair_offset = len(accumulated)
+            replay_paths.append(str(replay_dir / "observed-replay.json"))
+            stats = sequential_decision(
+                accumulated,
+                objective=objective,
+                minimum_pairs=design["min_pairs"],
+                maximum_pairs=design["max_pairs"],
+                batch_size=design["batch_size"],
+                alpha=plan["decision"]["alpha"],
+                mcid=plan["decision"]["mcid"],
+            )
+            if stats["status"] != "CONTINUE":
+                break
+        if stats is None:
+            raise LearnError(f"Gate Plan did not allocate evidence for suite {name}")
+        comparisons[name] = {"objective": objective, "replays": replay_paths, "statistics": stats, "planned_pairs": design["max_pairs"], "actual_pairs": len(accumulated)}
+        if stats["status"] != "PASS":
+            final_status = stats["status"]
+            break
+    report["runner_version"] = observed_runner_version or plan["runner"]["version"]
+    report["comparisons"] = comparisons
+    if plan["applicability"] == "PRELIMINARY" and final_status == "PASS":
+        final_status = "PRELIMINARY"
+    report["status"] = final_status
+    report["stop_reason"] = next((row["statistics"]["stop_reason"] for row in reversed(list(comparisons.values()))), "UNKNOWN")
+    report["acceptance"] = "PASS uses fresh pairs only under the pre-registered, hash-bound Gate Plan. Historical evidence never enters the decision statistic."
+    _write_json(output, report)
+    return report
 
 
 def _observed_rollout(*, task: dict[str, Any], task_source: Path, skill: str, candidate_id: str, variant: str, iteration: int, runner: Any, output: Path, seed: int | None, runner_config: dict[str, Any] | None) -> dict[str, Any]:

@@ -16,7 +16,7 @@ from .decision import DecisionError, add_decision, init_ledger, list_decisions, 
 from .discovery import discover_assets
 from .evidence import EvidenceError, bind_proof, compile_evidence_pack, evidence_receipt, render_evidence_viewer, reuse_trace_command, seal_trace, trace_command, workspace_snapshot
 from .evolve import EvolveError, build_evolution, collect_evolution, query_evolution, write_evolution_plan, write_evolution_report
-from .learn import LearnError, adopt, collect, gate, gate_observed, harvest, inspect_experiences, inspect_feedback, mine, propose, record_feedback, reject, render_learn_viewer, replay, replay_observed, runner_inventory, sleep, stage, tournament, verify_suite
+from .learn import LearnError, adopt, assess_gate_history, collect, gate, gate_observed, harvest, inspect_experiences, inspect_feedback, mine, plan_observed_gate, propose, record_feedback, reject, render_learn_viewer, replay, replay_observed, runner_inventory, sleep, stage, tournament, verify_suite
 from .reporters import render_json, render_markdown, render_sarif, report_data
 from .review import ReviewError, review
 from .run import RunError, attach_artifact, close_run, init_run, render_run_status, run_status, verify_run
@@ -28,6 +28,7 @@ from .audit_evolution import AuditEvolutionError, adopt_audit_rule, aggregate_sh
 from .evolution import CandidateError, default_registry, load_candidate
 from .policy_targets import PolicyTargetError, adopt_policy_candidate, apply_audit_profile, evaluate_trace_validator, gate_policy_candidate, propose_policy_candidate, replay_policy_candidate, review_policy_findings, stage_policy_candidate, validate_policy_transition
 from .quality import QualityError, diagnose_report, promote_regression
+from .gate_plan import GatePlanError
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -133,6 +134,7 @@ def build_parser() -> argparse.ArgumentParser:
     learn_replay.add_argument("--rollouts", type=int, default=1, help="Repeated isolated runs for non-static hosts.")
     learn_replay.add_argument("--seed", type=int)
     learn_replay.add_argument("--runner-config", type=Path, help="Optional local runner JSON configuration; it is never fetched.")
+    learn_replay.add_argument("--resume", action="store_true", help="Resume or reuse only an exact, hash-bound observed replay manifest; drift fails without execution.")
     learn_replay.add_argument("--target-type", choices=tuple(item.target_type for item in default_registry().list()))
     learn_gate = learn_commands.add_parser("gate", help="Run the target-specific core, validation, held-out, adversarial, and safety gates.")
     learn_gate.add_argument("--candidate", required=True, type=Path)
@@ -144,8 +146,28 @@ def build_parser() -> argparse.ArgumentParser:
     learn_gate.add_argument("--rollouts", type=int, default=1)
     learn_gate.add_argument("--statistics-profile", choices=("preliminary", "adoptable"), default="preliminary")
     learn_gate.add_argument("--runner-config", type=Path)
+    learn_gate.add_argument("--gate-plan", type=Path, help="Pre-registered gate-plan/v2. Required for conditional observed adoption gates; legacy rollouts remain supported for compatibility.")
     learn_gate.add_argument("--adversarial", type=Path, help="Required Constitution suite for audit-rule candidates.")
     learn_gate.add_argument("--target-type", choices=tuple(item.target_type for item in default_registry().list()))
+    learn_plan = learn_commands.add_parser("plan", help="Freeze a hash-bound, risk-conditioned observed Gate Plan before any rollout.")
+    learn_plan.add_argument("--candidate", required=True, type=Path)
+    learn_plan.add_argument("--validation", required=True, type=Path)
+    learn_plan.add_argument("--held-out", required=True, type=Path)
+    learn_plan.add_argument("--core", type=Path)
+    learn_plan.add_argument("--runner", choices=("scripted", "codex", "claude-code"), required=True)
+    learn_plan.add_argument("--runner-config", type=Path)
+    learn_plan.add_argument("--risk-class", choices=("R0", "R1", "R2", "R3", "R4"), required=True)
+    learn_plan.add_argument("--claim", action="append", required=True)
+    learn_plan.add_argument("--min-pairs", type=int)
+    learn_plan.add_argument("--max-pairs", type=int)
+    learn_plan.add_argument("--batch-size", type=int)
+    learn_plan.add_argument("--output", required=True, type=Path)
+    learn_history = learn_commands.add_parser("history", help="Assess verified Gate history for planning only; history never enters PASS.")
+    learn_history.add_argument("action", choices=("assess",))
+    learn_history.add_argument("--registry", required=True, type=Path)
+    learn_history.add_argument("--gate-plan", required=True, type=Path)
+    learn_history.add_argument("--suite", required=True)
+    learn_history.add_argument("--output", required=True, type=Path)
     learn_runner = learn_commands.add_parser("runner", help="List or explicitly verify locally installed real-host runners.")
     learn_runner.add_argument("action", choices=("list", "verify"))
     learn_runner.add_argument("--runner", choices=("static", "scripted", "codex", "claude-code"))
@@ -468,6 +490,12 @@ def main(argv: Sequence[str] | None = None) -> int:
                         raise LearnError(f"{args.target_type} proposal requires --proposal with bounded JSON Patch operations")
                     propose_policy_candidate(target_type=args.target_type, target=args.target, proposal=args.proposal, output=args.output)
                 return 0
+            if args.learn_command == "plan":
+                plan_observed_gate(candidate=args.candidate, core=args.core, validation=args.validation, held_out=args.held_out, runner_name=args.runner, runner_config=_runner_config(args.runner_config), risk_class=args.risk_class, claims=args.claim, output=args.output, min_pairs=args.min_pairs, max_pairs=args.max_pairs, batch_size=args.batch_size)
+                return 0
+            if args.learn_command == "history":
+                assess_gate_history(registry=args.registry, gate_plan=args.gate_plan, suite=args.suite, output=args.output)
+                return 0
             if args.learn_command == "replay":
                 target_type = args.target_type or _candidate_target(args.candidate)
                 if target_type == "audit-rule":
@@ -484,7 +512,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                 if args.runner == "static":
                     replay(candidate=args.candidate, suite=args.suite, output=args.output)
                 else:
-                    replay_observed(candidate=args.candidate, suite=args.suite, output=args.output, runner_name=args.runner, rollouts=args.rollouts, seed=args.seed, runner_config=config)
+                    replay_observed(candidate=args.candidate, suite=args.suite, output=args.output, runner_name=args.runner, rollouts=args.rollouts, seed=args.seed, runner_config=config, resume=args.resume)
                 return 0
             if args.learn_command == "gate":
                 target_type = args.target_type or _candidate_target(args.candidate)
@@ -499,7 +527,9 @@ def main(argv: Sequence[str] | None = None) -> int:
                     result = gate_policy_candidate(candidate=args.candidate, core=args.core, validation=args.validation, held_out=args.held_out, adversarial=args.adversarial, output=args.output)
                     return 0 if result["status"] == "PASS" else 1
                 config = _runner_config(args.runner_config)
-                result = gate(candidate=args.candidate, validation=args.validation, held_out=args.held_out, core=args.core, output=args.output) if args.runner == "static" else gate_observed(candidate=args.candidate, validation=args.validation, held_out=args.held_out, core=args.core, output=args.output, runner_name=args.runner, rollouts=args.rollouts, statistics_profile=args.statistics_profile, runner_config=config)
+                if args.runner == "static" and args.gate_plan is not None:
+                    raise LearnError("--gate-plan is only valid for observed runners")
+                result = gate(candidate=args.candidate, validation=args.validation, held_out=args.held_out, core=args.core, output=args.output) if args.runner == "static" else gate_observed(candidate=args.candidate, validation=args.validation, held_out=args.held_out, core=args.core, output=args.output, runner_name=args.runner, rollouts=args.rollouts, statistics_profile=args.statistics_profile, runner_config=config, gate_plan=args.gate_plan)
                 return 0 if result["status"] == "PASS" else 1
             if args.learn_command == "runner":
                 config = _runner_config(args.runner_config)
@@ -548,7 +578,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                 return 0 if result["status"] in {"PASS", "NOT_APPLICABLE"} else 1
             reject(candidate=args.candidate, reason=args.reason, output=args.output)
             return 0
-        except (LearnError, AuditEvolutionError, CandidateError, PolicyTargetError) as error:
+        except (LearnError, GatePlanError, AuditEvolutionError, CandidateError, PolicyTargetError) as error:
             raise SystemExit(f"aet: learn failed: {error}") from error
     if args.command == "evolve":
         try:

@@ -1,5 +1,5 @@
 {
-  "intent": "Ship AET v1.10.0 with fail-closed lossless evidence reuse and a cost-aware release policy that records Real Host Gate as NOT_APPLICABLE for deterministic releases while requiring full commit-bound paired evaluation for governance-asset adoption.",
+  "intent": "Ship AET v1.11.0 with condition-based Gate Plans, fail-closed sequential decisions, exact replay reuse, planning-only historical sensitivity, progressive Skill loading, and build-once release promotion without weakening fresh-evidence or human-adoption boundaries.",
   "changed_path_budget": 40,
   "allowed_paths": [
     "aet.intent.json",

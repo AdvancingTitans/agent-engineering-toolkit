@@ -240,7 +240,7 @@ class BusinessQualityFlowsTests(unittest.TestCase):
                 check=True,
             )
             metadata = json.loads((output / "candidate.json").read_text(encoding="utf-8"))
-            self.assertEqual(metadata["candidate_id"], "CAND-REAL-HOST-V1-10-0")
+            self.assertEqual(metadata["candidate_id"], "CAND-REAL-HOST-V1-11-0")
             candidate_bytes = (output / "candidate.SKILL.md").read_bytes()
             self.assertEqual(metadata["candidate_sha256"], hashlib.sha256(candidate_bytes).hexdigest())
             candidate_text = candidate_bytes.decode()
@@ -345,17 +345,32 @@ class BusinessQualityFlowsTests(unittest.TestCase):
                 return subprocess.CompletedProcess(argv, 0, stdout="b" * 40 + "\n")
             candidate = Path(argv[argv.index("--candidate") + 1])
             metadata = json.loads((candidate / "candidate.json").read_text(encoding="utf-8"))
-            raw_gate = Path(argv[argv.index("--output") + 1])
-            raw_gate.write_text(json.dumps(self._passing_observed_gate(metadata["candidate_sha256"])), encoding="utf-8")
+            output = Path(argv[argv.index("--output") + 1])
+            if "plan" in argv:
+                plan = {"schema_version": "gate-plan/v2", "risk_class": "R3", "claims": ["AET.REAL-HOST.TRACE-ROUTING"]}
+                plan["plan_sha256"] = hashlib.sha256(json.dumps(plan, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+                output.write_text(json.dumps(plan), encoding="utf-8")
+                return subprocess.CompletedProcess(argv, 0)
+            plan = json.loads(Path(argv[argv.index("--gate-plan") + 1]).read_text(encoding="utf-8"))
+            raw_gate = self._passing_observed_gate(metadata["candidate_sha256"])
+            raw_gate["gate_plan_sha256"] = plan["plan_sha256"]
+            for name, comparison in raw_gate["comparisons"].items():
+                replay = comparison.pop("replay")
+                comparison.update({
+                    "objective": "no_regression" if name == "core" else "confirmatory_superiority" if name == "held_out" else "superiority",
+                    "replays": [replay], "planned_pairs": 6, "actual_pairs": 6,
+                })
+                comparison["statistics"]["stop_reason"] = "SUCCESS_BOUNDARY"
+            output.write_text(json.dumps(raw_gate), encoding="utf-8")
             return subprocess.CompletedProcess(argv, 0)
 
-        with tempfile.TemporaryDirectory() as temporary, mock.patch.object(module.subprocess, "run", fake_run), mock.patch.object(module, "__version__", "1.10.0"):
-            release = Path(temporary) / "v1.10.0"
+        with tempfile.TemporaryDirectory() as temporary, mock.patch.object(module.subprocess, "run", fake_run), mock.patch.object(module, "__version__", "1.11.0"):
+            release = Path(temporary) / "v1.11.0"
             replay_argv = [
                 "--root", str(ROOT),
                 "--release-dir", str(release),
                 "--expected-commit", "b" * 40,
-                "--expected-version", "1.10.0",
+                "--expected-version", "1.11.0",
             ]
             with mock.patch.object(sys, "argv", [str(helper), *replay_argv]):
                 module.main()
@@ -363,17 +378,17 @@ class BusinessQualityFlowsTests(unittest.TestCase):
             self.assertTrue((release / "raw-gate.json").is_file())
             self.assertTrue((release / "real-host-gate.json").is_file())
             runner = json.loads((release / "runner.json").read_text(encoding="utf-8"))
-            self.assertEqual(runner, {"aet_argv": [sys.executable, "-m", "aet.cli"], "inherit_home": True})
+            self.assertEqual(runner, {"aet_argv": [sys.executable, "-m", "aet.cli"], "inherit_home": True, "model_fingerprint": "codex-default@0.144.1"})
             manifest = json.loads((release / "real-host-gate.json").read_text(encoding="utf-8"))
             self.assertEqual(manifest["runner"], {"name": "codex", "version": "codex-cli 0.144.1"})
-            self.assertEqual(len(calls), 2)
+            self.assertEqual(len(calls), 3)
             self.assertEqual(calls[0][0], ["git", "rev-parse", "HEAD"])
-            argv, options = calls[1]
+            self.assertIn("plan", calls[1][0])
+            argv, options = calls[2]
             self.assertEqual(argv[:3], [sys.executable, "-m", "aet.cli"])
             self.assertIn("--runner", argv)
             self.assertIn("codex", argv)
-            self.assertIn("--rollouts", argv)
-            self.assertIn("6", argv)
+            self.assertIn("--gate-plan", argv)
             self.assertEqual(options["cwd"], ROOT.resolve())
             self.assertTrue(options["check"])
 
@@ -474,7 +489,6 @@ class BusinessQualityFlowsTests(unittest.TestCase):
         ci = (ROOT / ".github" / "workflows" / "ci.yml").read_text(encoding="utf-8")
         for command in (
             "python -m pytest -q",
-            "python -m pytest tests/test_business_quality_flows.py -q",
             "aet learn suite verify --suite eval/real-agent/core",
             "aet learn suite verify --suite eval/real-agent/validation",
             "aet learn suite verify --suite eval/real-agent/held-out",
@@ -484,8 +498,10 @@ class BusinessQualityFlowsTests(unittest.TestCase):
             "wheel_version=",
             "source_version=",
             'test "$wheel_version" = "$source_version"',
+            "release-candidate-${{ github.sha }}",
         ):
             self.assertIn(command, ci)
+        self.assertEqual(1, ci.count("python -m pytest"))
 
         producer = (ROOT / ".github" / "workflows" / "real-host-gate.yml").read_text(encoding="utf-8")
         for binding in (
@@ -501,7 +517,7 @@ class BusinessQualityFlowsTests(unittest.TestCase):
 
         release = (ROOT / ".github" / "workflows" / "release.yml").read_text(encoding="utf-8")
         for binding in (
-            "workflow_dispatch:", "release_class:", "type: choice", "deterministic", "governance-adoption",
+            "workflow_dispatch:", "ci_run_id:", "release_class:", "type: choice", "deterministic", "governance-adoption",
             "gate_run_id:", "required: false", "actions/download-artifact@v4", "real-host-gate",
             "gh api", "head_sha", ".github/workflows/real-host-gate.yml", "GITHUB_SHA",
             "eval/real-agent/build_candidate.py", "eval/real-agent/release_gate.py verify",
@@ -510,7 +526,8 @@ class BusinessQualityFlowsTests(unittest.TestCase):
             "release-evidence.json", "release-classification.json",
             "eval/real-agent/release_classification.py", "classification-verification.json",
             'test -z "$GATE_RUN_ID"',
-            "wheel_version=", "source_version=", 'test "$wheel_version" = "$source_version"',
+            "Verify CI workflow-run provenance", "aet-ci-release-candidate/v1", 'uv run --isolated --with "$wheel" aet --version',
+            ".aet/ci-download/ci/manifest.json", ".aet/ci-download/ci/dist/",
             '[[ "$RELEASE_TAG" =~ ^v[0-9]+\\.[0-9]+\\.[0-9]+$ ]]',
             'git show-ref --verify "refs/tags/$RELEASE_TAG"',
         ):

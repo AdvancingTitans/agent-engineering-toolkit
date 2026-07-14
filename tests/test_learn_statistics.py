@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import unittest
 
-from aet.learn_statistics import compare_pairs, summarize_reliability
+from aet.learn_statistics import alpha_spending_schedule, compare_pairs, sequential_decision, summarize_reliability
 
 
 def pair(task: str, baseline: str, candidate: str, *, candidate_findings: list[dict] | None = None) -> dict:
@@ -61,6 +61,67 @@ class ReliabilityStatisticsTests(unittest.TestCase):
         report = compare_pairs([pair("task", "PASS", "FAIL", candidate_findings=[finding])], profile="preliminary")
         self.assertEqual(["TOOL_CALL_ARGUMENT_MISMATCH"], report["hard_regressions"])
         self.assertEqual("FAIL", report["status"])
+
+    def test_core_no_regression_accepts_stable_passes(self) -> None:
+        report = compare_pairs(
+            [pair("core", "PASS", "PASS") for _ in range(4)],
+            profile="adoptable",
+            objective="no_regression",
+            minimum_pairs=4,
+        )
+        self.assertEqual("PASS", report["status"])
+        self.assertEqual("no_regression", report["objective"])
+
+    def test_sequential_success_uses_prespecified_look_alpha(self) -> None:
+        rows = [pair("task", "FAIL", "PASS") for _ in range(8)]
+        report = sequential_decision(
+            rows,
+            objective="superiority",
+            minimum_pairs=4,
+            maximum_pairs=12,
+            batch_size=2,
+            alpha=0.05,
+            mcid=0.05,
+        )
+        self.assertEqual("PASS", report["status"])
+        self.assertEqual("SUCCESS_BOUNDARY", report["stop_reason"])
+        self.assertAlmostEqual(0.05 / 6, report["look_alpha"])
+
+    def test_directional_objective_uses_one_sided_exact_test(self) -> None:
+        report = compare_pairs([pair("task", "FAIL", "PASS") for _ in range(5)], profile="adoptable", objective="superiority", minimum_pairs=5)
+        self.assertAlmostEqual(0.03125, report["directional_mcnemar_p_value"])
+        self.assertEqual("PASS", report["status"])
+
+    def test_contract_retention_rejects_both_variants_failing(self) -> None:
+        report = compare_pairs([pair("core", "FAIL", "FAIL") for _ in range(4)], profile="adoptable", objective="no_regression", minimum_pairs=4)
+        self.assertEqual("FAIL", report["status"])
+
+    def test_directional_regression_is_fail_not_inconclusive(self) -> None:
+        report = compare_pairs([pair("task", "PASS", "FAIL")], profile="adoptable", objective="superiority", minimum_pairs=1)
+        self.assertEqual("FAIL", report["status"])
+
+    def test_alpha_spending_is_bounded_by_family_alpha(self) -> None:
+        schedule = alpha_spending_schedule(maximum_pairs=12, batch_size=2, alpha=0.05)
+        self.assertEqual(6, len(schedule))
+        self.assertAlmostEqual(0.05, sum(row["local_alpha"] for row in schedule))
+        self.assertAlmostEqual(0.05, schedule[-1]["cumulative_alpha"])
+
+    def test_futility_stops_only_when_even_all_remaining_improvements_cannot_pass(self) -> None:
+        report = sequential_decision([pair("task", "PASS", "PASS") for _ in range(4)], objective="superiority", minimum_pairs=4, maximum_pairs=6, batch_size=2, alpha=0.05, mcid=0.05)
+        self.assertEqual(("INCONCLUSIVE", "FUTILITY_BOUNDARY"), (report["status"], report["stop_reason"]))
+
+    def test_sequential_fixed_sample_p_value_cannot_be_peeked_into_pass(self) -> None:
+        rows = [pair("task", "FAIL", "PASS") for _ in range(6)]
+        legacy = compare_pairs(rows, profile="adoptable")
+        sequential = sequential_decision(rows, objective="superiority", minimum_pairs=4, maximum_pairs=12, batch_size=2, alpha=0.05, mcid=0.05)
+        self.assertEqual("PASS", legacy["status"])
+        self.assertEqual("CONTINUE", sequential["status"])
+        self.assertEqual("EVIDENCE_PENDING", sequential["stop_reason"])
+
+    def test_sequential_hard_regression_stops_immediately(self) -> None:
+        finding = {"code": "TOOL_CALL_ARGUMENT_MISMATCH", "status": "FAIL"}
+        report = sequential_decision([pair("task", "PASS", "FAIL", candidate_findings=[finding])], objective="superiority", minimum_pairs=4, maximum_pairs=12, batch_size=2, alpha=0.05, mcid=0.05)
+        self.assertEqual(("FAIL", "HARD_REGRESSION"), (report["status"], report["stop_reason"]))
 
 
 if __name__ == "__main__":

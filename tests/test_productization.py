@@ -14,6 +14,15 @@ from aet.rules import run_rules
 
 
 class ProductizationTests(unittest.TestCase):
+    def test_portable_skill_is_explicitly_opt_in(self) -> None:
+        root = Path(__file__).resolve().parents[1]
+        skill = (root / "skills" / "agent-engineering-toolkit" / "SKILL.md").read_text(encoding="utf-8")
+        metadata = (root / "skills" / "agent-engineering-toolkit" / "agents" / "openai.yaml").read_text(encoding="utf-8")
+        self.assertIn("**Default: OFF.**", skill)
+        self.assertIn("only when the user explicitly asks", skill)
+        self.assertIn("Do not carry opt-in\nacross tasks.", skill)
+        self.assertIn("only because I explicitly opted in", metadata)
+
     def test_audit_config_excludes_fixture_with_a_visible_reason(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

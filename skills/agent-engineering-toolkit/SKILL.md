@@ -1,11 +1,25 @@
 ---
 name: agent-engineering-toolkit
-description: Use the aet CLI as an evidence-driven Agent engineering quality and control layer. Audit instructions, review intent against diffs, trace explicit proofs, diagnose structured failures, stage regression candidates, or run bounded evidence-gated asset evolution. Works with any Agent that can read instructions and run a local CLI.
+description: Opt-in AET quality controls for evidence-backed Agent delivery and governance-asset evolution. Use only when the user explicitly asks to use AET for the current task; never auto-enable for ordinary coding, review, testing, or repository work.
 ---
 
 # Agent Engineering Toolkit
 
 Current Skill version: `1.9.0` (Evidence → Quality → bounded Evolution)
+
+## Activation policy
+
+**Default: OFF.** Installing this Skill does not authorize its use. Load or run
+AET only when the user explicitly asks to use AET for the current task (for
+example, “use AET”, “run `aet audit`”, or “produce an AET Evidence Pack”). A
+repository containing AET files, a generic request to test/review a change, or
+the availability of the `aet` executable is not opt-in. Do not carry opt-in
+across tasks.
+
+After explicit activation, choose only the smallest surface needed. Do not run
+real-host replay, Gate, tournament, or Sleep unless the user separately asks
+for governance-asset evaluation or evolution. Do not repeat a proof command
+that already has fresh, hash-bound evidence for the unchanged workspace.
 
 Use the `aet` CLI as the source of truth. The host agent may choose its own
 shell or package runner, but must preserve the commands' exit status and attach
@@ -20,7 +34,9 @@ it never adopts a candidate, commits it, pushes it, or lowers an evidence contra
 
 ## Route the request
 
-Choose one initial surface. If the request is ambiguous, default to read-only `audit` or `evolve plan`.
+This section applies only after explicit activation. Choose one initial surface.
+If the requested AET surface is ambiguous, ask which claim needs evidence;
+do not infer permission for a broader workflow.
 
 | User need | Initial command | Output |
 | --- | --- | --- |
@@ -40,7 +56,7 @@ Repo Archaeologist example: “Explain why this repository adopted a plugin arch
 
 1. Ensure `aet` is available on `PATH`, or run it from a project checkout with
    its documented package runner.
-2. Before implementation, run:
+2. If the explicitly requested scope includes a pre-change instruction audit, run:
 
    ```bash
    aet audit . --format json --output .aet/evidence/audit.json --strict
@@ -48,7 +64,8 @@ Repo Archaeologist example: “Explain why this repository adopted a plugin arch
 
 3. Read every `FAIL` first. Treat `UNKNOWN` as a verification gap, never as a
    pass. Correct the repository or the reference, then rerun the same command.
-4. Before delivery, require a human-reviewed `aet.intent.json` and run:
+4. If the explicitly requested scope includes diff-contract review, require a
+   human-reviewed `aet.intent.json` and run:
 
    ```bash
    aet review . --base main --format json --output .aet/evidence/review.json

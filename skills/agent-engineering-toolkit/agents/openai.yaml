@@ -1,4 +1,4 @@
 interface:
   display_name: "Agent Engineering Toolkit"
-  short_description: "Evidence-first audit, proof, and Repo Archaeologist workflow."
-  default_prompt: "Use $agent-engineering-toolkit to audit, review, collect execution evidence, or explain this repository's evolution with cited sources."
+  short_description: "Opt-in evidence controls for high-assurance Agent work."
+  default_prompt: "Use $agent-engineering-toolkit only because I explicitly opted in for this task. Select the smallest AET surface that establishes the requested claim; do not expand to real-host evaluation or asset evolution unless I request it."

@@ -126,6 +126,31 @@ Start with the smallest surface that answers the question.
 
 ## Quick start: trustworthy delivery
 
+### Activation and project fit
+
+**AET is opt-in and should remain off for ordinary Agent work.** Installing the
+CLI or portable Skill does not authorize an Agent to run it. Enable it for one
+task only when the user explicitly asks for AET; do not carry that permission
+into later tasks.
+
+| Workload | Recommended AET level |
+| --- | --- |
+| Routine coding, prototypes, small changes, exploratory work | **Off** (default); use the project's normal tests and CI. |
+| High-value PR or multi-Agent handoff where claims need portable proof | Run only the requested delivery surface: Audit, Review, Trace, or Evidence Pack. |
+| Release, regulated, security-sensitive, or high-blast-radius Agent change | Use the relevant full delivery contract and fresh declared proofs. |
+| Governance-asset optimization | Explicitly opt into `aet learn`; reserve real-host Gate/Shadow for adoption decisions. |
+
+This boundary is also a cost boundary. Deterministic Audit, Review and Pack are
+local, but repeated repository snapshots and large JSON reports still add
+latency and Agent-context tokens. Real-host evaluation is inherently expensive:
+an adoption-grade Gate runs both baseline and candidate for every task and
+rollout. The v1.9 case study above required **36 real Agent runs** (3 suites × 6
+pairs × 2 variants). Reusing unchanged, hash-bound evidence, passing report
+paths instead of full JSON, and running one declared proof once remove redundant
+cost without changing the result. Reducing suite coverage or rollout count does
+not: it lowers statistical power and must be reported as preliminary or
+inconclusive.
+
 Install the current release:
 
 ```bash
@@ -308,8 +333,18 @@ the complete directory rather than only `SKILL.md`:
 git clone https://github.com/AdvancingTitans/agent-engineering-toolkit.git
 cd agent-engineering-toolkit
 cp -R skills/agent-engineering-toolkit ~/.codex/skills/
-aet audit ~/.codex --format json --output ~/.aet/evidence/codex-audit.json
 ```
+
+Configure the host with an equivalent activation rule:
+
+> AET is opt-in. Do not load or run it for ordinary tasks. Use it only when the
+> user explicitly asks to use AET for the current task, and select the smallest
+> requested surface.
+
+To uninstall it from Codex, remove the complete
+`~/.codex/skills/agent-engineering-toolkit` directory and start a new task so
+the Skill catalog is reloaded. Removing the Skill does not uninstall the
+separate `aet` CLI.
 
 For source-backed project history, `aet evolve plan/collect/build/report`
 collects local Git and documentation by default. GitHub access occurs only with

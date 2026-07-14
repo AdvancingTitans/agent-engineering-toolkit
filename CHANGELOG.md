@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- Made the portable Skill explicitly opt-in and default-off: installation no
+  longer implies authorization for routine coding or review, activation is
+  scoped to the current user-requested task, and real-host evaluation/evolution
+  requires separate explicit intent. Added bilingual project-fit and cost
+  guidance distinguishing removable orchestration overhead from the rollout
+  and suite coverage required for adoption-grade statistical confidence.
 - Reworked the English and Chinese project entrypoints around AET's current
   position as an evidence-driven control plane for Agent-engineered
   repositories. The new narrative leads with the verified v1.9 real-host Gate,

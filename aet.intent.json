@@ -1,5 +1,5 @@
 {
-  "intent": "Reposition the English and Chinese README around AET's implemented evidence-driven control-plane architecture, replace both architecture diagrams with accurate editable dark-console visuals, and publish only reproducible v1.9 real-host comparison evidence without changing runtime behavior.",
+  "intent": "Redesign the English and Chinese README architecture diagrams around AET's implemented evidence, deterministic quality, bounded evolution, independent gate, shadow and human-adoption relationships without changing runtime behavior.",
   "changed_path_budget": 12,
   "allowed_paths": [
     "aet.intent.json",
@@ -7,10 +7,8 @@
     "README.md",
     "docs/README.zh-CN.md",
     "docs/assets/aet-architecture-en.html",
-    "docs/assets/aet-architecture-en.mmd",
     "docs/assets/aet-architecture-en.png",
     "docs/assets/aet-architecture-zh-cn.html",
-    "docs/assets/aet-architecture-zh-cn.mmd",
     "docs/assets/aet-architecture-zh-cn.png"
   ],
   "required_proofs": [

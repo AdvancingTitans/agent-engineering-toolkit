@@ -114,6 +114,11 @@ def expected(args: argparse.Namespace) -> dict[str, Any]:
                 raise ValueError(f"raw gate comparison {name} statistics {key} must equal {value!r}")
     if not re.fullmatch(r"[0-9a-f]{40}", args.commit):
         raise ValueError("commit must be a lowercase 40-character Git SHA")
+    raw_gate_path = args.raw_gate.resolve()
+    try:
+        raw_gate_label = raw_gate_path.relative_to(root).as_posix()
+    except ValueError:
+        raw_gate_label = str(raw_gate_path)
     return {
         "schema_version": "real-host-release-gate/v1",
         "report_kind": "real_host_release_gate",
@@ -122,7 +127,7 @@ def expected(args: argparse.Namespace) -> dict[str, Any]:
         "candidate_sha256": candidate_sha,
         "runner": {"name": raw["runner_name"], "version": raw["runner_version"]},
         "raw_gate": {
-            "path": ".aet/release/v1.9/raw-gate.json",
+            "path": raw_gate_label,
             "sha256": sha256(args.raw_gate),
             "status": raw["status"],
             "runner": raw["runner"],

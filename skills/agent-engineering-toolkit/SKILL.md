@@ -5,7 +5,7 @@ description: Opt-in AET quality controls for evidence-backed Agent delivery and 
 
 # Agent Engineering Toolkit
 
-Current Skill version: `1.9.0` (Evidence → Quality → bounded Evolution)
+Current Skill version: `1.10.0` (Evidence → Quality → bounded Evolution)
 
 ## Activation policy
 
@@ -16,7 +16,11 @@ repository containing AET files, a generic request to test/review a change, or
 the availability of the `aet` executable is not opt-in. Do not carry opt-in
 across tasks.
 
-After explicit activation, choose only the smallest surface needed. Do not run
+After explicit activation, choose only the smallest surface needed. Prefer
+`aet evidence receipt` when a compact status is sufficient. A successful Trace
+may be reused only through explicit `aet trace --reuse-if-fresh`, which refuses
+command, proof, artifact, log, or workspace drift without executing anything.
+Do not run
 real-host replay, Gate, tournament, or Sleep unless the user separately asks
 for governance-asset evaluation or evolution. Do not repeat a proof command
 that already has fresh, hash-bound evidence for the unchanged workspace.
@@ -87,6 +91,10 @@ Repo Archaeologist example: “Explain why this repository adopted a plugin arch
    report generated under the workspace; it is redacted and embedded only when
    explicitly requested. Trace is opt-in; neither audit nor review may execute
    a declared proof command. Attach the generated JSON to the handoff.
+   On an unchanged workspace, the user may explicitly request reuse by adding
+   `--reuse-if-fresh`; reuse fails closed and never falls back to execution.
+   Generate `aet evidence receipt --report <json> --output <receipt.json>` when
+   the host needs only a compact, hash-bound index.
 
 6. For archaeology, use:
 

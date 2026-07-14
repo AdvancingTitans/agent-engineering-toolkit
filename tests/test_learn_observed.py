@@ -17,6 +17,7 @@ from unittest.mock import patch
 from aet.learn import LearnError, replay_observed
 from aet.learn_scoring import score_rollout
 from aet.learn_runners import AgentRunRequest, ClaudeCodeRunner, CodexExecRunner, RunnerError, _snapshot
+from aet.evidence import seal_trace
 
 
 class ObservedLearningTests(unittest.TestCase):
@@ -368,6 +369,8 @@ class ObservedLearningTests(unittest.TestCase):
         if mutate is not None:
             mutate(report, workspace, argv)
             trace_path.write_text(json.dumps(report), encoding="utf-8")
+            # These tests exercise semantic checks beneath the integrity layer.
+            seal_trace(trace_path)
         after = _snapshot(workspace)
         (rollout / "before-snapshot.json").write_text(json.dumps(before), encoding="utf-8")
         (rollout / "after-snapshot.json").write_text(json.dumps(after), encoding="utf-8")

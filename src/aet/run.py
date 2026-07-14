@@ -12,7 +12,7 @@ from pathlib import Path
 from typing import Any
 
 from . import __version__
-from .evidence import compare_workspace_snapshots, workspace_snapshot
+from .evidence import EvidenceError, compare_workspace_snapshots, verify_trace_integrity, workspace_snapshot
 from .models import RunState, Status
 
 
@@ -40,19 +40,20 @@ def init_run(output: Path, intent_path: Path) -> dict[str, Any]:
     root = Path.cwd().resolve()
     intent = _intent_record(root, intent_path)
     created_at = _timestamp()
+    snapshot = workspace_snapshot(root)
     data: dict[str, Any] = {
         "schema_version": __version__,
         "report_kind": "aet_run",
         "run_id": f"run_{uuid.uuid4().hex[:12]}",
         "created_at": created_at,
-        "repository": {"root": str(root), "initial_workspace_snapshot": workspace_snapshot(root)},
+        "repository": {"root": str(root), "initial_workspace_snapshot": snapshot},
         "intent": intent,
         "artifacts": {kind: [] for kind in _REPORT_KINDS},
         "lifecycle": {"state": RunState.INTENT_BOUND.value, "history": [
             _event("created", RunState.CREATED, RunState.CREATED),
             _event("bind_intent", RunState.CREATED, RunState.INTENT_BOUND, {"intent_sha256": intent["sha256"]}),
         ]},
-        "latest_workspace_snapshot": workspace_snapshot(root),
+        "latest_workspace_snapshot": snapshot,
     }
     _write_json(output, data)
     return data
@@ -65,6 +66,8 @@ def attach_artifact(manifest_path: Path, kind: str, artifact_path: Path) -> dict
     if kind not in _REPORT_KINDS:
         raise RunError(f"unknown run artifact kind: {kind}")
     artifact = _artifact_record(manifest, kind, artifact_path)
+    if any(item.get("sha256") == artifact["sha256"] for item in manifest["artifacts"].get(kind, []) if isinstance(item, dict)):
+        return manifest
     state = _state(manifest)
     if state in (RunState.CLOSED, RunState.STALE):
         raise RunError(f"cannot attach {kind} while run is {state.value}; bind or review a fresh run instead")
@@ -166,6 +169,11 @@ def _artifact_record(manifest: dict[str, Any], kind: str, path: Path) -> dict[st
     source = path.resolve()
     if not source.is_file():
         raise RunError(f"artifact does not exist: {source}")
+    if kind == "trace":
+        try:
+            verify_trace_integrity(source)
+        except EvidenceError as error:
+            raise RunError(f"Trace integrity verification failed: {error}") from error
     try:
         report = json.loads(source.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError) as error:
@@ -200,11 +208,18 @@ def _report_passes(report: dict[str, Any]) -> bool:
 def _trace_passes(report: dict[str, Any]) -> bool:
     trace = report.get("trace", {})
     artifacts = trace.get("artifacts", []) if isinstance(trace, dict) else []
+    summary = report.get("summary", {})
+    validators = report.get("validators", [])
     return (
         isinstance(trace, dict)
         and trace.get("execution", {}).get("status") == Status.PASS.value
+        and isinstance(summary, dict)
+        and summary.get(Status.FAIL.value) == 0
+        and summary.get(Status.UNKNOWN.value) == 0
         and isinstance(artifacts, list)
         and all(isinstance(item, dict) and item.get("status") == Status.PASS.value for item in artifacts)
+        and isinstance(validators, list)
+        and all(isinstance(item, dict) and item.get("status") == Status.PASS.value for item in validators)
     )
 
 

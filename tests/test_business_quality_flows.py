@@ -1,4 +1,4 @@
-"""Deterministic business flows and delivery-gate contracts for v1.9."""
+"""Deterministic business flows and delivery-gate contracts for v1.10."""
 
 from __future__ import annotations
 
@@ -36,7 +36,7 @@ class BusinessQualityFlowsTests(unittest.TestCase):
             "statistics_profile": "adoptable", "candidate_sha256": candidate_sha256,
             "hard_gate_failures": [], "candidate_audit_failures": [],
             "comparisons": {
-                name: {"replay": f"replays/CAND-REAL-HOST-V1-9/{name}/observed-replay.json", "statistics": dict(statistics)}
+                name: {"replay": f"replays/CAND-REAL-HOST-V1-10-0/{name}/observed-replay.json", "statistics": dict(statistics)}
                 for name in ("core", "validation", "held_out")
             },
         }
@@ -241,6 +241,7 @@ class BusinessQualityFlowsTests(unittest.TestCase):
                 check=True,
             )
             metadata = json.loads((output / "candidate.json").read_text(encoding="utf-8"))
+            self.assertEqual(metadata["candidate_id"], "CAND-REAL-HOST-V1-10-0")
             candidate_bytes = (output / "candidate.SKILL.md").read_bytes()
             self.assertEqual(metadata["candidate_sha256"], hashlib.sha256(candidate_bytes).hexdigest())
             candidate_text = candidate_bytes.decode()
@@ -258,10 +259,11 @@ class BusinessQualityFlowsTests(unittest.TestCase):
             manifest = Path(temporary) / "real-host-gate.json"
             common = [
                 "--root", str(ROOT), "--candidate", str(output), "--raw-gate", str(raw_gate),
-                "--commit", "a" * 40, "--version", "1.9.0",
+                "--commit", "a" * 40, "--version", "1.10.0",
             ]
             subprocess.run([sys.executable, str(helper), "create", *common, "--output", str(manifest)], check=True)
             document = json.loads(manifest.read_text(encoding="utf-8"))
+            self.assertEqual(document["raw_gate"]["path"], str(raw_gate.resolve()))
             self.assertEqual(document["runner"], {"name": "codex", "version": "codex-cli 0.144.1"})
             self.assertEqual(set(document["suites"]), {"core", "validation", "held-out"})
             for suite in document["suites"].values():
@@ -353,8 +355,8 @@ class BusinessQualityFlowsTests(unittest.TestCase):
         declared_argv = shlex.split(declared)
         self.assertNotIn("$(", declared)
         self.assertNotIn("--commit", declared_argv)
-        with tempfile.TemporaryDirectory() as temporary, mock.patch.object(module.subprocess, "run", fake_run), mock.patch.object(module, "__version__", "1.9.0"):
-            release = Path(temporary) / "v1.9"
+        with tempfile.TemporaryDirectory() as temporary, mock.patch.object(module.subprocess, "run", fake_run), mock.patch.object(module, "__version__", "1.10.0"):
+            release = Path(temporary) / "v1.10.0"
             replay_argv = declared_argv[2:]
             replay_argv[replay_argv.index("--root") + 1] = str(ROOT)
             replay_argv[replay_argv.index("--release-dir") + 1] = str(release)
@@ -431,8 +433,8 @@ class BusinessQualityFlowsTests(unittest.TestCase):
             '[[ "$EXPECTED_COMMIT" =~ ^[0-9a-f]{40}$ ]]', 'test "$(git rev-parse HEAD)" = "$EXPECTED_COMMIT"',
             'test "$(git rev-parse HEAD)" = "$GITHUB_SHA"',
             "@openai/codex@0.144.1", "codex-cli 0.144.1", "eval/real-agent/run_real_host_gate.py",
-            ".aet/release/v1.9/raw-gate.json", ".aet/release/v1.9/real-host-gate.json",
-            "name: real-host-gate",
+            'RELEASE_DIR=".aet/release/v$VERSION"', '${{ env.RELEASE_DIR }}/raw-gate.json', '${{ env.RELEASE_DIR }}/real-host-gate.json',
+            "name: real-host-gate", "include-hidden-files: true",
         ):
             self.assertIn(binding, producer)
         self.assertNotIn('test "$(git rev-parse HEAD)" = "${{ inputs.commit }}"', producer)
@@ -442,7 +444,7 @@ class BusinessQualityFlowsTests(unittest.TestCase):
             "workflow_dispatch:", "gate_run_id:", "actions/download-artifact@v4", "real-host-gate",
             "gh api", "head_sha", ".github/workflows/real-host-gate.yml", "GITHUB_SHA",
             "eval/real-agent/build_candidate.py", "eval/real-agent/release_gate.py verify",
-            ".aet/release/v1.9/raw-gate.json", ".aet/release/v1.9/real-host-gate.json",
+            'RELEASE_DIR=".aet/release/$RELEASE_TAG"', '${{ env.RELEASE_DIR }}',
             "wheel_version=", "source_version=", 'test "$wheel_version" = "$source_version"',
             '[[ "$RELEASE_TAG" =~ ^v[0-9]+\\.[0-9]+\\.[0-9]+$ ]]',
             'git show-ref --verify "refs/tags/$RELEASE_TAG"',
@@ -455,11 +457,11 @@ class BusinessQualityFlowsTests(unittest.TestCase):
         self.assertIn("tests/test_business_quality_flows.py", business_proof["command"])
         real_host = next(proof for proof in intent["required_proofs"] if proof["id"] == "real-host-gate")
         self.assertIn("eval/real-agent/run_real_host_gate.py", real_host["command"])
-        self.assertIn("--release-dir .aet/release/v1.9", real_host["command"])
+        self.assertIn("--release-dir .aet/release/v1.10.0", real_host["command"])
         self.assertNotIn("$(", real_host["command"])
         self.assertEqual(
             real_host["evidence"],
-            [".aet/release/v1.9/real-host-gate.json", ".aet/release/v1.9/raw-gate.json"],
+            [".aet/release/v1.10.0/real-host-gate.json", ".aet/release/v1.10.0/raw-gate.json"],
         )
 
         example = (ROOT / "examples" / "github-actions" / "aet-audit.yml").read_text(encoding="utf-8")

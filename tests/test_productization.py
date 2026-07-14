@@ -79,6 +79,42 @@ class ProductizationTests(unittest.TestCase):
             data = json.loads(pack.read_text(encoding="utf-8"))
             self.assertEqual(data["proof_binding"]["status"], "PASS")
 
+            from aet.evidence import seal_trace
+            trace_data = json.loads(trace.read_text(encoding="utf-8"))
+            trace_data["validators"] = [{"validator": "junit", "status": "FAIL"}]
+            trace_data["summary"]["FAIL"] += 1
+            trace.write_text(json.dumps(trace_data), encoding="utf-8")
+            seal_trace(trace)
+            self.assertEqual(main(["evidence", "pack", "--review", str(review), "--trace", str(trace), "--output", str(pack)]), 0)
+            self.assertEqual(json.loads(pack.read_text(encoding="utf-8"))["proof_binding"]["status"], "FAIL")
+
+    def test_run_rejects_a_trace_with_a_broken_integrity_seal(self) -> None:
+        from aet.run import RunError, attach_artifact
+
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            _git(root, "init")
+            _git(root, "config", "user.email", "aet@example.test")
+            _git(root, "config", "user.name", "AET test")
+            (root / ".gitignore").write_text(".aet/\n", encoding="utf-8")
+            (root / "aet.intent.json").write_text(json.dumps({"intent": "seal", "changed_path_budget": 0, "allowed_paths": [], "required_proofs": []}), encoding="utf-8")
+            _git(root, "add", ".gitignore", "aet.intent.json")
+            _git(root, "commit", "-m", "fixture")
+            run = root / ".aet" / "run.json"
+            trace = root / ".aet" / "trace.json"
+            previous = Path.cwd()
+            try:
+                os.chdir(root)
+                self.assertEqual(main(["run", "init", "--intent", "aet.intent.json", "--output", str(run)]), 0)
+                self.assertEqual(main(["trace", "--output", str(trace), "--", "python3", "-c", "pass"]), 0)
+                data = json.loads(trace.read_text(encoding="utf-8"))
+                data["generated_at"] = "tampered"
+                trace.write_text(json.dumps(data), encoding="utf-8")
+                with self.assertRaises(RunError):
+                    attach_artifact(run, "trace", trace)
+            finally:
+                os.chdir(previous)
+
     def test_run_manifest_records_a_complete_evidence_only_lifecycle(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
@@ -112,6 +148,39 @@ class ProductizationTests(unittest.TestCase):
             manifest = json.loads(run.read_text(encoding="utf-8"))
             self.assertEqual(manifest["lifecycle"]["state"], "CLOSED")
             self.assertEqual([event["event"] for event in manifest["lifecycle"]["history"]], ["created", "bind_intent", "attach_audit", "attach_review", "attach_trace", "attach_evidence_pack", "close"])
+
+    def test_run_init_reuses_one_snapshot_and_duplicate_attach_is_idempotent(self) -> None:
+        from unittest import mock
+        from aet.evidence import workspace_snapshot as real_workspace_snapshot
+        from aet.run import attach_artifact
+
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            _git(root, "init")
+            _git(root, "config", "user.email", "aet@example.test")
+            _git(root, "config", "user.name", "AET test")
+            (root / "README.md").write_text("base\n", encoding="utf-8")
+            (root / ".gitignore").write_text(".aet/\n", encoding="utf-8")
+            _git(root, "add", "README.md", ".gitignore")
+            _git(root, "commit", "-m", "base")
+            intent = root / "aet.intent.json"
+            intent.write_text(json.dumps({"intent": "idempotent attach", "changed_path_budget": 1, "allowed_paths": ["aet.intent.json"], "required_proofs": []}), encoding="utf-8")
+            run = root / ".aet" / "run.json"
+            audit = root / ".aet" / "audit.json"
+            previous = Path.cwd()
+            try:
+                os.chdir(root)
+                with mock.patch("aet.run.workspace_snapshot", wraps=real_workspace_snapshot) as capture:
+                    self.assertEqual(main(["run", "init", "--intent", "aet.intent.json", "--output", str(run)]), 0)
+                    self.assertEqual(capture.call_count, 2)
+                self.assertEqual(main(["audit", ".", "--format", "json", "--output", str(audit), "--run", str(run)]), 0)
+                before = json.loads(run.read_text(encoding="utf-8"))
+                attach_artifact(run, "audit", audit)
+            finally:
+                os.chdir(previous)
+            after = json.loads(run.read_text(encoding="utf-8"))
+            self.assertEqual(len(after["artifacts"]["audit"]), 1)
+            self.assertEqual(after["lifecycle"]["history"], before["lifecycle"]["history"])
 
     def test_run_verify_persists_stale_after_the_workspace_changes(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

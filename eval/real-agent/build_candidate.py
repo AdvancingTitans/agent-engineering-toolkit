@@ -9,6 +9,8 @@ import json
 import re
 from pathlib import Path
 
+from aet import __version__
+
 
 BLOCK_ID = "routing-guidance"
 TARGET = Path("skills/agent-engineering-toolkit/SKILL.md")
@@ -54,7 +56,7 @@ def build(root: Path, output: Path) -> None:
     output.mkdir(parents=True, exist_ok=True)
     (output / "candidate.SKILL.md").write_text(candidate, encoding="utf-8")
     metadata = {
-        "candidate_id": "CAND-REAL-HOST-V1-9",
+        "candidate_id": f"CAND-REAL-HOST-V{__version__.replace('.', '-')}",
         "target_file": str(target),
         "baseline_sha256": sha256(baseline.encode()),
         "candidate_sha256": sha256(candidate.encode()),

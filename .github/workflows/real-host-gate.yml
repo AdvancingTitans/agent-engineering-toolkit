@@ -32,21 +32,25 @@ jobs:
           test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
           uv tool install .
           npm install --global @openai/codex@0.144.1
-          aet --version
+          VERSION="$(aet --version)"
+          RELEASE_DIR=".aet/release/v$VERSION"
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+          echo "RELEASE_DIR=$RELEASE_DIR" >> "$GITHUB_ENV"
           test "$(codex --version)" = "codex-cli 0.144.1"
       - name: Run the complete commit-bound real Codex gate
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
           uv run python eval/real-agent/run_real_host_gate.py \
-            --root . --release-dir .aet/release/v1.9 \
-            --expected-commit "$GITHUB_SHA"
+            --root . --release-dir "$RELEASE_DIR" \
+            --expected-commit "$GITHUB_SHA" --expected-version "$VERSION"
       - name: Upload passing real-host gate
         uses: actions/upload-artifact@v4
         with:
           name: real-host-gate
+          include-hidden-files: true
           if-no-files-found: error
           retention-days: 30
           path: |
-            .aet/release/v1.9/raw-gate.json
-            .aet/release/v1.9/real-host-gate.json
+            ${{ env.RELEASE_DIR }}/raw-gate.json
+            ${{ env.RELEASE_DIR }}/real-host-gate.json

@@ -14,7 +14,7 @@ from .config import ConfigError, load_audit_config
 from .context import ContextError, discover_context, record_context, render_context_verification, verify_context
 from .decision import DecisionError, add_decision, init_ledger, list_decisions, render_decisions, supersede_decision, verify_ledger
 from .discovery import discover_assets
-from .evidence import EvidenceError, bind_proof, compile_evidence_pack, render_evidence_viewer, trace_command, workspace_snapshot
+from .evidence import EvidenceError, bind_proof, compile_evidence_pack, evidence_receipt, render_evidence_viewer, reuse_trace_command, seal_trace, trace_command, workspace_snapshot
 from .evolve import EvolveError, build_evolution, collect_evolution, query_evolution, write_evolution_plan, write_evolution_report
 from .learn import LearnError, adopt, collect, gate, gate_observed, harvest, inspect_experiences, inspect_feedback, mine, propose, record_feedback, reject, render_learn_viewer, replay, replay_observed, runner_inventory, sleep, stage, tournament, verify_suite
 from .reporters import render_json, render_markdown, render_sarif, report_data
@@ -51,6 +51,7 @@ def build_parser() -> argparse.ArgumentParser:
     review_parser.add_argument("--policy", type=Path, help="Optional monotonic review-policy/v1 JSON.")
     trace_parser = commands.add_parser("trace", help="Run one explicit command and record redacted execution evidence.")
     trace_parser.add_argument("--output", required=True, type=Path, help="Write the Trace JSON to this path.")
+    trace_parser.add_argument("--reuse-if-fresh", action="store_true", help="Do not execute; reuse the output Trace only when command, proof, artifacts, logs, and workspace are exact and fresh.")
     trace_parser.add_argument("--redact-pattern", action="append", default=[], help="Additional regular expression to redact from argv and log excerpts (repeatable).")
     trace_parser.add_argument("--proof", help="Bind this Trace to a proof id declared by --intent.")
     trace_parser.add_argument("--intent", type=Path, default=Path("aet.intent.json"), help="Intent contract used with --proof.")
@@ -70,6 +71,9 @@ def build_parser() -> argparse.ArgumentParser:
     viewer_parser = evidence_commands.add_parser("viewer", help="Render a static, no-network HTML view of an Evidence Pack.")
     viewer_parser.add_argument("--pack", required=True, type=Path, help="Evidence Pack JSON artifact.")
     viewer_parser.add_argument("--output", required=True, type=Path, help="Write HTML viewer to this path.")
+    receipt_parser = evidence_commands.add_parser("receipt", help="Write a compact hash-bound index for a canonical evidence report.")
+    receipt_parser.add_argument("--report", required=True, type=Path, help="Canonical Audit, Review, Trace, or Evidence Pack JSON.")
+    receipt_parser.add_argument("--output", type=Path, help="Write receipt JSON instead of stdout.")
     init_parser = commands.add_parser("init", help="Write a non-overwriting candidate aet.toml.")
     init_parser.add_argument("--output", type=Path, default=Path("aet.toml"), help="Candidate config path.")
     triage_parser = commands.add_parser("triage", help="Explainably rank findings; this never changes PASS/FAIL/UNKNOWN.")
@@ -338,7 +342,8 @@ def main(argv: Sequence[str] | None = None) -> int:
             args.argv = args.argv[1:]
         try:
             proof = bind_proof(args.intent, args.proof) if args.proof else None
-            trace_data, exit_code = trace_command(args.argv, args.output, args.redact_pattern, proof, args.artifact)
+            operation = reuse_trace_command if args.reuse_if_fresh else trace_command
+            trace_data, exit_code = operation(args.argv, args.output, args.redact_pattern, proof, args.artifact)
             if bool(args.validator_policy) != bool(args.validate_artifact):
                 raise EvidenceError("--validator-policy and --validate-artifact must be provided together")
             if args.validator_policy:
@@ -351,9 +356,14 @@ def main(argv: Sequence[str] | None = None) -> int:
                 policy = _load_local_json(args.validator_policy)
                 validation = evaluate_trace_validator(policy, args.validate_artifact)
                 trace_data["validators"] = [validation]
-                args.output.write_text(render_json(trace_data), encoding="utf-8")
                 if validation["status"] != "PASS":
+                    bucket = "FAIL" if validation["status"] == "FAIL" else "UNKNOWN"
+                    trace_data["summary"][bucket] += 1
                     exit_code = 1
+                args.output.write_text(render_json(trace_data), encoding="utf-8")
+                seal_trace(args.output)
+            if args.reuse_if_fresh:
+                print(f"Reused fresh Trace: {args.output.resolve()}")
             if args.run:
                 attach_artifact(args.run, "trace", args.output)
         except (EvidenceError, PolicyTargetError) as error:
@@ -367,8 +377,18 @@ def main(argv: Sequence[str] | None = None) -> int:
                 compile_evidence_pack(audit=args.audit, review=args.review, trace=args.trace, output=args.output)
                 if args.run:
                     attach_artifact(args.run, "evidence_pack", args.output)
-            else:
+            elif args.evidence_command == "viewer":
                 render_evidence_viewer(args.pack, args.output)
+            else:
+                if args.output and args.output.resolve() == args.report.resolve():
+                    raise EvidenceError("receipt output must not replace its source report")
+                receipt = evidence_receipt(args.report)
+                rendered = render_json(receipt)
+                if args.output:
+                    args.output.parent.mkdir(parents=True, exist_ok=True)
+                    args.output.write_text(rendered, encoding="utf-8")
+                else:
+                    print(rendered, end="")
         except EvidenceError as error:
             raise SystemExit(f"aet: evidence pack failed: {error}") from error
         except RunError as error:

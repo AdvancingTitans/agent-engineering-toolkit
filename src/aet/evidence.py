@@ -88,6 +88,7 @@ def trace_command(
     if argv_status == Status.UNKNOWN.value:
         unknowns += 1
     unknowns += sum(item["status"] == Status.UNKNOWN.value for item in artifacts)
+    snapshot = workspace_snapshot(cwd, exclude_paths=_trace_snapshot_exclusions(output, cwd))
     data = {
         "schema_version": __version__,
         "report_kind": "trace",
@@ -100,7 +101,7 @@ def trace_command(
         "sources": [],
         "claims": [],
         "findings": [],
-        "workspace_snapshot": workspace_snapshot(cwd),
+        "workspace_snapshot": snapshot,
         "summary": {
             Status.PASS.value: int(execution_status == Status.PASS.value),
             Status.FAIL.value: int(execution_status == Status.FAIL.value),
@@ -109,12 +110,13 @@ def trace_command(
         },
         "trace": {
             "argv": redacted_argv,
+            "argv_sha256": _argv_digest(argv, redacted_argv),
             "argv_status": argv_status,
             "execution": {"status": execution_status, "exit_code": exit_code},
             "started_at": started_at,
             "finished_at": finished_at,
             "working_directory": str(cwd),
-            "git": _git_metadata(cwd),
+            "git": _git_metadata(snapshot),
             "stdout": _artifact_record(stdout_path, stdout),
             "stderr": _artifact_record(stderr_path, stderr),
             "artifacts": artifacts,
@@ -122,10 +124,183 @@ def trace_command(
         },
     }
     _atomic_write_json(output, data)
+    seal_trace(output)
     # A command result and its explicitly requested evidence are separate facts.
     # A missing report must fail a CI invocation without rewriting a successful
     # child exit status as though the command itself failed.
     return data, exit_code if exit_code else (1 if any(item["status"] != Status.PASS.value for item in artifacts) else 0)
+
+
+def reuse_trace_command(
+    argv: list[str],
+    output: Path,
+    redaction_patterns: Iterable[str] = (),
+    proof: dict[str, Any] | None = None,
+    artifact_paths: Iterable[str] = (),
+) -> tuple[dict[str, Any], int]:
+    """Reuse a successful Trace only when every current binding is exact."""
+    if not argv:
+        raise EvidenceError("trace reuse requires an explicit command after --")
+    output = output.resolve()
+    cwd = Path.cwd().resolve()
+    verify_trace_integrity(output)
+    try:
+        data = json.loads(output.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as error:
+        raise EvidenceError(f"cannot reuse Trace: {error}") from error
+    _validate_report("trace", data)
+    trace = data["trace"]
+    patterns = _compile_patterns(redaction_patterns)
+    redacted_argv, argv_status = _redact_argv(argv, patterns)
+    argv_digest = _argv_digest(argv, redacted_argv)
+    if argv_status != Status.PASS.value or argv_digest is None or trace.get("argv_status") != Status.PASS.value or trace.get("argv") != redacted_argv or trace.get("argv_sha256") != argv_digest:
+        raise EvidenceError("cannot reuse Trace: command argv is not an exact safe match")
+    if data.get("root") != str(cwd) or trace.get("working_directory") != str(cwd):
+        raise EvidenceError("cannot reuse Trace: workspace root differs")
+    if trace.get("proof") != proof:
+        raise EvidenceError("cannot reuse Trace: proof binding differs")
+    if trace.get("execution") != {"status": Status.PASS.value, "exit_code": 0}:
+        raise EvidenceError("cannot reuse Trace: prior execution did not pass")
+    summary = data.get("summary", {})
+    if summary.get(Status.FAIL.value) or summary.get(Status.UNKNOWN.value):
+        raise EvidenceError("cannot reuse Trace: prior result contains FAIL or UNKNOWN")
+    validators = data.get("validators", [])
+    if not isinstance(validators, list) or any(not isinstance(item, dict) or item.get("status") != Status.PASS.value for item in validators):
+        raise EvidenceError("cannot reuse Trace: prior validator did not pass")
+
+    requested = [path.relative_to(cwd).as_posix() for path in _declared_artifact_paths(artifact_paths, cwd)]
+    stored_artifacts = trace.get("artifacts")
+    if not isinstance(stored_artifacts, list) or len(stored_artifacts) != len(requested) or not all(isinstance(item, dict) for item in stored_artifacts) or [item.get("requested_path") for item in stored_artifacts] != requested:
+        raise EvidenceError("cannot reuse Trace: declared artifacts differ")
+    for stream in ("stdout", "stderr"):
+        _verify_file_record(trace.get(stream), _log_path(output, stream), f"{stream} log")
+    for stored, path in zip(stored_artifacts, _declared_artifact_paths(artifact_paths, cwd)):
+        if path.is_symlink():
+            raise EvidenceError(f"cannot reuse Trace: declared artifact is a symlink: {stored.get('requested_path')}")
+        current = _capture_artifact(path, cwd, patterns)
+        for field in ("status", "sha256", "size_bytes", "source_sha256", "source_size_bytes", "content"):
+            if stored.get(field) != current.get(field):
+                raise EvidenceError(f"cannot reuse Trace: declared artifact changed: {stored.get('requested_path')}")
+
+    current_snapshot = workspace_snapshot(cwd, exclude_paths=_trace_snapshot_exclusions(output, cwd))
+    binding = compare_workspace_snapshots({"trace": data.get("workspace_snapshot"), "current": current_snapshot})
+    if binding.get("status") != Status.PASS.value:
+        raise EvidenceError(f"cannot reuse Trace: workspace is not fresh ({binding.get('state', binding.get('reason', 'UNKNOWN'))})")
+    return data, 0
+
+
+def evidence_receipt(report_path: Path) -> dict[str, Any]:
+    """Return a compact, hash-bound index without replacing canonical evidence."""
+    source = report_path.resolve()
+    try:
+        raw = source.read_bytes()
+        report = json.loads(raw.decode("utf-8"))
+    except (OSError, UnicodeDecodeError, json.JSONDecodeError) as error:
+        raise EvidenceError(f"cannot read evidence report: {error}") from error
+    if not isinstance(report, dict) or not isinstance(report.get("report_kind"), str):
+        raise EvidenceError("evidence report must be a JSON object with report_kind")
+    kind = report["report_kind"]
+    if kind in {"audit", "review", "trace"}:
+        _validate_report(kind, report)
+    elif kind != "evidence_pack":
+        raise EvidenceError(f"unsupported evidence report kind: {kind}")
+    snapshot = report.get("workspace_snapshot") if isinstance(report.get("workspace_snapshot"), dict) else {}
+    if kind == "trace":
+        verify_trace_integrity(source)
+    root = _receipt_root(report, kind)
+    exclusions = _trace_snapshot_exclusions(source, root) if kind == "trace" and root is not None else ()
+    freshness = (
+        compare_workspace_snapshots({"recorded": snapshot, "current": workspace_snapshot(root, exclude_paths=exclusions)})
+        if root is not None
+        else {"status": Status.UNKNOWN.value, "reason": "evidence root is unavailable"}
+    )
+    receipt: dict[str, Any] = {
+        "schema_version": __version__,
+        "report_kind": "evidence_receipt",
+        "generated_at": _timestamp(),
+        "source": {"path": str(source), "sha256": hashlib.sha256(raw).hexdigest(), "report_kind": kind, "schema_version": report.get("schema_version")},
+        "summary": report.get("summary"),
+        "workspace_snapshot": {"status": snapshot.get("status", Status.UNKNOWN.value), "digest": snapshot.get("digest")},
+        "freshness": freshness,
+    }
+    if kind == "trace":
+        receipt["execution"] = report["trace"]["execution"]
+        receipt["validators"] = [
+            {key: item.get(key) for key in ("validator", "status")}
+            for item in report.get("validators", [])
+            if isinstance(item, dict)
+        ]
+        if isinstance(report["trace"].get("proof"), dict):
+            receipt["proof"] = {key: report["trace"]["proof"].get(key) for key in ("id", "intent_sha256", "status")}
+    if kind == "evidence_pack":
+        receipt["proof_binding"] = report.get("proof_binding")
+        receipt["snapshot_binding"] = report.get("snapshot_binding")
+    return receipt
+
+
+def seal_trace(output: Path) -> None:
+    """Write a content seal beside a canonical Trace report."""
+    report = output.resolve()
+    if report.is_symlink() or not report.is_file():
+        raise EvidenceError("cannot seal Trace: report is missing or is a symlink")
+    raw = report.read_bytes()
+    _atomic_write_json(_trace_integrity_path(report), {
+        "schema_version": "trace-integrity/v1",
+        "report_kind": "trace_integrity",
+        "report_path": str(report),
+        "sha256": hashlib.sha256(raw).hexdigest(),
+        "size_bytes": len(raw),
+    })
+
+
+def verify_trace_integrity(output: Path) -> None:
+    """Fail closed unless a Trace and its adjacent integrity seal agree."""
+    report = output.resolve()
+    seal_path = _trace_integrity_path(report)
+    if report.is_symlink() or not report.is_file() or seal_path.is_symlink() or not seal_path.is_file():
+        raise EvidenceError("cannot reuse Trace: canonical report or integrity seal is missing")
+    try:
+        raw = report.read_bytes()
+        seal = json.loads(seal_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as error:
+        raise EvidenceError(f"cannot reuse Trace: invalid integrity seal ({error})") from error
+    expected = {
+        "schema_version": "trace-integrity/v1",
+        "report_kind": "trace_integrity",
+        "report_path": str(report),
+        "sha256": hashlib.sha256(raw).hexdigest(),
+        "size_bytes": len(raw),
+    }
+    if seal != expected:
+        raise EvidenceError("cannot reuse Trace: canonical report integrity check failed")
+
+
+def _trace_integrity_path(output: Path) -> Path:
+    suffix = output.suffix
+    stem = output.name[: -len(suffix)] if suffix else output.name
+    return output.with_name(f"{stem}.integrity.json")
+
+
+def _trace_snapshot_exclusions(output: Path, root: Path) -> tuple[str, ...]:
+    exclusions: list[str] = []
+    for candidate in (output.resolve(), _trace_integrity_path(output.resolve())):
+        if _is_within(candidate, root.resolve()):
+            exclusions.append(candidate.relative_to(root.resolve()).as_posix())
+    return tuple(exclusions)
+
+
+def _receipt_root(report: dict[str, Any], kind: str) -> Path | None:
+    if kind in {"audit", "review", "trace"} and isinstance(report.get("root"), str):
+        return Path(report["root"])
+    if kind == "evidence_pack":
+        components = report.get("components")
+        if isinstance(components, dict):
+            for component in components.values():
+                if isinstance(component, dict) and component.get("status") == Status.PASS.value:
+                    portable = component.get("report")
+                    if isinstance(portable, dict) and isinstance(portable.get("root"), str):
+                        return Path(portable["root"])
+    return None
 
 
 def compile_evidence_pack(*, audit: Path | None, review: Path | None, trace: Path | None, output: Path) -> dict[str, Any]:
@@ -209,6 +384,8 @@ def _component(kind: str, path: Path | None) -> dict[str, Any]:
     source = path.resolve()
     if not source.is_file():
         raise EvidenceError(f"{kind} input does not exist: {source}")
+    if kind == "trace":
+        verify_trace_integrity(source)
     raw = source.read_bytes()
     try:
         report = json.loads(raw)
@@ -241,6 +418,20 @@ def _proof_binding(components: dict[str, dict[str, Any]]) -> dict[str, Any]:
     execution = trace["report"].get("execution", {})
     if execution.get("status") != Status.PASS.value:
         return {"status": Status.FAIL.value, "reason": "bound proof command did not exit successfully"}
+    summary = trace["report"].get("summary", {})
+    if not isinstance(summary, dict):
+        return {"status": Status.UNKNOWN.value, "reason": "bound proof Trace summary is unavailable"}
+    if summary.get(Status.FAIL.value):
+        return {"status": Status.FAIL.value, "reason": "bound proof Trace contains FAIL"}
+    if summary.get(Status.UNKNOWN.value):
+        return {"status": Status.UNKNOWN.value, "reason": "bound proof Trace contains UNKNOWN"}
+    validators = trace["report"].get("validators", [])
+    if not isinstance(validators, list) or any(not isinstance(item, dict) for item in validators):
+        return {"status": Status.UNKNOWN.value, "reason": "bound proof validator result is unavailable"}
+    if any(item.get("status") == Status.FAIL.value for item in validators):
+        return {"status": Status.FAIL.value, "reason": "bound proof validator did not pass"}
+    if any(item.get("status") != Status.PASS.value for item in validators):
+        return {"status": Status.UNKNOWN.value, "reason": "bound proof validator is UNKNOWN"}
     artifacts = trace["report"].get("artifacts", [])
     if not isinstance(artifacts, list) or any(not isinstance(item, dict) or item.get("status") != Status.PASS.value for item in artifacts):
         return {"status": Status.UNKNOWN.value, "reason": "a declared trace artifact was not safely captured"}
@@ -432,6 +623,12 @@ def _redact_argv(argv: list[str], patterns: tuple[re.Pattern[str], ...]) -> tupl
     return redacted, Status.PASS.value
 
 
+def _argv_digest(argv: list[str], redacted: list[str] | None) -> str | None:
+    if redacted is None or argv != redacted:
+        return None
+    return hashlib.sha256(json.dumps(argv, ensure_ascii=False, separators=(",", ":")).encode("utf-8")).hexdigest()
+
+
 def _redacted_log(raw: bytes, patterns: tuple[re.Pattern[str], ...]) -> dict[str, Any]:
     try:
         decoded = raw.decode("utf-8")
@@ -517,8 +714,7 @@ def _artifact_record(path: Path, log: dict[str, Any]) -> dict[str, Any]:
     }
 
 
-def _git_metadata(cwd: Path) -> dict[str, Any]:
-    snapshot = workspace_snapshot(cwd)
+def _git_metadata(snapshot: dict[str, Any]) -> dict[str, Any]:
     if snapshot["status"] != Status.PASS.value:
         return {
             "head": {"status": Status.UNKNOWN.value},
@@ -528,6 +724,16 @@ def _git_metadata(cwd: Path) -> dict[str, Any]:
         "head": {"status": Status.PASS.value, "value": snapshot["head_sha"]},
         "diff_digest": {"status": Status.PASS.value, "value": snapshot["worktree_digest"]},
     }
+
+
+def _verify_file_record(record: Any, expected: Path, label: str) -> None:
+    if not isinstance(record, dict) or record.get("status") != Status.PASS.value or record.get("path") != str(expected):
+        raise EvidenceError(f"cannot reuse Trace: {label} binding is invalid")
+    if expected.is_symlink() or not expected.is_file():
+        raise EvidenceError(f"cannot reuse Trace: {label} is missing")
+    raw = expected.read_bytes()
+    if record.get("sha256") != hashlib.sha256(raw).hexdigest() or record.get("size_bytes") != len(raw):
+        raise EvidenceError(f"cannot reuse Trace: {label} changed")
 
 
 def _git(cwd: Path, *args: str) -> str | None:

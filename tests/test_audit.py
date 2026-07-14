@@ -100,6 +100,147 @@ class AuditTests(unittest.TestCase):
             self.assertEqual(trace["trace"]["execution"], {"status": "FAIL", "exit_code": 7})
             self.assertEqual(trace["summary"]["FAIL"], 1)
 
+    def test_trace_reuses_only_an_exact_fresh_success_without_rerunning(self) -> None:
+        with _review_repository() as (root, _):
+            command = [sys.executable, "-c", "from pathlib import Path; p=Path('count.txt'); p.write_text(str(int(p.read_text())+1) if p.exists() else '1')"]
+            output = root / ".aet" / "evidence" / "trace.json"
+            previous = Path.cwd()
+            try:
+                os.chdir(root)
+                self.assertEqual(main(["trace", "--output", str(output), "--", *command]), 0)
+                self.assertEqual(main(["trace", "--reuse-if-fresh", "--output", str(output), "--", *command]), 0)
+            finally:
+                os.chdir(previous)
+            self.assertEqual((root / "count.txt").read_text(), "1")
+
+    def test_trace_reuse_refuses_stale_or_mismatched_evidence_without_execution(self) -> None:
+        with _review_repository() as (root, _):
+            command = [sys.executable, "-c", "from pathlib import Path; Path('proof-ran').write_text('yes')"]
+            output = root / ".aet" / "evidence" / "trace.json"
+            previous = Path.cwd()
+            try:
+                os.chdir(root)
+                self.assertEqual(main(["trace", "--output", str(output), "--", *command]), 0)
+                (root / "README.md").write_text("changed after proof\n", encoding="utf-8")
+                with self.assertRaises(SystemExit):
+                    main(["trace", "--reuse-if-fresh", "--output", str(output), "--", *command])
+                with self.assertRaises(SystemExit):
+                    main(["trace", "--reuse-if-fresh", "--output", str(output), "--", sys.executable, "-c", "raise SystemExit(9)"])
+            finally:
+                os.chdir(previous)
+            self.assertEqual((root / "proof-ran").read_text(), "yes")
+
+    def test_trace_reuse_distinguishes_commands_that_redact_to_the_same_argv(self) -> None:
+        with _review_repository() as (root, _):
+            output = root / ".aet" / "evidence" / "trace.json"
+            first = [sys.executable, "-c", "pass", "--token first-secret-value"]
+            second = [sys.executable, "-c", "pass", "--token second-secret-value"]
+            previous = Path.cwd()
+            try:
+                os.chdir(root)
+                self.assertEqual(main(["trace", "--output", str(output), "--", *first]), 0)
+                self.assertIsNone(json.loads(output.read_text(encoding="utf-8"))["trace"]["argv_sha256"])
+                with self.assertRaises(SystemExit):
+                    main(["trace", "--reuse-if-fresh", "--output", str(output), "--", *second])
+            finally:
+                os.chdir(previous)
+
+    def test_trace_reuse_refuses_tampered_log_or_declared_artifact(self) -> None:
+        with _review_repository() as (root, _):
+            command = [sys.executable, "-c", "from pathlib import Path; Path('report.txt').write_text('ok')"]
+            output = root / ".aet" / "evidence" / "trace.json"
+            previous = Path.cwd()
+            try:
+                os.chdir(root)
+                self.assertEqual(main(["trace", "--artifact", "report.txt", "--output", str(output), "--", *command]), 0)
+                output.with_suffix(".stdout.log").write_text("tampered", encoding="utf-8")
+                with self.assertRaises(SystemExit):
+                    main(["trace", "--reuse-if-fresh", "--artifact", "report.txt", "--output", str(output), "--", *command])
+            finally:
+                os.chdir(previous)
+
+    def test_trace_reuse_refuses_symlinked_logs_even_when_bytes_match(self) -> None:
+        with _review_repository() as (root, _):
+            command = [sys.executable, "-c", "print('ok')"]
+            output = root / ".aet" / "evidence" / "trace.json"
+            previous = Path.cwd()
+            try:
+                os.chdir(root)
+                self.assertEqual(main(["trace", "--output", str(output), "--", *command]), 0)
+                stdout = output.with_suffix(".stdout.log")
+                replacement = stdout.with_name("replacement.log")
+                replacement.write_bytes(stdout.read_bytes())
+                stdout.unlink()
+                stdout.symlink_to(replacement)
+                with self.assertRaises(SystemExit):
+                    main(["trace", "--reuse-if-fresh", "--output", str(output), "--", *command])
+            finally:
+                os.chdir(previous)
+
+    def test_trace_reuse_refuses_a_tampered_canonical_report(self) -> None:
+        with _review_repository() as (root, _):
+            command = [sys.executable, "-c", "print('ok')"]
+            output = root / ".aet" / "evidence" / "trace.json"
+            previous = Path.cwd()
+            try:
+                os.chdir(root)
+                self.assertEqual(main(["trace", "--output", str(output), "--", *command]), 0)
+                report = json.loads(output.read_text(encoding="utf-8"))
+                report["generated_at"] = "tampered"
+                output.write_text(json.dumps(report), encoding="utf-8")
+                with self.assertRaises(SystemExit):
+                    main(["trace", "--reuse-if-fresh", "--output", str(output), "--", *command])
+                with self.assertRaises(SystemExit):
+                    main(["evidence", "pack", "--trace", str(output), "--output", str(root / ".aet" / "pack.json")])
+            finally:
+                os.chdir(previous)
+
+    def test_evidence_receipt_is_compact_and_binds_the_canonical_report(self) -> None:
+        with TemporaryDirectory() as directory:
+            root = Path(directory)
+            trace = root / "trace.json"
+            receipt = root / "receipt.json"
+            self.assertEqual(main(["trace", "--output", str(trace), "--", sys.executable, "-c", "print('ok')"]), 0)
+            self.assertEqual(main(["evidence", "receipt", "--report", str(trace), "--output", str(receipt)]), 0)
+            data = json.loads(receipt.read_text(encoding="utf-8"))
+            self.assertEqual(data["report_kind"], "evidence_receipt")
+            self.assertEqual(data["source"]["sha256"], _sha256(trace))
+            self.assertEqual(data["source"]["report_kind"], "trace")
+            self.assertEqual(data["execution"], {"status": "PASS", "exit_code": 0})
+            self.assertNotIn("findings", data)
+            self.assertNotIn("assets", data)
+
+    def test_evidence_receipt_checks_live_freshness_and_cannot_replace_its_source(self) -> None:
+        with _review_repository() as (root, _):
+            trace = root / ".aet" / "trace.json"
+            receipt = root / ".aet" / "receipt.json"
+            previous = Path.cwd()
+            try:
+                os.chdir(root)
+                self.assertEqual(main(["trace", "--output", str(trace), "--", sys.executable, "-c", "pass"]), 0)
+                original = trace.read_bytes()
+                with self.assertRaises(SystemExit):
+                    main(["evidence", "receipt", "--report", str(trace), "--output", str(trace)])
+                self.assertEqual(trace.read_bytes(), original)
+                (root / "README.md").write_text("changed\n", encoding="utf-8")
+                self.assertEqual(main(["evidence", "receipt", "--report", str(trace), "--output", str(receipt)]), 0)
+            finally:
+                os.chdir(previous)
+            data = json.loads(receipt.read_text(encoding="utf-8"))
+            self.assertEqual(data["freshness"]["status"], "FAIL")
+
+    def test_trace_captures_one_workspace_snapshot_per_result(self) -> None:
+        from unittest import mock
+
+        snapshot = {
+            "status": "PASS", "head_sha": "a" * 40, "tracked_worktree_sha256": "b" * 64,
+            "worktree_digest": "c" * 64, "untracked_manifest_sha256": "d" * 64, "digest": "e" * 64,
+            "intent_sha256": None, "config_sha256": None, "control_files": {},
+        }
+        with TemporaryDirectory() as directory, mock.patch("aet.evidence.workspace_snapshot", return_value=snapshot) as capture:
+            self.assertEqual(main(["trace", "--output", str(Path(directory) / "trace.json"), "--", sys.executable, "-c", "pass"]), 0)
+            self.assertEqual(capture.call_count, 1)
+
     def test_trace_captures_declared_report_artifact_and_portable_pack(self) -> None:
         with TemporaryDirectory() as directory:
             root = Path(directory)

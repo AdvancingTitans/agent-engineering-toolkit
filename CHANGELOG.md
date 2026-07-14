@@ -1,6 +1,26 @@
 # Changelog
 
-## Unreleased
+## 1.10.0 — 2026-07-14
+
+- Added explicit lossless Trace reuse with `aet trace --reuse-if-fresh`. Reuse
+  never executes or falls back to execution and requires an exact non-secret
+  argv digest, safe rendered argv, proof binding, declared-artifact set and bytes,
+  stdout/stderr log bytes, successful source status, and current full Git
+  workspace snapshot. Any argv redaction disables reuse rather than persisting a
+  guessable secret digest. Canonical Trace JSON is protected by an adjacent
+  integrity seal; validator FAIL/UNKNOWN is propagated into the Trace summary,
+  Run Gate, and reuse decision. Missing legacy fields, tampering, or drift fail closed.
+- Added `aet evidence receipt`, a compact hash-bound index for canonical Audit,
+  Review, Trace, and Evidence Pack JSON. Canonical evidence remains unchanged;
+  Agents can consume the receipt without loading full findings or embedded
+  artifacts into context. Receipts independently recompute live workspace
+  freshness and cannot overwrite their canonical source.
+- Removed redundant in-request snapshot work from Trace and Run initialization,
+  and made identical Run artifact attachments idempotent. Persistent snapshot
+  caching remains intentionally absent because it cannot prove untracked-file
+  freshness without rereading content.
+- Generalized release evidence directories and candidate identifiers from the
+  source version, removing v1.9 workflow and manifest path hard-coding.
 
 - Made the portable Skill explicitly opt-in and default-off: installation no
   longer implies authorization for routine coding or review, activation is

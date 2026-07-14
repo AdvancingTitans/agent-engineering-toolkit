@@ -25,6 +25,15 @@ jobs:
           ref: ${{ inputs.tag }}
           fetch-depth: 0
       - uses: astral-sh/setup-uv@v5
+      - name: Bind release version and evidence path
+        env:
+          RELEASE_TAG: ${{ inputs.tag }}
+        run: |
+          VERSION="$(uv run python -c 'import aet; print(aet.__version__)')"
+          RELEASE_DIR=".aet/release/$RELEASE_TAG"
+          test "v$VERSION" = "$RELEASE_TAG"
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+          echo "RELEASE_DIR=$RELEASE_DIR" >> "$GITHUB_ENV"
       - name: Verify tag and gate workflow-run provenance
         env:
           GH_TOKEN: ${{ github.token }}
@@ -44,7 +53,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: real-host-gate
-          path: .aet/release/v1.9
+          path: ${{ env.RELEASE_DIR }}
           run-id: ${{ inputs.gate_run_id }}
           github-token: ${{ github.token }}
       - name: Reconstruct candidate and verify every bound byte
@@ -52,13 +61,13 @@ jobs:
           RELEASE_TAG: ${{ inputs.tag }}
         run: |
           uv run python eval/real-agent/build_candidate.py \
-            --root . --output .aet/release/v1.9/reconstructed-candidate
+            --root . --output "$RELEASE_DIR/reconstructed-candidate"
           uv run python eval/real-agent/release_gate.py verify \
             --root . \
-            --candidate .aet/release/v1.9/reconstructed-candidate \
-            --raw-gate .aet/release/v1.9/raw-gate.json \
+            --candidate "$RELEASE_DIR/reconstructed-candidate" \
+            --raw-gate "$RELEASE_DIR/raw-gate.json" \
             --commit "$GITHUB_SHA" --version "${RELEASE_TAG#v}" \
-            --manifest .aet/release/v1.9/real-host-gate.json
+            --manifest "$RELEASE_DIR/real-host-gate.json"
       - run: uv run --with pytest python -m pytest -q
       - run: uv run --with pytest python -m pytest tests/test_business_quality_flows.py -q
       - run: uv run --no-editable --reinstall-package agent-engineering-toolkit aet audit . --strict --format json --output .aet/evidence/release-audit.json

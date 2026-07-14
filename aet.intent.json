@@ -1,6 +1,6 @@
 {
-  "intent": "Redesign the English and Chinese README architecture diagrams around AET's implemented evidence, deterministic quality, bounded evolution, independent gate, shadow and human-adoption relationships without changing runtime behavior.",
-  "changed_path_budget": 12,
+  "intent": "Ship AET v1.10.0 with fail-closed, lossless Trace reuse, compact live-freshness receipts, same-state snapshot reuse, idempotent Run attachments, version-derived release paths, updated bilingual documentation, and unchanged real-host statistical rigor.",
+  "changed_path_budget": 25,
   "allowed_paths": [
     "aet.intent.json",
     "CHANGELOG.md",
@@ -9,22 +9,39 @@
     "docs/assets/aet-architecture-en.html",
     "docs/assets/aet-architecture-en.png",
     "docs/assets/aet-architecture-zh-cn.html",
-    "docs/assets/aet-architecture-zh-cn.png"
+    "docs/assets/aet-architecture-zh-cn.png",
+    ".github/workflows/real-host-gate.yml",
+    ".github/workflows/release.yml",
+    "eval/real-agent/build_candidate.py",
+    "eval/real-agent/release_gate.py",
+    "pyproject.toml",
+    "skills/agent-engineering-toolkit/SKILL.md",
+    "src/aet/__init__.py",
+    "src/aet/cli.py",
+    "src/aet/evidence.py",
+    "src/aet/learn_scoring.py",
+    "src/aet/run.py",
+    "tests/test_audit.py",
+    "tests/test_business_quality_flows.py",
+    "tests/test_learn_observed.py",
+    "tests/test_policy_targets.py",
+    "tests/test_productization.py",
+    "uv.lock"
   ],
   "required_proofs": [
     {
       "id": "business-flow",
       "command": ".venv/bin/python -m pytest tests/test_business_quality_flows.py tests/test_quality_loop.py tests/test_learn_observed.py -q",
       "evidence": [
-        ".aet/evidence/v1.9-business.json"
+        ".aet/evidence/v1.10-business.json"
       ]
     },
     {
       "id": "real-host-gate",
-      "command": ".venv/bin/python eval/real-agent/run_real_host_gate.py --root . --release-dir .aet/release/v1.9 --expected-version 1.9.0",
+      "command": ".venv/bin/python eval/real-agent/run_real_host_gate.py --root . --release-dir .aet/release/v1.10.0 --expected-version 1.10.0",
       "evidence": [
-        ".aet/release/v1.9/real-host-gate.json",
-        ".aet/release/v1.9/raw-gate.json"
+        ".aet/release/v1.10.0/real-host-gate.json",
+        ".aet/release/v1.10.0/raw-gate.json"
       ]
     },
     {

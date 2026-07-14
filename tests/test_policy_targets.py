@@ -6,6 +6,7 @@ import tempfile
 import unittest
 import json
 import os
+import subprocess
 import sys
 from pathlib import Path
 
@@ -78,6 +79,31 @@ class PolicyTargetTests(unittest.TestCase):
                 os.chdir(root)
                 with self.assertRaises(SystemExit):
                     main(["trace", "--artifact", "junit.xml", "--validator-policy", "validator.json", "--validate-artifact", "junit.xml", "--output", "trace.json", "--", sys.executable, "-c", "pass"])
+            finally:
+                os.chdir(previous)
+
+    def test_failed_trace_validator_blocks_reuse_and_is_visible_in_summary(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            subprocess.run(["git", "init"], cwd=root, check=True, capture_output=True)
+            subprocess.run(["git", "config", "user.email", "aet@example.test"], cwd=root, check=True)
+            subprocess.run(["git", "config", "user.name", "AET test"], cwd=root, check=True)
+            (root / ".gitignore").write_text(".aet/\n", encoding="utf-8")
+            (root / "README.md").write_text("base\n", encoding="utf-8")
+            subprocess.run(["git", "add", "."], cwd=root, check=True)
+            subprocess.run(["git", "commit", "-m", "base"], cwd=root, check=True, capture_output=True)
+            policy = root / "validator.json"
+            policy.write_text(json.dumps({"schema_version": "trace-validator/v1", "validator": "junit", "requirements": {"failures_max": 0, "errors_max": 0, "tests_min": 2}}), encoding="utf-8")
+            output = root / ".aet" / "trace.json"
+            command = [sys.executable, "-c", "from pathlib import Path; Path('junit.xml').write_text('<testsuite tests=\"1\" failures=\"1\" errors=\"0\"/>')"]
+            previous = Path.cwd()
+            try:
+                os.chdir(root)
+                self.assertEqual(main(["trace", "--artifact", "junit.xml", "--validator-policy", "validator.json", "--validate-artifact", "junit.xml", "--output", str(output), "--", *command]), 1)
+                report = json.loads(output.read_text(encoding="utf-8"))
+                self.assertEqual(report["summary"]["FAIL"], 1)
+                with self.assertRaises(SystemExit):
+                    main(["trace", "--reuse-if-fresh", "--artifact", "junit.xml", "--output", str(output), "--", *command])
             finally:
                 os.chdir(previous)
 

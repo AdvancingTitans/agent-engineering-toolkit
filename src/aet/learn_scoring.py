@@ -16,7 +16,7 @@ from pathlib import Path
 from typing import Any
 
 from .learn_contracts import BASE_HARD_FINDINGS, declared_hard_findings
-from .evidence import compare_workspace_snapshots, redact_artifact_content, workspace_snapshot
+from .evidence import EvidenceError, compare_workspace_snapshots, redact_artifact_content, verify_trace_integrity, workspace_snapshot
 
 
 SUCCESS_CLAIM = re.compile(r"\b(passed|verified|proven|tests? (?:are )?passing)\b|已(?:通过|验证|证明)|测试(?:已)?通过", re.IGNORECASE)
@@ -390,7 +390,13 @@ def _validate_trace_report(
         return "STALE_EVIDENCE", "Trace workspace snapshot is malformed."
     if snapshot.get("status") != "PASS":
         return "STALE_EVIDENCE", "Trace workspace snapshot is not verifiable."
-    recomputed = workspace_snapshot(workspace, exclude_paths=(path,))
+    report_path = workspace / path
+    integrity_path = report_path.with_name(f"{report_path.stem}.integrity.json")
+    try:
+        verify_trace_integrity(report_path)
+    except EvidenceError:
+        return "STALE_EVIDENCE", "Trace report integrity seal is missing or invalid."
+    recomputed = workspace_snapshot(workspace, exclude_paths=(path, integrity_path.relative_to(workspace).as_posix()))
     binding = compare_workspace_snapshots({"reported": snapshot, "recomputed": recomputed})
     if binding.get("status") != "PASS":
         return "STALE_EVIDENCE", "Trace workspace snapshot does not match the independently recomputed rollout state."

@@ -145,16 +145,20 @@ local, but repeated repository snapshots and large JSON reports still add
 latency and Agent-context tokens. Real-host evaluation is inherently expensive:
 an adoption-grade Gate runs both baseline and candidate for every task and
 rollout. The v1.9 case study above required **36 real Agent runs** (3 suites × 6
-pairs × 2 variants). Reusing unchanged, hash-bound evidence, passing report
-paths instead of full JSON, and running one declared proof once remove redundant
-cost without changing the result. Reducing suite coverage or rollout count does
-not: it lowers statistical power and must be reported as preliminary or
-inconclusive.
+pairs × 2 variants). v1.10 turns the safe reductions into explicit contracts:
+`trace --reuse-if-fresh` skips execution only after exact command, proof,
+artifact, validator, sealed-report, log and workspace verification; `evidence
+receipt` provides a compact hash-bound index with a live freshness check;
+duplicate Run attachments are idempotent; and identical
+snapshots are reused within one unchanged state. Explicit freshness checks still
+recompute them. Reuse failure never falls back to execution.
+Reducing suite coverage or rollout count is still not lossless: it lowers
+statistical power and must be reported as preliminary or inconclusive.
 
 Install the current release:
 
 ```bash
-uv tool install https://github.com/AdvancingTitans/agent-engineering-toolkit/releases/download/v1.9.0/agent_engineering_toolkit-1.9.0-py3-none-any.whl
+uv tool install https://github.com/AdvancingTitans/agent-engineering-toolkit/releases/download/v1.10.0/agent_engineering_toolkit-1.10.0-py3-none-any.whl
 aet --version
 ```
 
@@ -180,6 +184,15 @@ aet evidence pack \
   --review .aet/evidence/review.json \
   --trace .aet/evidence/trace.json \
   --output .aet/evidence/evidence-pack.json
+
+# Explicitly reuse only an exact, fresh successful Trace; never auto-executes.
+aet trace --reuse-if-fresh --proof unit-tests --intent aet.intent.json \
+  --artifact reports/pytest.txt --output .aet/evidence/trace.json \
+  -- python -m pytest -q
+
+# Give an Agent a compact index while retaining canonical evidence on disk.
+aet evidence receipt --report .aet/evidence/evidence-pack.json \
+  --output .aet/evidence/receipt.json
 ```
 
 `audit` and `review` never execute a declared proof. A non-zero Audit exit still
@@ -361,7 +374,7 @@ uv run --with pytest python -m pytest tests/test_business_quality_flows.py -q
 uv run --no-editable --reinstall-package agent-engineering-toolkit \
   aet audit . --strict --format json --output .aet/evidence/release-audit.json
 uv build
-uv run --isolated --with dist/agent_engineering_toolkit-1.9.0-py3-none-any.whl \
+uv run --isolated --with dist/agent_engineering_toolkit-1.10.0-py3-none-any.whl \
   aet --version
 ```
 

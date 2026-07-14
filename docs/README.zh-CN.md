@@ -127,15 +127,16 @@ Agent 获得运行授权。只有用户针对当前任务明确要求使用 AET 
 这也是成本边界。Audit、Review 与 Pack 虽是本地确定性操作，但重复 Workspace Snapshot 和
 大体积 JSON 仍会增加延迟与 Agent 上下文 Token。真实宿主评测的核心成本不可消除：
 Adoption-grade Gate 必须对每个 Task、每次 Rollout 都运行 Baseline 与 Candidate。上面的 v1.9
-案例共执行 **36 次真实 Agent 运行**（3 个 Suite × 6 对 × 2 个 Variant）。复用未变化且哈希
-绑定的 Evidence、只向 Agent 传 Report 路径而不是完整 JSON、每条声明 Proof 只运行一次，
-可以在不改变结果的前提下消除重复成本；减少 Suite 覆盖或 Rollout 数量会降低统计把握度，
-只能标为 Preliminary 或 Inconclusive，不能称为无损优化。
+案例共执行 **36 次真实 Agent 运行**（3 个 Suite × 6 对 × 2 个 Variant）。v1.10 已把安全降本
+变成显式契约：`trace --reuse-if-fresh` 只有在命令、Proof、Artifact、Validator、密封报告、Log 与 Workspace 全部
+精确验证后才跳过执行；`evidence receipt` 生成带实时新鲜度检查的哈希绑定紧凑索引；重复 Run Attachment 幂等；
+同一未变化状态内复用相同 Snapshot，显式新鲜度检查仍会重新计算。复用失败绝不自动回退执行。减少 Suite 覆盖或 Rollout 数量
+仍不是无损优化：它会降低统计把握度，只能标为 Preliminary 或 Inconclusive。
 
 安装当前 Release：
 
 ```bash
-uv tool install https://github.com/AdvancingTitans/agent-engineering-toolkit/releases/download/v1.9.0/agent_engineering_toolkit-1.9.0-py3-none-any.whl
+uv tool install https://github.com/AdvancingTitans/agent-engineering-toolkit/releases/download/v1.10.0/agent_engineering_toolkit-1.10.0-py3-none-any.whl
 aet --version
 ```
 
@@ -160,6 +161,15 @@ aet evidence pack \
   --review .aet/evidence/review.json \
   --trace .aet/evidence/trace.json \
   --output .aet/evidence/evidence-pack.json
+
+# 仅复用精确且新鲜的成功 Trace；验证失败时绝不自动执行。
+aet trace --reuse-if-fresh --proof unit-tests --intent aet.intent.json \
+  --artifact reports/pytest.txt --output .aet/evidence/trace.json \
+  -- python -m pytest -q
+
+# Canonical Evidence 留在磁盘，只给 Agent 紧凑索引。
+aet evidence receipt --report .aet/evidence/evidence-pack.json \
+  --output .aet/evidence/receipt.json
 ```
 
 `audit` 与 `review` 永远不会执行声明的 Proof。Audit 即使发现真实问题，也会先写报告再以
@@ -321,7 +331,7 @@ uv run --with pytest python -m pytest tests/test_business_quality_flows.py -q
 uv run --no-editable --reinstall-package agent-engineering-toolkit \
   aet audit . --strict --format json --output .aet/evidence/release-audit.json
 uv build
-uv run --isolated --with dist/agent_engineering_toolkit-1.9.0-py3-none-any.whl \
+uv run --isolated --with dist/agent_engineering_toolkit-1.10.0-py3-none-any.whl \
   aet --version
 ```
 

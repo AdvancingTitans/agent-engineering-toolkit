@@ -7,9 +7,18 @@ on:
         description: Existing v-prefixed tag to publish
         required: true
         type: string
-      gate_run_id:
-        description: Successful Real Host Gate run for the release commit
+      release_class:
+        description: Use governance-adoption only when this release adopts or claims improved Agent behavior
         required: true
+        default: deterministic
+        type: choice
+        options:
+          - deterministic
+          - governance-adoption
+      gate_run_id:
+        description: Required only for governance-adoption; leave empty for deterministic releases
+        required: false
+        default: ""
         type: string
 
 permissions:
@@ -34,22 +43,38 @@ jobs:
           test "v$VERSION" = "$RELEASE_TAG"
           echo "VERSION=$VERSION" >> "$GITHUB_ENV"
           echo "RELEASE_DIR=$RELEASE_DIR" >> "$GITHUB_ENV"
-      - name: Verify tag and gate workflow-run provenance
+      - name: Verify tag and release classification
         env:
-          GH_TOKEN: ${{ github.token }}
           RELEASE_TAG: ${{ inputs.tag }}
+          RELEASE_CLASS: ${{ inputs.release_class }}
           GATE_RUN_ID: ${{ inputs.gate_run_id }}
         run: |
           [[ "$RELEASE_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]
           git show-ref --verify "refs/tags/$RELEASE_TAG"
           test "${RELEASE_TAG#v}" = "$(uv run python -c 'import aet; print(aet.__version__)')"
           test "$(git rev-list -n 1 "$RELEASE_TAG")" = "$GITHUB_SHA"
+          case "$RELEASE_CLASS" in
+            deterministic) test -z "$GATE_RUN_ID" ;;
+            governance-adoption) [[ "$GATE_RUN_ID" =~ ^[0-9]+$ ]] ;;
+            *) exit 1 ;;
+          esac
+          uv run python eval/real-agent/release_classification.py \
+            --root . --manifest release-classification.json \
+            --release-tag "$RELEASE_TAG" --expected-class "$RELEASE_CLASS" \
+            --output "$RELEASE_DIR/classification-verification.json"
+      - name: Verify gate workflow-run provenance
+        if: inputs.release_class == 'governance-adoption'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GATE_RUN_ID: ${{ inputs.gate_run_id }}
+        run: |
           run_json="$(gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${GATE_RUN_ID}")"
           test "$(jq -r .head_sha <<<"$run_json")" = "$GITHUB_SHA"
           test "$(jq -r .conclusion <<<"$run_json")" = "success"
           test "$(jq -r .event <<<"$run_json")" = "workflow_dispatch"
           test "$(jq -r .path <<<"$run_json")" = ".github/workflows/real-host-gate.yml"
       - name: Download commit-bound real host gate
+        if: inputs.release_class == 'governance-adoption'
         uses: actions/download-artifact@v4
         with:
           name: real-host-gate
@@ -57,6 +82,7 @@ jobs:
           run-id: ${{ inputs.gate_run_id }}
           github-token: ${{ github.token }}
       - name: Reconstruct candidate and verify every bound byte
+        if: inputs.release_class == 'governance-adoption'
         env:
           RELEASE_TAG: ${{ inputs.tag }}
         run: |
@@ -68,6 +94,33 @@ jobs:
             --raw-gate "$RELEASE_DIR/raw-gate.json" \
             --commit "$GITHUB_SHA" --version "${RELEASE_TAG#v}" \
             --manifest "$RELEASE_DIR/real-host-gate.json"
+          jq -e --slurpfile classification "$RELEASE_DIR/classification-verification.json" '
+            .candidate_sha256 == $classification[0].governance_gate.candidate_sha256 and
+            (($classification[0].governance_gate.covered_suites - (.suites | keys)) | length == 0)
+          ' "$RELEASE_DIR/real-host-gate.json" >/dev/null
+      - name: Record release evidence disposition
+        env:
+          RELEASE_CLASS: ${{ inputs.release_class }}
+          GATE_RUN_ID: ${{ inputs.gate_run_id }}
+        run: |
+          mkdir -p "$RELEASE_DIR"
+          if test "$RELEASE_CLASS" = governance-adoption; then
+            gate_status=PASS
+            reason="Commit-bound adoption-grade Real Host Gate verified"
+            gate_manifest_sha256="$(sha256sum "$RELEASE_DIR/real-host-gate.json" | cut -d' ' -f1)"
+          else
+            gate_status=NOT_APPLICABLE
+            reason="Diff-bound classification contract declares no covered behavior claim or governance adoption"
+            gate_manifest_sha256=""
+          fi
+          jq -n \
+            --slurpfile classification "$RELEASE_DIR/classification-verification.json" \
+            --arg version "$VERSION" --arg commit "$GITHUB_SHA" \
+            --arg release_class "$RELEASE_CLASS" --arg gate_status "$gate_status" \
+            --arg reason "$reason" --arg gate_run_id "$GATE_RUN_ID" \
+            --arg gate_manifest_sha256 "$gate_manifest_sha256" \
+            '{schema_version:"release-evidence/v1",version:$version,release_commit:$commit,release_class:$release_class,classification:$classification[0],real_host_gate:({status:$gate_status,reason:$reason} + (if $gate_run_id == "" then {} else {workflow_run_id:$gate_run_id,manifest_sha256:$gate_manifest_sha256} end))}' \
+            > "$RELEASE_DIR/release-evidence.json"
       - run: uv run --with pytest python -m pytest -q
       - run: uv run --with pytest python -m pytest tests/test_business_quality_flows.py -q
       - run: uv run --no-editable --reinstall-package agent-engineering-toolkit aet audit . --strict --format json --output .aet/evidence/release-audit.json
@@ -83,4 +136,10 @@ jobs:
       - env:
           GH_TOKEN: ${{ github.token }}
           RELEASE_TAG: ${{ inputs.tag }}
-        run: gh release create "$RELEASE_TAG" dist/* --generate-notes --title "AET $RELEASE_TAG"
+          RELEASE_CLASS: ${{ inputs.release_class }}
+        run: |
+          assets=(dist/* release-classification.json "$RELEASE_DIR/classification-verification.json" "$RELEASE_DIR/release-evidence.json")
+          if test "$RELEASE_CLASS" = governance-adoption; then
+            assets+=("$RELEASE_DIR/real-host-gate.json")
+          fi
+          gh release create "$RELEASE_TAG" "${assets[@]}" --generate-notes --title "AET $RELEASE_TAG"

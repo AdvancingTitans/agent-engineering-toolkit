@@ -53,6 +53,11 @@ statistical, provenance-bound and human-controlled evaluation.** The tracked
 suites and producer are in [`eval/real-agent`](eval/real-agent) and
 [the real-host workflow](.github/workflows/real-host-gate.yml).
 
+It is also historical evidence for that bounded candidate, not a universal
+prerequisite for every AET package release. Runtime and deterministic-evidence
+changes use deterministic CI; a full paired Real Host Gate is reserved for
+governance-asset adoption or a new claim about observed Agent behavior.
+
 ## Why AET is different
 
 Most Agent quality stacks start with a transcript or a score. AET starts with
@@ -153,7 +158,14 @@ duplicate Run attachments are idempotent; and identical
 snapshots are reused within one unchanged state. Explicit freshness checks still
 recompute them. Reuse failure never falls back to execution.
 Reducing suite coverage or rollout count is still not lossless: it lowers
-statistical power and must be reported as preliminary or inconclusive.
+statistical power and must be reported as preliminary or inconclusive. The
+cost-safe choice is to classify an unrelated deterministic release as
+`NOT_APPLICABLE`, not to run a weakened Gate. When a release adopts the exact
+governance candidate evaluated by the suites, or makes a changed-behavior claim
+those suites cover, the complete Gate remains mandatory. A declarative
+Skill/API contract may be deterministic only when every behavior-sensitive path
+has a reviewed exception and cited deterministic proof; that classification
+makes no observed-behavior claim.
 
 Install the current release:
 
@@ -264,7 +276,12 @@ commits, pushes or publishes a release.
 ### Real-host evaluation
 
 Static replay checks document contracts; it is never presented as observed
-Agent behavior. Name a real runner when behavior matters:
+Agent behavior. Real-host evaluation is deliberately exceptional: use it when
+adopting the exact Skill/Prompt/governance candidate evaluated by the suites,
+changing behavior that those suites actually cover, or publishing a new
+observed-behavior claim. Do not run it for
+ordinary runtime, evidence, packaging, documentation, or deterministic-policy
+releases. Name a real runner when behavior matters:
 
 ```bash
 aet learn runner list
@@ -288,6 +305,28 @@ unsupported isolation remain `INFRASTRUCTURE_ERROR`, `UNKNOWN` or
 `INCONCLUSIVE`; they never become a candidate pass. Raw outputs and normalized
 events stay inside private rollout directories. Only derived Evidence Only
 phenomena, scores and hashes are eligible for export.
+
+### Release classification
+
+Every tag carries a tracked `release-classification.json` contract binding its
+base tag, complete changed-path digest, class, claims/adoptions, and any
+behavior-sensitive `NOT_APPLICABLE` exceptions to deterministic proofs. The
+GitHub Release workflow verifies that contract before accepting its explicit
+class:
+
+| Class | Real Host Gate | Release evidence |
+| --- | --- | --- |
+| `deterministic` | Must be omitted | `NOT_APPLICABLE` with a reason; full tests, business fixtures, Audit, build and wheel smoke-test still run. |
+| `governance-adoption` | Required | A successful workflow Run ID, commit, runner, candidate and suite bytes are all reverified before release. |
+
+The dispatch choice cannot override the tag contract. The workflow also rejects
+a Gate Run ID on a deterministic release, a governance-adoption release without
+one, a Gate whose Candidate SHA or covered Suite IDs differ from its structured
+claim binding, an unacknowledged sensitive path, or a stale Diff digest. Every Release
+publishes the contract, its commit-bound verification, and
+`release-evidence.json`; governance releases additionally retain the verified
+Real Host Gate manifest as a durable Release asset. Absence of a model Gate is
+therefore reviewable `NOT_APPLICABLE`, never silently treated as `PASS`.
 
 ## Where AET fits
 

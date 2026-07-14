@@ -1,5 +1,9 @@
 # AET v1.9.0 evidence-to-quality implementation plan
 
+> Historical v1.9 implementation record. Its universal fresh-Gate release rule
+> is superseded by the diff-bound release classification policy in the current
+> README; this document is not an active release contract.
+
 ## Decision
 
 Build the smallest quality loop that follows AET's existing evidence boundary:

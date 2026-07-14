@@ -7,7 +7,6 @@ import importlib.util
 import json
 import math
 import os
-import shlex
 import subprocess
 import sys
 import tempfile
@@ -350,16 +349,14 @@ class BusinessQualityFlowsTests(unittest.TestCase):
             raw_gate.write_text(json.dumps(self._passing_observed_gate(metadata["candidate_sha256"])), encoding="utf-8")
             return subprocess.CompletedProcess(argv, 0)
 
-        intent = json.loads((ROOT / "aet.intent.json").read_text(encoding="utf-8"))
-        declared = next(proof for proof in intent["required_proofs"] if proof["id"] == "real-host-gate")["command"]
-        declared_argv = shlex.split(declared)
-        self.assertNotIn("$(", declared)
-        self.assertNotIn("--commit", declared_argv)
         with tempfile.TemporaryDirectory() as temporary, mock.patch.object(module.subprocess, "run", fake_run), mock.patch.object(module, "__version__", "1.10.0"):
             release = Path(temporary) / "v1.10.0"
-            replay_argv = declared_argv[2:]
-            replay_argv[replay_argv.index("--root") + 1] = str(ROOT)
-            replay_argv[replay_argv.index("--release-dir") + 1] = str(release)
+            replay_argv = [
+                "--root", str(ROOT),
+                "--release-dir", str(release),
+                "--expected-commit", "b" * 40,
+                "--expected-version", "1.10.0",
+            ]
             with mock.patch.object(sys, "argv", [str(helper), *replay_argv]):
                 module.main()
             self.assertTrue((release / "candidate" / "candidate.SKILL.md").is_file())
@@ -379,6 +376,69 @@ class BusinessQualityFlowsTests(unittest.TestCase):
             self.assertIn("6", argv)
             self.assertEqual(options["cwd"], ROOT.resolve())
             self.assertTrue(options["check"])
+
+    def test_release_classification_is_diff_bound_and_fail_closed(self) -> None:
+        helper = REAL_AGENT / "release_classification.py"
+        spec = importlib.util.spec_from_file_location("aet_release_classification", helper)
+        self.assertIsNotNone(spec)
+        self.assertIsNotNone(spec.loader)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        path = "skills/agent-engineering-toolkit/SKILL.md"
+        base = {
+            "schema_version": "release-classification/v1",
+            "release_tag": "v1.10.0",
+            "base_tag": "v1.9.0",
+            "changed_paths_sha256": module.paths_digest([path]),
+            "release_class": "deterministic",
+            "real_host_gate": "NOT_APPLICABLE",
+            "observed_behavior_claims": [],
+            "governance_asset_adoptions": [],
+            "not_applicable_exceptions": [],
+        }
+        with self.assertRaisesRegex(ValueError, "every behavior-sensitive"):
+            module.validate(base, "v1.10.0", "b" * 40, "a" * 40, [path])
+        base["not_applicable_exceptions"] = [{
+            "path": path,
+            "reason": "Declarative authorization only; no observed behavior claim is made.",
+            "deterministic_proofs": ["tests/test_productization.py"],
+        }]
+        result = module.validate(base, "v1.10.0", "b" * 40, "a" * 40, [path])
+        self.assertEqual(result["behavior_sensitive_paths"], [path])
+        self.assertEqual(module.previous_release_tag(["v1.8.0", "v1.9.0", "v1.10.0"], "v1.10.0"), "v1.9.0")
+        self.assertEqual(
+            module.parse_name_status(b"R100\0skills/old/SKILL.md\0archive/SKILL.md\0M\0src/aet/learn.py\0"),
+            ["archive/SKILL.md", "skills/old/SKILL.md", "src/aet/learn.py"],
+        )
+        with self.assertRaisesRegex(ValueError, "safe tests"):
+            module.deterministic_proof_hashes(
+                ROOT, "b" * 40, [{"deterministic_proofs": ["README.md"]}]
+            )
+        with tempfile.TemporaryDirectory() as temporary:
+            manifest = Path(temporary) / "classification.json"
+            manifest.write_text(json.dumps(base), encoding="utf-8")
+            with mock.patch.object(module, "git", side_effect=["b" * 40, "b" * 40]):
+                with self.assertRaisesRegex(ValueError, "different commit"):
+                    module.verify(ROOT, manifest, "v1.10.0", "deterministic")
+        base["changed_paths_sha256"] = "0" * 64
+        with self.assertRaisesRegex(ValueError, "changed-path digest"):
+            module.validate(base, "v1.10.0", "b" * 40, "a" * 40, [path])
+        base.update({
+            "changed_paths_sha256": module.paths_digest([path]),
+            "release_class": "governance-adoption",
+            "real_host_gate": "REQUIRED",
+            "observed_behavior_claims": ["candidate improves the covered Trace-routing behavior"],
+            "not_applicable_exceptions": [],
+            "governance_gate": {
+                "candidate_sha256": "c" * 64,
+                "covered_suites": ["core", "validation", "held_out"],
+                "claim_ids": ["TRACE.ROUTING.EXACT-COMMAND"],
+            },
+        })
+        self.assertEqual(
+            module.validate(base, "v1.10.0", "b" * 40, "a" * 40, [path])["release_class"],
+            "governance-adoption",
+        )
 
     def test_release_suite_hashing_rejects_each_missing_empty_or_symlink_fixture(self) -> None:
         helper = REAL_AGENT / "release_gate.py"
@@ -441,28 +501,33 @@ class BusinessQualityFlowsTests(unittest.TestCase):
 
         release = (ROOT / ".github" / "workflows" / "release.yml").read_text(encoding="utf-8")
         for binding in (
-            "workflow_dispatch:", "gate_run_id:", "actions/download-artifact@v4", "real-host-gate",
+            "workflow_dispatch:", "release_class:", "type: choice", "deterministic", "governance-adoption",
+            "gate_run_id:", "required: false", "actions/download-artifact@v4", "real-host-gate",
             "gh api", "head_sha", ".github/workflows/real-host-gate.yml", "GITHUB_SHA",
             "eval/real-agent/build_candidate.py", "eval/real-agent/release_gate.py verify",
             'RELEASE_DIR=".aet/release/$RELEASE_TAG"', '${{ env.RELEASE_DIR }}',
+            "if: inputs.release_class == 'governance-adoption'", "NOT_APPLICABLE",
+            "release-evidence.json", "release-classification.json",
+            "eval/real-agent/release_classification.py", "classification-verification.json",
+            'test -z "$GATE_RUN_ID"',
             "wheel_version=", "source_version=", 'test "$wheel_version" = "$source_version"',
             '[[ "$RELEASE_TAG" =~ ^v[0-9]+\\.[0-9]+\\.[0-9]+$ ]]',
             'git show-ref --verify "refs/tags/$RELEASE_TAG"',
         ):
             self.assertIn(binding, release)
+        self.assertNotRegex(release, r"gate_run_id:\n\s+description:.*\n\s+required: true")
         self.assertNotIn('run: gh release create "${{ inputs.tag }}"', release)
+        self.assertIn("classification_contract_sha256", (REAL_AGENT / "release_classification.py").read_text(encoding="utf-8"))
 
         intent = json.loads((ROOT / "aet.intent.json").read_text(encoding="utf-8"))
         business_proof = next(proof for proof in intent["required_proofs"] if proof["id"] == "business-flow")
         self.assertIn("tests/test_business_quality_flows.py", business_proof["command"])
-        real_host = next(proof for proof in intent["required_proofs"] if proof["id"] == "real-host-gate")
-        self.assertIn("eval/real-agent/run_real_host_gate.py", real_host["command"])
-        self.assertIn("--release-dir .aet/release/v1.10.0", real_host["command"])
-        self.assertNotIn("$(", real_host["command"])
-        self.assertEqual(
-            real_host["evidence"],
-            [".aet/release/v1.10.0/real-host-gate.json", ".aet/release/v1.10.0/raw-gate.json"],
-        )
+        self.assertNotIn("real-host-gate", {proof["id"] for proof in intent["required_proofs"]})
+
+        architecture_en = (ROOT / "docs" / "assets" / "aet-architecture-en.html").read_text(encoding="utf-8")
+        architecture_zh = (ROOT / "docs" / "assets" / "aet-architecture-zh-cn.html").read_text(encoding="utf-8")
+        self.assertIn("paired real host only for behavior/adoption", architecture_en)
+        self.assertIn("仅行为改进/采纳使用配对真实宿主", architecture_zh)
 
         example = (ROOT / "examples" / "github-actions" / "aet-audit.yml").read_text(encoding="utf-8")
         self.assertIn("actions/checkout@v4", example)

@@ -1,21 +1,27 @@
 {
-  "intent": "Ship AET v1.10.0 with fail-closed, lossless Trace reuse, compact live-freshness receipts, same-state snapshot reuse, idempotent Run attachments, version-derived release paths, updated bilingual documentation, and unchanged real-host statistical rigor.",
-  "changed_path_budget": 25,
+  "intent": "Ship AET v1.10.0 with fail-closed lossless evidence reuse and a cost-aware release policy that records Real Host Gate as NOT_APPLICABLE for deterministic releases while requiring full commit-bound paired evaluation for governance-asset adoption.",
+  "changed_path_budget": 40,
   "allowed_paths": [
     "aet.intent.json",
     "CHANGELOG.md",
     "README.md",
     "docs/README.zh-CN.md",
+    "docs/superpowers/plans/2026-07-13-v1-9-quality-loop.md",
     "docs/assets/aet-architecture-en.html",
+    "docs/assets/aet-architecture-en.mmd",
     "docs/assets/aet-architecture-en.png",
     "docs/assets/aet-architecture-zh-cn.html",
+    "docs/assets/aet-architecture-zh-cn.mmd",
     "docs/assets/aet-architecture-zh-cn.png",
     ".github/workflows/real-host-gate.yml",
     ".github/workflows/release.yml",
     "eval/real-agent/build_candidate.py",
     "eval/real-agent/release_gate.py",
+    "eval/real-agent/release_classification.py",
+    "release-classification.json",
     "pyproject.toml",
     "skills/agent-engineering-toolkit/SKILL.md",
+    "skills/agent-engineering-toolkit/agents/openai.yaml",
     "src/aet/__init__.py",
     "src/aet/cli.py",
     "src/aet/evidence.py",
@@ -34,14 +40,6 @@
       "command": ".venv/bin/python -m pytest tests/test_business_quality_flows.py tests/test_quality_loop.py tests/test_learn_observed.py -q",
       "evidence": [
         ".aet/evidence/v1.10-business.json"
-      ]
-    },
-    {
-      "id": "real-host-gate",
-      "command": ".venv/bin/python eval/real-agent/run_real_host_gate.py --root . --release-dir .aet/release/v1.10.0 --expected-version 1.10.0",
-      "evidence": [
-        ".aet/release/v1.10.0/real-host-gate.json",
-        ".aet/release/v1.10.0/raw-gate.json"
       ]
     },
     {

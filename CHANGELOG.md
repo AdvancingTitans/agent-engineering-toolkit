@@ -21,6 +21,18 @@
   freshness without rereading content.
 - Generalized release evidence directories and candidate identifiers from the
   source version, removing v1.9 workflow and manifest path hard-coding.
+- Classified releases explicitly as `deterministic` or `governance-adoption`.
+  Deterministic runtime/evidence releases record the Real Host Gate as
+  `NOT_APPLICABLE`; only adoption releases that claim changed Agent behavior
+  require the complete commit-bound paired Gate. The workflow rejects both a
+  missing adoption Gate and an irrelevant Gate attached to a deterministic
+  release, and publishes the disposition as `release-evidence.json`.
+  Classification is a tracked, base-tag and Diff-digest-bound contract:
+  behavior-sensitive paths require exact reviewed exceptions with deterministic
+  proofs when a Gate is not applicable. Releases retain the contract,
+  commit-bound verification, evidence disposition, and (for adoption) verified
+  Gate manifest as durable assets. Adoption contracts bind structured claim IDs
+  and covered Suite IDs to the exact Candidate SHA verified by that manifest.
 
 - Made the portable Skill explicitly opt-in and default-off: installation no
   longer implies authorization for routine coding or review, activation is

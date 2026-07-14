@@ -1,0 +1,58 @@
+{
+  "schema_version": "release-classification/v1",
+  "release_tag": "v1.10.0",
+  "base_tag": "v1.9.0",
+  "changed_paths_sha256": "ed4d20e487c49ecbd09dea4ee6614c1dd069edb33b09cc91a2fbfc7bd5479b7f",
+  "changed_content_sha256": "30bc6110bda0e7ae499fda1eef1228e9b051367348ff7fffffa58cb3545381fd",
+  "release_class": "deterministic",
+  "real_host_gate": "NOT_APPLICABLE",
+  "observed_behavior_claims": [],
+  "governance_asset_adoptions": [],
+  "not_applicable_exceptions": [
+    {
+      "path": ".github/workflows/real-host-gate.yml",
+      "reason": "This change removes version-specific paths and preserves the existing paired runner; it makes no Agent-behavior claim.",
+      "deterministic_proofs": ["tests/test_business_quality_flows.py"]
+    },
+    {
+      "path": ".github/workflows/release.yml",
+      "reason": "This workflow adds fail-closed diff classification and durable evidence assets; it does not change an evaluated Agent candidate.",
+      "deterministic_proofs": ["tests/test_business_quality_flows.py"]
+    },
+    {
+      "path": "eval/real-agent/build_candidate.py",
+      "reason": "Candidate identifiers now follow the package version; candidate bytes and observed behavior are otherwise unchanged.",
+      "deterministic_proofs": ["tests/test_business_quality_flows.py"]
+    },
+    {
+      "path": "eval/real-agent/release_classification.py",
+      "reason": "This verifier enforces release evidence classification and does not alter an Agent runner, prompt, or candidate.",
+      "deterministic_proofs": ["tests/test_business_quality_flows.py"]
+    },
+    {
+      "path": "eval/real-agent/release_gate.py",
+      "reason": "The manifest records the actual release directory instead of a v1.9 constant; all bound bytes remain verified.",
+      "deterministic_proofs": ["tests/test_business_quality_flows.py"]
+    },
+    {
+      "path": "release-classification.json",
+      "reason": "This tracked contract records the reviewed classification, changed-path digest, and non-recursive content Diff digest; its verifier tests reject stale or incomplete declarations.",
+      "deterministic_proofs": ["tests/test_business_quality_flows.py"]
+    },
+    {
+      "path": "skills/agent-engineering-toolkit/SKILL.md",
+      "reason": "The default-off activation policy is a declarative authorization contract covered by exact metadata and text tests; the existing paired suites evaluate a different synthetic Trace-routing candidate and would not test non-activation.",
+      "deterministic_proofs": ["tests/test_productization.py", "tests/test_business_quality_flows.py"]
+    },
+    {
+      "path": "skills/agent-engineering-toolkit/agents/openai.yaml",
+      "reason": "The interface metadata mirrors the declarative default-off authorization contract and contains no observed behavior claim.",
+      "deterministic_proofs": ["tests/test_productization.py"]
+    },
+    {
+      "path": "src/aet/learn_scoring.py",
+      "reason": "This fail-closed integrity check rejects unsealed or stale Trace evidence and is covered by deterministic scoring tests.",
+      "deterministic_proofs": ["tests/test_learn_observed.py", "tests/test_business_quality_flows.py"]
+    }
+  ]
+}

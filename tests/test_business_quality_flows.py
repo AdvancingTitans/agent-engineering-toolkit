@@ -240,7 +240,7 @@ class BusinessQualityFlowsTests(unittest.TestCase):
                 check=True,
             )
             metadata = json.loads((output / "candidate.json").read_text(encoding="utf-8"))
-            self.assertEqual(metadata["candidate_id"], "CAND-REAL-HOST-V1-11-0")
+            self.assertEqual(metadata["candidate_id"], "CAND-REAL-HOST-V1-11-1")
             candidate_bytes = (output / "candidate.SKILL.md").read_bytes()
             self.assertEqual(metadata["candidate_sha256"], hashlib.sha256(candidate_bytes).hexdigest())
             candidate_text = candidate_bytes.decode()
@@ -420,6 +420,7 @@ class BusinessQualityFlowsTests(unittest.TestCase):
         }]
         result = module.validate(base, "v1.10.0", "b" * 40, "a" * 40, [path])
         self.assertEqual(result["behavior_sensitive_paths"], [path])
+        self.assertTrue(module.is_behavior_sensitive(".github/workflows/publish-pypi.yml"))
         self.assertEqual(module.previous_release_tag(["v1.8.0", "v1.9.0", "v1.10.0"], "v1.10.0"), "v1.9.0")
         self.assertEqual(
             module.parse_name_status(b"R100\0skills/old/SKILL.md\0archive/SKILL.md\0M\0src/aet/learn.py\0"),
@@ -499,6 +500,7 @@ class BusinessQualityFlowsTests(unittest.TestCase):
             "source_version=",
             'test "$wheel_version" = "$source_version"',
             "release-candidate-${{ github.sha }}",
+            "./examples/stale-proof-demo.sh",
         ):
             self.assertIn(command, ci)
         self.assertEqual(1, ci.count("python -m pytest"))
@@ -535,6 +537,18 @@ class BusinessQualityFlowsTests(unittest.TestCase):
         self.assertNotRegex(release, r"gate_run_id:\n\s+description:.*\n\s+required: true")
         self.assertNotIn('run: gh release create "${{ inputs.tag }}"', release)
         self.assertIn("classification_contract_sha256", (REAL_AGENT / "release_classification.py").read_text(encoding="utf-8"))
+
+        pypi = (ROOT / ".github" / "workflows" / "publish-pypi.yml").read_text(encoding="utf-8")
+        for binding in (
+            "workflow_dispatch:", "environment: pypi", "id-token: write",
+            'target_sha="$(git rev-parse HEAD)"', 'test "$(jq -r .head_sha <<<"$run_json")" = "$target_sha"',
+            'test "$(jq -r .event <<<"$run_json")" = push', "release-candidate-${{ env.TARGET_SHA }}",
+            "aet-ci-release-candidate/v1", 'test "$(jq -r .commit "$manifest")" = "$TARGET_SHA"',
+            'test "$(uv run --isolated --with "$wheel" aet --version)" = "${RELEASE_TAG#v}"',
+            "pypa/gh-action-pypi-publish@release/v1", "packages-dir: .aet/pypi/",
+        ):
+            self.assertIn(binding, pypi)
+        self.assertNotIn("release-candidate-${{ github.sha }}", pypi)
 
         intent = json.loads((ROOT / "aet.intent.json").read_text(encoding="utf-8"))
         business_proof = next(proof for proof in intent["required_proofs"] if proof["id"] == "business-flow")

@@ -1,9 +1,9 @@
 {
   "schema_version": "release-classification/v1",
-  "release_tag": "v1.11.0",
-  "base_tag": "v1.10.0",
-  "changed_paths_sha256": "79aa69a1cd94f4b6450b82ccc8a10622b09f9fb97e79fc3d4bd5cee8bc232df3",
-  "changed_content_sha256": "0cae623a9133f50e1d7624d36515a76011f8178c718a1e063259f4d96ad8396a",
+  "release_tag": "v1.11.1",
+  "base_tag": "v1.11.0",
+  "changed_paths_sha256": "f20d0176436812bcc0f1c5817b2314480d08b6654dfb5e651705664d6246a062",
+  "changed_content_sha256": "989b0dd16042d2cbcecd0f51dd779bfb076fead786dbc16a6951f1f23cbd198c",
   "release_class": "deterministic",
   "real_host_gate": "NOT_APPLICABLE",
   "observed_behavior_claims": [],
@@ -11,118 +11,33 @@
   "not_applicable_exceptions": [
     {
       "path": ".github/workflows/ci.yml",
-      "reason": "The workflow removes duplicate checks and produces one commit-bound artifact; it makes no changed Agent-behavior claim.",
+      "reason": "CI now runs the deterministic stale-proof demo and retains the existing build-once artifact contract; it makes no changed Agent-behavior claim.",
       "deterministic_proofs": ["tests/test_business_quality_flows.py"]
     },
     {
-      "path": ".github/workflows/real-host-gate.yml",
-      "reason": "The workflow carries the pre-registered plan as release evidence without adopting or claiming a new governance asset.",
+      "path": ".github/workflows/publish-pypi.yml",
+      "reason": "The PyPI workflow only verifies and promotes the exact tag-bound CI wheel through OIDC; it neither evaluates nor adopts an Agent candidate.",
       "deterministic_proofs": ["tests/test_business_quality_flows.py"]
-    },
-    {
-      "path": ".github/workflows/release.yml",
-      "reason": "The workflow promotes the exact CI artifact and verifies its provenance; it does not change an evaluated Agent candidate.",
-      "deterministic_proofs": ["tests/test_business_quality_flows.py"]
-    },
-    {
-      "path": "aet.intent.json",
-      "reason": "The repository proof command is version-neutralized and remains a deterministic delivery contract with no Agent-behavior claim.",
-      "deterministic_proofs": ["tests/test_productization.py", "tests/test_business_quality_flows.py"]
     },
     {
       "path": "eval/real-agent/release_classification.py",
-      "reason": "The verifier expands fail-closed sensitive-path coverage and cannot modify a candidate, runner, evaluator, or adoption decision.",
-      "deterministic_proofs": ["tests/test_business_quality_flows.py"]
-    },
-    {
-      "path": "eval/real-agent/release_gate.py",
-      "reason": "The release verifier validates plan-bound fresh-pair results while preserving the legacy six-pair contract; no new candidate is adopted.",
-      "deterministic_proofs": ["tests/test_business_quality_flows.py"]
-    },
-    {
-      "path": "eval/real-agent/run_real_host_gate.py",
-      "reason": "The producer replaces a fixed rollout count with a hash-bound R3 plan; this deterministic release makes no observed improvement claim.",
+      "reason": "The verifier now classifies the PyPI publication workflow as behavior-sensitive so every release must review its deterministic boundary explicitly.",
       "deterministic_proofs": ["tests/test_business_quality_flows.py"]
     },
     {
       "path": "release-classification.json",
-      "reason": "This tracked contract binds the complete v1.11 Diff to reviewed deterministic proofs and explicitly declares no behavior adoption.",
+      "reason": "This tracked contract binds the complete v1.11.1 Diff to deterministic proofs and explicitly declares no changed Agent behavior or governance adoption.",
       "deterministic_proofs": ["tests/test_business_quality_flows.py"]
     },
     {
-      "path": "schemas/gate-history-assessment-v1.schema.json",
-      "reason": "The schema describes planning-only history output and is validated without entering historical observations into a PASS decision.",
-      "deterministic_proofs": ["tests/test_gate_plan.py"]
-    },
-    {
-      "path": "schemas/gate-history-registry-v1.schema.json",
-      "reason": "The schema fail-closes verified history identity and count fields; it neither runs nor adopts an Agent candidate.",
-      "deterministic_proofs": ["tests/test_gate_plan.py"]
-    },
-    {
-      "path": "schemas/gate-plan-v2.schema.json",
-      "reason": "The schema records pre-execution risk, power, binding, and stopping contracts and is covered by deterministic contract tests.",
-      "deterministic_proofs": ["tests/test_gate_plan.py"]
-    },
-    {
       "path": "skills/agent-engineering-toolkit/SKILL.md",
-      "reason": "Progressive disclosure shortens default context while preserving default-off activation and immutable authority boundaries exactly.",
-      "deterministic_proofs": ["tests/test_productization.py"]
-    },
-    {
-      "path": "skills/agent-engineering-toolkit/references/delivery-workflow.md",
-      "reason": "This on-demand reference relocates existing delivery guidance without granting execution, adoption, commit, push, or release authority.",
-      "deterministic_proofs": ["tests/test_productization.py"]
-    },
-    {
-      "path": "skills/agent-engineering-toolkit/references/evolution-workflow.md",
-      "reason": "This on-demand reference preserves bounded evolution and explicit human adoption; it contains no adopted candidate claim.",
-      "deterministic_proofs": ["tests/test_productization.py"]
-    },
-    {
-      "path": "skills/agent-engineering-toolkit/references/provenance-workflow.md",
-      "reason": "This on-demand reference relocates provenance commands and retains their non-executing, source-bound semantics.",
-      "deterministic_proofs": ["tests/test_productization.py"]
-    },
-    {
-      "path": "skills/agent-engineering-toolkit/references/quality-workflow.md",
-      "reason": "This on-demand reference preserves deterministic diagnosis and validation-only regression staging without automatic repair.",
-      "deterministic_proofs": ["tests/test_productization.py", "tests/test_quality_loop.py"]
-    },
-    {
-      "path": "skills/agent-engineering-toolkit/references/security-boundaries.md",
-      "reason": "This on-demand reference makes existing trust boundaries explicit and does not authorize tools or alter evaluator outcomes.",
+      "reason": "The Skill change updates the package version only while preserving default-off activation and every immutable authority boundary.",
       "deterministic_proofs": ["tests/test_productization.py"]
     },
     {
       "path": "src/aet/__init__.py",
       "reason": "The module change is the package version declaration only and makes no claim about changed Agent behavior.",
       "deterministic_proofs": ["tests/test_productization.py"]
-    },
-    {
-      "path": "src/aet/cli.py",
-      "reason": "The CLI exposes explicit plan, resume, and history-assessment contracts whose routing and failure behavior are deterministically tested.",
-      "deterministic_proofs": ["tests/test_gate_plan.py", "tests/test_learn_observed.py"]
-    },
-    {
-      "path": "src/aet/gate_plan.py",
-      "reason": "The new planner is dependency-free, pre-registered, hash-bound, and planning-only for history; it does not itself execute or adopt candidates.",
-      "deterministic_proofs": ["tests/test_gate_plan.py", "tests/test_learn_statistics.py"]
-    },
-    {
-      "path": "src/aet/learn.py",
-      "reason": "The runtime removes redundant work through exact preflight, resume, reuse, and legal stopping while preserving fresh-only PASS decisions.",
-      "deterministic_proofs": ["tests/test_learn_observed.py", "tests/test_business_quality_flows.py"]
-    },
-    {
-      "path": "src/aet/learn_statistics.py",
-      "reason": "The statistical layer adds pre-specified directional and sequential boundaries while retaining legacy fixed-sample behavior under tests.",
-      "deterministic_proofs": ["tests/test_learn_statistics.py", "tests/test_gate_plan.py"]
-    },
-    {
-      "path": "src/aet/quality.py",
-      "reason": "The merge now preserves the most conservative confidence and risk flags so duplicate evidence cannot weaken review routing.",
-      "deterministic_proofs": ["tests/test_quality_loop.py"]
     }
   ]
 }

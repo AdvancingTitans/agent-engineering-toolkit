@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.11.1 — 2026-07-14
+
+- Reworked the bilingual entrypoint around one concrete failure: a passing test
+  log becomes stale when the workspace changes. Added a runnable stale-proof
+  demo and case study that preserve historical execution success while failing
+  current freshness.
+- Published the AET 1.x stability contract and moved three focused contribution
+  paths near the top of both READMEs.
+- Added a focused PyPI project page, complete package metadata and an OIDC
+  Trusted Publishing workflow that promotes only the exact wheel already built
+  and hash-verified by CI.
+
 ## 1.11.0 — 2026-07-14
 
 - Replaced the universal six-pair Real Host release constant with a

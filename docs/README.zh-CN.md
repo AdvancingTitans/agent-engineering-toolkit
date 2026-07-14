@@ -8,23 +8,67 @@
 
 **[English](../README.md) · [简体中文](README.zh-CN.md)**
 
-> **面向 Agent 工程仓库的 evidence-driven 控制平面。**
+> **不要再相信 Coding Agent 口头说“测试通过”，让它提交可复核证据。**
 
-Agent 可以写代码、调用工具，也可以声称“已经完成”。AET 负责回答更难、
-也更接近生产的问题：**到底发生了什么、现在能声明什么、什么仍然未知、哪里失败了、
-哪些治理资产允许演进，以及谁有权批准变化。**
-
-AET 位于外部 Agent Runtime 与生产信任之间。它把命令、Diff、Artifact、指令、工作区状态
-与人工 Intent 转化为哈希绑定的工程证据；把已确认失败沉淀为受限质量资产；再通过
-Candidate 无权修改的 evaluator 验证治理资产的改进。
+Agent 可以运行命令并展示一份绿色日志。但只要 Workspace 随后发生变化，这份日志就
+不再能证明当前代码。AET 记录精确命令、退出状态、声明的 Artifact、人的 Intent 和
+Git Workspace Snapshot，并在 Handoff 或 Release 前重新检查 Evidence 是否仍然 Fresh。
 
 ```text
-外部执行 → Evidence IR → 确定性 Quality → 受限 Evolution
-         → 条件化 Gate Plan → 新鲜配对决策 → 人工 Adoption
+Agent Claim → 精确执行证据 → 实时 Freshness 检查 → Human Decision
 ```
 
-它不是又一个 Agent Runtime，也不是只会出分的评测看板。它是一层让 Agent 工作在发布前
-**可检查**、让治理能力在不把裁判权交给优化器的前提下**可演进**的工程系统。
+AET 是一个本地、MIT License 的 CLI 和 Portable Skill，可用于 Codex、Claude Code、
+Cursor 及其他 Coding Agent。它不替代 Agent、测试或 CI，也不会把缺失证据解释成通过。
+
+## 运行 Stale Proof Demo
+
+安装当前 Release，然后运行仓库中的 Demo：
+
+```bash
+uv tool install https://github.com/AdvancingTitans/agent-engineering-toolkit/releases/download/v1.11.1/agent_engineering_toolkit-1.11.1-py3-none-any.whl
+git clone https://github.com/AdvancingTitans/agent-engineering-toolkit.git
+cd agent-engineering-toolkit
+./examples/stale-proof-demo.sh
+```
+
+大约 60 秒内，它会记录一次真实通过的测试，在不重新执行测试的情况下修改 Workspace，
+然后再次检查同一份 Evidence：
+
+```text
+freshness: EXACT_MATCH
+# Workspace 发生变化
+freshness: HEAD_MATCH_WORKTREE_DIFFERS
+```
+
+历史命令确实通过了；AET 报告的是 Evidence 已经 Stale，而不是改写历史或继续相信旧日志。
+完整过程参见 [Stale Proof Case Study](case-studies/stale-proof.md)。
+
+## 从一个 Claim 开始
+
+每个任务只启用能回答当前问题的最小能力面：
+
+| 需要验证的 Claim | Command | 结果 |
+| --- | --- | --- |
+| “这些 Agent 指令与 Skills 可用。” | `aet audit . --strict` | 带 Source Evidence 的 Findings |
+| “这个 Diff 没超出批准范围。” | `aet review . --base main --intent aet.intent.json` | Path 与 Proof Contract Review |
+| “这条命令在这些代码字节上运行过。” | `aet trace … -- <argv>` | Hash-bound Trace Evidence |
+| “附带的 Proof 仍匹配当前 Workspace。” | `aet evidence receipt --report <trace.json>` | 实时 Freshness State |
+
+AET 默认应保持 **Off**。只在高价值 PR、多 Agent Handoff、Release 或安全敏感变更中，
+当某个 Claim 需要 Portable Proof 时启用。普通修改继续使用项目原有测试与 CI。
+
+## 参与建设 AET
+
+最合适的第一份贡献不要求先理解整个 Control Plane：
+
+- 用一个小型公开 Fixture 复现 False Positive 或 False Negative；
+- 在公开仓库 Dogfood AET，并贡献脱敏 Case Study；
+- 为 Codex、Claude Code、Cursor 或 GitHub Actions 添加最小 Integration Recipe。
+
+可以从 [`good first issue`](https://github.com/AdvancingTitans/agent-engineering-toolkit/issues/1)
+开始，或阅读 [CONTRIBUTING](../CONTRIBUTING.md)。AET 1.x 的兼容承诺见
+[Stability Contract](stability.md)。
 
 ## 先看结果，而不是口号
 
@@ -138,7 +182,7 @@ Diagnosis Record、Gate/Shadow Evidence、Rejection Memory、Context Manifest、
 | 当前声明需要多少真实行为证据？ | `aet learn plan` | 哈希绑定的风险、覆盖、效应、功效与停止契约。 |
 | 可比历史 Gate 能否辅助规划？ | `aet learn history assess` | 显式漂移与敏感性分析；历史永不进入 PASS。 |
 
-## 快速开始：可信交付
+## 可信交付 Workflow Reference
 
 ### 启用策略与适用项目
 
@@ -165,7 +209,7 @@ Gate Plan 在执行前冻结适用性、Suite 目标、覆盖、Alpha、Power、
 安装当前 Release：
 
 ```bash
-uv tool install https://github.com/AdvancingTitans/agent-engineering-toolkit/releases/download/v1.11.0/agent_engineering_toolkit-1.11.0-py3-none-any.whl
+uv tool install https://github.com/AdvancingTitans/agent-engineering-toolkit/releases/download/v1.11.1/agent_engineering_toolkit-1.11.1-py3-none-any.whl
 aet --version
 ```
 
@@ -401,7 +445,7 @@ uv run --with pytest python -m pytest tests/test_business_quality_flows.py -q
 uv run --no-editable --reinstall-package agent-engineering-toolkit \
   aet audit . --strict --format json --output .aet/evidence/release-audit.json
 uv build
-uv run --isolated --with dist/agent_engineering_toolkit-1.11.0-py3-none-any.whl \
+uv run --isolated --with dist/agent_engineering_toolkit-1.11.1-py3-none-any.whl \
   aet --version
 ```
 

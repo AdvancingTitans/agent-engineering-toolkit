@@ -8,27 +8,71 @@
 
 **[English](README.md) · [简体中文](docs/README.zh-CN.md)**
 
-> **The evidence-driven control plane for Agent-engineered repositories.**
+> **Stop coding Agents from claiming “tests passed” without verifiable proof.**
 
-Agents can write code, call tools, and claim success. AET answers the harder
-engineering questions: **what actually happened, what may be claimed, what
-remains unknown, what failed, what may evolve, and who is allowed to approve
-the change.**
-
-AET sits between an external Agent runtime and production trust. It turns
-commands, diffs, artifacts, instructions, workspace state, and human intent
-into hash-bound evidence; converts confirmed failures into bounded quality
-assets; and tests governance changes with evaluators the candidate cannot
-modify.
+An Agent can run a command and show a green log. That log stops proving the
+current code as soon as the workspace changes. AET records the exact command,
+exit status, declared artifacts, human intent and Git workspace snapshot, then
+checks whether the evidence is still fresh before a handoff or release.
 
 ```text
-External execution → Evidence IR → Deterministic Quality → Bounded Evolution
-                   → Conditional Gate Plan → Fresh-pair Decision → Human Adoption
+Agent claim → exact execution evidence → live freshness check → human decision
 ```
 
-It is not another Agent runtime or score dashboard. It is the engineering layer
-that makes Agent work **inspectable before release and improvable without giving
-the optimizer authority over the judge**.
+AET is a local, MIT-licensed CLI and portable Skill for Codex, Claude Code,
+Cursor and other coding Agents. It does not replace your Agent, tests or CI, and
+it never turns missing evidence into a pass.
+
+## Try the stale-proof demo
+
+Install the current release and run the repository demo:
+
+```bash
+uv tool install https://github.com/AdvancingTitans/agent-engineering-toolkit/releases/download/v1.11.1/agent_engineering_toolkit-1.11.1-py3-none-any.whl
+git clone https://github.com/AdvancingTitans/agent-engineering-toolkit.git
+cd agent-engineering-toolkit
+./examples/stale-proof-demo.sh
+```
+
+In about 60 seconds it records a real passing test, changes the workspace without
+rerunning the test, and checks the same evidence again:
+
+```text
+freshness: EXACT_MATCH
+# workspace changes
+freshness: HEAD_MATCH_WORKTREE_DIFFERS
+```
+
+The command did pass historically. AET reports that the proof is now stale
+instead of rewriting history or trusting an old green log. See the complete
+[stale-proof case study](docs/case-studies/stale-proof.md).
+
+## Start with one claim
+
+Use only the smallest surface needed for the current task:
+
+| Claim to verify | Command | Result |
+| --- | --- | --- |
+| “These Agent instructions and Skills are usable.” | `aet audit . --strict` | Source-backed findings |
+| “This diff stayed inside the approved scope.” | `aet review . --base main --intent aet.intent.json` | Path and proof contract review |
+| “This exact command ran on these exact bytes.” | `aet trace … -- <argv>` | Hash-bound Trace evidence |
+| “The attached proof still matches the workspace.” | `aet evidence receipt --report <trace.json>` | Live freshness state |
+
+AET is normally **off**. Use it for high-value PRs, multi-Agent handoffs,
+releases, or security-sensitive changes where a claim needs portable proof.
+Ordinary edits should keep using the project's normal tests and CI.
+
+## Help build AET
+
+The best first contributions do not require learning the whole control plane:
+
+- reproduce a false positive or false negative with a small public fixture;
+- dogfood AET on a public repository and contribute a sanitized case study;
+- add a minimal integration recipe for Codex, Claude Code, Cursor or GitHub Actions.
+
+Start with the [`good first issue`](https://github.com/AdvancingTitans/agent-engineering-toolkit/issues/1)
+or read [CONTRIBUTING.md](CONTRIBUTING.md). The compatibility promise for 1.x is
+documented in the [stability contract](docs/stability.md).
 
 ## The result, not the promise
 
@@ -159,7 +203,7 @@ Start with the smallest surface that answers the question.
 | How much observed evidence is required for this claim? | `aet learn plan` | A hash-bound risk, coverage, effect, power and stopping contract. |
 | Can comparable historical Gates inform planning? | `aet learn history assess` | Drift-explicit sensitivity only; history never enters PASS. |
 
-## Quick start: trustworthy delivery
+## Delivery workflow reference
 
 ### Activation and project fit
 
@@ -196,7 +240,7 @@ planning sensitivity report and never reduces the fresh-pair PASS statistic.
 Install the current release:
 
 ```bash
-uv tool install https://github.com/AdvancingTitans/agent-engineering-toolkit/releases/download/v1.11.0/agent_engineering_toolkit-1.11.0-py3-none-any.whl
+uv tool install https://github.com/AdvancingTitans/agent-engineering-toolkit/releases/download/v1.11.1/agent_engineering_toolkit-1.11.1-py3-none-any.whl
 aet --version
 ```
 
@@ -465,7 +509,7 @@ uv run --with pytest python -m pytest tests/test_business_quality_flows.py -q
 uv run --no-editable --reinstall-package agent-engineering-toolkit \
   aet audit . --strict --format json --output .aet/evidence/release-audit.json
 uv build
-uv run --isolated --with dist/agent_engineering_toolkit-1.11.0-py3-none-any.whl \
+uv run --isolated --with dist/agent_engineering_toolkit-1.11.1-py3-none-any.whl \
   aet --version
 ```
 

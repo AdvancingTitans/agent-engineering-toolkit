@@ -5,7 +5,7 @@ description: Opt-in AET quality controls for evidence-backed Agent delivery and 
 
 # Agent Engineering Toolkit
 
-Current Skill version: `1.11.0` (Evidence → Quality → conditional Gate → bounded Evolution)
+Current Skill version: `1.11.1` (Evidence → Quality → conditional Gate → bounded Evolution)
 
 ## Activation policy
 

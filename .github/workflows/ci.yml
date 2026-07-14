@@ -18,6 +18,8 @@ jobs:
       - uses: astral-sh/setup-uv@v5
       - name: Full test suite
         run: uv run --with pytest python -m pytest -q
+      - name: Verify the stale-proof demo
+        run: ./examples/stale-proof-demo.sh
       - name: Verify real-agent suites
         run: |
           mkdir -p .aet/evidence/suites

@@ -4,20 +4,35 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "agent-engineering-toolkit"
-version = "1.11.0"
+version = "1.11.1"
 description = "An evidence-driven Agent engineering quality and control layer for delivery proof, deterministic diagnosis, and bounded asset evolution."
-readme = "README.md"
+readme = "PYPI_README.md"
 requires-python = ">=3.11"
 license = "MIT"
 authors = [{ name = "AdvancingTitans" }]
+keywords = [
+  "ai-agents",
+  "coding-agents",
+  "codex",
+  "claude-code",
+  "evidence",
+  "code-review",
+]
 classifiers = [
+  "Development Status :: 5 - Production/Stable",
+  "Environment :: Console",
+  "Intended Audience :: Developers",
   "Programming Language :: Python :: 3",
   "Programming Language :: Python :: 3 :: Only",
+  "Topic :: Software Development :: Quality Assurance",
 ]
 
 [project.urls]
 Homepage = "https://github.com/AdvancingTitans/agent-engineering-toolkit"
+Repository = "https://github.com/AdvancingTitans/agent-engineering-toolkit"
+Documentation = "https://github.com/AdvancingTitans/agent-engineering-toolkit#readme"
 Issues = "https://github.com/AdvancingTitans/agent-engineering-toolkit/issues"
+Changelog = "https://github.com/AdvancingTitans/agent-engineering-toolkit/blob/main/CHANGELOG.md"
 
 [project.scripts]
 aet = "aet.cli:main"

@@ -8,7 +8,9 @@
   makes the Evidence → Quality → bounded Evolution → human-authority model
   explicit, sharpens toolchain differentiation and trust boundaries, and
   replaces the previous Mermaid renders with bilingual, editable dark-console
-  architecture diagrams.
+  architecture diagrams. The diagrams now separate Evidence Pack inputs from
+  independent provenance stores, Quality regression staging from governance
+  asset adoption, and audit-rule-only Shadow from the general adoption path.
 
 ## 1.9.0 — 2026-07-14
 

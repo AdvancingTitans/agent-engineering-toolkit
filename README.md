@@ -79,25 +79,28 @@ itself evidence, redefine `PASS`, replace the evaluator, or authorize adoption.
 Editable, offline source: [English HTML](docs/assets/aet-architecture-en.html) ·
 [Chinese HTML](docs/assets/aet-architecture-zh-cn.html).
 
-The architecture has five cooperating stages and one non-negotiable authority
-boundary:
+The architecture separates three flows that must not be collapsed into one
+autonomous loop, plus independent local provenance stores:
 
-1. **Evidence Plane — capture facts.** `audit`, `review`, `trace`, `context`,
-   `decision`, `run` and `evolve` record narrow, hash-bound facts. Only `trace`
-   executes, and only the argv after `--`.
-2. **Deterministic Quality — explain without guessing.** `quality diagnose`
-   applies an explicit local mapping; `quality promote` can stage only a
-   confirmed, de-identified, validation-only regression candidate.
-3. **Bounded Evolution — propose inside a Constitution.** Evidence Only
-   patterns are routed through one registered target adapter and a bounded
-   Patch IR. Immutable evaluator and evidence semantics stay outside the write
-   surface.
-4. **Independent Gates — prove behavior, not prose.** Core, validation,
-   held-out, adversarial, policy and Shadow suites are selected by target type.
-   Real-host evaluation is opt-in and repeated.
-5. **Human Adoption — retain authority.** A passing Gate produces a reviewable
-   stage. Adoption rechecks the baseline hash and requires explicit human
-   authorization, writing the result to the Decision Ledger.
+1. **Delivery evidence.** Audit, Review and Trace reports are projected into
+   Evidence IR and may be compiled into an Evidence Pack. Component ingestion,
+   finding status, proof binding and snapshot binding remain separate facts.
+   An optional Run Manifest attaches existing artifacts through an explicit
+   lifecycle; it does not execute them.
+2. **Independent provenance.** Context Manifest, Decision Ledger and Evolve
+   archaeology each have their own verification semantics. They are not hidden
+   Evidence Pack inputs and are not interchangeable forms of memory.
+3. **Quality regression staging.** Deterministic diagnosis preserves source
+   status. Promotion requires a matching diagnosis and confirmed badcase, then
+   writes only a canonical, validation-only staging bundle for human review;
+   promotion is not adoption and never writes formal suites.
+4. **Governance asset evolution.** Evidence Only records are filtered, stored,
+   inspected and deterministically mined before an explicit target adapter
+   builds Candidate IR v2. Target-specific replay and Gates precede staging.
+   Shadow is an additional adoption brake for audit rules only.
+5. **Human authority.** Stage rechecks exact Gate and candidate bindings;
+   adoption rechecks the live baseline and requires explicit authorization.
+   `sleep` can stop at Stage but cannot adopt, commit, push or release.
 
 The output is not merely a report. It is a growing set of reusable engineering
 assets: Evidence Packs, regression candidates, diagnosis records, Gate and

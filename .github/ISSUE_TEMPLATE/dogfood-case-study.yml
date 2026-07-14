@@ -1,0 +1,76 @@
+name: Dogfood / case study
+description: Share a sanitized, reproducible Agent Engineering Toolkit workflow.
+title: "case study: "
+labels: [documentation]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for testing AET on a real project. Use only public or sanitized
+        material; remove secrets, private paths, and raw private transcripts.
+  - type: input
+    id: version
+    attributes:
+      label: AET version
+      placeholder: "aet --version"
+    validations:
+      required: true
+  - type: input
+    id: repository
+    attributes:
+      label: Public repository or fixture
+      description: Link the public repository, minimal fixture, or reproducible example.
+      placeholder: "https://github.com/owner/repository"
+    validations:
+      required: true
+  - type: dropdown
+    id: surface
+    attributes:
+      label: AET surface
+      options:
+        - audit
+        - review
+        - trace / evidence pack
+        - triage
+        - evolve / Repo Archaeologist
+        - another workflow
+    validations:
+      required: true
+  - type: textarea
+    id: goal
+    attributes:
+      label: Goal and context
+      description: What decision or agent workflow were you trying to make reviewable?
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Exact commands and reproduction steps
+      description: Include relevant flags and a safe, minimal setup.
+      render: shell
+    validations:
+      required: true
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Outcome and evidence
+      description: What did AET surface, prevent, or make easier to verify?
+    validations:
+      required: true
+  - type: textarea
+    id: limitations
+    attributes:
+      label: Limitations or unexpected findings
+      description: Note false positives, UNKNOWN results, friction, or missing guidance.
+  - type: checkboxes
+    id: consent
+    attributes:
+      label: Publication checks
+      options:
+        - label: I removed secrets, private paths, and confidential material.
+          required: true
+        - label: The example is reproducible from the information above.
+          required: true
+        - label: Maintainers may link this case study from AET documentation.
+          required: true

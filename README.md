@@ -146,6 +146,17 @@ itself evidence, redefine `PASS`, replace the evaluator, or authorize adoption.
 Editable, offline source: [English HTML](docs/assets/aet-architecture-en.html) ·
 [Chinese HTML](docs/assets/aet-architecture-zh-cn.html).
 
+### Animated architecture
+
+This focused animation compresses the detailed control plane into its macro
+evidence flow. It complements the full static diagram above rather than
+replacing its delivery, provenance, quality, and governance detail.
+
+![Animated AET evidence flow](docs/assets/aet-architecture-dark-luxury.gif)
+
+[简体中文动画](docs/assets/aet-architecture-dark-luxury-zh-cn.gif) ·
+[Semantic SVG source](docs/assets/aet-architecture-dark-luxury.svg)
+
 Read the diagram from top to bottom: humans retain scope and adoption authority;
 an external coding Agent works in the repository through the project's existing
 tools; AET is the local control plane that records and evaluates the resulting

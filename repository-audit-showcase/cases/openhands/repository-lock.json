@@ -1,0 +1,19 @@
+{
+  "schema_version": "repository-lock/v1",
+  "case_id": "openhands",
+  "repository": "OpenHands/OpenHands",
+  "url": "https://github.com/OpenHands/OpenHands",
+  "branch": "main",
+  "commit": "96f902a9ac14bf5edfb2e47d759d75c91e4faf28",
+  "license": {
+    "spdx": "MIT",
+    "path": "LICENSE",
+    "blob_sha": "572bb259491e4e2adafee0c03db0d4ed419e6b9a"
+  },
+  "excluded_license": {
+    "name": "PolyForm Free Trial License 1.0.0",
+    "path": "enterprise/LICENSE",
+    "blob_sha": "e5c4559d654892649fd0e05568cf5c355a7bb66c"
+  },
+  "locked_at": "2026-07-23"
+}

@@ -1,0 +1,545 @@
+{
+  "audit_version": "1.12.0",
+  "disclaimer": "Static analysis of a public upstream repository. No source code is redistributed, and no affiliation or upstream endorsement is implied.",
+  "evidence_count": 52,
+  "files": [
+    {
+      "categories": [],
+      "lines": 0,
+      "path": "sweagent/agent/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "categories": [
+        "agent",
+        "recovery"
+      ],
+      "lines": 317,
+      "path": "sweagent/agent/action_sampler.py",
+      "sha256": "63ae3f8dbb1a5c38518b0e4b89fb7b8b1178f5c5df951ca2da1c1f92ade372bd",
+      "size": 12060
+    },
+    {
+      "categories": [
+        "agent",
+        "local_agent_definition",
+        "recovery"
+      ],
+      "lines": 1294,
+      "path": "sweagent/agent/agents.py",
+      "sha256": "d6cdf7ac66a6509ceba08e3541b856f0734acf79f9a485ed8a6e2c72f0d211a8",
+      "size": 55804
+    },
+    {
+      "categories": [
+        "agent",
+        "local_agent_definition",
+        "recovery"
+      ],
+      "lines": 106,
+      "path": "sweagent/agent/extra/shell_agent.py",
+      "sha256": "2798c2bcec1f23a01912332b73b5dee272ff43a8f30fd957c45d218805738dd6",
+      "size": 4528
+    },
+    {
+      "categories": [
+        "agent"
+      ],
+      "lines": 399,
+      "path": "sweagent/agent/history_processors.py",
+      "sha256": "8e3621a9b7d94761d184c57dc2ab1028f7eb04b01fdfcbe8ba122977d19e477a",
+      "size": 14869
+    },
+    {
+      "categories": [],
+      "lines": 0,
+      "path": "sweagent/agent/hooks/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "categories": [
+        "agent"
+      ],
+      "lines": 139,
+      "path": "sweagent/agent/hooks/abstract.py",
+      "sha256": "8f5d913a975f18a7fc8e2f355390a7b59aa1a6c9ec436cdc9326ab46868ac98b",
+      "size": 4064
+    },
+    {
+      "categories": [
+        "agent"
+      ],
+      "lines": 34,
+      "path": "sweagent/agent/hooks/status.py",
+      "sha256": "04e0978bd4c884a068582b17a3027a4b922db00e437d694e30d00fb8095db41b",
+      "size": 1163
+    },
+    {
+      "categories": [
+        "agent",
+        "recovery"
+      ],
+      "lines": 903,
+      "path": "sweagent/agent/models.py",
+      "sha256": "91a8cb62703d7db656b0e615811ff0b9eedd51cd3ea89a6eeb2393f1d35c6cce",
+      "size": 37757
+    },
+    {
+      "categories": [
+        "agent",
+        "recovery"
+      ],
+      "lines": 313,
+      "path": "sweagent/agent/problem_statement.py",
+      "sha256": "8c1c87a35acfccdf9efb0563415120feb847058b19e738eb152cd10fe5385a40",
+      "size": 11064
+    },
+    {
+      "categories": [
+        "agent",
+        "feedback",
+        "recovery"
+      ],
+      "lines": 664,
+      "path": "sweagent/agent/reviewer.py",
+      "sha256": "881580a98eef5942d9e3be759fa6a7901c162b9fe1279d9beb334e969688ad10",
+      "size": 25829
+    },
+    {
+      "categories": [],
+      "lines": 0,
+      "path": "sweagent/environment/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "categories": [],
+      "lines": 0,
+      "path": "sweagent/environment/hooks/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "categories": [
+        "runtime"
+      ],
+      "lines": 60,
+      "path": "sweagent/environment/hooks/abstract.py",
+      "sha256": "1d814ed173aebfffec93c814d69b8051555f9a2bcd165ccae3d734f83f254210",
+      "size": 1872
+    },
+    {
+      "categories": [
+        "runtime"
+      ],
+      "lines": 28,
+      "path": "sweagent/environment/hooks/status.py",
+      "sha256": "5cae4d5ea9d4aeff9041854baeb8a45fb4943c334abafb2ea06aa256d3cce968",
+      "size": 835
+    },
+    {
+      "categories": [
+        "recovery",
+        "runtime"
+      ],
+      "lines": 258,
+      "path": "sweagent/environment/repo.py",
+      "sha256": "88d0c1098202a725eaaddcfa8d61b09eaacb7232cad5becbcd568b50b26dc760",
+      "size": 9519
+    },
+    {
+      "categories": [
+        "runtime"
+      ],
+      "lines": 276,
+      "path": "sweagent/environment/swe_env.py",
+      "sha256": "cc2631890aaba56a648a2bdeef6019b7c2f29a171daba6e704adbfb57ff99c7a",
+      "size": 10989
+    },
+    {
+      "categories": [],
+      "lines": 0,
+      "path": "sweagent/tools/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 57,
+      "path": "sweagent/tools/bundle.py",
+      "sha256": "13d6d79fa4f6be7604eb580c5b59c5c1538e49f1f6a414810b4d7b944e47df2e",
+      "size": 1804
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 223,
+      "path": "sweagent/tools/commands.py",
+      "sha256": "f4267d069350a78eaf83e2556a01923b76ea3724cd0016f9317db663b5f524af",
+      "size": 8233
+    },
+    {
+      "categories": [
+        "recovery",
+        "tool"
+      ],
+      "lines": 621,
+      "path": "sweagent/tools/parsing.py",
+      "sha256": "20fb9e08a808ba33aab122b487d67637b133a4e1fd698f28386a36f92f44b5d2",
+      "size": 25145
+    },
+    {
+      "categories": [
+        "recovery",
+        "tool"
+      ],
+      "lines": 430,
+      "path": "sweagent/tools/tools.py",
+      "sha256": "6a5b9ca0b4b7bbc60364fb832a478fad7c7c41a0d91cb0718c9ad523120e9a70",
+      "size": 16743
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 108,
+      "path": "sweagent/tools/utils.py",
+      "sha256": "7e6925fd0db11f617d0d994ff63a1e0f0983053a2ed455ede2f279f00852b74f",
+      "size": 4044
+    },
+    {
+      "categories": [
+        "agent",
+        "verification"
+      ],
+      "lines": 262,
+      "path": "tests/test_agent.py",
+      "sha256": "ccb00ddbff2cb5e9937e39dbff0ddbf1afbedb5d9a7e5ad1b9cea8977b97502d",
+      "size": 10366
+    },
+    {
+      "categories": [
+        "trajectory",
+        "verification"
+      ],
+      "lines": 342,
+      "path": "tests/test_data/trajectories/gpt4__swe-agent-test-repo__default_from_url__t-0.00__p-0.95__c-3.00__install-1/6e44b9__sweagenttestrepo-1c2844.traj",
+      "sha256": "dd79a193908492a51f532269ee126f3600da98b84551e2bdc1adacc7bf29ad67",
+      "size": 30693
+    },
+    {
+      "categories": [
+        "recovery",
+        "trajectory",
+        "verification"
+      ],
+      "lines": 15,
+      "path": "tests/test_data/trajectories/gpt4__swe-agent-test-repo__default_from_url__t-0.00__p-0.95__c-3.00__install-1/solution_missing_colon.py",
+      "sha256": "964996408c99e48aa2503f87029f252a28593bf2570a9ee02ba502cd77529032",
+      "size": 265
+    },
+    {
+      "categories": [
+        "trajectory",
+        "verification"
+      ],
+      "lines": 518,
+      "path": "tests/test_data/trajectories/gpt4__swe-agent__test-repo__default_from_url__t-0.00__p-0.95__c-3.00__install-1/args.yaml",
+      "sha256": "64929be09096fdb9bcb05ec20227abb751b542ebd2230432507cea5656c78f40",
+      "size": 30488
+    },
+    {
+      "categories": [
+        "trajectory",
+        "verification"
+      ],
+      "lines": 124,
+      "path": "tests/test_data/trajectories/gpt4__swe-agent__test-repo__default_from_url__t-0.00__p-0.95__c-3.00__install-1/swe-agent__test-repo-i1.traj",
+      "sha256": "37894da0658b71c3ffc37fcecad550386159e841d4aa8a82bfe6a12bd46589d1",
+      "size": 51540
+    },
+    {
+      "categories": [
+        "trajectory",
+        "verification"
+      ],
+      "lines": 520,
+      "path": "tests/test_data/trajectories/gpt4__swe-bench-dev-easy_first_only__default__t-0.00__p-0.95__c-3.00__install-1/args.yaml",
+      "sha256": "b7d2b2bec9e2630f6891f24beb8f70e39a50b01d453850fa6aa5c1c633866c9d",
+      "size": 30378
+    },
+    {
+      "categories": [
+        "trajectory",
+        "verification"
+      ],
+      "lines": 257,
+      "path": "tests/test_data/trajectories/gpt4__swe-bench-dev-easy_first_only__default__t-0.00__p-0.95__c-3.00__install-1/pydicom__pydicom-1458.traj",
+      "sha256": "f081b131803e16ed68cf2c65bedff8e8a60be494c98b141d0af44ce28ae56b74",
+      "size": 104975
+    },
+    {
+      "categories": [
+        "verification"
+      ],
+      "lines": 193,
+      "path": "tests/test_tools_command_parsing.py",
+      "sha256": "3e6474fc146fb16f1c5278ddbdb023a48f796353ee22b5c40142688af333685e",
+      "size": 7235
+    },
+    {
+      "categories": [
+        "trajectory"
+      ],
+      "lines": 6,
+      "path": "trajectories/README.md",
+      "sha256": "de112edf84f6aa74fe02b5cb3c0ce01394b254b409d48137515ec92127bced8e",
+      "size": 291
+    },
+    {
+      "categories": [
+        "trajectory"
+      ],
+      "lines": 318,
+      "path": "trajectories/demonstrations/ctf/crypto/BabyEncryption.traj",
+      "sha256": "fe26571d9c23f2b91483c18eb20d9e953d07ec5ad82ea36b6e1e80981d35afe4",
+      "size": 50065
+    },
+    {
+      "categories": [
+        "trajectory"
+      ],
+      "lines": 197,
+      "path": "trajectories/demonstrations/ctf/crypto/BabyTimeCapsule.traj",
+      "sha256": "c17a00dc5a46531c6ddf5e4209e78bd2769147eef15f2f7102cdcf3f17b262a8",
+      "size": 60470
+    },
+    {
+      "categories": [
+        "trajectory"
+      ],
+      "lines": 289,
+      "path": "trajectories/demonstrations/ctf/crypto/eps.traj",
+      "sha256": "a43b614947dc11151e13a18af5e4ce53e0db0c48d982c0ad6c8f703dda9a240b",
+      "size": 40018
+    },
+    {
+      "categories": [
+        "trajectory"
+      ],
+      "lines": 368,
+      "path": "trajectories/demonstrations/ctf/crypto/katy.traj",
+      "sha256": "17dde30d12f6e104fe23124689008813c5ce52ea35f4680f8fcff106ac3e9707",
+      "size": 65291
+    },
+    {
+      "categories": [
+        "trajectory"
+      ],
+      "lines": 102,
+      "path": "trajectories/demonstrations/ctf/forensics/flash.traj",
+      "sha256": "7b504b5c0541c9142ac731315f48631283d5c677b0ec32eaaf501f4a5675d15b",
+      "size": 63748
+    },
+    {
+      "categories": [
+        "trajectory"
+      ],
+      "lines": 102,
+      "path": "trajectories/demonstrations/ctf/misc/networking_1.traj",
+      "sha256": "00531c5873a072bfeda09b857d99dbe0fc5ccc2342a85a75af46037a77ea3ceb",
+      "size": 19147
+    },
+    {
+      "categories": [
+        "trajectory"
+      ],
+      "lines": 159,
+      "path": "trajectories/demonstrations/ctf/pwn/warmup.traj",
+      "sha256": "d006299bff4bba35071f0a44217a82b5062fade7da1e71f191c30dda3e9215db",
+      "size": 29936
+    },
+    {
+      "categories": [
+        "trajectory"
+      ],
+      "lines": 251,
+      "path": "trajectories/demonstrations/ctf/rev/rock.traj",
+      "sha256": "13592b73447d3c8339470846103ecf4ff99efe1ae923aa416f4ed2972032b2c0",
+      "size": 53544
+    },
+    {
+      "categories": [
+        "trajectory"
+      ],
+      "lines": 422,
+      "path": "trajectories/demonstrations/ctf/web/i_got_id_demo.traj",
+      "sha256": "451dc564e12fd2372115caae7c9d3ecd42fbf2d4bd1a6cf1914b4b5fcb089449",
+      "size": 109540
+    },
+    {
+      "categories": [
+        "trajectory"
+      ],
+      "lines": 151,
+      "path": "trajectories/demonstrations/function_calling_simple.traj",
+      "sha256": "b75b7744217bd5e91e6be8f39f17e8a215429be9d57b2d7ef1ff4c6787375d9f",
+      "size": 11640
+    },
+    {
+      "categories": [
+        "trajectory"
+      ],
+      "lines": 129,
+      "path": "trajectories/demonstrations/human_thought__swe-bench-HumanEvalFix-python__lcb__t-0.00__p-0.95__c-4.00__install-0/humanevalfix-python-0.traj",
+      "sha256": "d55e047485f44a26325ff03ec9895e8fecbc665b098fd98427baa8c57635f2de",
+      "size": 22114
+    },
+    {
+      "categories": [
+        "trajectory"
+      ],
+      "lines": 318,
+      "path": "trajectories/demonstrations/replay__marshmallow-code__marshmallow-1867__default__t-0.20__p-0.95__c-2.00__install-1___install_from_source/marshmallow-code__marshmallow-1867.traj",
+      "sha256": "8856076ec31832f20aefa7f0a2714e3ad6bc752f14815d94d2e852e50213a459",
+      "size": 81519
+    },
+    {
+      "categories": [
+        "trajectory"
+      ],
+      "lines": 251,
+      "path": "trajectories/demonstrations/replay__marshmallow-code__marshmallow-1867__default_sys-env_cursors_window100__t-0.20__p-0.95__c-2.00__install-1/marshmallow-code__marshmallow-1867.traj",
+      "sha256": "bcd55c687552ca66e6ae2c842b2f3a58a0eda15e7b83ebcfbbae97406d9beca3",
+      "size": 84100
+    },
+    {
+      "categories": [
+        "trajectory"
+      ],
+      "lines": 399,
+      "path": "trajectories/demonstrations/replay__marshmallow-code__marshmallow-1867__default_sys-env_window100__t-0.20__p-0.95__c-2.00__install-1/marshmallow-code__marshmallow-1867.traj",
+      "sha256": "da31b29132b6a7e871e0090193f0249725dba09e773efdbfd69e521d50ce6eb0",
+      "size": 68250
+    },
+    {
+      "categories": [
+        "trajectory"
+      ],
+      "lines": 594,
+      "path": "trajectories/demonstrations/replay__marshmallow-code__marshmallow-1867__function_calling__install-1/marshmallow-code__marshmallow-1867.traj",
+      "sha256": "c2ca395c37f23e8f1b603b3f27dc7557eb9216d35b695fd458e601a526b70366",
+      "size": 100262
+    },
+    {
+      "categories": [
+        "trajectory"
+      ],
+      "lines": 592,
+      "path": "trajectories/demonstrations/replay__marshmallow-code__marshmallow-1867__function_calling_replace__install-1/marshmallow-code__marshmallow-1867.traj",
+      "sha256": "446e76ce113eb8e3a12f264a5015d9f475f6e502201421d51a883b8b05ca8470",
+      "size": 100547
+    },
+    {
+      "categories": [
+        "trajectory"
+      ],
+      "lines": 3316,
+      "path": "trajectories/demonstrations/replay__marshmallow-code__marshmallow-1867__function_calling_replace_from_source/marshmallow-code__marshmallow-1867.traj",
+      "sha256": "cb042a1bd789bfd699f90afd8641f2a64336c7829369c7342b7a66ad4efa695f",
+      "size": 391467
+    },
+    {
+      "categories": [
+        "trajectory"
+      ],
+      "lines": 251,
+      "path": "trajectories/demonstrations/replay__marshmallow-code__marshmallow-1867__xml_sys-env_cursors_window100__t-0.20__p-0.95__c-2.00__install-1/marshmallow-code__marshmallow-1867.traj",
+      "sha256": "ac53752a5c51e0bc4644e3cdf19cd9083ee1ebe5ca53c2afbad09fe9b34aafaa",
+      "size": 84328
+    },
+    {
+      "categories": [
+        "trajectory"
+      ],
+      "lines": 399,
+      "path": "trajectories/demonstrations/replay__marshmallow-code__marshmallow-1867__xml_sys-env_window100__t-0.20__p-0.95__c-2.00__install-1/marshmallow-code__marshmallow-1867.traj",
+      "sha256": "b227c94642185bb4fd040f9a0525fdbb9b32fe6c2a22a0091a091e00aa2bcdf6",
+      "size": 67875
+    },
+    {
+      "categories": [
+        "trajectory"
+      ],
+      "lines": 432,
+      "path": "trajectories/demonstrations/str_replace_anthropic_demo.yaml",
+      "sha256": "b462534bf5203e7274eee9f681c6281d5e8280d681a3300648263cfdd742b3d7",
+      "size": 18108
+    }
+  ],
+  "generated_at": "2026-07-23T07:29:06.953800+00:00",
+  "llm": {
+    "affects_findings": false,
+    "execution_time_seconds": 0,
+    "model_name": null,
+    "status": "NOT_APPLICABLE",
+    "token_usage": null
+  },
+  "profile": {
+    "case_id": "swe-agent",
+    "schema_version": "repository-audit-profile/v1",
+    "sha256": "e7e5e5ea2b20a84c49b2b847b39e616e6ec3e29188fb375a614c05c769c9c871"
+  },
+  "report_kind": "repository_evidence_manifest",
+  "repository": {
+    "branch": "main",
+    "case_id": "swe-agent",
+    "commit": "3ea751c087f32b16e039a2233dd6eefecef325d5",
+    "license": {
+      "blob_sha": "e702436e21844c5c519de31ab68277a6d3b427d9",
+      "path": "LICENSE",
+      "spdx": "MIT"
+    },
+    "name": "SWE-agent",
+    "url": "https://github.com/SWE-agent/SWE-agent"
+  },
+  "review": {
+    "required_before_publication": true,
+    "status": "APPROVED"
+  },
+  "runtime": {
+    "excludes": [
+      "clone",
+      "dependency_install",
+      "llm_network",
+      "manual_review"
+    ],
+    "max_seconds": 900.0,
+    "total_seconds": 0.138405,
+    "within_budget": true
+  },
+  "schema_version": "repository-evidence-manifest/v1",
+  "scope": {
+    "exclude": [
+      "docs/**",
+      "benchmark/**",
+      "examples/**"
+    ],
+    "files_collected": 52,
+    "files_skipped": [],
+    "include": [
+      "sweagent/agent/**",
+      "sweagent/environment/**",
+      "sweagent/tools/**",
+      "trajectories/**",
+      "tests/test_agent.py",
+      "tests/test_tools_command_parsing.py",
+      "tests/test_data/trajectories/**"
+    ]
+  }
+}

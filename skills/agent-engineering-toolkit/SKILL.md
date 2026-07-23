@@ -5,7 +5,7 @@ description: Opt-in AET quality controls for evidence-backed Agent delivery and 
 
 # Agent Engineering Toolkit
 
-Current Skill version: `1.11.1` (Evidence → Quality → conditional Gate → bounded Evolution)
+Current Skill version: `1.12.0` (Evidence → Quality → conditional Gate → bounded Evolution)
 
 ## Activation policy
 
@@ -45,6 +45,7 @@ do not infer permission for a broader workflow.
 | User need | Initial command | Output |
 | --- | --- | --- |
 | Trust current instructions / Skills | `aet audit . --strict` | Audit report |
+| Inspect a commit-locked public Agent repository case | `aet audit <case> --repo <checkout>` | 12-file bilingual static Showcase bundle |
 | Check a proposed or completed diff | `aet review . --base <base>` | Review report |
 | Prove a command ran and retain a declared text report | `aet trace --proof <id> --artifact <path> … -- <argv>` | Trace + pack |
 | Understand why a repo changed | `aet evolve plan/collect/build/report` | Evolution Pack |
@@ -64,6 +65,7 @@ manual into the Agent context.
 | Surface | Read only when needed |
 | --- | --- |
 | Audit, Review, Trace, Pack, Run | [delivery workflow](references/delivery-workflow.md) |
+| Repository Audit Showcase | [repository audit showcase](references/repository-audit-showcase.md) |
 | Context, Decision, Evolve | [provenance workflow](references/provenance-workflow.md) |
 | Quality diagnose/promote | [quality workflow](references/quality-workflow.md) |
 | Learn, real-host Gate, Stage/Adopt | [evolution workflow](references/evolution-workflow.md) |

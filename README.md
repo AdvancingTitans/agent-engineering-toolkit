@@ -23,12 +23,43 @@ AET is a local, MIT-licensed CLI and portable Skill for Codex, Claude Code,
 Cursor and other coding Agents. It does not replace your Agent, tests or CI, and
 it never turns missing evidence into a pass.
 
+## Real-world Repository Audit Showcase
+
+AET now ships three commit-locked audits of public Agent repositories. Each
+case scans only a bounded local checkout, applies deterministic rules, and
+produces evidence-backed engineering observations plus HTML and SVG views.
+There is no project score or ranking.
+
+| Case | What the bounded audit demonstrates | Generated report |
+| --- | --- | --- |
+| SWE-agent | Agent loop, tool interaction, trajectory and completion evidence | [English](repository-audit-showcase/reports/swe-agent/audit-result/en/audit-report.md) · [简体中文](repository-audit-showcase/reports/swe-agent/audit-result/zh-CN/audit-report.md) |
+| Google ADK | Agent architecture, tool governance and evaluation feedback | [English](repository-audit-showcase/reports/google-adk/audit-result/en/audit-report.md) · [简体中文](repository-audit-showcase/reports/google-adk/audit-result/zh-CN/audit-report.md) |
+| OpenHands | Application orchestration, runtime isolation and the external Agent-core boundary | [English](repository-audit-showcase/reports/openhands/audit-result/en/audit-report.md) · [简体中文](repository-audit-showcase/reports/openhands/audit-result/zh-CN/audit-report.md) |
+
+![OpenHands bounded Agent flow](repository-audit-showcase/reports/openhands/audit-result/en/diagrams/agent-flow.svg)
+
+Run a case against the matching locked local checkout:
+
+```bash
+aet audit swe-agent --repo /path/to/SWE-agent
+aet audit google-adk --repo /path/to/adk-python
+aet audit openhands --repo /path/to/OpenHands
+```
+
+Each run writes two shared machine artifacts plus five human-readable artifacts
+for each of `en/` and `zh-CN/`: repository summaries, Markdown and HTML reports,
+and two SVG diagrams. The 15-minute budget starts with the local checkout and AET
+already installed. AET does not run upstream code or tests, install upstream
+dependencies, copy source text into reports, or use an LLM to create or change
+a Finding. `UNKNOWN` remains explicit, and generated reports require maintainer
+review before publication. See the [scope and publication boundary](repository-audit-showcase/docs/scope-and-publication.md).
+
 ## Try the stale-proof demo
 
 Install the current release and run the repository demo:
 
 ```bash
-uv tool install https://github.com/AdvancingTitans/agent-engineering-toolkit/releases/download/v1.11.1/agent_engineering_toolkit-1.11.1-py3-none-any.whl
+uv tool install https://github.com/AdvancingTitans/agent-engineering-toolkit/releases/download/v1.12.0/agent_engineering_toolkit-1.12.0-py3-none-any.whl
 git clone https://github.com/AdvancingTitans/agent-engineering-toolkit.git
 cd agent-engineering-toolkit
 ./examples/stale-proof-demo.sh
@@ -251,7 +282,7 @@ planning sensitivity report and never reduces the fresh-pair PASS statistic.
 Install the current release:
 
 ```bash
-uv tool install https://github.com/AdvancingTitans/agent-engineering-toolkit/releases/download/v1.11.1/agent_engineering_toolkit-1.11.1-py3-none-any.whl
+uv tool install https://github.com/AdvancingTitans/agent-engineering-toolkit/releases/download/v1.12.0/agent_engineering_toolkit-1.12.0-py3-none-any.whl
 aet --version
 ```
 
@@ -520,7 +551,7 @@ uv run --with pytest python -m pytest tests/test_business_quality_flows.py -q
 uv run --no-editable --reinstall-package agent-engineering-toolkit \
   aet audit . --strict --format json --output .aet/evidence/release-audit.json
 uv build
-uv run --isolated --with dist/agent_engineering_toolkit-1.11.1-py3-none-any.whl \
+uv run --isolated --with dist/agent_engineering_toolkit-1.12.0-py3-none-any.whl \
   aet --version
 ```
 

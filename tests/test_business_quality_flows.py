@@ -240,7 +240,7 @@ class BusinessQualityFlowsTests(unittest.TestCase):
                 check=True,
             )
             metadata = json.loads((output / "candidate.json").read_text(encoding="utf-8"))
-            self.assertEqual(metadata["candidate_id"], "CAND-REAL-HOST-V1-11-1")
+            self.assertEqual(metadata["candidate_id"], "CAND-REAL-HOST-V1-12-0")
             candidate_bytes = (output / "candidate.SKILL.md").read_bytes()
             self.assertEqual(metadata["candidate_sha256"], hashlib.sha256(candidate_bytes).hexdigest())
             candidate_text = candidate_bytes.decode()

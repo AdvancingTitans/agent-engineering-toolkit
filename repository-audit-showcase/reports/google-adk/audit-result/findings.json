@@ -1,0 +1,229 @@
+{
+  "audit_version": "1.12.0",
+  "disclaimer": "Static analysis of a public upstream repository. No source code is redistributed, and no affiliation or upstream endorsement is implied.",
+  "findings": [
+    {
+      "evidence": [
+        {
+          "detail": "HEAD=67ab27f2547db48f7248b1689aab4c18502aee17",
+          "line": null,
+          "path": ".git"
+        }
+      ],
+      "id": "AET-REPO-001",
+      "impact": {
+        "description": "A mismatched or dirty checkout makes line-level evidence non-reproducible.",
+        "level": "high"
+      },
+      "recommendation": "Checkout the locked commit and remove local repository changes.",
+      "rule_version": "1",
+      "severity": "INFO",
+      "status": "PASS",
+      "title": "Repository revision is reproducibly locked"
+    },
+    {
+      "evidence": [
+        {
+          "detail": "git_blob=d645695673349e3947e8e5ae42332d0ac3164cd7; expected=d645695673349e3947e8e5ae42332d0ac3164cd7",
+          "line": 1,
+          "path": "LICENSE"
+        }
+      ],
+      "id": "AET-REPO-002",
+      "impact": {
+        "description": "A license mismatch or prohibited path in the evidence set invalidates publication.",
+        "level": "high"
+      },
+      "recommendation": "Restore the locked license file and keep prohibited paths outside every include pattern.",
+      "rule_version": "1",
+      "severity": "INFO",
+      "status": "PASS",
+      "title": "License and prohibited-path boundary is enforced"
+    },
+    {
+      "evidence": [
+        {
+          "detail": "category=agent; sha256=626fc6c0db72db435f82c29cea3d45c138df8e5a9cbc53edc16bc26e3433e06a",
+          "line": 1,
+          "path": "src/google/adk/agents/__init__.py"
+        },
+        {
+          "detail": "category=agent; sha256=d76c7774db14ed7d6efbb5c247e27521d13ad6d7c51d37da1b4988e17c4201fa",
+          "line": 1,
+          "path": "src/google/adk/agents/_managed_agent.py"
+        },
+        {
+          "detail": "category=tool; sha256=dfcb71a29e88bce149bae373f114e189101e95e16d1c62925f82b3e524aa7c93",
+          "line": 1,
+          "path": "src/google/adk/agents/active_streaming_tool.py"
+        },
+        {
+          "detail": "category=tool; sha256=1f433dfb9e7086a75f1a19d10e512e3c7b66abf7c2b11ae25ab0242ad58b8c83",
+          "line": 1,
+          "path": "src/google/adk/agents/llm/task/_finish_task_tool.py"
+        },
+        {
+          "detail": "category=runtime; sha256=94b3b3212def203b5b9d653ca09a1181f3afe40cdd68667a5ae2d862f3f61e0c",
+          "line": 1,
+          "path": "src/google/adk/runners.py"
+        },
+        {
+          "detail": "category=runtime; sha256=439a003dc763bca8deec242087bc2c0fb29b7667fca9ebc13bc23da22f53152b",
+          "line": 1,
+          "path": "src/google/adk/tools/environment/__init__.py"
+        }
+      ],
+      "id": "AET-REPO-003",
+      "impact": {
+        "description": "Static Agent, tool, and runner evidence is present in the bounded SDK scope.",
+        "level": "high"
+      },
+      "recommendation": "Keep Agent, sub-Agent, tool, and runner responsibilities explicit and independently testable.",
+      "rule_version": "1",
+      "severity": "INFO",
+      "status": "PASS",
+      "title": "Agent architecture boundaries are visible"
+    },
+    {
+      "evidence": [
+        {
+          "detail": "category=tool; sha256=dfcb71a29e88bce149bae373f114e189101e95e16d1c62925f82b3e524aa7c93",
+          "line": 1,
+          "path": "src/google/adk/agents/active_streaming_tool.py"
+        },
+        {
+          "detail": "category=tool; sha256=1f433dfb9e7086a75f1a19d10e512e3c7b66abf7c2b11ae25ab0242ad58b8c83",
+          "line": 1,
+          "path": "src/google/adk/agents/llm/task/_finish_task_tool.py"
+        },
+        {
+          "detail": "category=permission; sha256=9c39ecfc30ceb4d06727a55e23bcc9188e2a3f425ed682ddc2ce8442d0c1d295",
+          "line": 89,
+          "path": "src/google/adk/agents/config_agent_utils.py"
+        },
+        {
+          "detail": "category=permission; sha256=62ccf7a555a1f2b5dbaec8e0dec79f1b60ef655d3430c2b67237d8a8bc72e1eb",
+          "line": 268,
+          "path": "src/google/adk/agents/context.py"
+        },
+        {
+          "detail": "category=recovery; sha256=d76c7774db14ed7d6efbb5c247e27521d13ad6d7c51d37da1b4988e17c4201fa",
+          "line": 84,
+          "path": "src/google/adk/agents/_managed_agent.py"
+        },
+        {
+          "detail": "category=recovery; sha256=2fe42c15e89cffe1233554487da26fc670a6adba1dfdbbee4152df1fd076edfb",
+          "line": 602,
+          "path": "src/google/adk/agents/base_agent.py"
+        }
+      ],
+      "id": "AET-REPO-004",
+      "impact": {
+        "description": "The bounded SDK scope contains static tool, permission, and failure-handling evidence.",
+        "level": "high"
+      },
+      "recommendation": "Bind each tool registration to explicit authorization and failure evidence.",
+      "rule_version": "1",
+      "severity": "INFO",
+      "status": "PASS",
+      "title": "Tool governance evidence is inspectable"
+    },
+    {
+      "evidence": [
+        {
+          "detail": "category=verification; sha256=1083ca2c59140e45eaaf471a4a5a0dada4cb63e3df30a9acff762cc1594d4632",
+          "line": 1,
+          "path": "src/google/adk/evaluation/__init__.py"
+        },
+        {
+          "detail": "category=verification; sha256=4720d76ecb6a5eb048bda9f4a1a3c86a3359c4fe727cd2729e31077456964e6e",
+          "line": 1,
+          "path": "src/google/adk/evaluation/_eval_set_results_manager_utils.py"
+        },
+        {
+          "detail": "category=feedback; sha256=1083ca2c59140e45eaaf471a4a5a0dada4cb63e3df30a9acff762cc1594d4632",
+          "line": 1,
+          "path": "src/google/adk/evaluation/__init__.py"
+        },
+        {
+          "detail": "category=feedback; sha256=4720d76ecb6a5eb048bda9f4a1a3c86a3359c4fe727cd2729e31077456964e6e",
+          "line": 1,
+          "path": "src/google/adk/evaluation/_eval_set_results_manager_utils.py"
+        }
+      ],
+      "id": "AET-REPO-005",
+      "impact": {
+        "description": "Evaluation and feedback evidence is present in the bounded SDK scope.",
+        "level": "medium"
+      },
+      "recommendation": "Expose a traceable link from evaluation results to the Agent path being assessed.",
+      "rule_version": "1",
+      "severity": "INFO",
+      "status": "PASS",
+      "title": "Evaluation feedback paths are present"
+    }
+  ],
+  "generated_at": "2026-07-23T07:29:08.208957+00:00",
+  "llm": {
+    "affects_findings": false,
+    "execution_time_seconds": 0,
+    "model_name": null,
+    "status": "NOT_APPLICABLE",
+    "token_usage": null
+  },
+  "report_kind": "repository_audit",
+  "repository": {
+    "branch": "main",
+    "case_id": "google-adk",
+    "commit": "67ab27f2547db48f7248b1689aab4c18502aee17",
+    "license": {
+      "blob_sha": "d645695673349e3947e8e5ae42332d0ac3164cd7",
+      "path": "LICENSE",
+      "spdx": "Apache-2.0"
+    },
+    "name": "Google Agent Development Kit",
+    "url": "https://github.com/google/adk-python"
+  },
+  "review": {
+    "required_before_publication": true,
+    "status": "APPROVED"
+  },
+  "runtime": {
+    "excludes": [
+      "clone",
+      "dependency_install",
+      "llm_network",
+      "manual_review"
+    ],
+    "max_seconds": 900.0,
+    "total_seconds": 1.176703,
+    "within_budget": true
+  },
+  "schema_version": "repository-audit-result/v1",
+  "scope": {
+    "exclude": [
+      "samples/**",
+      "docs/**",
+      "src/google/adk/examples/**"
+    ],
+    "files_collected": 474,
+    "files_skipped": [],
+    "include": [
+      "src/google/adk/agents/**",
+      "src/google/adk/tools/**",
+      "src/google/adk/runners.py",
+      "src/google/adk/evaluation/**",
+      "tests/unittests/agents/**",
+      "tests/unittests/tools/**",
+      "tests/unittests/runners/**",
+      "tests/unittests/evaluation/**",
+      "tests/unittests/test_runners.py"
+    ]
+  },
+  "summary": {
+    "FAIL": 0,
+    "NOT_APPLICABLE": 0,
+    "PASS": 5,
+    "UNKNOWN": 0
+  }
+}

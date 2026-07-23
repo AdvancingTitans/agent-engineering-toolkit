@@ -1,5 +1,24 @@
 # Changelog
 
+## 1.12.0 — 2026-07-23
+
+- Added the Repository Audit Showcase for commit-locked SWE-agent, Google ADK,
+  and OpenHands checkouts, with independent
+  `repository-audit-profile/v1` profiles and the
+  `aet audit <case> --repo <checkout>` CLI.
+- Added deterministic, static-only evidence collection and findings. Upstream
+  code and tests are never executed; LLM narration is off and cannot change a
+  Finding; `PASS`/`FAIL`/`UNKNOWN`/`NOT_APPLICABLE` remain authoritative.
+- Added profile, result, and evidence-manifest JSON Schemas, shared machine
+  artifacts, and complete English/Simplified Chinese summaries, Markdown,
+  HTML, Agent-flow SVGs, and evidence-chain SVGs.
+- Locked each upstream commit and License boundary. OpenHands
+  `enterprise/**` content is prohibited, and its externally versioned Agent
+  core remains an explicit `UNKNOWN` rather than a guessed local capability.
+- Added bounded-path, symbolic-link, stale-output, Schema, false-positive,
+  runtime-budget, CLI-compatibility, and no-source-redistribution regression
+  coverage.
+
 ## 1.11.1 — 2026-07-14
 
 - Reworked the bilingual entrypoint around one concrete failure: a passing test

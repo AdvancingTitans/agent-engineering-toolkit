@@ -1,0 +1,4782 @@
+{
+  "audit_version": "1.12.0",
+  "disclaimer": "Static analysis of a public upstream repository. No source code is redistributed, and no affiliation or upstream endorsement is implied.",
+  "evidence_count": 474,
+  "files": [
+    {
+      "categories": [
+        "agent"
+      ],
+      "lines": 78,
+      "path": "src/google/adk/agents/__init__.py",
+      "sha256": "626fc6c0db72db435f82c29cea3d45c138df8e5a9cbc53edc16bc26e3433e06a",
+      "size": 2314
+    },
+    {
+      "categories": [
+        "agent",
+        "local_agent_definition",
+        "recovery"
+      ],
+      "lines": 496,
+      "path": "src/google/adk/agents/_managed_agent.py",
+      "sha256": "d76c7774db14ed7d6efbb5c247e27521d13ad6d7c51d37da1b4988e17c4201fa",
+      "size": 19997
+    },
+    {
+      "categories": [
+        "agent",
+        "tool"
+      ],
+      "lines": 40,
+      "path": "src/google/adk/agents/active_streaming_tool.py",
+      "sha256": "dfcb71a29e88bce149bae373f114e189101e95e16d1c62925f82b3e524aa7c93",
+      "size": 1222
+    },
+    {
+      "categories": [
+        "agent"
+      ],
+      "lines": 79,
+      "path": "src/google/adk/agents/agent_config.py",
+      "sha256": "f05e411b1ede94de53fe0d3df4ab7e53eeb002cc15ad09d2266df6df2818f902",
+      "size": 2640
+    },
+    {
+      "categories": [
+        "agent",
+        "local_agent_definition",
+        "recovery"
+      ],
+      "lines": 774,
+      "path": "src/google/adk/agents/base_agent.py",
+      "sha256": "2fe42c15e89cffe1233554487da26fc670a6adba1dfdbbee4152df1fd076edfb",
+      "size": 24234
+    },
+    {
+      "categories": [
+        "agent"
+      ],
+      "lines": 86,
+      "path": "src/google/adk/agents/base_agent_config.py",
+      "sha256": "d79d0f17aec8cbd4f23c0f1e39d35920037d3ba59557c3fdceb9c7fa80eb75b2",
+      "size": 2543
+    },
+    {
+      "categories": [
+        "agent"
+      ],
+      "lines": 22,
+      "path": "src/google/adk/agents/callback_context.py",
+      "sha256": "003d21135febbbe8594801cf40312966178ff215fe1c16b399d1b0e6dfa96b86",
+      "size": 760
+    },
+    {
+      "categories": [
+        "agent"
+      ],
+      "lines": 112,
+      "path": "src/google/adk/agents/common_configs.py",
+      "sha256": "fa96d5e06697c442a6d009e7a250d30a31d267ff5b1994aa6b2e6dbfdd43f489",
+      "size": 3125
+    },
+    {
+      "categories": [
+        "agent",
+        "permission",
+        "recovery"
+      ],
+      "lines": 332,
+      "path": "src/google/adk/agents/config_agent_utils.py",
+      "sha256": "9c39ecfc30ceb4d06727a55e23bcc9188e2a3f425ed682ddc2ce8442d0c1d295",
+      "size": 9988
+    },
+    {
+      "categories": [
+        "agent"
+      ],
+      "lines": 6115,
+      "path": "src/google/adk/agents/config_schemas/AgentConfig.json",
+      "sha256": "871465ebce420115d47af916451d9d36eae97dc3f67a4c3d6c1837c2dc9a2b59",
+      "size": 194754
+    },
+    {
+      "categories": [
+        "agent",
+        "isolation",
+        "permission"
+      ],
+      "lines": 1038,
+      "path": "src/google/adk/agents/context.py",
+      "sha256": "62ccf7a555a1f2b5dbaec8e0dec79f1b60ef655d3430c2b67237d8a8bc72e1eb",
+      "size": 36833
+    },
+    {
+      "categories": [
+        "agent"
+      ],
+      "lines": 107,
+      "path": "src/google/adk/agents/context_cache_config.py",
+      "sha256": "ac01b8bb118f5ad0b93eda0a5dbcdca9c658b972276a073c4e9e22805c20de91",
+      "size": 3859
+    },
+    {
+      "categories": [
+        "agent",
+        "isolation",
+        "permission"
+      ],
+      "lines": 574,
+      "path": "src/google/adk/agents/invocation_context.py",
+      "sha256": "b13691c01ed243f4c8d3b365875654ede145af8bbd69b7fa5eab0aef9cce2c96",
+      "size": 21013
+    },
+    {
+      "categories": [
+        "agent",
+        "local_agent_definition"
+      ],
+      "lines": 156,
+      "path": "src/google/adk/agents/langgraph_agent.py",
+      "sha256": "b7e2127b4a32ee11c7f1c322a8a07fcd4fb39f37d9285441486a8c32f9bb4e19",
+      "size": 4967
+    },
+    {
+      "categories": [
+        "agent"
+      ],
+      "lines": 99,
+      "path": "src/google/adk/agents/live_request_queue.py",
+      "sha256": "4aedda83e219be5470d8e86937c2a617eae42a98e6975b270f278f224a9b3d96",
+      "size": 3742
+    },
+    {
+      "categories": [],
+      "lines": 13,
+      "path": "src/google/adk/agents/llm/__init__.py",
+      "sha256": "43955acccf4b719dbab4dceb4c9437274dc864bf3d15b22c252cd9d010255c7d",
+      "size": 574
+    },
+    {
+      "categories": [],
+      "lines": 13,
+      "path": "src/google/adk/agents/llm/task/__init__.py",
+      "sha256": "43955acccf4b719dbab4dceb4c9437274dc864bf3d15b22c252cd9d010255c7d",
+      "size": 574
+    },
+    {
+      "categories": [
+        "agent",
+        "recovery",
+        "tool"
+      ],
+      "lines": 184,
+      "path": "src/google/adk/agents/llm/task/_finish_task_tool.py",
+      "sha256": "1f433dfb9e7086a75f1a19d10e512e3c7b66abf7c2b11ae25ab0242ad58b8c83",
+      "size": 6125
+    },
+    {
+      "categories": [
+        "agent"
+      ],
+      "lines": 119,
+      "path": "src/google/adk/agents/llm/task/_task_models.py",
+      "sha256": "04d90ef9b49dad190ac182865b98e9838cd22a49dcd0b809e4ffed75885a9395",
+      "size": 3237
+    },
+    {
+      "categories": [
+        "agent",
+        "local_agent_definition",
+        "recovery"
+      ],
+      "lines": 1257,
+      "path": "src/google/adk/agents/llm_agent.py",
+      "sha256": "3519e4f48883a1701012e2d20e4ee884f04985e27959461f8c8f2d18cea61b85",
+      "size": 44951
+    },
+    {
+      "categories": [
+        "agent"
+      ],
+      "lines": 214,
+      "path": "src/google/adk/agents/llm_agent_config.py",
+      "sha256": "065d31ebf9c07beb53e0fa02eef35f136aeb9af614813e15f924c74499d562ad",
+      "size": 6539
+    },
+    {
+      "categories": [
+        "agent",
+        "local_agent_definition",
+        "recovery"
+      ],
+      "lines": 180,
+      "path": "src/google/adk/agents/loop_agent.py",
+      "sha256": "48639dfe9153ee7454d6c4f2ee569f1d95e3398f908ae4147f720787f7ae257d",
+      "size": 5951
+    },
+    {
+      "categories": [
+        "agent"
+      ],
+      "lines": 50,
+      "path": "src/google/adk/agents/loop_agent_config.py",
+      "sha256": "3d72b3f4df6262e9bf268e52fb10ea2c16b24c7003b6a2c425decb22bfa0ee2e",
+      "size": 1534
+    },
+    {
+      "categories": [
+        "agent"
+      ],
+      "lines": 95,
+      "path": "src/google/adk/agents/mcp_instruction_provider.py",
+      "sha256": "fb68e35a5f75e82a59b0ffa6616a472161faf4631a76acd15cae1d07b63f0fb8",
+      "size": 3192
+    },
+    {
+      "categories": [
+        "agent",
+        "local_agent_definition",
+        "recovery"
+      ],
+      "lines": 242,
+      "path": "src/google/adk/agents/parallel_agent.py",
+      "sha256": "1280d44bd11b90b2317c9be93e2c237a4e41e2ee0e547f9c49d493a55f4f4667",
+      "size": 8107
+    },
+    {
+      "categories": [
+        "agent"
+      ],
+      "lines": 46,
+      "path": "src/google/adk/agents/parallel_agent_config.py",
+      "sha256": "ca21aaf60428482fbc3ff0e8fcf63331b7938e249b3bc608fe9b7046dd7d648c",
+      "size": 1433
+    },
+    {
+      "categories": [
+        "agent",
+        "permission"
+      ],
+      "lines": 78,
+      "path": "src/google/adk/agents/readonly_context.py",
+      "sha256": "6d2fe3aca87f1c1c9418b2019a1d182e9e0779c7907671b2815f767386cc80f1",
+      "size": 2499
+    },
+    {
+      "categories": [
+        "agent",
+        "local_agent_definition",
+        "recovery"
+      ],
+      "lines": 852,
+      "path": "src/google/adk/agents/remote_a2a_agent.py",
+      "sha256": "9e2e6949ceddf5c2110a1e55a77386ac36e6815acf424f21a1e135166a16010c",
+      "size": 31384
+    },
+    {
+      "categories": [
+        "agent"
+      ],
+      "lines": 422,
+      "path": "src/google/adk/agents/run_config.py",
+      "sha256": "490e5047059e975921165970374a855a8c37215052a0ad74dc31719774c26664",
+      "size": 15577
+    },
+    {
+      "categories": [
+        "agent",
+        "local_agent_definition",
+        "recovery"
+      ],
+      "lines": 174,
+      "path": "src/google/adk/agents/sequential_agent.py",
+      "sha256": "0cab4977f07d07407ee100b860ad94467c29dc489e124327caca5d4ca45289ec",
+      "size": 6064
+    },
+    {
+      "categories": [
+        "agent"
+      ],
+      "lines": 46,
+      "path": "src/google/adk/agents/sequential_agent_config.py",
+      "sha256": "5ad3a87d3daa06b2c23630d294541cc9a9c0d98b991d5d66a9515715a47d1cc7",
+      "size": 1459
+    },
+    {
+      "categories": [
+        "agent"
+      ],
+      "lines": 39,
+      "path": "src/google/adk/agents/transcription_entry.py",
+      "sha256": "d7aecc1ecdbe90123412e1815c6839ea775f7f88f04ed2a2bc405067d1ffd1fc",
+      "size": 1213
+    },
+    {
+      "categories": [
+        "feedback",
+        "recovery",
+        "verification"
+      ],
+      "lines": 31,
+      "path": "src/google/adk/evaluation/__init__.py",
+      "sha256": "1083ca2c59140e45eaaf471a4a5a0dada4cb63e3df30a9acff762cc1594d4632",
+      "size": 1020
+    },
+    {
+      "categories": [
+        "feedback",
+        "recovery",
+        "verification"
+      ],
+      "lines": 69,
+      "path": "src/google/adk/evaluation/_eval_set_results_manager_utils.py",
+      "sha256": "4720d76ecb6a5eb048bda9f4a1a3c86a3359c4fe727cd2729e31077456964e6e",
+      "size": 2231
+    },
+    {
+      "categories": [
+        "feedback",
+        "verification"
+      ],
+      "lines": 108,
+      "path": "src/google/adk/evaluation/_eval_sets_manager_utils.py",
+      "sha256": "2ac541a9070cbf10f0b32f855dc07a7ebd1d7cf38d3d850ca33a04f6c9b2a0dd",
+      "size": 3419
+    },
+    {
+      "categories": [
+        "feedback",
+        "verification"
+      ],
+      "lines": 40,
+      "path": "src/google/adk/evaluation/_path_validation.py",
+      "sha256": "ace580c28a8d49b4c3daf66b0daf0ce6f3b152869ceaf2cda369c84eb271583e",
+      "size": 1383
+    },
+    {
+      "categories": [
+        "feedback",
+        "recovery",
+        "verification"
+      ],
+      "lines": 76,
+      "path": "src/google/adk/evaluation/_retry_options_utils.py",
+      "sha256": "f2cca86483b2efa13ab939074472e82741e759fba2094ba19a1922b1bdf6e8ed",
+      "size": 2466
+    },
+    {
+      "categories": [
+        "feedback",
+        "verification"
+      ],
+      "lines": 108,
+      "path": "src/google/adk/evaluation/_vertex_ai_scenario_generation_facade.py",
+      "sha256": "2ffdda0018cc9fea7e52403825d48ba50770187c2cd70d28c6ca1c0e7b1b661c",
+      "size": 3496
+    },
+    {
+      "categories": [
+        "agent",
+        "feedback",
+        "recovery",
+        "verification"
+      ],
+      "lines": 712,
+      "path": "src/google/adk/evaluation/agent_evaluator.py",
+      "sha256": "c3e0ad9199c237647c3a7f2883f947af03bb79a98b66c087997b5885684cf95e",
+      "size": 25972
+    },
+    {
+      "categories": [
+        "feedback",
+        "verification"
+      ],
+      "lines": 69,
+      "path": "src/google/adk/evaluation/app_details.py",
+      "sha256": "526839a69dbec4c1d35019ab3a1c3aabd3d012bb97c42e4a80e76d52c63719fd",
+      "size": 2308
+    },
+    {
+      "categories": [
+        "feedback",
+        "verification"
+      ],
+      "lines": 214,
+      "path": "src/google/adk/evaluation/base_eval_service.py",
+      "sha256": "0d16ad09cd8d235eeb975b0b0bf028558f6105b6d26d7385ee7e566a82e5870b",
+      "size": 6055
+    },
+    {
+      "categories": [
+        "feedback",
+        "verification"
+      ],
+      "lines": 27,
+      "path": "src/google/adk/evaluation/common.py",
+      "sha256": "c816531042cd1a931b88b4f664c90623c49e394276e1270aa5d8751e2c9273c3",
+      "size": 886
+    },
+    {
+      "categories": [
+        "feedback",
+        "verification"
+      ],
+      "lines": 22,
+      "path": "src/google/adk/evaluation/constants.py",
+      "sha256": "4caebf7d0c5d068a97c49e0fe59a3a77ed966f016daa3f162c0f7bb6e6614e80",
+      "size": 783
+    },
+    {
+      "categories": [
+        "feedback",
+        "verification"
+      ],
+      "lines": 107,
+      "path": "src/google/adk/evaluation/conversation_scenarios.py",
+      "sha256": "43c97ec8ef5f44e0c4e3512d43c5f978ca997bc1e386b5a446e2562167d5505b",
+      "size": 3775
+    },
+    {
+      "categories": [
+        "feedback",
+        "recovery",
+        "verification"
+      ],
+      "lines": 77,
+      "path": "src/google/adk/evaluation/custom_metric_evaluator.py",
+      "sha256": "7ca2642c062a7eae236a3b46251c959216f0a74e6865e9de2f43efb17bc1c605",
+      "size": 2572
+    },
+    {
+      "categories": [
+        "feedback",
+        "verification"
+      ],
+      "lines": 261,
+      "path": "src/google/adk/evaluation/eval_case.py",
+      "sha256": "e5079c90e0ea0251fc845f5caf1654a7780c6616adb79d0c1a806acf55aab4b3",
+      "size": 8675
+    },
+    {
+      "categories": [
+        "feedback",
+        "verification"
+      ],
+      "lines": 267,
+      "path": "src/google/adk/evaluation/eval_config.py",
+      "sha256": "8c029e5f4b48003ac8dab848810ae6bd2fd1f60efa4aba52c23eb3b7d50298e7",
+      "size": 8787
+    },
+    {
+      "categories": [
+        "feedback",
+        "verification"
+      ],
+      "lines": 406,
+      "path": "src/google/adk/evaluation/eval_metrics.py",
+      "sha256": "6e900c7c68adba44950047bb285278620c843e6ae61449ec6a02bb12fd5fd883",
+      "size": 12619
+    },
+    {
+      "categories": [
+        "feedback",
+        "verification"
+      ],
+      "lines": 91,
+      "path": "src/google/adk/evaluation/eval_result.py",
+      "sha256": "06a24a54764bac477e8cacee16d986dae8b8b2e2386a2058c6b35e2d655b3cf2",
+      "size": 2766
+    },
+    {
+      "categories": [
+        "feedback",
+        "verification"
+      ],
+      "lines": 82,
+      "path": "src/google/adk/evaluation/eval_rubrics.py",
+      "sha256": "d8ff96ea5ed40a2631418024b3053e35f1c150c0937350017b50fdbc537f88fc",
+      "size": 2355
+    },
+    {
+      "categories": [
+        "feedback",
+        "verification"
+      ],
+      "lines": 41,
+      "path": "src/google/adk/evaluation/eval_set.py",
+      "sha256": "625fcbf72f64ee1cae58034e97e1e6229e9b24dac22faf30ec768acefd76922a",
+      "size": 1191
+    },
+    {
+      "categories": [
+        "feedback",
+        "verification"
+      ],
+      "lines": 51,
+      "path": "src/google/adk/evaluation/eval_set_results_manager.py",
+      "sha256": "bd5aec2e262ac699c1d3707656d8f8e48ec0bb7eba8948e926e85c7067a77f65",
+      "size": 1582
+    },
+    {
+      "categories": [
+        "feedback",
+        "verification"
+      ],
+      "lines": 87,
+      "path": "src/google/adk/evaluation/eval_sets_manager.py",
+      "sha256": "5e4b75c3751bd2c75f8c6c097fae6f1fd24c8e4a5ad1f0efc3255372e30814b2",
+      "size": 2730
+    },
+    {
+      "categories": [
+        "feedback",
+        "verification"
+      ],
+      "lines": 27,
+      "path": "src/google/adk/evaluation/evaluation_constants.py",
+      "sha256": "1c5a85b6edeae4216fca803c3613907b247aa19b81622f3849bca3035bdd841b",
+      "size": 893
+    },
+    {
+      "categories": [
+        "feedback",
+        "recovery",
+        "verification"
+      ],
+      "lines": 805,
+      "path": "src/google/adk/evaluation/evaluation_generator.py",
+      "sha256": "a86a0ec954c68a98b9825eadd886c4e7de9309c7de315fe0f18e6a5a7d6a503d",
+      "size": 28602
+    },
+    {
+      "categories": [
+        "feedback",
+        "verification"
+      ],
+      "lines": 91,
+      "path": "src/google/adk/evaluation/evaluator.py",
+      "sha256": "e08866df29b56cf0a39bd9b497c24e4826e9f6bf5c719af85f62f821a622e383",
+      "size": 3186
+    },
+    {
+      "categories": [
+        "feedback",
+        "verification"
+      ],
+      "lines": 123,
+      "path": "src/google/adk/evaluation/final_response_match_v1.py",
+      "sha256": "ef14752ffb7c35ab6930623d2ef5e8e17c1784396e07246fd223b81195e1ced8",
+      "size": 4384
+    },
+    {
+      "categories": [
+        "feedback",
+        "verification"
+      ],
+      "lines": 255,
+      "path": "src/google/adk/evaluation/final_response_match_v2.py",
+      "sha256": "a106d7de1172cd4aa94331443c590a5d088a055b957229f196d6dcc145a2789c",
+      "size": 12342
+    },
+    {
+      "categories": [
+        "feedback",
+        "recovery",
+        "verification"
+      ],
+      "lines": 123,
+      "path": "src/google/adk/evaluation/gcs_eval_set_results_manager.py",
+      "sha256": "f7ccbea389a27cfdcc919ac7f51d892e0efdc4cfa61d7939f09a52a838a42546",
+      "size": 4553
+    },
+    {
+      "categories": [
+        "feedback",
+        "recovery",
+        "verification"
+      ],
+      "lines": 215,
+      "path": "src/google/adk/evaluation/gcs_eval_sets_manager.py",
+      "sha256": "e93b28bd4514d0b0c99e5cc719f306e586cac2998a2a23d9153747c9f66c34a1",
+      "size": 7968
+    },
+    {
+      "categories": [
+        "feedback",
+        "recovery",
+        "verification"
+      ],
+      "lines": 762,
+      "path": "src/google/adk/evaluation/hallucinations_v1.py",
+      "sha256": "c611c4f675e45a2f323bde8a4befa29e06bfaf0c1c37ab768dcb7c4f58185e8d",
+      "size": 26236
+    },
+    {
+      "categories": [
+        "feedback",
+        "verification"
+      ],
+      "lines": 154,
+      "path": "src/google/adk/evaluation/in_memory_eval_sets_manager.py",
+      "sha256": "be2553517aa924141cc3ce303f023256d846114123a9210f75fc8a1d6229a027",
+      "size": 5233
+    },
+    {
+      "categories": [
+        "feedback",
+        "recovery",
+        "verification"
+      ],
+      "lines": 191,
+      "path": "src/google/adk/evaluation/llm_as_judge.py",
+      "sha256": "751b9714d2de240c9959bcfe191f01ceb7b23df196d8530c6168871e21ba9f25",
+      "size": 7124
+    },
+    {
+      "categories": [
+        "feedback",
+        "verification"
+      ],
+      "lines": 191,
+      "path": "src/google/adk/evaluation/llm_as_judge_utils.py",
+      "sha256": "ee5190911d54550dd7be0c4aaa01cbe307c749fcb3511a4e73ec794a514a6418",
+      "size": 6011
+    },
+    {
+      "categories": [
+        "feedback",
+        "recovery",
+        "verification"
+      ],
+      "lines": 562,
+      "path": "src/google/adk/evaluation/local_eval_service.py",
+      "sha256": "485fcb0d90a4aeb7cd1dd1ff3ea18cab87b572c7dab28cb8bd42e3b531decbab",
+      "size": 21490
+    },
+    {
+      "categories": [
+        "feedback",
+        "verification"
+      ],
+      "lines": 105,
+      "path": "src/google/adk/evaluation/local_eval_set_results_manager.py",
+      "sha256": "c2f05e4305dd6902c0bb99ecff06d2bee5a0494453b3678ce34a218ee644cd81",
+      "size": 3996
+    },
+    {
+      "categories": [
+        "feedback",
+        "recovery",
+        "verification"
+      ],
+      "lines": 350,
+      "path": "src/google/adk/evaluation/local_eval_sets_manager.py",
+      "sha256": "fe4891235dfb35127fd8c78b355a22affbb6d2c2c394f38fc3ab3b01a03d460b",
+      "size": 11568
+    },
+    {
+      "categories": [
+        "feedback",
+        "verification"
+      ],
+      "lines": 229,
+      "path": "src/google/adk/evaluation/metric_evaluator_registry.py",
+      "sha256": "3a43cb2dbcb6531bf9a70e5209d8bd09c1fe392b13021580d7fbaf610196bd9d",
+      "size": 9165
+    },
+    {
+      "categories": [
+        "feedback",
+        "verification"
+      ],
+      "lines": 262,
+      "path": "src/google/adk/evaluation/metric_info_providers.py",
+      "sha256": "034585f081cda1bf6a9cc23c902d87db00e18d314aff159b62abda0c765b3b05",
+      "size": 10290
+    },
+    {
+      "categories": [
+        "feedback",
+        "verification"
+      ],
+      "lines": 63,
+      "path": "src/google/adk/evaluation/multi_turn_task_success_evaluator.py",
+      "sha256": "edf7e6544f8bdb03a3ceee4a936c6fcbce1adaee25326d28bfa509a55cb8c77e",
+      "size": 2290
+    },
+    {
+      "categories": [
+        "feedback",
+        "verification"
+      ],
+      "lines": 63,
+      "path": "src/google/adk/evaluation/multi_turn_tool_use_quality_evaluator.py",
+      "sha256": "808c94582de7954727bd1ff0859d507f46d5c25dd21f0e845273323ed8262a61",
+      "size": 2240
+    },
+    {
+      "categories": [
+        "feedback",
+        "verification"
+      ],
+      "lines": 69,
+      "path": "src/google/adk/evaluation/multi_turn_trajectory_quality_evaluator.py",
+      "sha256": "23170cc7868c2b1a9aae199e838b6ef7ae7551d59152bbdf122b0ed7bbc65607",
+      "size": 2561
+    },
+    {
+      "categories": [
+        "feedback",
+        "verification"
+      ],
+      "lines": 98,
+      "path": "src/google/adk/evaluation/request_intercepter_plugin.py",
+      "sha256": "869e9e1f925ce130e32b41f7cf9a24661bb9cf911f858330327cfc6a3962d663",
+      "size": 3438
+    },
+    {
+      "categories": [
+        "feedback",
+        "verification"
+      ],
+      "lines": 98,
+      "path": "src/google/adk/evaluation/response_evaluator.py",
+      "sha256": "ae21428bdae65ab17092a20351d48e8604d5979973c820a8a5f4721df4892d17",
+      "size": 3388
+    },
+    {
+      "categories": [
+        "feedback",
+        "verification"
+      ],
+      "lines": 482,
+      "path": "src/google/adk/evaluation/rubric_based_evaluator.py",
+      "sha256": "03db90a8dab7ff5790671aa25cdd4050daf933db0bd53a3ee921fac098542f0e",
+      "size": 17443
+    },
+    {
+      "categories": [
+        "feedback",
+        "verification"
+      ],
+      "lines": 330,
+      "path": "src/google/adk/evaluation/rubric_based_final_response_quality_v1.py",
+      "sha256": "b03b21c74bc8b549efd7b42240ac7d9e044b326718000a40b5cbfdaece84d3df",
+      "size": 16330
+    },
+    {
+      "categories": [
+        "feedback",
+        "recovery",
+        "verification"
+      ],
+      "lines": 377,
+      "path": "src/google/adk/evaluation/rubric_based_multi_turn_trajectory_evaluator.py",
+      "sha256": "3046641610daa4c89196b99b33e6b1a7a7975eca37e7e3024826f1fd3ca17c60",
+      "size": 19000
+    },
+    {
+      "categories": [
+        "feedback",
+        "verification"
+      ],
+      "lines": 201,
+      "path": "src/google/adk/evaluation/rubric_based_tool_use_quality_v1.py",
+      "sha256": "4d05133f51fbd3bc9740f0afdd70a70aa6c85a876672365c57807c14ca42c6b5",
+      "size": 10846
+    },
+    {
+      "categories": [
+        "feedback",
+        "verification"
+      ],
+      "lines": 61,
+      "path": "src/google/adk/evaluation/safety_evaluator.py",
+      "sha256": "6f7485184977678123653e7a457d7b601bb7ecf6b59033e7916a56045697c4ce",
+      "size": 2156
+    },
+    {
+      "categories": [
+        "feedback",
+        "verification"
+      ],
+      "lines": 49,
+      "path": "src/google/adk/evaluation/simulation/__init__.py",
+      "sha256": "05c98c88057e1b18582432c42f5ff449f7e016e3464cbcfd5bc487874d2de401",
+      "size": 1734
+    },
+    {
+      "categories": [
+        "feedback",
+        "recovery",
+        "verification"
+      ],
+      "lines": 235,
+      "path": "src/google/adk/evaluation/simulation/_cloud_tts_llm.py",
+      "sha256": "ed9a32150e5f8060d39eb5bd8a499c7307e481b4a5f3a30567b473570b4c9f30",
+      "size": 7844
+    },
+    {
+      "categories": [
+        "feedback",
+        "recovery",
+        "verification"
+      ],
+      "lines": 411,
+      "path": "src/google/adk/evaluation/simulation/_llm_audio_user_simulator.py",
+      "sha256": "6028fc8d093bf286b434a64f4a8ac58f4622c3c7a7c96dafd80d7dc6c5ad69ea",
+      "size": 14235
+    },
+    {
+      "categories": [
+        "feedback",
+        "recovery",
+        "verification"
+      ],
+      "lines": 319,
+      "path": "src/google/adk/evaluation/simulation/llm_backed_user_simulator.py",
+      "sha256": "3fefaa2c2ef75a3235121e232236b06f4b34507b1b3a35061f752a2a35b72020",
+      "size": 11172
+    },
+    {
+      "categories": [
+        "feedback",
+        "recovery",
+        "verification"
+      ],
+      "lines": 219,
+      "path": "src/google/adk/evaluation/simulation/llm_backed_user_simulator_prompts.py",
+      "sha256": "51fa38f4256cd0e2de898158a266e29cc4ff127e51f85afac37f8045320ba5b4",
+      "size": 7950
+    },
+    {
+      "categories": [
+        "feedback",
+        "verification"
+      ],
+      "lines": 259,
+      "path": "src/google/adk/evaluation/simulation/per_turn_user_simulator_quality_prompts.py",
+      "sha256": "d53d980d480b2ec99b3d58ed6686678e5074e456167c6920fb9a72871b7f6243",
+      "size": 12391
+    },
+    {
+      "categories": [
+        "feedback",
+        "recovery",
+        "verification"
+      ],
+      "lines": 385,
+      "path": "src/google/adk/evaluation/simulation/per_turn_user_simulator_quality_v1.py",
+      "sha256": "2c8f0dc384e508f4b20ca3ae1d02ee4c48a0ea8d9a15e16b267197093b2d7eaf",
+      "size": 13248
+    },
+    {
+      "categories": [
+        "feedback",
+        "verification"
+      ],
+      "lines": 525,
+      "path": "src/google/adk/evaluation/simulation/pre_built_personas.py",
+      "sha256": "6b14eb3079f8d443309237e394ead22c3ac2b574459a4b94dd9fe1be0ebc3f9b",
+      "size": 20237
+    },
+    {
+      "categories": [
+        "feedback",
+        "verification"
+      ],
+      "lines": 79,
+      "path": "src/google/adk/evaluation/simulation/static_user_simulator.py",
+      "sha256": "114f6672acca13a60dc08dfa0ce441cc9abe100e874acaf51d244c6aedead35c",
+      "size": 2572
+    },
+    {
+      "categories": [
+        "feedback",
+        "recovery",
+        "verification"
+      ],
+      "lines": 171,
+      "path": "src/google/adk/evaluation/simulation/user_simulator.py",
+      "sha256": "bad4f51bb66c4e24887f74c717dc1e7d5c5adf5481b45c5b5e70025dab7775bc",
+      "size": 6164
+    },
+    {
+      "categories": [
+        "feedback",
+        "verification"
+      ],
+      "lines": 126,
+      "path": "src/google/adk/evaluation/simulation/user_simulator_personas.py",
+      "sha256": "cf59e892863ce3d727a6fdb9f812d6d48d1aea3bc435f75bdbfda20390187f34",
+      "size": 3832
+    },
+    {
+      "categories": [
+        "feedback",
+        "verification"
+      ],
+      "lines": 171,
+      "path": "src/google/adk/evaluation/simulation/user_simulator_provider.py",
+      "sha256": "1d3ae7b26082cf2e00cf5aed7d7d4a217951c5ece7cd8b01d14e8087815d6199",
+      "size": 7120
+    },
+    {
+      "categories": [
+        "feedback",
+        "recovery",
+        "verification"
+      ],
+      "lines": 275,
+      "path": "src/google/adk/evaluation/trajectory_evaluator.py",
+      "sha256": "172e5737727b0935ec06fb2c03cc80206d3ff963c9866a6be801a4c0ade27589",
+      "size": 9978
+    },
+    {
+      "categories": [
+        "feedback",
+        "verification"
+      ],
+      "lines": 375,
+      "path": "src/google/adk/evaluation/vertex_ai_eval_facade.py",
+      "sha256": "5e734d344dd06adaf69cbc27de48019491ab0639fe2677cf468008da890e0bb1",
+      "size": 12341
+    },
+    {
+      "categories": [
+        "isolation",
+        "permission",
+        "recovery",
+        "runtime"
+      ],
+      "lines": 2345,
+      "path": "src/google/adk/runners.py",
+      "sha256": "94b3b3212def203b5b9d653ca09a1181f3afe40cdd68667a5ae2d862f3f61e0c",
+      "size": 86484
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 125,
+      "path": "src/google/adk/tools/__init__.py",
+      "sha256": "51a9c65da4e43cda1d7a7857d16e64411e08c4d672da640fc831cc741a076790",
+      "size": 5183
+    },
+    {
+      "categories": [
+        "recovery",
+        "tool"
+      ],
+      "lines": 516,
+      "path": "src/google/adk/tools/_automatic_function_calling_util.py",
+      "sha256": "4047a4e4108912b4aedbfe26d8b5f76309c279e94f4386d6f44a8ea906fed245",
+      "size": 17150
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 153,
+      "path": "src/google/adk/tools/_forwarding_artifact_service.py",
+      "sha256": "3aa76d76477c9c8aa095a6115a6b6396468a8bf188c247ff213ef0ad3a3d7447",
+      "size": 4728
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 556,
+      "path": "src/google/adk/tools/_function_parameter_parse_util.py",
+      "sha256": "54a7865d0d776ab39c23ca45d26d1171472eb78adf95b7d89ba03dd60f016cbd",
+      "size": 19108
+    },
+    {
+      "categories": [
+        "recovery",
+        "tool"
+      ],
+      "lines": 257,
+      "path": "src/google/adk/tools/_function_tool_declarations.py",
+      "sha256": "c66ef477181a242fd77a9591bc7e545d23a59b61a0fe5f295cf38ee63c50fbeb",
+      "size": 7918
+    },
+    {
+      "categories": [
+        "recovery",
+        "tool"
+      ],
+      "lines": 191,
+      "path": "src/google/adk/tools/_gda_stream_util.py",
+      "sha256": "613593c4017c128e18d330adb8d019e4becb0df3044656627beddf34476643b7",
+      "size": 5421
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 247,
+      "path": "src/google/adk/tools/_gemini_schema_util.py",
+      "sha256": "83d1a2ee9fd1647db052ec07be6935e7065aab2ca85587fdbb05240a20bc8f2d",
+      "size": 8872
+    },
+    {
+      "categories": [
+        "permission",
+        "recovery",
+        "tool"
+      ],
+      "lines": 290,
+      "path": "src/google/adk/tools/_google_credentials.py",
+      "sha256": "11211d7cafaf07e8754f13aff19966db45406dd77eb0a0fb5f7c323dffb4778f",
+      "size": 10680
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 30,
+      "path": "src/google/adk/tools/_memory_entry_utils.py",
+      "sha256": "2ea844afa3ab335e95cbb68a21397941a23f9f4138dd2127796f50112f8378d3",
+      "size": 967
+    },
+    {
+      "categories": [
+        "recovery",
+        "tool"
+      ],
+      "lines": 159,
+      "path": "src/google/adk/tools/_node_tool.py",
+      "sha256": "56e21c4a421e93c3d60cfdb52d513ef53be286289f873aeac424fc9ea7f156b0",
+      "size": 5068
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 68,
+      "path": "src/google/adk/tools/_remote_mcp_server.py",
+      "sha256": "0996596362274d9b2a574f3e4213f6f6f0bbb3c2b8660b33ee2a94ba2f5da285",
+      "size": 2597
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 57,
+      "path": "src/google/adk/tools/_request_input_tool.py",
+      "sha256": "0fa814d4e1fba7a37cf52cebd5977a97f8d13ee7cdbd6a83f603e18df4129b40",
+      "size": 2022
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 26,
+      "path": "src/google/adk/tools/agent_simulator/__init__.py",
+      "sha256": "dfd45d84a378dbf5e6bb406cdb7f13be224b1926698f772552088a8ba6fefff7",
+      "size": 894
+    },
+    {
+      "categories": [
+        "agent",
+        "tool"
+      ],
+      "lines": 64,
+      "path": "src/google/adk/tools/agent_simulator/agent_simulator_config.py",
+      "sha256": "1e372727e9d7b1ea3666f23d5f0c5e55f8276f8e25ad44844ac8c032f69d572e",
+      "size": 2179
+    },
+    {
+      "categories": [
+        "agent",
+        "tool"
+      ],
+      "lines": 28,
+      "path": "src/google/adk/tools/agent_simulator/agent_simulator_engine.py",
+      "sha256": "bf5a8b8283df153f8ceef9f04c5933572611e57744cc3a9f5c4a462802b62d6f",
+      "size": 1010
+    },
+    {
+      "categories": [
+        "agent",
+        "tool"
+      ],
+      "lines": 28,
+      "path": "src/google/adk/tools/agent_simulator/agent_simulator_factory.py",
+      "sha256": "23d1e45d788d60710e35fcf5254fd99a8a565bc1e9e8dcbed06b23183d7d0555",
+      "size": 1016
+    },
+    {
+      "categories": [
+        "agent",
+        "tool"
+      ],
+      "lines": 28,
+      "path": "src/google/adk/tools/agent_simulator/agent_simulator_plugin.py",
+      "sha256": "b52dec93de3af74e355c5db6f7502a1f8b733a25be7f0ad7300658d0a60ce9c8",
+      "size": 1010
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 22,
+      "path": "src/google/adk/tools/agent_simulator/strategies/__init__.py",
+      "sha256": "6c7d6117d8bb09db324a4622735b020272e705bc5188d46dc0a163c316394335",
+      "size": 772
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 28,
+      "path": "src/google/adk/tools/agent_simulator/strategies/base.py",
+      "sha256": "497c9f18be8c427024caa94566558799dea7f5bce2c1e1e77354b787e8e978cc",
+      "size": 928
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 29,
+      "path": "src/google/adk/tools/agent_simulator/strategies/tool_spec_mock_strategy.py",
+      "sha256": "2938fc6e327c6ac93ce38b56310b7aba2a696eac3d98142ad3f0477c31132084",
+      "size": 1008
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 28,
+      "path": "src/google/adk/tools/agent_simulator/tool_connection_analyzer.py",
+      "sha256": "f0a7af031db5f8d5015e56a32a258202386e389002e856453b13789f561c23ff",
+      "size": 975
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 29,
+      "path": "src/google/adk/tools/agent_simulator/tool_connection_map.py",
+      "sha256": "d232d3d755df7f4974fb0d539072fa188c459d05b9812da92968de92b84ac6cc",
+      "size": 1061
+    },
+    {
+      "categories": [
+        "agent",
+        "permission",
+        "recovery",
+        "tool"
+      ],
+      "lines": 468,
+      "path": "src/google/adk/tools/agent_tool.py",
+      "sha256": "680998241777bdfdecb8349cc9eb4ac41de1fcc53b0d8eeb66d96a389b0b53c4",
+      "size": 15098
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 26,
+      "path": "src/google/adk/tools/api_registry.py",
+      "sha256": "30918e3d59a6befefbdbc9757e3d1a8704dbaed1181e3808fa7d0b787784a5f3",
+      "size": 857
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 19,
+      "path": "src/google/adk/tools/apihub_tool/__init__.py",
+      "sha256": "180193735ac5cea40b045defa329e052dcf0ba445ffba5cb8279d01a18ec6d08",
+      "size": 653
+    },
+    {
+      "categories": [
+        "permission",
+        "tool"
+      ],
+      "lines": 201,
+      "path": "src/google/adk/tools/apihub_tool/apihub_toolset.py",
+      "sha256": "33ae31e12e02ed3760f7fd38ef2680755b1df81b3d46edd6575fd98bc8b99b89",
+      "size": 7433
+    },
+    {
+      "categories": [],
+      "lines": 13,
+      "path": "src/google/adk/tools/apihub_tool/clients/__init__.py",
+      "sha256": "43955acccf4b719dbab4dceb4c9437274dc864bf3d15b22c252cd9d010255c7d",
+      "size": 574
+    },
+    {
+      "categories": [
+        "permission",
+        "recovery",
+        "tool"
+      ],
+      "lines": 354,
+      "path": "src/google/adk/tools/apihub_tool/clients/apihub_client.py",
+      "sha256": "40022562714df1b46c06eb739b4d9ce97c74737104f486977cabe61bcb5f76c9",
+      "size": 11838
+    },
+    {
+      "categories": [
+        "recovery",
+        "tool"
+      ],
+      "lines": 29,
+      "path": "src/google/adk/tools/apihub_tool/clients/secret_client.py",
+      "sha256": "87c7903f4232f5b87d6bb2847f94d09d21d933531ae72b3f3ffc3617df49806b",
+      "size": 953
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 21,
+      "path": "src/google/adk/tools/application_integration_tool/__init__.py",
+      "sha256": "e387a2e43b3b58fbd5651be2cc3c9cb8eeec08b497b3d55ac98cc03df55eb968",
+      "size": 799
+    },
+    {
+      "categories": [
+        "permission",
+        "tool"
+      ],
+      "lines": 346,
+      "path": "src/google/adk/tools/application_integration_tool/application_integration_toolset.py",
+      "sha256": "3695e0ca98873e81d7024a93c5f376eb92744782136c07b5019258f20fa82340",
+      "size": 12776
+    },
+    {
+      "categories": [
+        "permission",
+        "recovery",
+        "tool"
+      ],
+      "lines": 938,
+      "path": "src/google/adk/tools/application_integration_tool/clients/connections_client.py",
+      "sha256": "63b7174a94157d6ebad7b8af67037250da9af87923df28416bc3d86374942fa0",
+      "size": 32935
+    },
+    {
+      "categories": [
+        "permission",
+        "recovery",
+        "tool"
+      ],
+      "lines": 290,
+      "path": "src/google/adk/tools/application_integration_tool/clients/integration_client.py",
+      "sha256": "3b8d8d7b02094238c9e22fafe9550fd41d3e76412c5a204848765cd726781e37",
+      "size": 11954
+    },
+    {
+      "categories": [
+        "permission",
+        "tool"
+      ],
+      "lines": 213,
+      "path": "src/google/adk/tools/application_integration_tool/integration_connector_tool.py",
+      "sha256": "e17ec0a1c6fddd2d36b7ad59f676e740e7afd82d08f179770ed0bddb9adb2404",
+      "size": 8042
+    },
+    {
+      "categories": [
+        "permission",
+        "tool"
+      ],
+      "lines": 107,
+      "path": "src/google/adk/tools/authenticated_function_tool.py",
+      "sha256": "c6b2252567194523e6db7b31da6ac344f6345128af6fd4d7e3ea44568cea0621",
+      "size": 3842
+    },
+    {
+      "categories": [
+        "permission",
+        "tool"
+      ],
+      "lines": 108,
+      "path": "src/google/adk/tools/base_authenticated_tool.py",
+      "sha256": "f87a399f4149f1a8dd5970f01cf4b063ced18b8cae80e30065324798062645ed",
+      "size": 3576
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 252,
+      "path": "src/google/adk/tools/base_tool.py",
+      "sha256": "e9b6d76f8d28e5451677bc0ed6bbf99bc7abfa95fd9db71f448fc6dab22dcec6",
+      "size": 8821
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 241,
+      "path": "src/google/adk/tools/base_toolset.py",
+      "sha256": "0a0557f8a98fa6e05bf3204899989acab53c64f71265f180d9740d3dfd2eff28",
+      "size": 7936
+    },
+    {
+      "categories": [
+        "permission",
+        "recovery",
+        "tool"
+      ],
+      "lines": 260,
+      "path": "src/google/adk/tools/bash_tool.py",
+      "sha256": "5a916d8ffdc48d08da79f4f33aa27c97872144307fed803792e4f4409d1ef497",
+      "size": 7987
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 68,
+      "path": "src/google/adk/tools/bigquery/__init__.py",
+      "sha256": "50e88d2902dd2670764ceb48366742b51228e898439704b349dcc6cbd10bfce1",
+      "size": 2317
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 26,
+      "path": "src/google/adk/tools/bigquery/bigquery_credentials.py",
+      "sha256": "4ff635dfbc9676e8d860998e4ee8491fd55f6b1aa714ab1cc3a089ef266422fe",
+      "size": 883
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 43,
+      "path": "src/google/adk/tools/bigquery/bigquery_skill.py",
+      "sha256": "d396475709d631244149a3b09c37cfa72c4625327dd26bb5ced8bcd22b3e52aa",
+      "size": 1528
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 26,
+      "path": "src/google/adk/tools/bigquery/bigquery_toolset.py",
+      "sha256": "c536ee0724a6610feb72278511fadebf61a881ab59c9d8cbdb5470d2327e7f2d",
+      "size": 871
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 26,
+      "path": "src/google/adk/tools/bigquery/client.py",
+      "sha256": "fc8e39e5664140cc65ac3df386a59156719fb22bcb78494816b1447b0a887667",
+      "size": 841
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 26,
+      "path": "src/google/adk/tools/bigquery/config.py",
+      "sha256": "54f530891d86942cbc4413e1cd595a81aaf20a7135cd38124a985565eb47434e",
+      "size": 841
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 26,
+      "path": "src/google/adk/tools/bigquery/data_insights_tool.py",
+      "sha256": "cac9d001e5ec70e1150bc64332b21b8dd6d1add6898d4c007697250667738360",
+      "size": 877
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 26,
+      "path": "src/google/adk/tools/bigquery/metadata_tool.py",
+      "sha256": "091599d79031d6ae8041161080b5da560ce64f56543a51309763403fb70988aa",
+      "size": 862
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 26,
+      "path": "src/google/adk/tools/bigquery/query_tool.py",
+      "sha256": "5b47ef29bd3ce8d58e0d57ad692ecce67377529ce8b8ebb3c79a902c150ec0a5",
+      "size": 853
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 26,
+      "path": "src/google/adk/tools/bigquery/search_tool.py",
+      "sha256": "c8d7a48d768b7eb88eabad0c0d9cea82f1006cdf19c22d8b8f7920056b494aca",
+      "size": 856
+    },
+    {
+      "categories": [
+        "requirement",
+        "tool"
+      ],
+      "lines": 47,
+      "path": "src/google/adk/tools/bigquery/skills/bigquery-ai-ml/SKILL.md",
+      "sha256": "bf873812bc1139486bf80c0733104f7bd50b2292d4dc7c3c92a2e294a7c74fa9",
+      "size": 2368
+    },
+    {
+      "categories": [
+        "requirement",
+        "tool"
+      ],
+      "lines": 92,
+      "path": "src/google/adk/tools/bigquery/skills/bigquery-ai-ml/references/bigquery_ai_classify.md",
+      "sha256": "e222ffe8beab679db498fa26689c7dc93636bcb9fb8197f898777ad709859845",
+      "size": 3801
+    },
+    {
+      "categories": [
+        "requirement",
+        "tool"
+      ],
+      "lines": 110,
+      "path": "src/google/adk/tools/bigquery/skills/bigquery-ai-ml/references/bigquery_ai_detect_anomalies.md",
+      "sha256": "60c873f1272f117f6fffa1a3d243ab7f4585804f3942408f510940a2c5507892",
+      "size": 4657
+    },
+    {
+      "categories": [
+        "requirement",
+        "tool"
+      ],
+      "lines": 106,
+      "path": "src/google/adk/tools/bigquery/skills/bigquery-ai-ml/references/bigquery_ai_forecast.md",
+      "sha256": "818f36c1f92277b4efcd8116b7e4c4a6f350a93ebc0df3ec1ebe048fd08f1891",
+      "size": 6671
+    },
+    {
+      "categories": [
+        "requirement",
+        "tool"
+      ],
+      "lines": 116,
+      "path": "src/google/adk/tools/bigquery/skills/bigquery-ai-ml/references/bigquery_ai_generate.md",
+      "sha256": "7dd446b4220e7c71a15e9d51ff70ebdde22a5922c30c377f5c2f440a62474129",
+      "size": 4272
+    },
+    {
+      "categories": [
+        "requirement",
+        "tool"
+      ],
+      "lines": 51,
+      "path": "src/google/adk/tools/bigquery/skills/bigquery-ai-ml/references/bigquery_ai_generate_bool.md",
+      "sha256": "11ef66b4365cb7bdefa4d42cdcfdfa3376d298103806cfcf42540ca2d0d2ec02",
+      "size": 1931
+    },
+    {
+      "categories": [
+        "requirement",
+        "tool"
+      ],
+      "lines": 50,
+      "path": "src/google/adk/tools/bigquery/skills/bigquery-ai-ml/references/bigquery_ai_generate_double.md",
+      "sha256": "4905bb62bcdad01096dd5edb1624490574916d84cd319bef8eabc0c99207b0d2",
+      "size": 1961
+    },
+    {
+      "categories": [
+        "requirement",
+        "tool"
+      ],
+      "lines": 50,
+      "path": "src/google/adk/tools/bigquery/skills/bigquery-ai-ml/references/bigquery_ai_generate_int.md",
+      "sha256": "094ac6f12156a5072b9a7d1d615cf12d1e94d590c7afb96ec573f3eee67ef4e8",
+      "size": 1915
+    },
+    {
+      "categories": [
+        "requirement",
+        "tool"
+      ],
+      "lines": 55,
+      "path": "src/google/adk/tools/bigquery/skills/bigquery-ai-ml/references/bigquery_ai_if.md",
+      "sha256": "c833954f58ca1e6d21b7155cf90299e53236f01cf2568a23d990865a059c7e9d",
+      "size": 2051
+    },
+    {
+      "categories": [
+        "requirement",
+        "tool"
+      ],
+      "lines": 52,
+      "path": "src/google/adk/tools/bigquery/skills/bigquery-ai-ml/references/bigquery_ai_score.md",
+      "sha256": "2d473f9850d502735dd8d876853296ae5a9f2e7b3c02736b9dd5815a6789aee4",
+      "size": 1922
+    },
+    {
+      "categories": [
+        "requirement",
+        "tool"
+      ],
+      "lines": 76,
+      "path": "src/google/adk/tools/bigquery/skills/bigquery-ai-ml/references/bigquery_ai_search.md",
+      "sha256": "d5faf7ae19b555944d80b379d4d2297d469fafd46fad2329ead96d169c3d3d37",
+      "size": 3414
+    },
+    {
+      "categories": [
+        "requirement",
+        "tool"
+      ],
+      "lines": 48,
+      "path": "src/google/adk/tools/bigquery/skills/bigquery-ai-ml/references/bigquery_ai_similarity.md",
+      "sha256": "757fd466ebc1814fbada29cea07362ad7b41d11e8ef42796ab8532fb6b1f9e1a",
+      "size": 1865
+    },
+    {
+      "categories": [
+        "requirement",
+        "tool"
+      ],
+      "lines": 502,
+      "path": "src/google/adk/tools/bigquery/skills/bigquery-graph/SKILL.md",
+      "sha256": "aa26739a4653d842553b9903932c520662cb9994cfe042b6ee274bfb1dd5d074",
+      "size": 19395
+    },
+    {
+      "categories": [
+        "requirement",
+        "tool"
+      ],
+      "lines": 156,
+      "path": "src/google/adk/tools/bigquery/skills/bigquery-graph/references/graph_schema/best_practices.md",
+      "sha256": "cb0e05c12fec8a81ca30a4f550e94c543026d34c095a228c71aacf4dc96244db",
+      "size": 6543
+    },
+    {
+      "categories": [
+        "requirement",
+        "tool"
+      ],
+      "lines": 221,
+      "path": "src/google/adk/tools/bigquery/skills/bigquery-graph/references/graph_schema/ddl_reference.md",
+      "sha256": "719fa91ba910fa0f4ab5b49e1399c99c68b29fa5c386989d5b0e234150150dc3",
+      "size": 7664
+    },
+    {
+      "categories": [
+        "requirement",
+        "tool"
+      ],
+      "lines": 106,
+      "path": "src/google/adk/tools/bigquery/skills/bigquery-graph/references/graph_schema/feature_parity.md",
+      "sha256": "e9925f47b273f5a7fe7c4ff8c246cf2f0a3d732570646d054cfdda36ab10ab98",
+      "size": 4903
+    },
+    {
+      "categories": [
+        "requirement",
+        "tool"
+      ],
+      "lines": 92,
+      "path": "src/google/adk/tools/bigquery/skills/bigquery-graph/references/graph_schema/graph_schema_ddl_advisor.md",
+      "sha256": "7ca507c1c32fb19f621aee6d515b8a2c5b6d1fa2c2ea798bdd808b299eb7ebfa",
+      "size": 4203
+    },
+    {
+      "categories": [
+        "requirement",
+        "tool"
+      ],
+      "lines": 72,
+      "path": "src/google/adk/tools/bigquery/skills/bigquery-graph/references/semantic_queries.md",
+      "sha256": "3e764ca3aa016635da561f8c5cb9d06f905a9695c47aec9ca7d64c7587398005",
+      "size": 3143
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 34,
+      "path": "src/google/adk/tools/bigtable/__init__.py",
+      "sha256": "b56af31f9b6cbad05310017266fbab328392bc37c3aff600c854cbca9b3855ba",
+      "size": 1308
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 45,
+      "path": "src/google/adk/tools/bigtable/bigtable_credentials.py",
+      "sha256": "2628e60ee490b87413e34531ad1f0999720f413b5d763048df84bed9c6a735ba",
+      "size": 1511
+    },
+    {
+      "categories": [
+        "permission",
+        "tool"
+      ],
+      "lines": 204,
+      "path": "src/google/adk/tools/bigtable/bigtable_toolset.py",
+      "sha256": "32f0ded5c739de155332f8db395b423004331f78dae07ac04a5a7558201ad2a5",
+      "size": 7100
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 56,
+      "path": "src/google/adk/tools/bigtable/client.py",
+      "sha256": "98682660d136195096dce0bee4b83aeae0dbf28545e7aa1a5ff40267bc911d81",
+      "size": 1654
+    },
+    {
+      "categories": [
+        "recovery",
+        "tool"
+      ],
+      "lines": 382,
+      "path": "src/google/adk/tools/bigtable/metadata_tool.py",
+      "sha256": "9c55c1b37cede12c6acae97859e5ffcd75cf47f601b7f0403af7d03c11c69298",
+      "size": 11856
+    },
+    {
+      "categories": [
+        "recovery",
+        "tool"
+      ],
+      "lines": 137,
+      "path": "src/google/adk/tools/bigtable/query_tool.py",
+      "sha256": "86a39b685b7ad460c23044a1b3188285f1f420447f46e1c49b4a7b037fc4aca7",
+      "size": 4413
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 28,
+      "path": "src/google/adk/tools/bigtable/settings.py",
+      "sha256": "ce58f4db9d0ee29afec2416613a0b1c50f79626363fb4ee86df2ea470fe5ce1a",
+      "size": 941
+    },
+    {
+      "categories": [],
+      "lines": 13,
+      "path": "src/google/adk/tools/computer_use/__init__.py",
+      "sha256": "43955acccf4b719dbab4dceb4c9437274dc864bf3d15b22c252cd9d010255c7d",
+      "size": 574
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 281,
+      "path": "src/google/adk/tools/computer_use/base_computer.py",
+      "sha256": "52a5562d4c2f641fb75a98f42b5b8668b408175ce0461c0acc8d0e4dea5f97e5",
+      "size": 8104
+    },
+    {
+      "categories": [
+        "permission",
+        "recovery",
+        "tool"
+      ],
+      "lines": 198,
+      "path": "src/google/adk/tools/computer_use/computer_use_tool.py",
+      "sha256": "892ec2f50f58f3fd1fac40d71d0521ae831f9c79648ee796e26f7e65ed059cf8",
+      "size": 7227
+    },
+    {
+      "categories": [
+        "recovery",
+        "tool"
+      ],
+      "lines": 287,
+      "path": "src/google/adk/tools/computer_use/computer_use_toolset.py",
+      "sha256": "41cbe41b37aab696cbdc971eb3340b5710d95f48b36521e6171ce43d08b4363e",
+      "size": 9627
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 31,
+      "path": "src/google/adk/tools/crewai_tool.py",
+      "sha256": "db764791decec52dfd5c696ee983e0154c58e1a9176d00695abd80728aced5ad",
+      "size": 938
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 25,
+      "path": "src/google/adk/tools/data_agent/__init__.py",
+      "sha256": "da36ad28af5c75fd54dd2fa39fdaf1e1140ea2fa5388f884a8be1c21f2c5ba56",
+      "size": 810
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 35,
+      "path": "src/google/adk/tools/data_agent/config.py",
+      "sha256": "2d7e9df009dd2f823a8774c21dbcaf6850ddee83b0f1e7013fd844768f95ddc7",
+      "size": 1127
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 36,
+      "path": "src/google/adk/tools/data_agent/credentials.py",
+      "sha256": "4ea6fde470beba0ff340bfb15e6c46ae567e377433fff946c6b2add73e19f665",
+      "size": 1243
+    },
+    {
+      "categories": [
+        "recovery",
+        "tool"
+      ],
+      "lines": 325,
+      "path": "src/google/adk/tools/data_agent/data_agent_tool.py",
+      "sha256": "9daa9936478615834ca17d2724ff1198f28e54f01317c5d2605c2967b8a804dc",
+      "size": 10303
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 93,
+      "path": "src/google/adk/tools/data_agent/data_agent_toolset.py",
+      "sha256": "d2cbaa1690be224f6ec2ff1aeef1e63b95ff6dc831cfe056ebe8f0f24094028d",
+      "size": 2824
+    },
+    {
+      "categories": [
+        "recovery",
+        "tool"
+      ],
+      "lines": 352,
+      "path": "src/google/adk/tools/discovery_engine_search_tool.py",
+      "sha256": "6f3b617acb16d5bb80a08f14badd5c5c5bf37ad38d2411b4c0924948dcbb657c",
+      "size": 12275
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 78,
+      "path": "src/google/adk/tools/enterprise_search_tool.py",
+      "sha256": "71329e3fb16bfe9815560cafed0515dda225433c99c45e166da8e2b41542c393",
+      "size": 2601
+    },
+    {
+      "categories": [
+        "runtime",
+        "tool"
+      ],
+      "lines": 23,
+      "path": "src/google/adk/tools/environment/__init__.py",
+      "sha256": "439a003dc763bca8deec242087bc2c0fb29b7667fca9ebc13bc23da22f53152b",
+      "size": 768
+    },
+    {
+      "categories": [
+        "runtime",
+        "tool"
+      ],
+      "lines": 46,
+      "path": "src/google/adk/tools/environment/_constants.py",
+      "sha256": "825f0ea9fe7cac53e9585640a6ccc809de3f3e723460bf093ce2fbadb2dce710",
+      "size": 1750
+    },
+    {
+      "categories": [
+        "recovery",
+        "runtime",
+        "tool"
+      ],
+      "lines": 140,
+      "path": "src/google/adk/tools/environment/_edit_file_tool.py",
+      "sha256": "51fe342e3baa4f1ea0162ad135187d169a0a13fd11205c6424cd90d56f1d73ef",
+      "size": 4518
+    },
+    {
+      "categories": [
+        "runtime",
+        "tool"
+      ],
+      "lines": 115,
+      "path": "src/google/adk/tools/environment/_environment_toolset.py",
+      "sha256": "1e10b8de0cbd812086ae0ba24ef93a8b8d311a70d35bdb7255a235a3ca2d2883",
+      "size": 3719
+    },
+    {
+      "categories": [
+        "recovery",
+        "runtime",
+        "tool"
+      ],
+      "lines": 137,
+      "path": "src/google/adk/tools/environment/_execute_tool.py",
+      "sha256": "f71b7e8fc95bdc704f3c9942a909aba7b61a367fd6dc7fc7e98f731883350eb6",
+      "size": 4566
+    },
+    {
+      "categories": [
+        "recovery",
+        "runtime",
+        "tool"
+      ],
+      "lines": 165,
+      "path": "src/google/adk/tools/environment/_read_file_tool.py",
+      "sha256": "8f5d5409950b2f73c03918279aa707c491874b1d933f03299e97163ca7b1308d",
+      "size": 5374
+    },
+    {
+      "categories": [
+        "runtime",
+        "tool"
+      ],
+      "lines": 27,
+      "path": "src/google/adk/tools/environment/_tools.py",
+      "sha256": "ce47e9c70a41c0bbd0064ff50fa5c475d083e0528896fbbfde9200232f4129d8",
+      "size": 1069
+    },
+    {
+      "categories": [
+        "runtime",
+        "tool"
+      ],
+      "lines": 26,
+      "path": "src/google/adk/tools/environment/_utils.py",
+      "sha256": "0826160a6e318f138a518a4325c9663b02f28ff0bb989953af6da8356b1bfaad",
+      "size": 934
+    },
+    {
+      "categories": [
+        "recovery",
+        "runtime",
+        "tool"
+      ],
+      "lines": 92,
+      "path": "src/google/adk/tools/environment/_write_file_tool.py",
+      "sha256": "82387b3f0d267daeb09693120ca8dc2abf49ecb0160b6345b79ad7c746922f0c",
+      "size": 2977
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 17,
+      "path": "src/google/adk/tools/environment_simulation/__init__.py",
+      "sha256": "7405b2a42f0fe4512c93b2162e2cdbe8b65ce94e32644fb60367424b2288061c",
+      "size": 731
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 170,
+      "path": "src/google/adk/tools/environment_simulation/environment_simulation_config.py",
+      "sha256": "5cf2e69078202b751d0637910f168db0825df8dfc2ed4da915179159ddb01db7",
+      "size": 6081
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 143,
+      "path": "src/google/adk/tools/environment_simulation/environment_simulation_engine.py",
+      "sha256": "67a3211fa871976aaac375b9b0cc816c9cf576d1b370e5c5352d679dd6a139e6",
+      "size": 5325
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 74,
+      "path": "src/google/adk/tools/environment_simulation/environment_simulation_factory.py",
+      "sha256": "d930bf6ec2a1d2b1d3bff37c438c5bc053b7f9f78441b08c3cf9c8422bc397c6",
+      "size": 2572
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 43,
+      "path": "src/google/adk/tools/environment_simulation/environment_simulation_plugin.py",
+      "sha256": "bd5d51bbb8f61bad132590da18a78ad8cee01a0b0518b15097044c09ae0d08aa",
+      "size": 1614
+    },
+    {
+      "categories": [],
+      "lines": 13,
+      "path": "src/google/adk/tools/environment_simulation/strategies/__init__.py",
+      "sha256": "43955acccf4b719dbab4dceb4c9437274dc864bf3d15b22c252cd9d010255c7d",
+      "size": 574
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 65,
+      "path": "src/google/adk/tools/environment_simulation/strategies/base.py",
+      "sha256": "b675177dad5469e7d5269871606a791d6373d4bfbdbac0a8fd8862415527480d",
+      "size": 2019
+    },
+    {
+      "categories": [
+        "recovery",
+        "tool"
+      ],
+      "lines": 224,
+      "path": "src/google/adk/tools/environment_simulation/strategies/tool_spec_mock_strategy.py",
+      "sha256": "7de686bf95a80ba1b86fbc6660a417a17939384d6fce6d19c12992a497e4620c",
+      "size": 8389
+    },
+    {
+      "categories": [
+        "recovery",
+        "tool"
+      ],
+      "lines": 141,
+      "path": "src/google/adk/tools/environment_simulation/tool_connection_analyzer.py",
+      "sha256": "0d4623c25b75b0c26afcd44f88af300164c0d30472d6d10d1eea2358e6be588c",
+      "size": 5422
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 44,
+      "path": "src/google/adk/tools/environment_simulation/tool_connection_map.py",
+      "sha256": "93f7939682e35cf527eca62c439c15cbe3a3476e939977ac374e8d2005cb6404",
+      "size": 1391
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 103,
+      "path": "src/google/adk/tools/example_tool.py",
+      "sha256": "cedb477f025e03aa9e07ebc11e670d76fd936bc08f6611668cf33ad40b924fc5",
+      "size": 3520
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 26,
+      "path": "src/google/adk/tools/exit_loop_tool.py",
+      "sha256": "7f4374afa77ff1ef13e70fd17d13fac9e4873c6ab4e0a5391a39ec22571a9c68",
+      "size": 877
+    },
+    {
+      "categories": [
+        "permission",
+        "recovery",
+        "tool"
+      ],
+      "lines": 351,
+      "path": "src/google/adk/tools/function_tool.py",
+      "sha256": "be1cbddb0abb17c231c7fce80179aa764d0af0e83b57f2d64d25515e6e579e77",
+      "size": 12942
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 31,
+      "path": "src/google/adk/tools/get_user_choice_tool.py",
+      "sha256": "2d4079eb5f13dd16d3e90c801406e92d12b0c19d875e8bad6d76b0973d44cd89",
+      "size": 1030
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 41,
+      "path": "src/google/adk/tools/google_api_tool/__init__.py",
+      "sha256": "d797806120eeb8598cb65c2d1a9564f6d893c97054b01d1019a2ab90cf1bad39",
+      "size": 1385
+    },
+    {
+      "categories": [
+        "permission",
+        "tool"
+      ],
+      "lines": 84,
+      "path": "src/google/adk/tools/google_api_tool/google_api_tool.py",
+      "sha256": "b27d4b8c92844f91f01fcab918c50c7d73d4a2f1683cbd83ea15f302bb6126f1",
+      "size": 2888
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 175,
+      "path": "src/google/adk/tools/google_api_tool/google_api_toolset.py",
+      "sha256": "b4c1ff6b55909626d86d792dc68ce6efd215a0fb341ced39d306cd8438453dd8",
+      "size": 6380
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 236,
+      "path": "src/google/adk/tools/google_api_tool/google_api_toolsets.py",
+      "sha256": "58a42d67b27aaad6529f0384f4061c845250207e16d69e2055cfc40470b7d789",
+      "size": 7725
+    },
+    {
+      "categories": [
+        "recovery",
+        "tool"
+      ],
+      "lines": 578,
+      "path": "src/google/adk/tools/google_api_tool/googleapi_to_openapi_converter.py",
+      "sha256": "5f89fe4e3cf48f4fe980c8830904de449f54d3a102585a42663761e146a82445",
+      "size": 18441
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 70,
+      "path": "src/google/adk/tools/google_maps_grounding_tool.py",
+      "sha256": "264e46ff186fd038739d94e244e4554f428a31e53deabe57b65aec47f6493d29",
+      "size": 2401
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 54,
+      "path": "src/google/adk/tools/google_search_agent_tool.py",
+      "sha256": "00d2d8484f1aa08024453a1fec15c3c1b72a9ecdd79052e21754f252508e0e63",
+      "size": 1779
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 97,
+      "path": "src/google/adk/tools/google_search_tool.py",
+      "sha256": "da3eed46ecd92bf3c169eaa78d8e6162310190e6ec0b193c37ac57f1f48120d7",
+      "size": 3289
+    },
+    {
+      "categories": [
+        "permission",
+        "recovery",
+        "tool"
+      ],
+      "lines": 139,
+      "path": "src/google/adk/tools/google_tool.py",
+      "sha256": "e034c10604fb60e107b769a2a308f4e206b2e21469f37414e168536e7e9f55ab",
+      "size": 4680
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 32,
+      "path": "src/google/adk/tools/langchain_tool.py",
+      "sha256": "6ec2e85d078e004e142226a1f4859f85f62e0e7ebf44c497b4a3d634e6224d68",
+      "size": 969
+    },
+    {
+      "categories": [
+        "recovery",
+        "tool"
+      ],
+      "lines": 331,
+      "path": "src/google/adk/tools/load_artifacts_tool.py",
+      "sha256": "d8ff0ad7a5226f1dfda442c5cd11f91956a205197a4dd837e5cebd586bb546f9",
+      "size": 11030
+    },
+    {
+      "categories": [
+        "recovery",
+        "tool"
+      ],
+      "lines": 172,
+      "path": "src/google/adk/tools/load_mcp_resource_tool.py",
+      "sha256": "507ee44187347ab91f57eed345193bba368afd713861e87e11237fe930bf24ea",
+      "size": 5763
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 107,
+      "path": "src/google/adk/tools/load_memory_tool.py",
+      "sha256": "b1ba215926ef23c9ceaf713b885e26a6c38a10c42313869715877291ab7967ef",
+      "size": 3087
+    },
+    {
+      "categories": [
+        "recovery",
+        "tool"
+      ],
+      "lines": 312,
+      "path": "src/google/adk/tools/load_web_page.py",
+      "sha256": "a52baa6e18ba927c06c1befba2bfc4018294566efb037f9c45e2c54946bf8189",
+      "size": 9319
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 60,
+      "path": "src/google/adk/tools/long_running_tool.py",
+      "sha256": "401885753f55fcd7e9d94da062c263f4f6d4ccb930bf3e537d3fd2b1c0bbc8b4",
+      "size": 1966
+    },
+    {
+      "categories": [
+        "recovery",
+        "tool"
+      ],
+      "lines": 47,
+      "path": "src/google/adk/tools/mcp_tool/__init__.py",
+      "sha256": "83340547d2a280c6d804ec6b0218b3e70a2f04298e4bc33db25e95a728bfe6e0",
+      "size": 1506
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 197,
+      "path": "src/google/adk/tools/mcp_tool/_agent_to_mcp.py",
+      "sha256": "d5db44cb72e4d6a2cf669682c38827676b3615f0b5826816341ba18c9af1d857",
+      "size": 7315
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 173,
+      "path": "src/google/adk/tools/mcp_tool/conversion_utils.py",
+      "sha256": "82962b1a4b496354747a34266de977f21d3f5e58fcb613771c351f2fd3ca9f0a",
+      "size": 5546
+    },
+    {
+      "categories": [
+        "recovery",
+        "tool"
+      ],
+      "lines": 1075,
+      "path": "src/google/adk/tools/mcp_tool/mcp_session_manager.py",
+      "sha256": "912f2b49286fe0d719f7edaa7d3023cc751dd1a03b1b2a868a5cc406f59890a0",
+      "size": 37471
+    },
+    {
+      "categories": [
+        "permission",
+        "recovery",
+        "tool"
+      ],
+      "lines": 611,
+      "path": "src/google/adk/tools/mcp_tool/mcp_tool.py",
+      "sha256": "687ff23e3e7e292fad3fd7dff2b5fca6f97791a22b756bea8e88b221aa900235",
+      "size": 22855
+    },
+    {
+      "categories": [
+        "permission",
+        "recovery",
+        "tool"
+      ],
+      "lines": 584,
+      "path": "src/google/adk/tools/mcp_tool/mcp_toolset.py",
+      "sha256": "6fc2c5c507a0affa632cced5afa597cc9baeb5396e98a5cce2108113d57441cd",
+      "size": 20898
+    },
+    {
+      "categories": [
+        "recovery",
+        "tool"
+      ],
+      "lines": 361,
+      "path": "src/google/adk/tools/mcp_tool/session_context.py",
+      "sha256": "b332bcee2fff69f31c8d41ed593ec88088509ed1be022084d14fd7e6f4f2c47e",
+      "size": 13435
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 21,
+      "path": "src/google/adk/tools/openapi_tool/__init__.py",
+      "sha256": "5f5e97f21cfc8e121c3c3405f1a0aecbed171c2d7cbda08195e1290cb6103e1a",
+      "size": 724
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 19,
+      "path": "src/google/adk/tools/openapi_tool/auth/__init__.py",
+      "sha256": "2e17facdf99c4a652cca9570ef77a6e472da6fb83a802082ad2bfac322451ef2",
+      "size": 637
+    },
+    {
+      "categories": [
+        "permission",
+        "recovery",
+        "tool"
+      ],
+      "lines": 500,
+      "path": "src/google/adk/tools/openapi_tool/auth/auth_helpers.py",
+      "sha256": "2a077c8e59b7fca9685b1c135db02d7da92924bd1e5a1b1ee32a17599d3b5d00",
+      "size": 15911
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 25,
+      "path": "src/google/adk/tools/openapi_tool/auth/credential_exchangers/__init__.py",
+      "sha256": "5f4d694a0ca850fe6a9ff51db7e7a248bd5375e892d0b010602b95fa63c331e8",
+      "size": 1002
+    },
+    {
+      "categories": [
+        "permission",
+        "tool"
+      ],
+      "lines": 107,
+      "path": "src/google/adk/tools/openapi_tool/auth/credential_exchangers/auto_auth_credential_exchanger.py",
+      "sha256": "cff5296e8b48b90f767cde39b123808fb18259ce63cf6849f19490be07614936",
+      "size": 3434
+    },
+    {
+      "categories": [
+        "permission",
+        "tool"
+      ],
+      "lines": 55,
+      "path": "src/google/adk/tools/openapi_tool/auth/credential_exchangers/base_credential_exchanger.py",
+      "sha256": "2989d53710f9dc32679f3eadbdcd94ce2892503e76601e35afcf799ba6254aef",
+      "size": 1817
+    },
+    {
+      "categories": [
+        "permission",
+        "tool"
+      ],
+      "lines": 119,
+      "path": "src/google/adk/tools/openapi_tool/auth/credential_exchangers/oauth2_exchanger.py",
+      "sha256": "ceb7196b1a2c5a4d4c2fba58c48d1e2cf0833f3776c5c41784be153e57476d99",
+      "size": 3897
+    },
+    {
+      "categories": [
+        "permission",
+        "recovery",
+        "tool"
+      ],
+      "lines": 195,
+      "path": "src/google/adk/tools/openapi_tool/auth/credential_exchangers/service_account_exchanger.py",
+      "sha256": "af71cdf39425bed28fa1d8ca017a37ba9736084b20840da58c2ba810bdbe965f",
+      "size": 7189
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 19,
+      "path": "src/google/adk/tools/openapi_tool/common/__init__.py",
+      "sha256": "8f9cbc2bb0942820698be83246bd4e7cc7eaa32f425de191d26575e1a35440e8",
+      "size": 625
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 270,
+      "path": "src/google/adk/tools/openapi_tool/common/common.py",
+      "sha256": "9f4af4c3e4ceca5612db870b2c38a003af074d3580c7d5b4ebad6761ebb2174d",
+      "size": 8224
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 35,
+      "path": "src/google/adk/tools/openapi_tool/openapi_spec_parser/__init__.py",
+      "sha256": "41006c295a30dbf470e72b542681a6f6ac8f3cf9ad79506cf1e8645fea6f6c1d",
+      "size": 1229
+    },
+    {
+      "categories": [
+        "isolation",
+        "permission",
+        "tool"
+      ],
+      "lines": 338,
+      "path": "src/google/adk/tools/openapi_tool/openapi_spec_parser/openapi_spec_parser.py",
+      "sha256": "e6f5519a0011e3054cb53650622ce44129435bc36a92b79d0a78eff8e10a6a41",
+      "size": 11219
+    },
+    {
+      "categories": [
+        "permission",
+        "tool"
+      ],
+      "lines": 262,
+      "path": "src/google/adk/tools/openapi_tool/openapi_spec_parser/openapi_toolset.py",
+      "sha256": "a4430199a283ebd4ddb40ea56ab3fdbbb83a8b1a836b88b810e0067471cea353",
+      "size": 10514
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 302,
+      "path": "src/google/adk/tools/openapi_tool/openapi_spec_parser/operation_parser.py",
+      "sha256": "8139aa6b9b11cb3f1e9866ea1d1a81a0b1ae471e4c345c8383c2c75be07df0d0",
+      "size": 10370
+    },
+    {
+      "categories": [
+        "permission",
+        "recovery",
+        "tool"
+      ],
+      "lines": 622,
+      "path": "src/google/adk/tools/openapi_tool/openapi_spec_parser/rest_api_tool.py",
+      "sha256": "b58c52e126b07e27fd7c434cb91487d4ffde5a2d38db6056dbfdaf006d77265b",
+      "size": 23511
+    },
+    {
+      "categories": [
+        "permission",
+        "recovery",
+        "tool"
+      ],
+      "lines": 366,
+      "path": "src/google/adk/tools/openapi_tool/openapi_spec_parser/tool_auth_handler.py",
+      "sha256": "ab3ff49412d8f85c6212c5126e996d6cb6a4ed3e45fa0ad0216c5dd0754c4d17",
+      "size": 13524
+    },
+    {
+      "categories": [
+        "recovery",
+        "tool"
+      ],
+      "lines": 92,
+      "path": "src/google/adk/tools/preload_memory_tool.py",
+      "sha256": "e38e6a4c9b0c0486b7f5f211c337f10fdbd5fbe1c74bf275dc9b709074d15d83",
+      "size": 2754
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 30,
+      "path": "src/google/adk/tools/pubsub/__init__.py",
+      "sha256": "5e00913a9d268dd2fec51d647eab3e87ea362728426a1c686e4182738e61aa5f",
+      "size": 1183
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 169,
+      "path": "src/google/adk/tools/pubsub/client.py",
+      "sha256": "399a82639ce88789397b225b9e32b1160758fe62152f04459abe2e090e332a85",
+      "size": 4889
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 36,
+      "path": "src/google/adk/tools/pubsub/config.py",
+      "sha256": "2c85119350bd8628aabf774a42fddd6812fd1ee7931e398b1007240599c9355b",
+      "size": 1144
+    },
+    {
+      "categories": [
+        "recovery",
+        "tool"
+      ],
+      "lines": 188,
+      "path": "src/google/adk/tools/pubsub/message_tool.py",
+      "sha256": "0ab42d3e21c1db76e0b015cdd3854be9bc9cc121a1ec7101e50da47565130043",
+      "size": 5807
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 45,
+      "path": "src/google/adk/tools/pubsub/pubsub_credentials.py",
+      "sha256": "0d338ee45e450680bccfa41d1d023e03fb42a28732cfd3ae2f0bf591dd4bcab6",
+      "size": 1500
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 99,
+      "path": "src/google/adk/tools/pubsub/pubsub_toolset.py",
+      "sha256": "c39426ad14f8d3e4af1a5734de0689d2120c61f1b296dbbbb4da3c5084c03524",
+      "size": 3181
+    },
+    {
+      "categories": [
+        "recovery",
+        "tool"
+      ],
+      "lines": 56,
+      "path": "src/google/adk/tools/retrieval/__init__.py",
+      "sha256": "206a93c637bb05f3e1092c0251c4653e0955df2b040959db394359f2e8d58162",
+      "size": 1868
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 55,
+      "path": "src/google/adk/tools/retrieval/base_retrieval_tool.py",
+      "sha256": "b81c332519e5d10a42335528e2d7b4ccde215f7ed163dc09d00479b90976e80a",
+      "size": 1749
+    },
+    {
+      "categories": [
+        "recovery",
+        "tool"
+      ],
+      "lines": 83,
+      "path": "src/google/adk/tools/retrieval/files_retrieval.py",
+      "sha256": "8e5846930a27576028286c5bb37393773f2830426ee73a51d18e1f75bb80ce66",
+      "size": 2620
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 41,
+      "path": "src/google/adk/tools/retrieval/llama_index_retrieval.py",
+      "sha256": "9606102860a0130594aaa9d01775a1934b7cbaf7aeff001492d2b14ae4be09ed",
+      "size": 1304
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 113,
+      "path": "src/google/adk/tools/retrieval/vertex_ai_rag_retrieval.py",
+      "sha256": "7d81209cfd35dd89366f17d703e91cd35d6613ebd98e84a3d6427745893b5a21",
+      "size": 3656
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 176,
+      "path": "src/google/adk/tools/set_model_response_tool.py",
+      "sha256": "d4d154db54b4c6a558943932b7f27130dec3602f4f9e170ccf70fdc14140eff9",
+      "size": 6470
+    },
+    {
+      "categories": [
+        "recovery",
+        "tool"
+      ],
+      "lines": 1225,
+      "path": "src/google/adk/tools/skill_toolset.py",
+      "sha256": "8e0cebfce4ae73cd0932d4afcc2a7cb853e09a57ef70a0b3345ffe26f599e56e",
+      "size": 42091
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 42,
+      "path": "src/google/adk/tools/spanner/__init__.py",
+      "sha256": "5fc940c4b100f24154a8fd198cd713ae2bd782617793c36665b6fb73bfc43af7",
+      "size": 1700
+    },
+    {
+      "categories": [
+        "recovery",
+        "tool"
+      ],
+      "lines": 372,
+      "path": "src/google/adk/tools/spanner/admin_tool.py",
+      "sha256": "94a4f5687a72f099520387c4c0019521e86bf5a7fb11ee4334597c8dde311c29",
+      "size": 10656
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 110,
+      "path": "src/google/adk/tools/spanner/admin_toolset.py",
+      "sha256": "55d0a4ef78407fded0ac294a9c22e11e05918e1d3cd87578c94894fcd2e1e703",
+      "size": 3316
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 33,
+      "path": "src/google/adk/tools/spanner/client.py",
+      "sha256": "fced6d0f1627615bd6842ff59484a62d23b9985094010eacdf77a3fe87b77b1d",
+      "size": 1063
+    },
+    {
+      "categories": [
+        "recovery",
+        "tool"
+      ],
+      "lines": 557,
+      "path": "src/google/adk/tools/spanner/metadata_tool.py",
+      "sha256": "077426eb87b5bd544690bb148592b4741b0aaaaff6a6aa221ff571364bb2da57",
+      "size": 16901
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 195,
+      "path": "src/google/adk/tools/spanner/query_tool.py",
+      "sha256": "31d1b6085211742f525639b3de66a6d675879ebc9063dcda7ecc7a20baf18153",
+      "size": 5695
+    },
+    {
+      "categories": [
+        "recovery",
+        "tool"
+      ],
+      "lines": 627,
+      "path": "src/google/adk/tools/spanner/search_tool.py",
+      "sha256": "35ded70cd73658d91a44cdba2dc115095e9e43eea5e0d261b46b384aad64b81d",
+      "size": 22402
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 270,
+      "path": "src/google/adk/tools/spanner/settings.py",
+      "sha256": "91338126f126129fef0439c6da116daad44fefea5f020fe0cc3e90dcac7f8e50",
+      "size": 10308
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 45,
+      "path": "src/google/adk/tools/spanner/spanner_credentials.py",
+      "sha256": "7e0e33bdee8209245d45de1237e8f5d88eb1bca7ac76ec0736a979c5072300e8",
+      "size": 1501
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 146,
+      "path": "src/google/adk/tools/spanner/spanner_toolset.py",
+      "sha256": "9c1e215790ace63cdf7bacc6dba4abdd24f165a85f05420e24f42ca528fcab4a",
+      "size": 4586
+    },
+    {
+      "categories": [
+        "recovery",
+        "tool"
+      ],
+      "lines": 757,
+      "path": "src/google/adk/tools/spanner/utils.py",
+      "sha256": "35b6c4d0bb22dba1d9f4f72ab335b6a8ffed7f69ed1d33e6fb7c9c998d07a832",
+      "size": 26678
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 129,
+      "path": "src/google/adk/tools/tool_configs.py",
+      "sha256": "501aae7593fa46d383f5994d03011cbc4d1c131b662708ce305fd4a5cad94a4e",
+      "size": 3564
+    },
+    {
+      "categories": [
+        "permission",
+        "tool"
+      ],
+      "lines": 45,
+      "path": "src/google/adk/tools/tool_confirmation.py",
+      "sha256": "91a53232498ca58990c5f5fa6c52ece9adb5351041d15ba1f28770a7f4eae464",
+      "size": 1426
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 41,
+      "path": "src/google/adk/tools/tool_context.py",
+      "sha256": "1384f5858a18a6ede85778670e80510057a81d61edc50e4db6364db66b2ab419",
+      "size": 1372
+    },
+    {
+      "categories": [
+        "recovery",
+        "tool"
+      ],
+      "lines": 111,
+      "path": "src/google/adk/tools/toolbox_toolset.py",
+      "sha256": "e8aec714f1cf77ccc9c575f3025d683fc5a2b94c5ca2d1882e23b90cfe18da8f",
+      "size": 3856
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 88,
+      "path": "src/google/adk/tools/transfer_to_agent_tool.py",
+      "sha256": "6529a7eb01371ce9851fcf3398c70df296b1a2ff148b15987ae433930ab5253f",
+      "size": 2976
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 70,
+      "path": "src/google/adk/tools/url_context_tool.py",
+      "sha256": "1db729c554ef842526691e32a8d95d91ef87657040037533bd544ac1fdf34c78",
+      "size": 2431
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 67,
+      "path": "src/google/adk/tools/vertex_ai_load_profiles_tool.py",
+      "sha256": "1a48e6243e917d4e4a1373d300d2328396e10f0d8c6e2832f48a8e391b221654",
+      "size": 2248
+    },
+    {
+      "categories": [
+        "tool"
+      ],
+      "lines": 196,
+      "path": "src/google/adk/tools/vertex_ai_search_tool.py",
+      "sha256": "521fe22ce159e2f00868268dd9f6744ba2b535910faf92915ecddec73d5ef467",
+      "size": 6910
+    },
+    {
+      "categories": [],
+      "lines": 13,
+      "path": "tests/unittests/agents/__init__.py",
+      "sha256": "43955acccf4b719dbab4dceb4c9437274dc864bf3d15b22c252cd9d010255c7d",
+      "size": 574
+    },
+    {
+      "categories": [],
+      "lines": 13,
+      "path": "tests/unittests/agents/llm/__init__.py",
+      "sha256": "43955acccf4b719dbab4dceb4c9437274dc864bf3d15b22c252cd9d010255c7d",
+      "size": 574
+    },
+    {
+      "categories": [
+        "agent",
+        "verification"
+      ],
+      "lines": 81,
+      "path": "tests/unittests/agents/llm/event_utils.py",
+      "sha256": "091ccdc6688ef682fe8820285e394ce8a19bcf99bdd3ddab3b6f1f129a9dae09",
+      "size": 2416
+    },
+    {
+      "categories": [],
+      "lines": 13,
+      "path": "tests/unittests/agents/llm/task/__init__.py",
+      "sha256": "43955acccf4b719dbab4dceb4c9437274dc864bf3d15b22c252cd9d010255c7d",
+      "size": 574
+    },
+    {
+      "categories": [
+        "agent",
+        "permission",
+        "tool",
+        "verification"
+      ],
+      "lines": 363,
+      "path": "tests/unittests/agents/llm/task/test_finish_task_tool.py",
+      "sha256": "14fa9af111494238f581c68970b6f96108f93bcd5754f0591e400408587547c8",
+      "size": 12319
+    },
+    {
+      "categories": [
+        "agent",
+        "verification"
+      ],
+      "lines": 573,
+      "path": "tests/unittests/agents/test_agent_clone.py",
+      "sha256": "9cb530f54500517d9ed3e9a81e865dd68f58771d9f8ccb50427f27bfc63a42d8",
+      "size": 19590
+    },
+    {
+      "categories": [
+        "agent",
+        "permission",
+        "recovery",
+        "verification"
+      ],
+      "lines": 628,
+      "path": "tests/unittests/agents/test_agent_config.py",
+      "sha256": "33853b506ac0d3d2f3ffb7d88c77f6ff88fac1b60b85a5272257ad0cc79b18c5",
+      "size": 19833
+    },
+    {
+      "categories": [
+        "agent",
+        "verification"
+      ],
+      "lines": 1080,
+      "path": "tests/unittests/agents/test_base_agent.py",
+      "sha256": "b6b6beea505df2a87e86387cf2dc2a70480d978c7d0409f892637dd19e5469f6",
+      "size": 33728
+    },
+    {
+      "categories": [
+        "agent",
+        "permission",
+        "verification"
+      ],
+      "lines": 509,
+      "path": "tests/unittests/agents/test_callback_context.py",
+      "sha256": "dbd1a5b2c1a412fc2e745140ffa4c594ea891a9a90212c2a8b8f66b695066829",
+      "size": 18011
+    },
+    {
+      "categories": [
+        "agent",
+        "isolation",
+        "permission",
+        "verification"
+      ],
+      "lines": 1194,
+      "path": "tests/unittests/agents/test_context.py",
+      "sha256": "f1672b25cc85ec18522b558455cbf1b1d96f6329268d08c1c9d259a379e74fc9",
+      "size": 40447
+    },
+    {
+      "categories": [
+        "agent",
+        "verification"
+      ],
+      "lines": 174,
+      "path": "tests/unittests/agents/test_context_cache_config.py",
+      "sha256": "3a3527d81228c950e58a5c1d0666ffaefe0d30f02172bc909b58ecd9c2eafaed",
+      "size": 5959
+    },
+    {
+      "categories": [
+        "agent",
+        "verification"
+      ],
+      "lines": 1345,
+      "path": "tests/unittests/agents/test_gemini_context_cache_manager.py",
+      "sha256": "498314d106f8df082663df446526046f89995ed69a88aa76267d8bdc328b29d4",
+      "size": 49301
+    },
+    {
+      "categories": [
+        "agent",
+        "isolation",
+        "verification"
+      ],
+      "lines": 734,
+      "path": "tests/unittests/agents/test_invocation_context.py",
+      "sha256": "529b8adbfd4403d4aacf9efd93e4e06d065c1360ccf5cb0093c6e7c51de4b67c",
+      "size": 27432
+    },
+    {
+      "categories": [
+        "agent",
+        "verification"
+      ],
+      "lines": 159,
+      "path": "tests/unittests/agents/test_invocation_context_process_queue.py",
+      "sha256": "5ddc315f7227165ab58282900d0eb1a1d16ddc32cc199e3b9f48ff28d071a61b",
+      "size": 4996
+    },
+    {
+      "categories": [
+        "agent",
+        "verification"
+      ],
+      "lines": 252,
+      "path": "tests/unittests/agents/test_langgraph_agent.py",
+      "sha256": "1090fd120f08548b0dff820d3049238c6e8bbb0a2943449587da289e06035e8c",
+      "size": 9001
+    },
+    {
+      "categories": [
+        "agent",
+        "verification"
+      ],
+      "lines": 91,
+      "path": "tests/unittests/agents/test_live_request_queue.py",
+      "sha256": "f992c9952f3025ed1403803f8fb60db2b606d407303b0260f0178b2fd02a5c02",
+      "size": 2752
+    },
+    {
+      "categories": [
+        "agent",
+        "verification"
+      ],
+      "lines": 210,
+      "path": "tests/unittests/agents/test_llm_agent_callbacks.py",
+      "sha256": "7c8a14a53aa80ebaed020d4025a03248a677cb032b42dc1a6da8ef92d9e31276",
+      "size": 5636
+    },
+    {
+      "categories": [
+        "agent",
+        "verification"
+      ],
+      "lines": 90,
+      "path": "tests/unittests/agents/test_llm_agent_error_messages.py",
+      "sha256": "bd0e7ebc7e23ec6656fb1ce6071b4b076325d8a5b51220879d01b6587773d02b",
+      "size": 2861
+    },
+    {
+      "categories": [
+        "agent",
+        "recovery",
+        "verification"
+      ],
+      "lines": 605,
+      "path": "tests/unittests/agents/test_llm_agent_fields.py",
+      "sha256": "c935cd849e42f6122bf868f7242b90d76bbbbbfb74a86f15ad6300d1e902bbcb",
+      "size": 18742
+    },
+    {
+      "categories": [
+        "agent",
+        "verification"
+      ],
+      "lines": 434,
+      "path": "tests/unittests/agents/test_llm_agent_include_contents.py",
+      "sha256": "57332a26293d0a09f6543b958041e6a3f8425f81549d53a1f82fe99dd1b583e4",
+      "size": 13057
+    },
+    {
+      "categories": [
+        "agent",
+        "verification"
+      ],
+      "lines": 481,
+      "path": "tests/unittests/agents/test_llm_agent_interruptions.py",
+      "sha256": "e00a83feb55bcee092b4a55353739e5c9ebd4b1ad4a11576cc235b8e364a5aa6",
+      "size": 15145
+    },
+    {
+      "categories": [
+        "agent",
+        "recovery",
+        "verification"
+      ],
+      "lines": 389,
+      "path": "tests/unittests/agents/test_llm_agent_output_save.py",
+      "sha256": "807c266a7332915eb44bfee3e7fca5d01932a6729c13f8e08a60f1935db65400",
+      "size": 13409
+    },
+    {
+      "categories": [
+        "agent",
+        "verification"
+      ],
+      "lines": 49,
+      "path": "tests/unittests/agents/test_llm_agent_single_turn_subagents.py",
+      "sha256": "00440e175c8f9d49202abd7a01e5bfa3bc685a5d91d6d370b1745ae35f2f84f7",
+      "size": 1804
+    },
+    {
+      "categories": [
+        "agent",
+        "verification"
+      ],
+      "lines": 120,
+      "path": "tests/unittests/agents/test_llm_agent_streaming_output.py",
+      "sha256": "384f88e744e2d8e3529e2b73f9439ac92335f065fe6020a538d2eb32573cb61c",
+      "size": 4107
+    },
+    {
+      "categories": [
+        "agent",
+        "verification"
+      ],
+      "lines": 292,
+      "path": "tests/unittests/agents/test_loop_agent.py",
+      "sha256": "e28ad9881580535ae2b74570d48b3b31a39249bec1144908f405cfb296078fc0",
+      "size": 9172
+    },
+    {
+      "categories": [
+        "agent",
+        "recovery",
+        "verification"
+      ],
+      "lines": 1209,
+      "path": "tests/unittests/agents/test_managed_agent.py",
+      "sha256": "f41144df17675e14769bc39689dac394e344ec22a61ef122302b74da582a7c7b",
+      "size": 36073
+    },
+    {
+      "categories": [
+        "agent",
+        "verification"
+      ],
+      "lines": 191,
+      "path": "tests/unittests/agents/test_mcp_instruction_provider.py",
+      "sha256": "d4334a5dc517b65f168b55f86cf7bd8c283943c86da6155798698dd0165e02af",
+      "size": 6423
+    },
+    {
+      "categories": [
+        "agent",
+        "verification"
+      ],
+      "lines": 250,
+      "path": "tests/unittests/agents/test_model_callback_chain.py",
+      "sha256": "d481b314a46394712e3d1fbbbe21e620ecfda1bd3c623091cf7d8e8fd694cf83",
+      "size": 6904
+    },
+    {
+      "categories": [
+        "agent",
+        "verification"
+      ],
+      "lines": 180,
+      "path": "tests/unittests/agents/test_output_key_visibility.py",
+      "sha256": "9d76e57eac54c61f407ec9980996ad300415719389b3784a8735328a8ee5d8df",
+      "size": 5877
+    },
+    {
+      "categories": [
+        "agent",
+        "recovery",
+        "verification"
+      ],
+      "lines": 416,
+      "path": "tests/unittests/agents/test_parallel_agent.py",
+      "sha256": "aab6c7220e35d8290467f1cad7d1e7960105bc79c1213781957b248bb61f67a5",
+      "size": 14142
+    },
+    {
+      "categories": [
+        "agent",
+        "verification"
+      ],
+      "lines": 59,
+      "path": "tests/unittests/agents/test_readonly_context.py",
+      "sha256": "ef3d15a17bb19ae4b6f3e745a30f9835c45586d66d37582372439ba34c045ff0",
+      "size": 2009
+    },
+    {
+      "categories": [
+        "agent",
+        "recovery",
+        "verification"
+      ],
+      "lines": 3367,
+      "path": "tests/unittests/agents/test_remote_a2a_agent.py",
+      "sha256": "463c210d8b4d2d000d6569ca3f7ac92f89921658e984a68a322f90fbfed7fa5b",
+      "size": 117745
+    },
+    {
+      "categories": [
+        "agent",
+        "verification"
+      ],
+      "lines": 264,
+      "path": "tests/unittests/agents/test_resumable_llm_agent.py",
+      "sha256": "3051e743d71841801c0f21b3bea7d6ee4ff2fea5ecb2a7bcace7807223459376",
+      "size": 8056
+    },
+    {
+      "categories": [
+        "agent",
+        "verification"
+      ],
+      "lines": 139,
+      "path": "tests/unittests/agents/test_run_config.py",
+      "sha256": "5ecfbd9193218a2f2e518ffa9d936473fb5b1155f4e87bb9f140a2974394739f",
+      "size": 4724
+    },
+    {
+      "categories": [
+        "agent",
+        "verification"
+      ],
+      "lines": 208,
+      "path": "tests/unittests/agents/test_sequential_agent.py",
+      "sha256": "ad58ef252bf5dd51f77d973e203371f9a66db3ddd01e52c157f46c2c0c8a16d4",
+      "size": 7154
+    },
+    {
+      "categories": [],
+      "lines": 13,
+      "path": "tests/unittests/evaluation/__init__.py",
+      "sha256": "43955acccf4b719dbab4dceb4c9437274dc864bf3d15b22c252cd9d010255c7d",
+      "size": 574
+    },
+    {
+      "categories": [
+        "feedback",
+        "verification"
+      ],
+      "lines": 131,
+      "path": "tests/unittests/evaluation/mock_gcs_utils.py",
+      "sha256": "64baeab9ee2d9b93df0a9dd12fe7690ef9cf0a8c9c22dc351e2e6d1b7e0764e5",
+      "size": 3636
+    },
+    {
+      "categories": [],
+      "lines": 13,
+      "path": "tests/unittests/evaluation/simulation/__init__.py",
+      "sha256": "43955acccf4b719dbab4dceb4c9437274dc864bf3d15b22c252cd9d010255c7d",
+      "size": 574
+    },
+    {
+      "categories": [
+        "feedback",
+        "verification"
+      ],
+      "lines": 227,
+      "path": "tests/unittests/evaluation/simulation/test_cloud_tts_llm.py",
+      "sha256": "8694c62ed022dae7a7e3900347f62ec243f5ff495eba09bd9ab0f430e0588eae",
+      "size": 7829
+    },
+    {
+      "categories": [
+        "feedback",
+        "verification"
+      ],
+      "lines": 354,
+      "path": "tests/unittests/evaluation/simulation/test_llm_audio_user_simulator.py",
+      "sha256": "e349d8781f66c93a89ad329b2bfad05d1b1b80578ca53d27cee0ed20f72f6f04",
+      "size": 12931
+    },
+    {
+      "categories": [
+        "feedback",
+        "verification"
+      ],
+      "lines": 420,
+      "path": "tests/unittests/evaluation/simulation/test_llm_backed_user_simulator.py",
+      "sha256": "6d60713f069739edb98d0c6824340e2d32430aab8b09dfec15d4ddec8f7db4b0",
+      "size": 14378
+    },
+    {
+      "categories": [
+        "feedback",
+        "isolation",
+        "verification"
+      ],
+      "lines": 280,
+      "path": "tests/unittests/evaluation/simulation/test_llm_backed_user_simulator_prompts.py",
+      "sha256": "37b060032da1b445dccdbb29ba59f463de12ae414c75a1186060eaac4a7bdd8b",
+      "size": 8408
+    },
+    {
+      "categories": [
+        "feedback",
+        "isolation",
+        "verification"
+      ],
+      "lines": 239,
+      "path": "tests/unittests/evaluation/simulation/test_per_turn_user_simulation_quality_prompts.py",
+      "sha256": "2833485fc5870b25f49a7fa9dfdc557a3392968913c98dab1a42aa1f2a4e882c",
+      "size": 7565
+    },
+    {
+      "categories": [
+        "feedback",
+        "verification"
+      ],
+      "lines": 724,
+      "path": "tests/unittests/evaluation/simulation/test_per_turn_user_simulation_quality_v1.py",
+      "sha256": "17a834d22c07126f8e7bfc73e02c2b3a7a485025b423125cea8681c4d5f4d88c",
+      "size": 20432
+    },
+    {
+      "categories": [
+        "feedback",
+        "verification"
+      ],
+      "lines": 20,
+      "path": "tests/unittests/evaluation/simulation/test_pre_built_personas.py",
+      "sha256": "4cece2fdbe7a2d0effa088e203c75e719547b25a9388048455f0ba305bd95ed4",
+      "size": 826
+    },
+    {
+      "categories": [
+        "feedback",
+        "verification"
+      ],
+      "lines": 54,
+      "path": "tests/unittests/evaluation/simulation/test_static_user_simulator.py",
+      "sha256": "f0110ea3710e294cafe4a36b1cc120a183acaec830db3c746b8b3adc75c44d97",
+      "size": 2105
+    },
+    {
+      "categories": [
+        "feedback",
+        "recovery",
+        "verification"
+      ],
+      "lines": 106,
+      "path": "tests/unittests/evaluation/simulation/test_user_simulator.py",
+      "sha256": "f55dd3207116b2bb7ff2a23858d6b2e6142adf4f2983fe6eb4674ab51b51d178",
+      "size": 3868
+    },
+    {
+      "categories": [
+        "feedback",
+        "verification"
+      ],
+      "lines": 133,
+      "path": "tests/unittests/evaluation/simulation/test_user_simulator_personas.py",
+      "sha256": "64cfdc2c1cc310f24f852700cfd2f664809db21e501e18890b5df3d7214e3ade",
+      "size": 4890
+    },
+    {
+      "categories": [
+        "feedback",
+        "verification"
+      ],
+      "lines": 266,
+      "path": "tests/unittests/evaluation/simulation/test_user_simulator_provider.py",
+      "sha256": "8c0352fe6ed2cba321b083512292db4b98a17ce8fec91e53a080ed68c8f814ab",
+      "size": 10821
+    },
+    {
+      "categories": [
+        "feedback",
+        "verification"
+      ],
+      "lines": 52,
+      "path": "tests/unittests/evaluation/test__path_validation.py",
+      "sha256": "beaf029313cf658dffb8a6ef31738ba355cd93099198a602dd94f36c54d578c1",
+      "size": 1878
+    },
+    {
+      "categories": [
+        "feedback",
+        "verification"
+      ],
+      "lines": 73,
+      "path": "tests/unittests/evaluation/test_app_details.py",
+      "sha256": "ad30e8b41dd10a0e91af70ec8e67c8d95e4eab7f18eb649ebad16bf2db63a3bc",
+      "size": 2326
+    },
+    {
+      "categories": [
+        "feedback",
+        "verification"
+      ],
+      "lines": 110,
+      "path": "tests/unittests/evaluation/test_custom_metric_evaluator.py",
+      "sha256": "a6179e991607d42691fdc72dba2aa9e4bffcf8fbd350709249e1814b95e90ef7",
+      "size": 4366
+    },
+    {
+      "categories": [
+        "feedback",
+        "verification"
+      ],
+      "lines": 319,
+      "path": "tests/unittests/evaluation/test_eval_case.py",
+      "sha256": "f4068947a7f91f377bd455d9c3b6b73879d168b57eef8602319850a6694fc718",
+      "size": 11141
+    },
+    {
+      "categories": [
+        "feedback",
+        "verification"
+      ],
+      "lines": 287,
+      "path": "tests/unittests/evaluation/test_eval_config.py",
+      "sha256": "b2bfd8716295cb8a9eb67b21933706a434b27677b5305bfc57338ca6a8a3c42c",
+      "size": 10396
+    },
+    {
+      "categories": [
+        "feedback",
+        "verification"
+      ],
+      "lines": 1144,
+      "path": "tests/unittests/evaluation/test_evaluation_generator.py",
+      "sha256": "6b8ea39ac8f57f4677241bb6b6e94a7d76f53fa32b837513d0f129deba44e33d",
+      "size": 42144
+    },
+    {
+      "categories": [
+        "feedback",
+        "verification"
+      ],
+      "lines": 163,
+      "path": "tests/unittests/evaluation/test_final_response_match_v1.py",
+      "sha256": "8374a1c0b6469ebbe0fe102db5007e2303e474a8644cb7deba6f5c4d1c7e14b0",
+      "size": 5478
+    },
+    {
+      "categories": [
+        "feedback",
+        "verification"
+      ],
+      "lines": 594,
+      "path": "tests/unittests/evaluation/test_final_response_match_v2.py",
+      "sha256": "3025735f1936a0328f9d105db20309494730c65d4e08222d08a6a900bf57dac1",
+      "size": 17746
+    },
+    {
+      "categories": [
+        "feedback",
+        "verification"
+      ],
+      "lines": 220,
+      "path": "tests/unittests/evaluation/test_gcs_eval_set_results_manager.py",
+      "sha256": "aa059a99f3033ea4ea85186f2a193a232ab38df27612b826f6ec51caf9ff5d9a",
+      "size": 7853
+    },
+    {
+      "categories": [
+        "feedback",
+        "verification"
+      ],
+      "lines": 421,
+      "path": "tests/unittests/evaluation/test_gcs_eval_sets_manager.py",
+      "sha256": "b1dc043d5c79b174b1458e4a15d423628834cccb08333c2aaf55ebb3b740fe07",
+      "size": 13975
+    },
+    {
+      "categories": [
+        "feedback",
+        "verification"
+      ],
+      "lines": 1578,
+      "path": "tests/unittests/evaluation/test_hallucinations_v1.py",
+      "sha256": "8bb9dc4703f2bfde2157a1d9344e851402d237da22189f4f4eae41eea4807ac8",
+      "size": 41110
+    },
+    {
+      "categories": [
+        "feedback",
+        "verification"
+      ],
+      "lines": 198,
+      "path": "tests/unittests/evaluation/test_in_memory_eval_sets_manager.py",
+      "sha256": "b925319f84d94a744f36243f14f0c44656eea4339f8fa14c064487d36188129d",
+      "size": 6497
+    },
+    {
+      "categories": [
+        "feedback",
+        "verification"
+      ],
+      "lines": 239,
+      "path": "tests/unittests/evaluation/test_llm_as_judge.py",
+      "sha256": "9610b3abdd51f2927dd95930199c23de80d93787bc0b47f4840e6aecabbd8bf2",
+      "size": 7743
+    },
+    {
+      "categories": [
+        "feedback",
+        "verification"
+      ],
+      "lines": 364,
+      "path": "tests/unittests/evaluation/test_llm_as_judge_utils.py",
+      "sha256": "585cac80e4f41e8e614a27799380989e584a1d45b40c9638ec85ec824e799cf0",
+      "size": 13095
+    },
+    {
+      "categories": [
+        "feedback",
+        "recovery",
+        "verification"
+      ],
+      "lines": 949,
+      "path": "tests/unittests/evaluation/test_local_eval_service.py",
+      "sha256": "44f339e933ecb475e07a6fa2e8a701b34d3b6df3079e9fa3fb9ea6054a1758a3",
+      "size": 32670
+    },
+    {
+      "categories": [
+        "feedback",
+        "verification"
+      ],
+      "lines": 206,
+      "path": "tests/unittests/evaluation/test_local_eval_set_results_manager.py",
+      "sha256": "729c9b447c102e1e9030fc432dc179f186858c94b40500e41d140d72a36057b4",
+      "size": 7826
+    },
+    {
+      "categories": [
+        "feedback",
+        "verification"
+      ],
+      "lines": 774,
+      "path": "tests/unittests/evaluation/test_local_eval_sets_manager.py",
+      "sha256": "0cb830ef3d94e95b793852d65e3508286ba598dc7fbf8a2779e834ce54423199",
+      "size": 26279
+    },
+    {
+      "categories": [
+        "feedback",
+        "recovery",
+        "verification"
+      ],
+      "lines": 334,
+      "path": "tests/unittests/evaluation/test_metric_evaluator_registry.py",
+      "sha256": "b89df54f2499857a52be45aa089a01ec2e4836b2d9cb3bb22c474c88ec0a4346",
+      "size": 12714
+    },
+    {
+      "categories": [
+        "feedback",
+        "verification"
+      ],
+      "lines": 106,
+      "path": "tests/unittests/evaluation/test_multi_turn_task_success_evaluator.py",
+      "sha256": "863498fcc9bf06dbdfee29d390e14b900a69c10335ff41e864bc59bc22d3cb53",
+      "size": 4060
+    },
+    {
+      "categories": [
+        "feedback",
+        "verification"
+      ],
+      "lines": 106,
+      "path": "tests/unittests/evaluation/test_multi_turn_tool_use_quality_evaluator.py",
+      "sha256": "69bf0bdcaf559c0667609715e99b937c593b06e19bbeb9092b929b83f0a63599",
+      "size": 4089
+    },
+    {
+      "categories": [
+        "feedback",
+        "verification"
+      ],
+      "lines": 106,
+      "path": "tests/unittests/evaluation/test_multi_turn_trajectory_quality_evaluator.py",
+      "sha256": "3304b7b79f69ed5131f412fb1a18b919871aa37b5ce9e62c73e8c34aaec8d896",
+      "size": 4108
+    },
+    {
+      "categories": [
+        "feedback",
+        "verification"
+      ],
+      "lines": 72,
+      "path": "tests/unittests/evaluation/test_request_intercepter_plugin.py",
+      "sha256": "8284463ea8bded2d03254bde6be87ebad0c28ef751fef44b5979de75c77fb4b8",
+      "size": 2763
+    },
+    {
+      "categories": [
+        "feedback",
+        "verification"
+      ],
+      "lines": 120,
+      "path": "tests/unittests/evaluation/test_response_evaluator.py",
+      "sha256": "e993ad6dd8eb5280703ffdc3bc050e7c1f2fd0e22e819dd7d787358b9d1b4e90",
+      "size": 4430
+    },
+    {
+      "categories": [
+        "feedback",
+        "recovery",
+        "verification"
+      ],
+      "lines": 78,
+      "path": "tests/unittests/evaluation/test_retry_options_utils.py",
+      "sha256": "981e4b31df5228a64553623d83c2f326e8662a45b58abf6c11d00926a36beca0",
+      "size": 2828
+    },
+    {
+      "categories": [
+        "feedback",
+        "verification"
+      ],
+      "lines": 886,
+      "path": "tests/unittests/evaluation/test_rubric_based_evaluator.py",
+      "sha256": "542808fea571fe82630694eeb8a655814fa2d29ef931a12f64fe40a8e25bfee9",
+      "size": 31309
+    },
+    {
+      "categories": [
+        "feedback",
+        "verification"
+      ],
+      "lines": 224,
+      "path": "tests/unittests/evaluation/test_rubric_based_final_response_quality_v1.py",
+      "sha256": "155d066df6ba06777f3e03e9d90e3e5c5ac5264e085def9350202846c5cc5dc3",
+      "size": 7956
+    },
+    {
+      "categories": [
+        "feedback",
+        "verification"
+      ],
+      "lines": 307,
+      "path": "tests/unittests/evaluation/test_rubric_based_multi_turn_trajectory_evaluator.py",
+      "sha256": "d1a3d28f08fc13861b3b0d88509ce5f50cd0f74a17850c4e6740f3e242fd012c",
+      "size": 10668
+    },
+    {
+      "categories": [
+        "feedback",
+        "verification"
+      ],
+      "lines": 199,
+      "path": "tests/unittests/evaluation/test_rubric_based_tool_use_quality_v1.py",
+      "sha256": "133699434e83fd5473f13523b03d03b3df73d29efe1aff287ea716d05b4e85c2",
+      "size": 6709
+    },
+    {
+      "categories": [
+        "feedback",
+        "verification"
+      ],
+      "lines": 78,
+      "path": "tests/unittests/evaluation/test_safety_evaluator.py",
+      "sha256": "4af934e2d65de81115cefbccbde120112692670a3227c95cff004535f1f4ce6e",
+      "size": 2960
+    },
+    {
+      "categories": [
+        "feedback",
+        "verification"
+      ],
+      "lines": 525,
+      "path": "tests/unittests/evaluation/test_trajectory_evaluator.py",
+      "sha256": "372a675c9407d559c360954e555d6116eb453503c125a5059cbbe21e872e072c",
+      "size": 20518
+    },
+    {
+      "categories": [
+        "feedback",
+        "verification"
+      ],
+      "lines": 594,
+      "path": "tests/unittests/evaluation/test_vertex_ai_eval_facade.py",
+      "sha256": "86cc96599d19ef1a4e409511d58402123beaef5100db522099741268d9b05970",
+      "size": 21286
+    },
+    {
+      "categories": [
+        "feedback",
+        "verification"
+      ],
+      "lines": 155,
+      "path": "tests/unittests/evaluation/test_vertex_ai_scenario_generation_facade.py",
+      "sha256": "3793730214cc73660f5ab56ea2de040535367a5680498e79cb24d335b9818893",
+      "size": 5158
+    },
+    {
+      "categories": [],
+      "lines": 13,
+      "path": "tests/unittests/runners/__init__.py",
+      "sha256": "43955acccf4b719dbab4dceb4c9437274dc864bf3d15b22c252cd9d010255c7d",
+      "size": 574
+    },
+    {
+      "categories": [
+        "runtime",
+        "verification"
+      ],
+      "lines": 538,
+      "path": "tests/unittests/runners/test_pause_invocation.py",
+      "sha256": "f01d8f53e758b3b4c94dc6f5f226e888548f1121444bcf53275ed24a5a2fab62",
+      "size": 17852
+    },
+    {
+      "categories": [
+        "runtime",
+        "verification"
+      ],
+      "lines": 317,
+      "path": "tests/unittests/runners/test_resume_invocation.py",
+      "sha256": "c486324b4d707dc127d0ed9aeb60472a516644167bd01df186645606cc8dd6f8",
+      "size": 9591
+    },
+    {
+      "categories": [
+        "permission",
+        "runtime",
+        "verification"
+      ],
+      "lines": 1021,
+      "path": "tests/unittests/runners/test_run_tool_confirmation.py",
+      "sha256": "7b09137c35ac733743aec43696aefc06e586f6ad4d885c6d916abd9c93505be4",
+      "size": 33830
+    },
+    {
+      "categories": [
+        "runtime",
+        "verification"
+      ],
+      "lines": 917,
+      "path": "tests/unittests/runners/test_runner_debug.py",
+      "sha256": "f5563d802356a115c2b1b8257f42748fe48a55891bf1cff56ca5620cba8814db",
+      "size": 31621
+    },
+    {
+      "categories": [
+        "isolation",
+        "recovery",
+        "runtime",
+        "verification"
+      ],
+      "lines": 1438,
+      "path": "tests/unittests/runners/test_runner_node.py",
+      "sha256": "e8574ae604e60244107883cbd11ed157c1e41972d7f9d63012ec2db6f6531e00",
+      "size": 45031
+    },
+    {
+      "categories": [
+        "runtime",
+        "verification"
+      ],
+      "lines": 363,
+      "path": "tests/unittests/runners/test_runner_rewind.py",
+      "sha256": "269c01991d664b1a0b660f709997b35e4093856558eccb642296c4d41f0177bd",
+      "size": 12070
+    },
+    {
+      "categories": [
+        "recovery",
+        "verification"
+      ],
+      "lines": 2188,
+      "path": "tests/unittests/test_runners.py",
+      "sha256": "dccbb6bbbf168095875081b8941b2cd34d7283f3591fa094263c73d035eea6a1",
+      "size": 70071
+    },
+    {
+      "categories": [],
+      "lines": 13,
+      "path": "tests/unittests/tools/__init__.py",
+      "sha256": "43955acccf4b719dbab4dceb4c9437274dc864bf3d15b22c252cd9d010255c7d",
+      "size": 574
+    },
+    {
+      "categories": [
+        "permission",
+        "recovery",
+        "tool",
+        "verification"
+      ],
+      "lines": 539,
+      "path": "tests/unittests/tools/apihub_tool/clients/test_apihub_client.py",
+      "sha256": "9214fe61b200b4acb578fec86847a68c707f913ac7e7111c5515ab514db89872",
+      "size": 19087
+    },
+    {
+      "categories": [
+        "tool",
+        "verification"
+      ],
+      "lines": 33,
+      "path": "tests/unittests/tools/apihub_tool/clients/test_secret_client_deprecated.py",
+      "sha256": "27d811d13f741ab6a2849513afb15ac25b991fea1a53ae1f48c08c6e42466518",
+      "size": 1239
+    },
+    {
+      "categories": [
+        "permission",
+        "tool",
+        "verification"
+      ],
+      "lines": 230,
+      "path": "tests/unittests/tools/apihub_tool/test_apihub_toolset.py",
+      "sha256": "092837d479b2118c4a61c06001cc7073dbaefee85644d91cd0b948eb8eed6cb3",
+      "size": 6212
+    },
+    {
+      "categories": [
+        "permission",
+        "tool",
+        "verification"
+      ],
+      "lines": 706,
+      "path": "tests/unittests/tools/application_integration_tool/clients/test_connections_client.py",
+      "sha256": "1e6b6049e182847dea224dc152d7aaa228c5a41af4d79794bdce07af66cdbc54",
+      "size": 25611
+    },
+    {
+      "categories": [
+        "permission",
+        "recovery",
+        "tool",
+        "verification"
+      ],
+      "lines": 758,
+      "path": "tests/unittests/tools/application_integration_tool/clients/test_integration_client.py",
+      "sha256": "ac6f09f9007694269365dd29e95df52ddda63a35a5b051222767c315b7529813",
+      "size": 25062
+    },
+    {
+      "categories": [
+        "permission",
+        "tool",
+        "verification"
+      ],
+      "lines": 740,
+      "path": "tests/unittests/tools/application_integration_tool/test_application_integration_toolset.py",
+      "sha256": "5672e4fc54d10a1c4736a24f8a4c89c943b23b7b68ad3f04050942504f202be9",
+      "size": 23680
+    },
+    {
+      "categories": [
+        "permission",
+        "tool",
+        "verification"
+      ],
+      "lines": 308,
+      "path": "tests/unittests/tools/application_integration_tool/test_integration_connector_tool.py",
+      "sha256": "3b0127bbd09a4fb5da555824a4ceaac3ded55cab5ebc398f5abcd9331be3a9e8",
+      "size": 10915
+    },
+    {
+      "categories": [
+        "tool",
+        "verification"
+      ],
+      "lines": 116,
+      "path": "tests/unittests/tools/bigquery/test_bigquery_skill.py",
+      "sha256": "9e8b0895fad919de40e8da94dcd03d95c99fb12cd8e004dee3b1775b70761265",
+      "size": 3782
+    },
+    {
+      "categories": [
+        "tool",
+        "verification"
+      ],
+      "lines": 91,
+      "path": "tests/unittests/tools/bigtable/test_bigtable_credentials.py",
+      "sha256": "837b1e09e4fa36a8420e71bd7541d94a0a88c31867d3f96a9cc5f6816a6403b5",
+      "size": 3582
+    },
+    {
+      "categories": [
+        "tool",
+        "verification"
+      ],
+      "lines": 272,
+      "path": "tests/unittests/tools/bigtable/test_bigtable_metadata_tool.py",
+      "sha256": "39dc1654f1efe0f811f8da564dfa6c5f32e62e7c2a4baff6828143a4d9d890f9",
+      "size": 9036
+    },
+    {
+      "categories": [
+        "recovery",
+        "tool",
+        "verification"
+      ],
+      "lines": 309,
+      "path": "tests/unittests/tools/bigtable/test_bigtable_query_tool.py",
+      "sha256": "aafdd97f034644870f38dbc87bbaf9fd1cdf3562651aaea1277ddc35b4864468",
+      "size": 9949
+    },
+    {
+      "categories": [
+        "permission",
+        "recovery",
+        "tool",
+        "verification"
+      ],
+      "lines": 340,
+      "path": "tests/unittests/tools/bigtable/test_bigtable_toolset.py",
+      "sha256": "d57d4a27c7df398447a3228cda916a50994c88002bd75c66043572fe975338c5",
+      "size": 11101
+    },
+    {
+      "categories": [
+        "tool",
+        "verification"
+      ],
+      "lines": 50,
+      "path": "tests/unittests/tools/bigtable/test_client.py",
+      "sha256": "90ff61ccca03faab35ff84edd9102850cac18f1914988f85550ad05cd2e6be80",
+      "size": 1760
+    },
+    {
+      "categories": [],
+      "lines": 13,
+      "path": "tests/unittests/tools/computer_use/__init__.py",
+      "sha256": "43955acccf4b719dbab4dceb4c9437274dc864bf3d15b22c252cd9d010255c7d",
+      "size": 574
+    },
+    {
+      "categories": [
+        "tool",
+        "verification"
+      ],
+      "lines": 341,
+      "path": "tests/unittests/tools/computer_use/test_base_computer.py",
+      "sha256": "5c857c1d1df90c59f554e2a020ba53e484be7b33d8f0c4b2e48664e1e1157a17",
+      "size": 11231
+    },
+    {
+      "categories": [
+        "permission",
+        "tool",
+        "verification"
+      ],
+      "lines": 618,
+      "path": "tests/unittests/tools/computer_use/test_computer_use_tool.py",
+      "sha256": "714a950e48a07c53b10f970f51530fa7e1b6cbaefeee42061a21cd895b2f4f57",
+      "size": 21759
+    },
+    {
+      "categories": [
+        "tool",
+        "verification"
+      ],
+      "lines": 612,
+      "path": "tests/unittests/tools/computer_use/test_computer_use_toolset.py",
+      "sha256": "61318945297d5404b9bd3e17e2802c46017887acde48dde3d5f1abbc51660199",
+      "size": 19997
+    },
+    {
+      "categories": [
+        "tool",
+        "verification"
+      ],
+      "lines": 224,
+      "path": "tests/unittests/tools/data_agent/test_data_agent_tool.py",
+      "sha256": "fb64bd7e63d081000c9319f966a989fda080288abdcd05d50aade26420927fbc",
+      "size": 8078
+    },
+    {
+      "categories": [
+        "tool",
+        "verification"
+      ],
+      "lines": 128,
+      "path": "tests/unittests/tools/data_agent/test_data_agent_toolset.py",
+      "sha256": "d2cecbee98de0c3d03c1b341e6748a55fe29492f0f74ab6cca873cd4f696996e",
+      "size": 4172
+    },
+    {
+      "categories": [
+        "runtime",
+        "tool",
+        "verification"
+      ],
+      "lines": 150,
+      "path": "tests/unittests/tools/environment/test_edit_file_tool.py",
+      "sha256": "5098a3f62b8d72f3e27e81ba3e19d5b349992b8620b7e45c1568540a960e1b46",
+      "size": 4323
+    },
+    {
+      "categories": [
+        "runtime",
+        "tool",
+        "verification"
+      ],
+      "lines": 196,
+      "path": "tests/unittests/tools/environment/test_read_file_tool.py",
+      "sha256": "62c0adb20229889868933b99e05b4d53d680a318c609de75efe0265eb052163f",
+      "size": 5817
+    },
+    {
+      "categories": [],
+      "lines": 13,
+      "path": "tests/unittests/tools/environment_simulation/__init__.py",
+      "sha256": "43955acccf4b719dbab4dceb4c9437274dc864bf3d15b22c252cd9d010255c7d",
+      "size": 574
+    },
+    {
+      "categories": [
+        "tool",
+        "verification"
+      ],
+      "lines": 257,
+      "path": "tests/unittests/tools/environment_simulation/test_environment_simulation_engine.py",
+      "sha256": "7e2feed85aab68b154c8f3fc969e74ae2d6db411f19e8fe3869442a624441fb8",
+      "size": 10217
+    },
+    {
+      "categories": [
+        "tool",
+        "verification"
+      ],
+      "lines": 69,
+      "path": "tests/unittests/tools/environment_simulation/test_environment_simulation_factory.py",
+      "sha256": "409c56b169206dc3a5b7274379e27fd545db9f9b5763fd5baab3de5748b02898",
+      "size": 2915
+    },
+    {
+      "categories": [
+        "tool",
+        "verification"
+      ],
+      "lines": 46,
+      "path": "tests/unittests/tools/environment_simulation/test_environment_simulation_plugin.py",
+      "sha256": "87c7458dd440c25a1a32ec8bee5e355666a0f3c3a2ca2ffabdfe6ebcc7d8ae1a",
+      "size": 1590
+    },
+    {
+      "categories": [],
+      "lines": 13,
+      "path": "tests/unittests/tools/google_api_tool/__init__.py",
+      "sha256": "43955acccf4b719dbab4dceb4c9437274dc864bf3d15b22c252cd9d010255c7d",
+      "size": 574
+    },
+    {
+      "categories": [
+        "tool",
+        "verification"
+      ],
+      "lines": 759,
+      "path": "tests/unittests/tools/google_api_tool/test_docs_batchupdate.py",
+      "sha256": "e78a31c35859e2f976f10dc8d057972043617c5f8af73d5bd0037f8384bb4e38",
+      "size": 28329
+    },
+    {
+      "categories": [
+        "permission",
+        "tool",
+        "verification"
+      ],
+      "lines": 153,
+      "path": "tests/unittests/tools/google_api_tool/test_google_api_tool.py",
+      "sha256": "07c4d0c155155856101f7330bf247f521cb94417c412ba3c7166829991d48cf4",
+      "size": 5573
+    },
+    {
+      "categories": [
+        "tool",
+        "verification"
+      ],
+      "lines": 610,
+      "path": "tests/unittests/tools/google_api_tool/test_google_api_toolset.py",
+      "sha256": "4e34f668c490fceaab7fa7a31d9c31ca88cd0cac1faf8625acc592bfad598253",
+      "size": 20458
+    },
+    {
+      "categories": [
+        "tool",
+        "verification"
+      ],
+      "lines": 773,
+      "path": "tests/unittests/tools/google_api_tool/test_googleapi_to_openapi_converter.py",
+      "sha256": "00ab5b6c9904e6c4977444557e7191b691c5cf1534c7b512ed00f49dff8c18be",
+      "size": 27235
+    },
+    {
+      "categories": [],
+      "lines": 13,
+      "path": "tests/unittests/tools/mcp_tool/__init__.py",
+      "sha256": "43955acccf4b719dbab4dceb4c9437274dc864bf3d15b22c252cd9d010255c7d",
+      "size": 574
+    },
+    {
+      "categories": [
+        "tool",
+        "verification"
+      ],
+      "lines": 217,
+      "path": "tests/unittests/tools/mcp_tool/test_agent_to_mcp.py",
+      "sha256": "aa47e7dda180f515b2a15493adc1903fe0b641be550259fc16852c5a8f8d46d1",
+      "size": 6427
+    },
+    {
+      "categories": [
+        "tool",
+        "verification"
+      ],
+      "lines": 209,
+      "path": "tests/unittests/tools/mcp_tool/test_conversion_utils.py",
+      "sha256": "c850b4dffe5d65b219abdf4c70b71930a2cdd4bdcad1fc8b81544cb03b9a9415",
+      "size": 7076
+    },
+    {
+      "categories": [
+        "isolation",
+        "permission",
+        "recovery",
+        "tool",
+        "verification"
+      ],
+      "lines": 1516,
+      "path": "tests/unittests/tools/mcp_tool/test_mcp_session_manager.py",
+      "sha256": "0db9e79243c2f48503b89f356afbd66a937ce22bfa4798303af85ec5a1eac783",
+      "size": 54196
+    },
+    {
+      "categories": [
+        "permission",
+        "recovery",
+        "tool",
+        "verification"
+      ],
+      "lines": 1678,
+      "path": "tests/unittests/tools/mcp_tool/test_mcp_tool.py",
+      "sha256": "ed5d9923499d099a6d7eecbadff25412764517223f79acede3463c001e402c71",
+      "size": 56728
+    },
+    {
+      "categories": [
+        "permission",
+        "recovery",
+        "tool",
+        "verification"
+      ],
+      "lines": 819,
+      "path": "tests/unittests/tools/mcp_tool/test_mcp_toolset.py",
+      "sha256": "71a031b8cc1a68c755de108ebec42a6719e1a24216cfd5993b9bd5d23ef5b68f",
+      "size": 27546
+    },
+    {
+      "categories": [
+        "permission",
+        "tool",
+        "verification"
+      ],
+      "lines": 298,
+      "path": "tests/unittests/tools/mcp_tool/test_mcp_toolset_auth.py",
+      "sha256": "241a4fc597879510375772f4d04756c8dd9d62b4691e3bf86688ba37741d070e",
+      "size": 10353
+    },
+    {
+      "categories": [
+        "recovery",
+        "tool",
+        "verification"
+      ],
+      "lines": 948,
+      "path": "tests/unittests/tools/mcp_tool/test_session_context.py",
+      "sha256": "f4126c361132b88bd7eabd31f80e5bc4a72665cda41707f2729884519dc590d5",
+      "size": 31042
+    },
+    {
+      "categories": [
+        "permission",
+        "tool",
+        "verification"
+      ],
+      "lines": 145,
+      "path": "tests/unittests/tools/openapi_tool/auth/credential_exchangers/test_auto_auth_credential_exchanger.py",
+      "sha256": "9d3737f24fc094ba39f727b326ef85b70e2cad0769b294aa3c77105b31b23d0c",
+      "size": 5250
+    },
+    {
+      "categories": [
+        "permission",
+        "tool",
+        "verification"
+      ],
+      "lines": 68,
+      "path": "tests/unittests/tools/openapi_tool/auth/credential_exchangers/test_base_auth_credential_exchanger.py",
+      "sha256": "ba7b7b66b5d0a5dc13bcf67ca9e8bfea464d6020cabe014619534a5e29a02a25",
+      "size": 2398
+    },
+    {
+      "categories": [
+        "permission",
+        "tool",
+        "verification"
+      ],
+      "lines": 153,
+      "path": "tests/unittests/tools/openapi_tool/auth/credential_exchangers/test_oauth2_exchanger.py",
+      "sha256": "f3f93f5d80df5215743e654e2e4c0650d01541d00ce828daacf2bdb416e7d0a0",
+      "size": 5470
+    },
+    {
+      "categories": [
+        "permission",
+        "tool",
+        "verification"
+      ],
+      "lines": 393,
+      "path": "tests/unittests/tools/openapi_tool/auth/credential_exchangers/test_service_account_exchanger.py",
+      "sha256": "474de30d90625def3ae2e053d6c6d3966ffe88fdd6b419488b60f87ec2a45622",
+      "size": 13136
+    },
+    {
+      "categories": [
+        "permission",
+        "tool",
+        "verification"
+      ],
+      "lines": 573,
+      "path": "tests/unittests/tools/openapi_tool/auth/test_auth_helper.py",
+      "sha256": "88288ee27897ed3d21284a2425018852bcb6fcba0caf25eba8070ba51c736862",
+      "size": 18282
+    },
+    {
+      "categories": [
+        "recovery",
+        "tool",
+        "verification"
+      ],
+      "lines": 412,
+      "path": "tests/unittests/tools/openapi_tool/common/test_common.py",
+      "sha256": "7d23846bfd437db1071464229c3f1849fd33d05456c348f24e771e8a206490c9",
+      "size": 12867
+    },
+    {
+      "categories": [
+        "tool",
+        "verification"
+      ],
+      "lines": 1367,
+      "path": "tests/unittests/tools/openapi_tool/openapi_spec_parser/test.yaml",
+      "sha256": "dd2b5865f7e7e069e662d5ff3e6dd89ea65d69aeb47f88955c5feb8489488bdc",
+      "size": 67277
+    },
+    {
+      "categories": [
+        "tool",
+        "verification"
+      ],
+      "lines": 868,
+      "path": "tests/unittests/tools/openapi_tool/openapi_spec_parser/test_openapi_spec_parser.py",
+      "sha256": "a66da25383f3a0b2d51b85892a88ae64de29ac21ba7aec99c75ad364b43adc0c",
+      "size": 29025
+    },
+    {
+      "categories": [
+        "permission",
+        "tool",
+        "verification"
+      ],
+      "lines": 334,
+      "path": "tests/unittests/tools/openapi_tool/openapi_spec_parser/test_openapi_toolset.py",
+      "sha256": "8549f657479a0b51266ab8ff72cb532c99cdfab35d14c94d9b1c01188e3f9c1e",
+      "size": 12682
+    },
+    {
+      "categories": [
+        "tool",
+        "verification"
+      ],
+      "lines": 452,
+      "path": "tests/unittests/tools/openapi_tool/openapi_spec_parser/test_operation_parser.py",
+      "sha256": "1e2354c119952ba441dba85ea304c7b802379e323129c509d164ad85a70644cf",
+      "size": 15874
+    },
+    {
+      "categories": [
+        "permission",
+        "tool",
+        "verification"
+      ],
+      "lines": 1661,
+      "path": "tests/unittests/tools/openapi_tool/openapi_spec_parser/test_rest_api_tool.py",
+      "sha256": "3b54a4d68c3a865ba2040865b0a38e7a23a42f5df54e657561343a7df03f05c5",
+      "size": 52494
+    },
+    {
+      "categories": [
+        "permission",
+        "tool",
+        "verification"
+      ],
+      "lines": 417,
+      "path": "tests/unittests/tools/openapi_tool/openapi_spec_parser/test_tool_auth_handler.py",
+      "sha256": "a8c8e14342dc90b0c0a5b920bbfae3381187aebb137d124bbb765b243ce58a95",
+      "size": 14837
+    },
+    {
+      "categories": [
+        "tool",
+        "verification"
+      ],
+      "lines": 135,
+      "path": "tests/unittests/tools/pubsub/test_pubsub_client.py",
+      "sha256": "aeecd7733328887c14e71739f9662783d44f04a8ed2fa0bd2ac35c1f3b1da527",
+      "size": 5565
+    },
+    {
+      "categories": [
+        "tool",
+        "verification"
+      ],
+      "lines": 27,
+      "path": "tests/unittests/tools/pubsub/test_pubsub_config.py",
+      "sha256": "a714489eca6361ee6fb5f0aed8d465069aa29ae2357be52c048a57dc6c3db2c6",
+      "size": 975
+    },
+    {
+      "categories": [
+        "tool",
+        "verification"
+      ],
+      "lines": 133,
+      "path": "tests/unittests/tools/pubsub/test_pubsub_credentials.py",
+      "sha256": "e200d8ad147483f34818f11d7a77372874b4951c8d9bdb094d62c907e531d1b7",
+      "size": 4436
+    },
+    {
+      "categories": [
+        "tool",
+        "verification"
+      ],
+      "lines": 330,
+      "path": "tests/unittests/tools/pubsub/test_pubsub_message_tool.py",
+      "sha256": "7bdc38c4cf2f0b136903df0340e96fa0d37cb996a13fcfe4b99df673fda4b08f",
+      "size": 12393
+    },
+    {
+      "categories": [
+        "tool",
+        "verification"
+      ],
+      "lines": 131,
+      "path": "tests/unittests/tools/pubsub/test_pubsub_toolset.py",
+      "sha256": "a48dbdd200c8910f3128d097a2ea9891ffc12b133f5184c3584349c1dfa40c1b",
+      "size": 4267
+    },
+    {
+      "categories": [],
+      "lines": 13,
+      "path": "tests/unittests/tools/retrieval/__init__.py",
+      "sha256": "43955acccf4b719dbab4dceb4c9437274dc864bf3d15b22c252cd9d010255c7d",
+      "size": 574
+    },
+    {
+      "categories": [
+        "tool",
+        "verification"
+      ],
+      "lines": 67,
+      "path": "tests/unittests/tools/retrieval/test_base_retrieval_tool.py",
+      "sha256": "d5bac0e645df90054018a966859187f9c2921e64b1c63c9dbde65367bec078c9",
+      "size": 2434
+    },
+    {
+      "categories": [
+        "tool",
+        "verification"
+      ],
+      "lines": 150,
+      "path": "tests/unittests/tools/retrieval/test_files_retrieval.py",
+      "sha256": "7789fb3fcc2da7f07b3f06f1ad478f3486dc00fb0e744401ecdda74eaa0ae53d",
+      "size": 5213
+    },
+    {
+      "categories": [
+        "tool",
+        "verification"
+      ],
+      "lines": 187,
+      "path": "tests/unittests/tools/retrieval/test_vertex_ai_rag_retrieval.py",
+      "sha256": "4976c986c445d5c8e1e769efe3e4abae5f4c0401d02db6cbcdf6e2a1f823c3df",
+      "size": 5639
+    },
+    {
+      "categories": [
+        "recovery",
+        "tool",
+        "verification"
+      ],
+      "lines": 384,
+      "path": "tests/unittests/tools/spanner/test_admin_tool.py",
+      "sha256": "7d44faecbd88c1ceac5b5d3fc3e7fee1790c8d1367224c2736bd2dee84143f6b",
+      "size": 12382
+    },
+    {
+      "categories": [
+        "tool",
+        "verification"
+      ],
+      "lines": 91,
+      "path": "tests/unittests/tools/spanner/test_admin_toolset.py",
+      "sha256": "5d27c0aeaf558bab2b181be0c1001cbcfd519f25989f0f1d6b1e74a6b24a94d0",
+      "size": 2993
+    },
+    {
+      "categories": [
+        "recovery",
+        "tool",
+        "verification"
+      ],
+      "lines": 296,
+      "path": "tests/unittests/tools/spanner/test_metadata_tool.py",
+      "sha256": "78580bc8f60af85c4ad984519828b82fb2f674e45394b5d5a2ac4b0c68675171",
+      "size": 9985
+    },
+    {
+      "categories": [
+        "recovery",
+        "tool",
+        "verification"
+      ],
+      "lines": 532,
+      "path": "tests/unittests/tools/spanner/test_search_tool.py",
+      "sha256": "227cc8ba581a473a4fbdad09b46252b54459fa8aac851a07a5a9f21e45066742",
+      "size": 19666
+    },
+    {
+      "categories": [
+        "tool",
+        "verification"
+      ],
+      "lines": 138,
+      "path": "tests/unittests/tools/spanner/test_spanner_client.py",
+      "sha256": "0014a18986b97835de1f30f35d4567c97c70b0ae50b2f5a82cc1753a8d47f749",
+      "size": 5244
+    },
+    {
+      "categories": [
+        "tool",
+        "verification"
+      ],
+      "lines": 55,
+      "path": "tests/unittests/tools/spanner/test_spanner_credentials.py",
+      "sha256": "1a5aefb61da5862beff33dbc85255a6b7b1cf07cf666886a929ad7ec3d225a46",
+      "size": 2132
+    },
+    {
+      "categories": [
+        "tool",
+        "verification"
+      ],
+      "lines": 225,
+      "path": "tests/unittests/tools/spanner/test_spanner_query_tool.py",
+      "sha256": "e22f9ff7bc59c02ee570206981f359395bc085fd0a90bad720084f639449416f",
+      "size": 7294
+    },
+    {
+      "categories": [
+        "tool",
+        "verification"
+      ],
+      "lines": 115,
+      "path": "tests/unittests/tools/spanner/test_spanner_tool_settings.py",
+      "sha256": "57d0e0a0fe69b5be7cd8afbbda81a9f2ad3ff9649e9197181c846dce62a174a1",
+      "size": 4153
+    },
+    {
+      "categories": [
+        "tool",
+        "verification"
+      ],
+      "lines": 234,
+      "path": "tests/unittests/tools/spanner/test_spanner_toolset.py",
+      "sha256": "8d0c59ee6b79b6986e592ae91b41618c41ef594e3fa7f54a795cf84b2114d04c",
+      "size": 7312
+    },
+    {
+      "categories": [
+        "recovery",
+        "tool",
+        "verification"
+      ],
+      "lines": 474,
+      "path": "tests/unittests/tools/spanner/test_utils.py",
+      "sha256": "a6649d5d47913820e2be243a159fefb5d7f41a95f8c57fef6849e5944686a0dc",
+      "size": 16803
+    },
+    {
+      "categories": [
+        "tool",
+        "verification"
+      ],
+      "lines": 249,
+      "path": "tests/unittests/tools/test__gda_stream_util.py",
+      "sha256": "22475b848eac9f5000b230f475fa28f33ac10a49e18b115d8f861d46515fa404",
+      "size": 7654
+    },
+    {
+      "categories": [
+        "permission",
+        "tool",
+        "verification"
+      ],
+      "lines": 1682,
+      "path": "tests/unittests/tools/test_agent_tool.py",
+      "sha256": "751a7df1bd6392c828d769ff8a8898e95c55871b2fcabd2607e5412c5dd9a811",
+      "size": 49426
+    },
+    {
+      "categories": [
+        "permission",
+        "tool",
+        "verification"
+      ],
+      "lines": 541,
+      "path": "tests/unittests/tools/test_authenticated_function_tool.py",
+      "sha256": "4bb8940758a90a72d374d20c3d19f3a9fbcaa5655b43c1c9ca586a220c350388",
+      "size": 18797
+    },
+    {
+      "categories": [
+        "permission",
+        "tool",
+        "verification"
+      ],
+      "lines": 345,
+      "path": "tests/unittests/tools/test_base_authenticated_tool.py",
+      "sha256": "6f9e1abe923c53ff2fe5eeea57526661ca25fc8b67edbb40574fc05f4d00dbfb",
+      "size": 12051
+    },
+    {
+      "categories": [
+        "permission",
+        "tool",
+        "verification"
+      ],
+      "lines": 584,
+      "path": "tests/unittests/tools/test_base_google_credentials_manager.py",
+      "sha256": "723b4a3d36cbd625b2b46382b48cd05e8d39e3a2f5c185d2ef1fc2e667e572d6",
+      "size": 22941
+    },
+    {
+      "categories": [
+        "tool",
+        "verification"
+      ],
+      "lines": 169,
+      "path": "tests/unittests/tools/test_base_tool.py",
+      "sha256": "5d258300d4e159aab6490fe4928f3ce5468b38fcde442b7a25b53874746df7f4",
+      "size": 5083
+    },
+    {
+      "categories": [
+        "tool",
+        "verification"
+      ],
+      "lines": 450,
+      "path": "tests/unittests/tools/test_base_toolset.py",
+      "sha256": "44d24693b727bdac475270852bd141d1280f9547f208f44122a908c9e897e6c0",
+      "size": 15209
+    },
+    {
+      "categories": [
+        "permission",
+        "tool",
+        "verification"
+      ],
+      "lines": 300,
+      "path": "tests/unittests/tools/test_bash_tool.py",
+      "sha256": "fd5b38281c0981ff62a05519c48639766052e9f6ddfc82a974cac55fb300f3ed",
+      "size": 10872
+    },
+    {
+      "categories": [
+        "permission",
+        "tool",
+        "verification"
+      ],
+      "lines": 43,
+      "path": "tests/unittests/tools/test_bash_tool_windows.py",
+      "sha256": "c52ba2baeca17ad9c38059b5d5babfae858aa177f59d7a60f7098f9dd8df3071",
+      "size": 1538
+    },
+    {
+      "categories": [
+        "tool",
+        "verification"
+      ],
+      "lines": 764,
+      "path": "tests/unittests/tools/test_build_function_declaration.py",
+      "sha256": "3bce5c651b29ad1d9c19860c9c9426cb4a1e3105fbc7a9fec8b48316264f2c15",
+      "size": 25533
+    },
+    {
+      "categories": [
+        "recovery",
+        "tool",
+        "verification"
+      ],
+      "lines": 516,
+      "path": "tests/unittests/tools/test_discovery_engine_search_tool.py",
+      "sha256": "a38fb109f9d16e3d62270d46bde8b8d17c928412c97fe4245ec9468b2ba3aa28",
+      "size": 18556
+    },
+    {
+      "categories": [
+        "tool",
+        "verification"
+      ],
+      "lines": 115,
+      "path": "tests/unittests/tools/test_enterprise_web_search_tool.py",
+      "sha256": "623658dc4bcfe294f8346d1720910ff0cccab6f9c2f83a794b0dafea5fb90f43",
+      "size": 3802
+    },
+    {
+      "categories": [
+        "tool",
+        "verification"
+      ],
+      "lines": 142,
+      "path": "tests/unittests/tools/test_environment_toolset.py",
+      "sha256": "5442a7c41d630a8d8ba5ecd5797b5eb851dc145c7febf2388be429f027e7ce64",
+      "size": 4565
+    },
+    {
+      "categories": [
+        "tool",
+        "verification"
+      ],
+      "lines": 295,
+      "path": "tests/unittests/tools/test_forwarding_artifact_service.py",
+      "sha256": "672919123c58d7b32e3773d19900e78a8cd3480c85a1fc0d548c3623878d287f",
+      "size": 9606
+    },
+    {
+      "categories": [
+        "recovery",
+        "tool",
+        "verification"
+      ],
+      "lines": 654,
+      "path": "tests/unittests/tools/test_from_function_with_options.py",
+      "sha256": "b902919ef033fa34453c43063293fbb9c44bc7284579d51f100529f7fbe83a73",
+      "size": 23308
+    },
+    {
+      "categories": [
+        "permission",
+        "recovery",
+        "tool",
+        "verification"
+      ],
+      "lines": 535,
+      "path": "tests/unittests/tools/test_function_tool.py",
+      "sha256": "0958994c43d616dfa599e4edc8962e1e024cb81fe4e2049e6029908bbe26f7e6",
+      "size": 19156
+    },
+    {
+      "categories": [
+        "tool",
+        "verification"
+      ],
+      "lines": 942,
+      "path": "tests/unittests/tools/test_function_tool_declarations.py",
+      "sha256": "7e8bfd9ea47c9c806bac4124e7f255a006ff3bb72a804a9dd2bedb0b7df77fc5",
+      "size": 27669
+    },
+    {
+      "categories": [
+        "tool",
+        "verification"
+      ],
+      "lines": 523,
+      "path": "tests/unittests/tools/test_function_tool_pydantic.py",
+      "sha256": "b88eb2299a4c1ed4988dec1dd9f8a447bca7c537925093919d8b71f1241652f0",
+      "size": 16740
+    },
+    {
+      "categories": [
+        "tool",
+        "verification"
+      ],
+      "lines": 231,
+      "path": "tests/unittests/tools/test_function_tool_with_import_annotations.py",
+      "sha256": "f3393e239a24d3d0a532273c5bcae98dfcc23570cf7bd50c59f8a0fffa66d6c8",
+      "size": 8637
+    },
+    {
+      "categories": [
+        "tool",
+        "verification"
+      ],
+      "lines": 941,
+      "path": "tests/unittests/tools/test_gemini_schema_util.py",
+      "sha256": "fbeddfcc74b2eacd4a4db0293bc0959a4c467d9287866f95a0b02a1d6acb3a6c",
+      "size": 35128
+    },
+    {
+      "categories": [
+        "tool",
+        "verification"
+      ],
+      "lines": 51,
+      "path": "tests/unittests/tools/test_get_user_choice_tool.py",
+      "sha256": "80bdc79c0ddd69111e3382168349add645d29c44cfba01927801884693b70adf",
+      "size": 1813
+    },
+    {
+      "categories": [
+        "tool",
+        "verification"
+      ],
+      "lines": 92,
+      "path": "tests/unittests/tools/test_google_maps_grounding_tool.py",
+      "sha256": "c594dc23f2f7e002fea175fbb45870b1151dcdbfc8d55f2883a981c069c23a64",
+      "size": 3279
+    },
+    {
+      "categories": [
+        "tool",
+        "verification"
+      ],
+      "lines": 139,
+      "path": "tests/unittests/tools/test_google_search_agent_tool.py",
+      "sha256": "9ee83425b93121f652ded309808819b43ab4313e661178fb7c8db90675622b41",
+      "size": 4431
+    },
+    {
+      "categories": [
+        "tool",
+        "verification"
+      ],
+      "lines": 538,
+      "path": "tests/unittests/tools/test_google_search_tool.py",
+      "sha256": "3a1fa54bc5fea29669092226f860e690d949fa5e52de5f38cd5fadfc29b4bd07",
+      "size": 17674
+    },
+    {
+      "categories": [
+        "permission",
+        "tool",
+        "verification"
+      ],
+      "lines": 317,
+      "path": "tests/unittests/tools/test_google_tool.py",
+      "sha256": "235d2cd49609576e6a0202359cbfb8b88ef6d24335c22dcb48ad3ca28c4bc711",
+      "size": 11197
+    },
+    {
+      "categories": [
+        "recovery",
+        "tool",
+        "verification"
+      ],
+      "lines": 472,
+      "path": "tests/unittests/tools/test_load_artifacts_tool.py",
+      "sha256": "bb17c4329dd7f13e753ae4c94bc6f40b41d7fae9323f060e754d3bd7b2ad2882",
+      "size": 15192
+    },
+    {
+      "categories": [
+        "tool",
+        "verification"
+      ],
+      "lines": 165,
+      "path": "tests/unittests/tools/test_load_mcp_resource_tool.py",
+      "sha256": "99f64e5dab1e3ae1b519c26d95cf56b7f9db933bbb409bcfa22c6963c37fae0b",
+      "size": 5991
+    },
+    {
+      "categories": [
+        "tool",
+        "verification"
+      ],
+      "lines": 86,
+      "path": "tests/unittests/tools/test_load_memory_tool.py",
+      "sha256": "6873839481c10daf03d9cf148cfd420e65bee08823e9a2cde2832b1532990c06",
+      "size": 3166
+    },
+    {
+      "categories": [
+        "tool",
+        "verification"
+      ],
+      "lines": 397,
+      "path": "tests/unittests/tools/test_load_web_page.py",
+      "sha256": "92a70cc548ddaa6ef7b9752e7e61133b6897cded104f55e32cde487537a383d3",
+      "size": 11616
+    },
+    {
+      "categories": [
+        "tool",
+        "verification"
+      ],
+      "lines": 125,
+      "path": "tests/unittests/tools/test_local_environment.py",
+      "sha256": "4d70a93e718b43962658a2d6d7a58958b3516bafe0dc40027f913cff3640567f",
+      "size": 4733
+    },
+    {
+      "categories": [
+        "tool",
+        "verification"
+      ],
+      "lines": 178,
+      "path": "tests/unittests/tools/test_long_running_tool.py",
+      "sha256": "49a9a0a87d43bb8a810b5663df77604ae2cc05853ec075f6c8e568ed9053511a",
+      "size": 6428
+    },
+    {
+      "categories": [
+        "tool",
+        "verification"
+      ],
+      "lines": 116,
+      "path": "tests/unittests/tools/test_request_input_tool.py",
+      "sha256": "238d711cbfb42840034ff3b2c5addbf12d41fbd5a17e7e5b78edf8600e1afeec",
+      "size": 4146
+    },
+    {
+      "categories": [
+        "tool",
+        "verification"
+      ],
+      "lines": 636,
+      "path": "tests/unittests/tools/test_set_model_response_tool.py",
+      "sha256": "5fea2276c4f5d65c819cae2596e38ecaf479958cb74966f2501ecd8ced6280b0",
+      "size": 20388
+    },
+    {
+      "categories": [
+        "recovery",
+        "tool",
+        "verification"
+      ],
+      "lines": 280,
+      "path": "tests/unittests/tools/test_skill_path_traversal.py",
+      "sha256": "0a2173fc05032734283b9b645bb9ecc9160dc0e40dd65d64d84a04bd2fbc447c",
+      "size": 9998
+    },
+    {
+      "categories": [
+        "recovery",
+        "tool",
+        "verification"
+      ],
+      "lines": 2475,
+      "path": "tests/unittests/tools/test_skill_toolset.py",
+      "sha256": "2ed6b4e2ec0b83857e6cda61a0125bbf516c7be766c207fc42986c82818275de",
+      "size": 84248
+    },
+    {
+      "categories": [
+        "tool",
+        "verification"
+      ],
+      "lines": 56,
+      "path": "tests/unittests/tools/test_tool_config.py",
+      "sha256": "da31164fdd2f9fe0244944d6c9a723c689c7a32f3c425c82f5b9be1b9efb7fe4",
+      "size": 2244
+    },
+    {
+      "categories": [
+        "permission",
+        "tool",
+        "verification"
+      ],
+      "lines": 93,
+      "path": "tests/unittests/tools/test_tool_confirmation.py",
+      "sha256": "8e7a751718474294093fb7a219cc5d0221a657173a30104c07ad33b4fb6e004b",
+      "size": 3147
+    },
+    {
+      "categories": [
+        "tool",
+        "verification"
+      ],
+      "lines": 256,
+      "path": "tests/unittests/tools/test_transfer_to_agent_tool.py",
+      "sha256": "6cd7b47e0478f1e5369f3ed3a1b8da1b2046f4b0bb4c6938313f3c4632ac7716",
+      "size": 9432
+    },
+    {
+      "categories": [
+        "tool",
+        "verification"
+      ],
+      "lines": 344,
+      "path": "tests/unittests/tools/test_url_context_tool.py",
+      "sha256": "f6f45244f9547fd9f01ee9a448f4852f22577e85ee4fcf661d6d5e683ae65492",
+      "size": 11640
+    },
+    {
+      "categories": [
+        "tool",
+        "verification"
+      ],
+      "lines": 100,
+      "path": "tests/unittests/tools/test_vertex_ai_load_profiles_tool.py",
+      "sha256": "b6f9aaf81d8bbea39ab61f361042a051f575d65347a5a96c7c11b01de404e7ae",
+      "size": 3480
+    },
+    {
+      "categories": [
+        "tool",
+        "verification"
+      ],
+      "lines": 582,
+      "path": "tests/unittests/tools/test_vertex_ai_search_tool.py",
+      "sha256": "56cfc4cb529cce12b9da7d1e3f58f2265a329496df2efceb3e666314ee79bbd9",
+      "size": 21402
+    }
+  ],
+  "generated_at": "2026-07-23T07:29:08.208957+00:00",
+  "llm": {
+    "affects_findings": false,
+    "execution_time_seconds": 0,
+    "model_name": null,
+    "status": "NOT_APPLICABLE",
+    "token_usage": null
+  },
+  "profile": {
+    "case_id": "google-adk",
+    "schema_version": "repository-audit-profile/v1",
+    "sha256": "c7ee816fef950c07701fb312d07373c718abc5f1fe170a2497eabb7be736e976"
+  },
+  "report_kind": "repository_evidence_manifest",
+  "repository": {
+    "branch": "main",
+    "case_id": "google-adk",
+    "commit": "67ab27f2547db48f7248b1689aab4c18502aee17",
+    "license": {
+      "blob_sha": "d645695673349e3947e8e5ae42332d0ac3164cd7",
+      "path": "LICENSE",
+      "spdx": "Apache-2.0"
+    },
+    "name": "Google Agent Development Kit",
+    "url": "https://github.com/google/adk-python"
+  },
+  "review": {
+    "required_before_publication": true,
+    "status": "APPROVED"
+  },
+  "runtime": {
+    "excludes": [
+      "clone",
+      "dependency_install",
+      "llm_network",
+      "manual_review"
+    ],
+    "max_seconds": 900.0,
+    "total_seconds": 1.176703,
+    "within_budget": true
+  },
+  "schema_version": "repository-evidence-manifest/v1",
+  "scope": {
+    "exclude": [
+      "samples/**",
+      "docs/**",
+      "src/google/adk/examples/**"
+    ],
+    "files_collected": 474,
+    "files_skipped": [],
+    "include": [
+      "src/google/adk/agents/**",
+      "src/google/adk/tools/**",
+      "src/google/adk/runners.py",
+      "src/google/adk/evaluation/**",
+      "tests/unittests/agents/**",
+      "tests/unittests/tools/**",
+      "tests/unittests/runners/**",
+      "tests/unittests/evaluation/**",
+      "tests/unittests/test_runners.py"
+    ]
+  }
+}

@@ -1,0 +1,157 @@
+{
+  "schema_version": "repository-audit-profile/v1",
+  "case_id": "google-adk",
+  "repository": {
+    "name": "Google Agent Development Kit",
+    "url": "https://github.com/google/adk-python",
+    "branch": "main",
+    "commit": "67ab27f2547db48f7248b1689aab4c18502aee17",
+    "license": {
+      "spdx": "Apache-2.0",
+      "path": "LICENSE",
+      "blob_sha": "d645695673349e3947e8e5ae42332d0ac3164cd7"
+    }
+  },
+  "scope": {
+    "include": [
+      "src/google/adk/agents/**",
+      "src/google/adk/tools/**",
+      "src/google/adk/runners.py",
+      "src/google/adk/evaluation/**",
+      "tests/unittests/agents/**",
+      "tests/unittests/tools/**",
+      "tests/unittests/runners/**",
+      "tests/unittests/evaluation/**",
+      "tests/unittests/test_runners.py"
+    ],
+    "exclude": [
+      "samples/**",
+      "docs/**",
+      "src/google/adk/examples/**"
+    ],
+    "prohibited": [
+      ".git/**"
+    ],
+    "extensions": [
+      ".json",
+      ".md",
+      ".py",
+      ".toml",
+      ".yaml",
+      ".yml"
+    ],
+    "max_file_bytes": 524288
+  },
+  "objectives": [
+    {
+      "title": "Agent architecture boundaries are visible",
+      "required_categories": [
+        "agent",
+        "tool",
+        "runtime"
+      ],
+      "pass_claim": "Static Agent, tool, and runner evidence is present in the bounded SDK scope.",
+      "unknown_claim": "The bounded SDK scope does not prove every Agent responsibility boundary.",
+      "impact": {
+        "level": "high"
+      },
+      "recommendation": "Keep Agent, sub-Agent, tool, and runner responsibilities explicit and independently testable.",
+      "localization": {
+        "zh-CN": {
+          "title": "Agent 架构边界可识别",
+          "pass_claim": "有界 SDK 范围内存在可定位的 Agent、工具与 Runner 静态证据。",
+          "unknown_claim": "有界 SDK 范围不足以证明每个 Agent 的职责边界。",
+          "recommendation": "保持 Agent、子 Agent、工具与 Runner 职责清晰，并确保各自可独立验证。"
+        }
+      }
+    },
+    {
+      "title": "Tool governance evidence is inspectable",
+      "required_categories": [
+        "tool",
+        "permission",
+        "recovery"
+      ],
+      "pass_claim": "The bounded SDK scope contains static tool, permission, and failure-handling evidence.",
+      "unknown_claim": "The bounded SDK scope does not prove a complete permission boundary for every tool.",
+      "impact": {
+        "level": "high"
+      },
+      "recommendation": "Bind each tool registration to explicit authorization and failure evidence.",
+      "localization": {
+        "zh-CN": {
+          "title": "工具治理证据可核查",
+          "pass_claim": "有界 SDK 范围内存在可定位的工具、权限与失败处理证据。",
+          "unknown_claim": "有界 SDK 范围不足以证明每个工具都具备完整的权限边界。",
+          "recommendation": "将每项工具注册与明确的授权依据和失败处理证据关联。"
+        }
+      }
+    },
+    {
+      "title": "Evaluation feedback paths are present",
+      "required_categories": [
+        "verification",
+        "feedback"
+      ],
+      "pass_claim": "Evaluation and feedback evidence is present in the bounded SDK scope.",
+      "unknown_claim": "The bounded SDK scope does not prove that evaluation feedback reaches every Agent path.",
+      "impact": {
+        "level": "medium"
+      },
+      "recommendation": "Expose a traceable link from evaluation results to the Agent path being assessed.",
+      "localization": {
+        "zh-CN": {
+          "title": "评估反馈路径可识别",
+          "pass_claim": "有界 SDK 范围内存在可定位的评估与反馈证据。",
+          "unknown_claim": "有界 SDK 范围不足以证明评估反馈覆盖每条 Agent 路径。",
+          "recommendation": "为评估结果与其所对应的 Agent 路径建立可追溯关联。"
+        }
+      }
+    }
+  ],
+  "flow": {
+    "nodes": [
+      {
+        "label": "Agent",
+        "label_zh_cn": "Agent",
+        "category": "agent"
+      },
+      {
+        "label": "Sub Agent",
+        "label_zh_cn": "子 Agent",
+        "category": "agent"
+      },
+      {
+        "label": "Tool",
+        "label_zh_cn": "工具",
+        "category": "tool"
+      },
+      {
+        "label": "Runner",
+        "label_zh_cn": "Runner",
+        "category": "runtime"
+      },
+      {
+        "label": "Evaluation",
+        "label_zh_cn": "评估",
+        "category": "verification"
+      }
+    ]
+  },
+  "runtime": {
+    "max_seconds": 900,
+    "starts_when": "local_repository_exists_and_dependencies_are_installed",
+    "includes": [
+      "evidence_collection",
+      "rule_analysis",
+      "artifact_generation",
+      "html_svg_rendering"
+    ],
+    "excludes": [
+      "clone",
+      "dependency_install",
+      "llm_network",
+      "manual_review"
+    ]
+  }
+}

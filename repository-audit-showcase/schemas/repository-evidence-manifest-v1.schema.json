@@ -1,0 +1,339 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/AdvancingTitans/agent-engineering-toolkit/blob/main/repository-audit-showcase/schemas/repository-evidence-manifest-v1.schema.json",
+  "title": "AET Repository Evidence Manifest v1",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "audit_version",
+    "generated_at",
+    "repository",
+    "scope",
+    "runtime",
+    "llm",
+    "review",
+    "disclaimer",
+    "report_kind",
+    "profile",
+    "evidence_count",
+    "files"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "repository-evidence-manifest/v1"
+    },
+    "audit_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "repository": {
+      "$ref": "#/$defs/repository"
+    },
+    "scope": {
+      "$ref": "#/$defs/scope"
+    },
+    "runtime": {
+      "$ref": "#/$defs/runtime"
+    },
+    "llm": {
+      "$ref": "#/$defs/llm"
+    },
+    "review": {
+      "$ref": "#/$defs/review"
+    },
+    "disclaimer": {
+      "type": "string",
+      "minLength": 1
+    },
+    "report_kind": {
+      "const": "repository_evidence_manifest"
+    },
+    "profile": {
+      "type": "object",
+      "required": [
+        "case_id",
+        "sha256",
+        "schema_version"
+      ],
+      "properties": {
+        "case_id": {
+          "enum": [
+            "swe-agent",
+            "google-adk",
+            "openhands"
+          ]
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "schema_version": {
+          "const": "repository-audit-profile/v1"
+        }
+      },
+      "additionalProperties": false
+    },
+    "evidence_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "files": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/file"
+      }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "sha1": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "repository": {
+      "type": "object",
+      "required": [
+        "case_id",
+        "name",
+        "url",
+        "branch",
+        "commit",
+        "license"
+      ],
+      "properties": {
+        "case_id": {
+          "enum": [
+            "swe-agent",
+            "google-adk",
+            "openhands"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "url": {
+          "type": "string",
+          "pattern": "^https://github\\.com/[^/]+/[^/]+/?$"
+        },
+        "branch": {
+          "type": "string",
+          "minLength": 1
+        },
+        "commit": {
+          "$ref": "#/$defs/sha1"
+        },
+        "license": {
+          "type": "object",
+          "required": [
+            "spdx",
+            "path",
+            "blob_sha"
+          ],
+          "properties": {
+            "spdx": {
+              "type": "string",
+              "minLength": 1
+            },
+            "path": {
+              "type": "string",
+              "minLength": 1
+            },
+            "blob_sha": {
+              "$ref": "#/$defs/sha1"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "scope": {
+      "type": "object",
+      "required": [
+        "include",
+        "exclude",
+        "files_collected",
+        "files_skipped"
+      ],
+      "properties": {
+        "include": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "exclude": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "files_collected": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "files_skipped": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "path",
+              "reason"
+            ],
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              },
+              "reason": {
+                "enum": [
+                  "symbolic_link",
+                  "size_limit",
+                  "not_utf8"
+                ]
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "runtime": {
+      "type": "object",
+      "required": [
+        "total_seconds",
+        "max_seconds",
+        "within_budget",
+        "excludes"
+      ],
+      "properties": {
+        "total_seconds": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 900
+        },
+        "max_seconds": {
+          "const": 900
+        },
+        "within_budget": {
+          "const": true
+        },
+        "excludes": {
+          "const": [
+            "clone",
+            "dependency_install",
+            "llm_network",
+            "manual_review"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "llm": {
+      "type": "object",
+      "required": [
+        "status",
+        "model_name",
+        "token_usage",
+        "execution_time_seconds",
+        "affects_findings"
+      ],
+      "properties": {
+        "status": {
+          "const": "NOT_APPLICABLE"
+        },
+        "model_name": {
+          "type": "null"
+        },
+        "token_usage": {
+          "type": "null"
+        },
+        "execution_time_seconds": {
+          "const": 0
+        },
+        "affects_findings": {
+          "const": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "review": {
+      "type": "object",
+      "required": [
+        "status",
+        "required_before_publication"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "PENDING",
+            "APPROVED",
+            "REJECTED"
+          ]
+        },
+        "required_before_publication": {
+          "const": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "file": {
+      "type": "object",
+      "required": [
+        "path",
+        "sha256",
+        "size",
+        "lines",
+        "categories"
+      ],
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$)).+$"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "size": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "lines": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "categories": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "agent",
+              "tool",
+              "runtime",
+              "verification",
+              "trajectory",
+              "permission",
+              "recovery",
+              "feedback",
+              "isolation",
+              "requirement",
+              "external",
+              "local_agent_definition"
+            ]
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

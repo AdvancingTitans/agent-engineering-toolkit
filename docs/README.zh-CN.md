@@ -21,12 +21,42 @@ Agent Claim → 精确执行证据 → 实时 Freshness 检查 → Human Decisio
 AET 是一个本地、MIT License 的 CLI 和 Portable Skill，可用于 Codex、Claude Code、
 Cursor 及其他 Coding Agent。它不替代 Agent、测试或 CI，也不会把缺失证据解释成通过。
 
+## 真实仓库审查案例库
+
+AET 现在内置三个公开 Agent 仓库的 commit 锁定审查案例。每个案例只扫描本地仓库中
+明确限定的范围，运行确定性规则，并生成带证据位置的工程观察、HTML 报告与 SVG
+视图；不提供项目评分或排名。
+
+| 案例 | 有界审查展示内容 | 生成报告 |
+| --- | --- | --- |
+| SWE-agent | Agent 循环、工具交互、Trajectory 与完成证据 | [简体中文](../repository-audit-showcase/reports/swe-agent/audit-result/zh-CN/audit-report.md) · [English](../repository-audit-showcase/reports/swe-agent/audit-result/en/audit-report.md) |
+| Google ADK | Agent 架构、工具治理与评估反馈 | [简体中文](../repository-audit-showcase/reports/google-adk/audit-result/zh-CN/audit-report.md) · [English](../repository-audit-showcase/reports/google-adk/audit-result/en/audit-report.md) |
+| OpenHands | 应用编排、运行隔离与外部 Agent 核心边界 | [简体中文](../repository-audit-showcase/reports/openhands/audit-result/zh-CN/audit-report.md) · [English](../repository-audit-showcase/reports/openhands/audit-result/en/audit-report.md) |
+
+![OpenHands 有界 Agent 流程](../repository-audit-showcase/reports/openhands/audit-result/zh-CN/diagrams/agent-flow.svg)
+
+针对与锁定版本一致的本地 checkout 运行：
+
+```bash
+aet audit swe-agent --repo /path/to/SWE-agent
+aet audit google-adk --repo /path/to/adk-python
+aet audit openhands --repo /path/to/OpenHands
+```
+
+每次运行在 `audit-result/` 中写出两项共享的机器产物，并在 `en/` 与 `zh-CN/`
+下各生成五项人类可读产物：仓库摘要、Markdown 和 HTML 报告，以及两张 SVG 图。
+15 分钟预算从本地 checkout 与 AET
+已准备完毕后开始计算。AET 不执行上游代码或测试，不安装上游依赖，不把源码正文
+复制进报告，也不允许 LLM 创建或改变 Finding。`UNKNOWN` 保持显式，生成报告必须
+先经维护者审核才能发布。详见
+[范围与发布边界](../repository-audit-showcase/docs/scope-and-publication.md)。
+
 ## 运行 Stale Proof Demo
 
 安装当前 Release，然后运行仓库中的 Demo：
 
 ```bash
-uv tool install https://github.com/AdvancingTitans/agent-engineering-toolkit/releases/download/v1.11.1/agent_engineering_toolkit-1.11.1-py3-none-any.whl
+uv tool install https://github.com/AdvancingTitans/agent-engineering-toolkit/releases/download/v1.12.0/agent_engineering_toolkit-1.12.0-py3-none-any.whl
 git clone https://github.com/AdvancingTitans/agent-engineering-toolkit.git
 cd agent-engineering-toolkit
 ./examples/stale-proof-demo.sh
@@ -219,7 +249,7 @@ Gate Plan 在执行前冻结适用性、Suite 目标、覆盖、Alpha、Power、
 安装当前 Release：
 
 ```bash
-uv tool install https://github.com/AdvancingTitans/agent-engineering-toolkit/releases/download/v1.11.1/agent_engineering_toolkit-1.11.1-py3-none-any.whl
+uv tool install https://github.com/AdvancingTitans/agent-engineering-toolkit/releases/download/v1.12.0/agent_engineering_toolkit-1.12.0-py3-none-any.whl
 aet --version
 ```
 
@@ -455,7 +485,7 @@ uv run --with pytest python -m pytest tests/test_business_quality_flows.py -q
 uv run --no-editable --reinstall-package agent-engineering-toolkit \
   aet audit . --strict --format json --output .aet/evidence/release-audit.json
 uv build
-uv run --isolated --with dist/agent_engineering_toolkit-1.11.1-py3-none-any.whl \
+uv run --isolated --with dist/agent_engineering_toolkit-1.12.0-py3-none-any.whl \
   aet --version
 ```
 

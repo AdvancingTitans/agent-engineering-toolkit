@@ -1,0 +1,14 @@
+{
+  "schema_version": "repository-lock/v1",
+  "case_id": "google-adk",
+  "repository": "google/adk-python",
+  "url": "https://github.com/google/adk-python",
+  "branch": "main",
+  "commit": "67ab27f2547db48f7248b1689aab4c18502aee17",
+  "license": {
+    "spdx": "Apache-2.0",
+    "path": "LICENSE",
+    "blob_sha": "d645695673349e3947e8e5ae42332d0ac3164cd7"
+  },
+  "locked_at": "2026-07-23"
+}

@@ -1,0 +1,14 @@
+{
+  "schema_version": "repository-lock/v1",
+  "case_id": "swe-agent",
+  "repository": "SWE-agent/SWE-agent",
+  "url": "https://github.com/SWE-agent/SWE-agent",
+  "branch": "main",
+  "commit": "3ea751c087f32b16e039a2233dd6eefecef325d5",
+  "license": {
+    "spdx": "MIT",
+    "path": "LICENSE",
+    "blob_sha": "e702436e21844c5c519de31ab68277a6d3b427d9"
+  },
+  "locked_at": "2026-07-23"
+}

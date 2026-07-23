@@ -1,43 +1,65 @@
 {
   "schema_version": "release-classification/v1",
-  "release_tag": "v1.11.1",
-  "base_tag": "v1.11.0",
-  "changed_paths_sha256": "f20d0176436812bcc0f1c5817b2314480d08b6654dfb5e651705664d6246a062",
-  "changed_content_sha256": "989b0dd16042d2cbcecd0f51dd779bfb076fead786dbc16a6951f1f23cbd198c",
+  "release_tag": "v1.12.0",
+  "base_tag": "v1.11.1",
+  "changed_paths_sha256": "f26b95dfb5c97027ae8fe470adf31eab99f2061ed8e6bec1359b15e7e2db3094",
+  "changed_content_sha256": "b682bf418afdef1d7d289743af03547798c726d5c50497b20438a0e423bb2823",
   "release_class": "deterministic",
   "real_host_gate": "NOT_APPLICABLE",
   "observed_behavior_claims": [],
   "governance_asset_adoptions": [],
   "not_applicable_exceptions": [
     {
-      "path": ".github/workflows/ci.yml",
-      "reason": "CI now runs the deterministic stale-proof demo and retains the existing build-once artifact contract; it makes no changed Agent-behavior claim.",
-      "deterministic_proofs": ["tests/test_business_quality_flows.py"]
-    },
-    {
-      "path": ".github/workflows/publish-pypi.yml",
-      "reason": "The PyPI workflow only verifies and promotes the exact tag-bound CI wheel through OIDC; it neither evaluates nor adopts an Agent candidate.",
-      "deterministic_proofs": ["tests/test_business_quality_flows.py"]
-    },
-    {
-      "path": "eval/real-agent/release_classification.py",
-      "reason": "The verifier now classifies the PyPI publication workflow as behavior-sensitive so every release must review its deterministic boundary explicitly.",
-      "deterministic_proofs": ["tests/test_business_quality_flows.py"]
+      "path": "aet.intent.json",
+      "reason": "The reviewed intent binds the complete three-case Showcase scope and its deterministic local proof commands; it makes no changed Agent-behavior claim.",
+      "deterministic_proofs": [
+        "tests/test_business_quality_flows.py",
+        "tests/test_repository_audit.py"
+      ]
     },
     {
       "path": "release-classification.json",
-      "reason": "This tracked contract binds the complete v1.11.1 Diff to deterministic proofs and explicitly declares no changed Agent behavior or governance adoption.",
-      "deterministic_proofs": ["tests/test_business_quality_flows.py"]
+      "reason": "This tracked contract binds the complete v1.12.0 Diff to deterministic proofs and explicitly declares no changed Agent behavior or governance adoption.",
+      "deterministic_proofs": [
+        "tests/test_business_quality_flows.py"
+      ]
     },
     {
       "path": "skills/agent-engineering-toolkit/SKILL.md",
-      "reason": "The Skill change updates the package version only while preserving default-off activation and every immutable authority boundary.",
-      "deterministic_proofs": ["tests/test_productization.py"]
+      "reason": "The Skill adds an explicit route to the bounded Repository Audit Showcase while preserving default-off activation and human publication authority.",
+      "deterministic_proofs": [
+        "tests/test_productization.py",
+        "tests/test_repository_audit.py"
+      ]
+    },
+    {
+      "path": "skills/agent-engineering-toolkit/references/repository-audit-showcase.md",
+      "reason": "The new reference documents only the three commit-locked static cases, evidence boundaries, runtime scope, and mandatory human review state.",
+      "deterministic_proofs": [
+        "tests/test_productization.py",
+        "tests/test_repository_audit.py"
+      ]
     },
     {
       "path": "src/aet/__init__.py",
       "reason": "The module change is the package version declaration only and makes no claim about changed Agent behavior.",
-      "deterministic_proofs": ["tests/test_productization.py"]
+      "deterministic_proofs": [
+        "tests/test_productization.py"
+      ]
+    },
+    {
+      "path": "src/aet/cli.py",
+      "reason": "The CLI adds three explicit repository-case aliases and preserves legacy path audit behavior; deterministic tests cover dispatch and invalid combinations.",
+      "deterministic_proofs": [
+        "tests/test_repository_audit.py"
+      ]
+    },
+    {
+      "path": "src/aet/repository_audit.py",
+      "reason": "The new static repository auditor is deterministic, read-only, Evidence First, bounded by locked profiles, and never executes upstream code or tests.",
+      "deterministic_proofs": [
+        "tests/test_repository_audit.py"
+      ]
     }
   ]
 }

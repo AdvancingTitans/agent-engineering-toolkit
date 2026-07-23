@@ -1,0 +1,222 @@
+{
+  "audit_version": "1.12.0",
+  "disclaimer": "Static analysis of a public upstream repository. No source code is redistributed, and no affiliation or upstream endorsement is implied.",
+  "findings": [
+    {
+      "evidence": [
+        {
+          "detail": "HEAD=96f902a9ac14bf5edfb2e47d759d75c91e4faf28",
+          "line": null,
+          "path": ".git"
+        }
+      ],
+      "id": "AET-REPO-001",
+      "impact": {
+        "description": "A mismatched or dirty checkout makes line-level evidence non-reproducible.",
+        "level": "high"
+      },
+      "recommendation": "Checkout the locked commit and remove local repository changes.",
+      "rule_version": "1",
+      "severity": "INFO",
+      "status": "PASS",
+      "title": "Repository revision is reproducibly locked"
+    },
+    {
+      "evidence": [
+        {
+          "detail": "git_blob=572bb259491e4e2adafee0c03db0d4ed419e6b9a; expected=572bb259491e4e2adafee0c03db0d4ed419e6b9a",
+          "line": 1,
+          "path": "LICENSE"
+        }
+      ],
+      "id": "AET-REPO-002",
+      "impact": {
+        "description": "A license mismatch or prohibited path in the evidence set invalidates publication.",
+        "level": "high"
+      },
+      "recommendation": "Restore the locked license file and keep prohibited paths outside every include pattern.",
+      "rule_version": "1",
+      "severity": "INFO",
+      "status": "PASS",
+      "title": "License and prohibited-path boundary is enforced"
+    },
+    {
+      "evidence": [
+        {
+          "detail": "category=agent; sha256=a8db9c739e703bfb7a03d0d6c73249498580cf6721b64293bb3aa7032ab18ce1",
+          "line": 1,
+          "path": "openhands/app_server/app_conversation/README.md"
+        },
+        {
+          "detail": "category=agent; sha256=26fade1d9d62e1decaa42e7a60f436ee9d08b550ff59e58a1528229e32bed7a1",
+          "line": 1,
+          "path": "openhands/app_server/app_conversation/app_conversation_info_service.py"
+        },
+        {
+          "detail": "category=runtime; sha256=a8db9c739e703bfb7a03d0d6c73249498580cf6721b64293bb3aa7032ab18ce1",
+          "line": 1,
+          "path": "openhands/app_server/app_conversation/README.md"
+        },
+        {
+          "detail": "category=runtime; sha256=26fade1d9d62e1decaa42e7a60f436ee9d08b550ff59e58a1528229e32bed7a1",
+          "line": 1,
+          "path": "openhands/app_server/app_conversation/app_conversation_info_service.py"
+        },
+        {
+          "detail": "category=trajectory; sha256=4a0222a86861bf22fea46fd3f0d32109ce36481f42ac121a84b233439695be39",
+          "line": 1,
+          "path": "openhands/app_server/event/README.md"
+        },
+        {
+          "detail": "category=trajectory; sha256=5ed340b11987c4004767bd0fd0ec2ed8497c41a2d19edff4a8fca4d29ab9c0fb",
+          "line": 1,
+          "path": "openhands/app_server/event/aws_event_service.py"
+        },
+        {
+          "detail": "category=verification; sha256=6a89be0e5ed3a4c51909f2d8366e911e861eefb49ab3cc716aff9992567064b1",
+          "line": 1,
+          "path": "tests/unit/app_server/file_store/test_file_store.py"
+        },
+        {
+          "detail": "category=verification; sha256=8ab4be7e7217b6cf2b6604c7a1f5e28c7c14ad675d4b36c90a4b1b44f2a2a364",
+          "line": 1,
+          "path": "tests/unit/app_server/test_agent_server_env_override.py"
+        }
+      ],
+      "id": "AET-REPO-003",
+      "impact": {
+        "description": "Static conversation, runtime, event, and verification evidence is present in the application-server scope.",
+        "level": "high"
+      },
+      "recommendation": "Keep cross-package Agent execution claims explicitly bound to versioned SDK and verification evidence.",
+      "rule_version": "1",
+      "severity": "INFO",
+      "status": "PASS",
+      "title": "Application orchestration evidence is visible"
+    },
+    {
+      "evidence": [
+        {
+          "detail": "category=runtime; sha256=a8db9c739e703bfb7a03d0d6c73249498580cf6721b64293bb3aa7032ab18ce1",
+          "line": 1,
+          "path": "openhands/app_server/app_conversation/README.md"
+        },
+        {
+          "detail": "category=runtime; sha256=26fade1d9d62e1decaa42e7a60f436ee9d08b550ff59e58a1528229e32bed7a1",
+          "line": 1,
+          "path": "openhands/app_server/app_conversation/app_conversation_info_service.py"
+        },
+        {
+          "detail": "category=isolation; sha256=26fade1d9d62e1decaa42e7a60f436ee9d08b550ff59e58a1528229e32bed7a1",
+          "line": 88,
+          "path": "openhands/app_server/app_conversation/app_conversation_info_service.py"
+        },
+        {
+          "detail": "category=isolation; sha256=7c8cf495789001a5925774f23a678b2d6da122942f9555fcf520abe3b2b7e69a",
+          "line": 116,
+          "path": "openhands/app_server/app_conversation/app_conversation_models.py"
+        },
+        {
+          "detail": "category=recovery; sha256=7c8cf495789001a5925774f23a678b2d6da122942f9555fcf520abe3b2b7e69a",
+          "line": 170,
+          "path": "openhands/app_server/app_conversation/app_conversation_models.py"
+        },
+        {
+          "detail": "category=recovery; sha256=864bff55884872eac7de6b2ce6f89a19df3d9db99e9ade993d096f308f051259",
+          "line": 379,
+          "path": "openhands/app_server/app_conversation/app_conversation_router.py"
+        }
+      ],
+      "id": "AET-REPO-004",
+      "impact": {
+        "description": "Static runtime, isolation, and failure-handling evidence is present in the bounded scope.",
+        "level": "high"
+      },
+      "recommendation": "Bind sandbox actions and recovery paths to explicit, inspectable result evidence.",
+      "rule_version": "1",
+      "severity": "INFO",
+      "status": "PASS",
+      "title": "Runtime isolation and recovery evidence is inspectable"
+    },
+    {
+      "evidence": [
+        {
+          "detail": "category=external; sha256=81c65766ba4b3c41fc3cc1007c6274de1cbdf4ae2b298fd782ee790fc9172b0b",
+          "line": 1,
+          "path": "pyproject.toml"
+        }
+      ],
+      "id": "AET-REPO-005",
+      "impact": {
+        "description": "The checkout evidences an external Agent dependency but not a local Agent-core definition. Missing categories: local_agent_definition.",
+        "level": "medium"
+      },
+      "recommendation": "Audit the separately versioned Agent SDK before making end-to-end execution claims.",
+      "rule_version": "1",
+      "severity": "WARN",
+      "status": "UNKNOWN",
+      "title": "The external Agent core remains outside this checkout"
+    }
+  ],
+  "generated_at": "2026-07-23T07:29:08.811892+00:00",
+  "llm": {
+    "affects_findings": false,
+    "execution_time_seconds": 0,
+    "model_name": null,
+    "status": "NOT_APPLICABLE",
+    "token_usage": null
+  },
+  "report_kind": "repository_audit",
+  "repository": {
+    "branch": "main",
+    "case_id": "openhands",
+    "commit": "96f902a9ac14bf5edfb2e47d759d75c91e4faf28",
+    "license": {
+      "blob_sha": "572bb259491e4e2adafee0c03db0d4ed419e6b9a",
+      "path": "LICENSE",
+      "spdx": "MIT"
+    },
+    "name": "OpenHands",
+    "url": "https://github.com/OpenHands/OpenHands"
+  },
+  "review": {
+    "required_before_publication": true,
+    "status": "APPROVED"
+  },
+  "runtime": {
+    "excludes": [
+      "clone",
+      "dependency_install",
+      "llm_network",
+      "manual_review"
+    ],
+    "max_seconds": 900.0,
+    "total_seconds": 0.518621,
+    "within_budget": true
+  },
+  "schema_version": "repository-audit-result/v1",
+  "scope": {
+    "exclude": [
+      "enterprise/**",
+      "tests/**/enterprise/**",
+      "frontend/**",
+      "deployment/**",
+      "docs/**"
+    ],
+    "files_collected": 107,
+    "files_skipped": [],
+    "include": [
+      "pyproject.toml",
+      "openhands/app_server/app_conversation/**",
+      "openhands/app_server/sandbox/**",
+      "openhands/app_server/event/**",
+      "tests/unit/app_server/**"
+    ]
+  },
+  "summary": {
+    "FAIL": 0,
+    "NOT_APPLICABLE": 0,
+    "PASS": 4,
+    "UNKNOWN": 1
+  }
+}

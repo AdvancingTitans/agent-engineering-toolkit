@@ -1,0 +1,1187 @@
+{
+  "audit_version": "1.12.0",
+  "disclaimer": "Static analysis of a public upstream repository. No source code is redistributed, and no affiliation or upstream endorsement is implied.",
+  "evidence_count": 107,
+  "files": [
+    {
+      "categories": [
+        "agent",
+        "runtime"
+      ],
+      "lines": 20,
+      "path": "openhands/app_server/app_conversation/README.md",
+      "sha256": "a8db9c739e703bfb7a03d0d6c73249498580cf6721b64293bb3aa7032ab18ce1",
+      "size": 774
+    },
+    {
+      "categories": [],
+      "lines": 1,
+      "path": "openhands/app_server/app_conversation/__init__.py",
+      "sha256": "c64c2f763490162efe4a0d42795574ea82eb64fbb5486514aa73854db4305120",
+      "size": 26
+    },
+    {
+      "categories": [
+        "agent",
+        "isolation",
+        "runtime"
+      ],
+      "lines": 136,
+      "path": "openhands/app_server/app_conversation/app_conversation_info_service.py",
+      "sha256": "26fade1d9d62e1decaa42e7a60f436ee9d08b550ff59e58a1528229e32bed7a1",
+      "size": 4395
+    },
+    {
+      "categories": [
+        "agent",
+        "isolation",
+        "recovery",
+        "runtime"
+      ],
+      "lines": 430,
+      "path": "openhands/app_server/app_conversation/app_conversation_models.py",
+      "sha256": "7c8cf495789001a5925774f23a678b2d6da122942f9555fcf520abe3b2b7e69a",
+      "size": 15094
+    },
+    {
+      "categories": [
+        "agent",
+        "isolation",
+        "recovery",
+        "runtime"
+      ],
+      "lines": 1719,
+      "path": "openhands/app_server/app_conversation/app_conversation_router.py",
+      "sha256": "864bff55884872eac7de6b2ce6f89a19df3d9db99e9ade993d096f308f051259",
+      "size": 63652
+    },
+    {
+      "categories": [
+        "agent",
+        "runtime"
+      ],
+      "lines": 195,
+      "path": "openhands/app_server/app_conversation/app_conversation_service.py",
+      "sha256": "bc26754ff80f0b2ddc8706afa357e793253f595631271ed5d913b7759b4e0c64",
+      "size": 7185
+    },
+    {
+      "categories": [
+        "agent",
+        "isolation",
+        "permission",
+        "recovery",
+        "runtime"
+      ],
+      "lines": 739,
+      "path": "openhands/app_server/app_conversation/app_conversation_service_base.py",
+      "sha256": "c742ccace40855a736edefbc156f5149014d8b6c4d19395497b640aa1a6cee49",
+      "size": 27974
+    },
+    {
+      "categories": [
+        "agent",
+        "runtime"
+      ],
+      "lines": 76,
+      "path": "openhands/app_server/app_conversation/app_conversation_start_task_service.py",
+      "sha256": "0e1680adccca1fb62fceedc54138bf647ae2f6ceaf6598406bddabbd3ad4031a",
+      "size": 2498
+    },
+    {
+      "categories": [
+        "agent",
+        "runtime"
+      ],
+      "lines": 40,
+      "path": "openhands/app_server/app_conversation/conversation_secret_enricher.py",
+      "sha256": "106619bd981767e08eae8f00eb776f70eb60c1a68fe207787b9a3f6f63c19bd4",
+      "size": 1330
+    },
+    {
+      "categories": [
+        "agent",
+        "runtime"
+      ],
+      "lines": 1,
+      "path": "openhands/app_server/app_conversation/git/README.md",
+      "sha256": "87253f65dfac5f0a349133d98250faef79aedf5ed56f0401f40e71ba04467867",
+      "size": 57
+    },
+    {
+      "categories": [
+        "agent",
+        "recovery",
+        "runtime"
+      ],
+      "lines": 148,
+      "path": "openhands/app_server/app_conversation/hook_loader.py",
+      "sha256": "8d76b93b520e006e7a114e601a002afe8208c94ff3fc3fadc325f245ff2548f8",
+      "size": 4996
+    },
+    {
+      "categories": [
+        "agent",
+        "isolation",
+        "recovery",
+        "runtime"
+      ],
+      "lines": 3086,
+      "path": "openhands/app_server/app_conversation/live_status_app_conversation_service.py",
+      "sha256": "26a64ac127646b401993817f69ebc716803d25717a500f5d17e221f17d9b7273",
+      "size": 128498
+    },
+    {
+      "categories": [
+        "agent",
+        "isolation",
+        "permission",
+        "recovery",
+        "runtime"
+      ],
+      "lines": 754,
+      "path": "openhands/app_server/app_conversation/skill_loader.py",
+      "sha256": "99fb032289fadb7795a5e652c6f5ee9ac4f735ad52e44380ec06d58d57d28bdd",
+      "size": 28621
+    },
+    {
+      "categories": [
+        "agent",
+        "isolation",
+        "recovery",
+        "runtime"
+      ],
+      "lines": 755,
+      "path": "openhands/app_server/app_conversation/sql_app_conversation_info_service.py",
+      "sha256": "481dc2944dfc087b1628e7f239c935040a34b61ebf298007640577f28a357587",
+      "size": 29822
+    },
+    {
+      "categories": [
+        "agent",
+        "isolation",
+        "recovery",
+        "runtime"
+      ],
+      "lines": 294,
+      "path": "openhands/app_server/app_conversation/sql_app_conversation_start_task_service.py",
+      "sha256": "df9fa434a38ba5f5e5e343a2e81d54df16ae3af3c9b6e007b832345d42189d06",
+      "size": 10922
+    },
+    {
+      "categories": [
+        "runtime",
+        "trajectory"
+      ],
+      "lines": 21,
+      "path": "openhands/app_server/event/README.md",
+      "sha256": "4a0222a86861bf22fea46fd3f0d32109ce36481f42ac121a84b233439695be39",
+      "size": 749
+    },
+    {
+      "categories": [
+        "recovery",
+        "runtime",
+        "trajectory"
+      ],
+      "lines": 130,
+      "path": "openhands/app_server/event/aws_event_service.py",
+      "sha256": "5ed340b11987c4004767bd0fd0ec2ed8497c41a2d19edff4a8fca4d29ab9c0fb",
+      "size": 4470
+    },
+    {
+      "categories": [
+        "runtime",
+        "trajectory"
+      ],
+      "lines": 110,
+      "path": "openhands/app_server/event/event_router.py",
+      "sha256": "d467b2c8bfce57d79924eafc398d0452b89d470da9cbb239f4fbda3cf5cecc4c",
+      "size": 3578
+    },
+    {
+      "categories": [
+        "runtime",
+        "trajectory"
+      ],
+      "lines": 74,
+      "path": "openhands/app_server/event/event_service.py",
+      "sha256": "60cc419d2448bb2c8e9f5227da785bf49ac5b63921bd42c78e79e416bea33dc6",
+      "size": 2573
+    },
+    {
+      "categories": [
+        "recovery",
+        "runtime",
+        "trajectory"
+      ],
+      "lines": 205,
+      "path": "openhands/app_server/event/event_service_base.py",
+      "sha256": "1fad51b9d8cec224f39777e78b88b1a51ef079e251c74d2e9c79fd519554f3fe",
+      "size": 8141
+    },
+    {
+      "categories": [],
+      "lines": 0,
+      "path": "openhands/app_server/event/event_store.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "categories": [
+        "recovery",
+        "runtime",
+        "trajectory"
+      ],
+      "lines": 70,
+      "path": "openhands/app_server/event/filesystem_event_service.py",
+      "sha256": "b9d4a5a49ff7e1374845a1b07040df96e5c0cb7359101b484d934712b7f425ba",
+      "size": 2444
+    },
+    {
+      "categories": [
+        "recovery",
+        "runtime",
+        "trajectory"
+      ],
+      "lines": 101,
+      "path": "openhands/app_server/event/google_cloud_event_service.py",
+      "sha256": "343065f4c98782536bafdbb56b881720baf00775f2d2ccb5802bd0bb8902e8f2",
+      "size": 3490
+    },
+    {
+      "categories": [
+        "isolation",
+        "runtime"
+      ],
+      "lines": 21,
+      "path": "openhands/app_server/sandbox/README.md",
+      "sha256": "fe18acef00784ac01bc796c073e2f18ba2ae646e199e6bcf8aaeab61a0416041",
+      "size": 831
+    },
+    {
+      "categories": [
+        "isolation",
+        "recovery",
+        "runtime"
+      ],
+      "lines": 715,
+      "path": "openhands/app_server/sandbox/docker_sandbox_service.py",
+      "sha256": "34bb7f8a81c81cdb99984718fdf6175b99cbc43aca6043b7506c2cfdec5aaca8",
+      "size": 28110
+    },
+    {
+      "categories": [
+        "isolation",
+        "recovery",
+        "runtime"
+      ],
+      "lines": 133,
+      "path": "openhands/app_server/sandbox/docker_sandbox_spec_service.py",
+      "sha256": "a663361ce8a0ea937446ae1b4573a6e7d6d0f41ed3eea5e2c5ed1a100dfb2437",
+      "size": 4866
+    },
+    {
+      "categories": [
+        "isolation",
+        "runtime"
+      ],
+      "lines": 155,
+      "path": "openhands/app_server/sandbox/dynamic_remote_sandbox_spec_service.py",
+      "sha256": "eebca000c9672e3f7ab319a17ccd0c87ef51b1ca081c56471949a6e775d74bf5",
+      "size": 6102
+    },
+    {
+      "categories": [
+        "isolation",
+        "recovery",
+        "runtime"
+      ],
+      "lines": 48,
+      "path": "openhands/app_server/sandbox/preset_sandbox_spec_service.py",
+      "sha256": "2374f0811a0cb6de9dc39198067f58a069cb3bf3db2864222b4411dc0bcb3101",
+      "size": 1473
+    },
+    {
+      "categories": [
+        "isolation",
+        "recovery",
+        "runtime"
+      ],
+      "lines": 477,
+      "path": "openhands/app_server/sandbox/process_sandbox_service.py",
+      "sha256": "31a1c2cacda2caffe36484196498ba3c55e8f54e5e777eb0c7130620c4056179",
+      "size": 16416
+    },
+    {
+      "categories": [
+        "isolation",
+        "runtime"
+      ],
+      "lines": 48,
+      "path": "openhands/app_server/sandbox/process_sandbox_spec_service.py",
+      "sha256": "11d8c3a7d91f7673f96863cf2064099a7625346734c401d47397f4af3eb48135",
+      "size": 1546
+    },
+    {
+      "categories": [
+        "isolation",
+        "recovery",
+        "runtime"
+      ],
+      "lines": 1148,
+      "path": "openhands/app_server/sandbox/remote_sandbox_service.py",
+      "sha256": "039ca1525d3238b37b5d153ed6d85214481b5f04883187f0afd9cb05549ad474",
+      "size": 46346
+    },
+    {
+      "categories": [
+        "isolation",
+        "runtime"
+      ],
+      "lines": 49,
+      "path": "openhands/app_server/sandbox/remote_sandbox_spec_service.py",
+      "sha256": "91801cacb6bf90842d8b577fbbb88ba2396abe4ff8689152a019895213911845",
+      "size": 1600
+    },
+    {
+      "categories": [
+        "isolation",
+        "runtime"
+      ],
+      "lines": 93,
+      "path": "openhands/app_server/sandbox/sandbox_models.py",
+      "sha256": "fcb4c86f38ebb86ecd1431660d77ba41204624a54f91dea2303678f969654b80",
+      "size": 2564
+    },
+    {
+      "categories": [
+        "isolation",
+        "runtime"
+      ],
+      "lines": 220,
+      "path": "openhands/app_server/sandbox/sandbox_router.py",
+      "sha256": "07fef71e6849b33ae3c0a8d12c0694f418f434622cfe750e49d418b065c83985",
+      "size": 7752
+    },
+    {
+      "categories": [
+        "isolation",
+        "recovery",
+        "runtime"
+      ],
+      "lines": 268,
+      "path": "openhands/app_server/sandbox/sandbox_service.py",
+      "sha256": "d651fc67f12c1259e7af4d81c20b3da207bb6918abddde5c13a5dc1e59ad06d8",
+      "size": 10087
+    },
+    {
+      "categories": [
+        "isolation",
+        "runtime"
+      ],
+      "lines": 22,
+      "path": "openhands/app_server/sandbox/sandbox_spec_models.py",
+      "sha256": "f261ee5ea68f71518ce9577669dd63c59374bfb31ecb03afa93732021c52d75b",
+      "size": 617
+    },
+    {
+      "categories": [
+        "isolation",
+        "runtime"
+      ],
+      "lines": 58,
+      "path": "openhands/app_server/sandbox/sandbox_spec_router.py",
+      "sha256": "37f5c553954c2325d2768a2466830091d86c2c31871c678fd2e17e02b3274c88",
+      "size": 2075
+    },
+    {
+      "categories": [
+        "isolation",
+        "runtime"
+      ],
+      "lines": 210,
+      "path": "openhands/app_server/sandbox/sandbox_spec_service.py",
+      "sha256": "ff71e0fb45cda438fbd8253425704746d41f2273d8a3d0aff26b43637962b415",
+      "size": 8043
+    },
+    {
+      "categories": [
+        "isolation",
+        "runtime"
+      ],
+      "lines": 139,
+      "path": "openhands/app_server/sandbox/session_auth.py",
+      "sha256": "893d725e43a1a1c1441861faf0a7e556b44a95e3960882569d6ec7013dcfc055",
+      "size": 5254
+    },
+    {
+      "categories": [
+        "isolation",
+        "recovery",
+        "runtime"
+      ],
+      "lines": 543,
+      "path": "openhands/app_server/sandbox/workspace_archive.py",
+      "sha256": "202fc8e119e9970b4c08e80bb809df052cf8130880e7b7c243fbc3ac81ef625f",
+      "size": 21613
+    },
+    {
+      "categories": [
+        "external"
+      ],
+      "lines": 353,
+      "path": "pyproject.toml",
+      "sha256": "81c65766ba4b3c41fc3cc1007c6274de1cbdf4ae2b298fd782ee790fc9172b0b",
+      "size": 8922
+    },
+    {
+      "categories": [],
+      "lines": 1,
+      "path": "tests/unit/app_server/__init__.py",
+      "sha256": "242a75ce5c319c5891f4df978b48d27c7c8cf03e3bcfe79e25f8a54b56d30521",
+      "size": 31
+    },
+    {
+      "categories": [],
+      "lines": 0,
+      "path": "tests/unit/app_server/analytics/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "categories": [],
+      "lines": 0,
+      "path": "tests/unit/app_server/file_store/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "categories": [
+        "recovery",
+        "runtime",
+        "verification"
+      ],
+      "lines": 339,
+      "path": "tests/unit/app_server/file_store/test_file_store.py",
+      "sha256": "6a89be0e5ed3a4c51909f2d8366e911e861eefb49ab3cc716aff9992567064b1",
+      "size": 11816
+    },
+    {
+      "categories": [
+        "isolation",
+        "recovery",
+        "runtime",
+        "verification"
+      ],
+      "lines": 961,
+      "path": "tests/unit/app_server/test_agent_server_env_override.py",
+      "sha256": "8ab4be7e7217b6cf2b6604c7a1f5e28c7c14ad675d4b36c90a4b1b44f2a2a364",
+      "size": 38693
+    },
+    {
+      "categories": [
+        "isolation",
+        "runtime",
+        "verification"
+      ],
+      "lines": 334,
+      "path": "tests/unit/app_server/test_app_conversation_hooks_endpoint.py",
+      "sha256": "98da8bd363a431e8c0c61b482cbae43ee0b05babc9d17c80fedda96cbf800c54",
+      "size": 11857
+    },
+    {
+      "categories": [
+        "isolation",
+        "runtime",
+        "verification"
+      ],
+      "lines": 1171,
+      "path": "tests/unit/app_server/test_app_conversation_router.py",
+      "sha256": "bf49293168ff4cb8963d979376ccbb4f4397f34e019d6732bc7041da8b276e19",
+      "size": 46240
+    },
+    {
+      "categories": [
+        "isolation",
+        "permission",
+        "recovery",
+        "runtime",
+        "verification"
+      ],
+      "lines": 1507,
+      "path": "tests/unit/app_server/test_app_conversation_service_base.py",
+      "sha256": "17e2a265e552e74bfabf0ba378f2ebc512f36b76d536e162be2d30fe197306ea",
+      "size": 52496
+    },
+    {
+      "categories": [
+        "isolation",
+        "runtime",
+        "verification"
+      ],
+      "lines": 565,
+      "path": "tests/unit/app_server/test_app_conversation_skills_endpoint.py",
+      "sha256": "d09a16752a974436fb9b09d2911601999924b67e790a9f9b46b5015a6a5465e4",
+      "size": 19733
+    },
+    {
+      "categories": [
+        "runtime",
+        "verification"
+      ],
+      "lines": 336,
+      "path": "tests/unit/app_server/test_aws_event_service.py",
+      "sha256": "7af602070a62ddee4bcdefe4321f4b62229e080b803c4a63e237875e9392adea",
+      "size": 12764
+    },
+    {
+      "categories": [
+        "runtime",
+        "verification"
+      ],
+      "lines": 179,
+      "path": "tests/unit/app_server/test_config_event_service_selection.py",
+      "sha256": "9947c3a08596c287a13ca1b950e641428d06bf4079b994a677d2c62ca859e3f0",
+      "size": 7109
+    },
+    {
+      "categories": [
+        "runtime",
+        "verification"
+      ],
+      "lines": 325,
+      "path": "tests/unit/app_server/test_config_router.py",
+      "sha256": "15077ae264243d49c5d81ff25c027c67092558892d19b219229b2663c6ea33e6",
+      "size": 11574
+    },
+    {
+      "categories": [
+        "runtime",
+        "verification"
+      ],
+      "lines": 163,
+      "path": "tests/unit/app_server/test_constants.py",
+      "sha256": "95bb9f8c8ae0d82075728cbc3fe112ff852a3c227edaa0cce9b791d54b274a50",
+      "size": 6177
+    },
+    {
+      "categories": [
+        "recovery",
+        "runtime",
+        "verification"
+      ],
+      "lines": 66,
+      "path": "tests/unit/app_server/test_db_session_dependency.py",
+      "sha256": "6310abd7e58c317b28ee196d9c02edab1fd33a3016eab78959fc0cd142d40f35",
+      "size": 2799
+    },
+    {
+      "categories": [
+        "recovery",
+        "runtime",
+        "verification"
+      ],
+      "lines": 720,
+      "path": "tests/unit/app_server/test_db_session_injector.py",
+      "sha256": "11794ce581d5b4d8f7817b933194972bd2931016b060459dcfdcc0ef8b8f4142",
+      "size": 28226
+    },
+    {
+      "categories": [
+        "runtime",
+        "verification"
+      ],
+      "lines": 805,
+      "path": "tests/unit/app_server/test_default_web_client_config_injector.py",
+      "sha256": "a29decdae39e1827641fd7d500501defcdc514fecbf892ecd34033cc99dbb774",
+      "size": 32527
+    },
+    {
+      "categories": [
+        "isolation",
+        "runtime",
+        "verification"
+      ],
+      "lines": 1708,
+      "path": "tests/unit/app_server/test_docker_sandbox_service.py",
+      "sha256": "9f8bbe1132b561fe41d9d17d422316dfd44c5798528441e30378e2b4a95c6451",
+      "size": 64168
+    },
+    {
+      "categories": [
+        "isolation",
+        "runtime",
+        "verification"
+      ],
+      "lines": 531,
+      "path": "tests/unit/app_server/test_docker_sandbox_spec_service_injector.py",
+      "sha256": "b13c295f7088762f556c3723a4fdc630017e241c86197dbbeaefdf08768931c8",
+      "size": 20379
+    },
+    {
+      "categories": [
+        "permission",
+        "runtime",
+        "verification"
+      ],
+      "lines": 297,
+      "path": "tests/unit/app_server/test_docker_utils.py",
+      "sha256": "4e3ef2bb872948d77ba20eb5277a2409d928677f1ad47e047dc86f8385393594",
+      "size": 11904
+    },
+    {
+      "categories": [
+        "isolation",
+        "recovery",
+        "runtime",
+        "verification"
+      ],
+      "lines": 488,
+      "path": "tests/unit/app_server/test_dynamic_remote_sandbox_spec_service.py",
+      "sha256": "766ca85688874762d34354fc4abb884ddc9a37658fd3a76abcca2218c8811402",
+      "size": 19739
+    },
+    {
+      "categories": [
+        "runtime",
+        "verification"
+      ],
+      "lines": 300,
+      "path": "tests/unit/app_server/test_encryption_key.py",
+      "sha256": "286dcf6e5432e05c6589259129e971f3d7388ea9800902ace98cba06399b773d",
+      "size": 10782
+    },
+    {
+      "categories": [
+        "runtime",
+        "verification"
+      ],
+      "lines": 200,
+      "path": "tests/unit/app_server/test_event_router.py",
+      "sha256": "3a780612305cb75270c870043bfbed79d2531f67128b1b3c4b5ad5240ebc3e65",
+      "size": 6631
+    },
+    {
+      "categories": [
+        "runtime",
+        "verification"
+      ],
+      "lines": 469,
+      "path": "tests/unit/app_server/test_filesystem_event_service.py",
+      "sha256": "017a677ad01f088233f6c29fcedaa8537f52393372d5fec95e43c029845b72e9",
+      "size": 15955
+    },
+    {
+      "categories": [
+        "runtime",
+        "verification"
+      ],
+      "lines": 937,
+      "path": "tests/unit/app_server/test_git_router.py",
+      "sha256": "e645d50e9699d455117d8062c7b65fcc2f701c4bc9cd2c3fbe46658a95a4236b",
+      "size": 33581
+    },
+    {
+      "categories": [
+        "runtime",
+        "verification"
+      ],
+      "lines": 322,
+      "path": "tests/unit/app_server/test_httpx_client_injector.py",
+      "sha256": "cdb1791b2a1296705e3c411000992d0905e5477562f41ba12422fb240dfdc9fe",
+      "size": 13684
+    },
+    {
+      "categories": [
+        "runtime",
+        "verification"
+      ],
+      "lines": 659,
+      "path": "tests/unit/app_server/test_jwt_service.py",
+      "sha256": "f47f4c9a0cf27fbdd5df6a5d5b83ab709adecc0bf9d02a5916ba9356058eeb9b",
+      "size": 27857
+    },
+    {
+      "categories": [
+        "isolation",
+        "recovery",
+        "runtime",
+        "verification"
+      ],
+      "lines": 4503,
+      "path": "tests/unit/app_server/test_live_status_app_conversation_service.py",
+      "sha256": "d868989daf95a17ab35db52d49a74a96f447937cb5d3fc03c644de20d3a5d04a",
+      "size": 179200
+    },
+    {
+      "categories": [
+        "runtime",
+        "verification"
+      ],
+      "lines": 327,
+      "path": "tests/unit/app_server/test_llm_model_service.py",
+      "sha256": "465a944d5af3bfad53b3d5e84d22293b08fa86dce662eb28ca200c980d4a0b01",
+      "size": 11771
+    },
+    {
+      "categories": [
+        "runtime",
+        "verification"
+      ],
+      "lines": 265,
+      "path": "tests/unit/app_server/test_marketplace_composition.py",
+      "sha256": "bd523fee6fb650c6db24ccd7a69eb7a1a7d3d3ec5b267634643fc3f6e1c05f3b",
+      "size": 9693
+    },
+    {
+      "categories": [
+        "runtime",
+        "verification"
+      ],
+      "lines": 191,
+      "path": "tests/unit/app_server/test_models.py",
+      "sha256": "f9b35c579f19d80da2fb8044691aa601bafff394f44d95f88b0af5d60f0b39a7",
+      "size": 7203
+    },
+    {
+      "categories": [
+        "runtime",
+        "verification"
+      ],
+      "lines": 227,
+      "path": "tests/unit/app_server/test_pending_message_router.py",
+      "sha256": "03a8de69a46470fbe8dc1a6839e99c2a516955e058d26738a6804ccb8fb8cad6",
+      "size": 8331
+    },
+    {
+      "categories": [
+        "runtime",
+        "verification"
+      ],
+      "lines": 309,
+      "path": "tests/unit/app_server/test_pending_message_service.py",
+      "sha256": "e13a15e245542657e0ebe601c0bbb4457f697618fcd16741aefe80daeca058ba",
+      "size": 10550
+    },
+    {
+      "categories": [
+        "isolation",
+        "runtime",
+        "verification"
+      ],
+      "lines": 378,
+      "path": "tests/unit/app_server/test_process_sandbox_service.py",
+      "sha256": "923550fe75b72cd6ca8d16b63ab742036f894461a9436c14190c5e899e4eb7c6",
+      "size": 13530
+    },
+    {
+      "categories": [
+        "runtime",
+        "verification"
+      ],
+      "lines": 1191,
+      "path": "tests/unit/app_server/test_profiles_api.py",
+      "sha256": "01c9d6e5919e570b2739517c696582c5625b43dfd26b4ccb7bcfacd6e6fb6a49",
+      "size": 42395
+    },
+    {
+      "categories": [
+        "feedback",
+        "runtime",
+        "verification"
+      ],
+      "lines": 52,
+      "path": "tests/unit/app_server/test_recaptcha_service.py",
+      "sha256": "405c89d94b624aa9c56099784befd65243846ab87b843d5c7c01330223d054d1",
+      "size": 1349
+    },
+    {
+      "categories": [
+        "isolation",
+        "recovery",
+        "runtime",
+        "verification"
+      ],
+      "lines": 2819,
+      "path": "tests/unit/app_server/test_remote_sandbox_service.py",
+      "sha256": "5847796d41e8c8e518721e47d9a24a15b6772015b92c9cc055e704360c120a87",
+      "size": 111523
+    },
+    {
+      "categories": [
+        "recovery",
+        "runtime",
+        "verification"
+      ],
+      "lines": 193,
+      "path": "tests/unit/app_server/test_resolve_provider_llm_base_url.py",
+      "sha256": "ee1ea305279fcaefb0bf561984090d4f50a2c030130855bd6015eba07bda4f32",
+      "size": 6784
+    },
+    {
+      "categories": [
+        "isolation",
+        "runtime",
+        "verification"
+      ],
+      "lines": 981,
+      "path": "tests/unit/app_server/test_sandbox_secrets_router.py",
+      "sha256": "3b302412d89aecf73d4d6f87c99597f855bf414cecc8dbaf99fe962c2e6356ab",
+      "size": 39391
+    },
+    {
+      "categories": [
+        "isolation",
+        "runtime",
+        "verification"
+      ],
+      "lines": 368,
+      "path": "tests/unit/app_server/test_sandbox_service.py",
+      "sha256": "ed03adda73ae12e29cce58bdd40bff51f92bb9552ebf4b74c2b7f27d71142844",
+      "size": 14703
+    },
+    {
+      "categories": [
+        "isolation",
+        "runtime",
+        "verification"
+      ],
+      "lines": 181,
+      "path": "tests/unit/app_server/test_sandbox_spec_service.py",
+      "sha256": "90be27d13081c589a3ed8345a5fa20e4ec7f28d0bf1fc557b090d3c1acd46bb0",
+      "size": 7122
+    },
+    {
+      "categories": [
+        "runtime",
+        "verification"
+      ],
+      "lines": 683,
+      "path": "tests/unit/app_server/test_secrets_api.py",
+      "sha256": "f747b8cd28e3523cb68c694aeadb5b38732db4268fb7a4a88957d887955864a9",
+      "size": 24400
+    },
+    {
+      "categories": [
+        "isolation",
+        "runtime",
+        "verification"
+      ],
+      "lines": 535,
+      "path": "tests/unit/app_server/test_send_message_endpoint.py",
+      "sha256": "3f21a3320f21d3dee43fcc2ca6f04489691bfa4813bc9f72223158f2a972b308",
+      "size": 20239
+    },
+    {
+      "categories": [
+        "runtime",
+        "verification"
+      ],
+      "lines": 294,
+      "path": "tests/unit/app_server/test_set_title_callback_processor.py",
+      "sha256": "de513f5fb3902c1e994dcea8d2fc0f0ad6be15390c8843a2077c897ffe6a34c0",
+      "size": 9698
+    },
+    {
+      "categories": [
+        "runtime",
+        "verification"
+      ],
+      "lines": 146,
+      "path": "tests/unit/app_server/test_settings_agent_kind_switch.py",
+      "sha256": "20c85d270f1b3fa1747e4646e9c21b70a51dec2ca06fa1d3dbdc391d05d8cb99",
+      "size": 5060
+    },
+    {
+      "categories": [
+        "runtime",
+        "verification"
+      ],
+      "lines": 354,
+      "path": "tests/unit/app_server/test_settings_api.py",
+      "sha256": "799a11ffd7998e0489e1c2e30d7993cebd4e21bd456f38335d229f47b30e026f",
+      "size": 12622
+    },
+    {
+      "categories": [
+        "isolation",
+        "permission",
+        "runtime",
+        "verification"
+      ],
+      "lines": 1285,
+      "path": "tests/unit/app_server/test_skill_loader.py",
+      "sha256": "c23c2ad3cb34d93e95f20be753fd0e3cecb16ec5b7a617f8faa22f2638a447ef",
+      "size": 45847
+    },
+    {
+      "categories": [
+        "isolation",
+        "runtime",
+        "verification"
+      ],
+      "lines": 1379,
+      "path": "tests/unit/app_server/test_sql_app_conversation_info_service.py",
+      "sha256": "0644934793b82f416e341eb59e22eb494e03880d3a1e2cb6d9335d24a08328db",
+      "size": 54679
+    },
+    {
+      "categories": [
+        "isolation",
+        "runtime",
+        "verification"
+      ],
+      "lines": 783,
+      "path": "tests/unit/app_server/test_sql_app_conversation_start_task_service.py",
+      "sha256": "7955431394f98ffc86b54dce6d1aeeb3ecdb2385c02d8d7f37410d4291b82b54",
+      "size": 28836
+    },
+    {
+      "categories": [
+        "runtime",
+        "verification"
+      ],
+      "lines": 736,
+      "path": "tests/unit/app_server/test_sql_event_callback_service.py",
+      "sha256": "e203503b23bcffde83a9e72aae89499e7eb1aba64375aec345bc5cbbc0dbab62",
+      "size": 27186
+    },
+    {
+      "categories": [
+        "runtime",
+        "verification"
+      ],
+      "lines": 106,
+      "path": "tests/unit/app_server/test_status_router.py",
+      "sha256": "64e3b86f3e2807b3b6abcf553f60d27d12266dd63af63064d917de1a5d678277",
+      "size": 3486
+    },
+    {
+      "categories": [
+        "runtime",
+        "verification"
+      ],
+      "lines": 128,
+      "path": "tests/unit/app_server/test_user_context_email.py",
+      "sha256": "915420758f34bfdbe27e0aa5a6010de29aba01a1bb69cdef7c46884f8ed84239",
+      "size": 4726
+    },
+    {
+      "categories": [
+        "permission",
+        "runtime",
+        "verification"
+      ],
+      "lines": 186,
+      "path": "tests/unit/app_server/test_user_git_info.py",
+      "sha256": "3e12c8623361e9d0b3426c8bb630be87039315f63b7ddb019d275e26e7cad08a",
+      "size": 7169
+    },
+    {
+      "categories": [
+        "runtime",
+        "verification"
+      ],
+      "lines": 127,
+      "path": "tests/unit/app_server/test_version.py",
+      "sha256": "875129b0c6168ed75eded77d9d80af95570d9b6d9d069e700bfc348a5e31fd36",
+      "size": 4383
+    },
+    {
+      "categories": [
+        "runtime",
+        "verification"
+      ],
+      "lines": 110,
+      "path": "tests/unit/app_server/test_web_client_deployment_mode.py",
+      "sha256": "597e1a2e2b479faf00e2086ea8053c667c8d1905ebfc58c3ba6c76535b0585fa",
+      "size": 4298
+    },
+    {
+      "categories": [
+        "isolation",
+        "runtime",
+        "verification"
+      ],
+      "lines": 394,
+      "path": "tests/unit/app_server/test_webhook_router_acp.py",
+      "sha256": "44341c1feddcd2a6025cdbb80a8cccd19c64a1bb3c749fab44c7b7b5bee554d0",
+      "size": 14140
+    },
+    {
+      "categories": [
+        "isolation",
+        "runtime",
+        "verification"
+      ],
+      "lines": 592,
+      "path": "tests/unit/app_server/test_webhook_router_auth.py",
+      "sha256": "0ebe68a50e6dc8cdc33ee491a94c5442d2bcd9f6894678516f70a33cc3c8e6a6",
+      "size": 21204
+    },
+    {
+      "categories": [
+        "isolation",
+        "runtime",
+        "verification"
+      ],
+      "lines": 455,
+      "path": "tests/unit/app_server/test_webhook_router_auto_title.py",
+      "sha256": "054a680e9145798ab81f21193675292073db2952263a5f823132c95ad4785e18",
+      "size": 15700
+    },
+    {
+      "categories": [
+        "isolation",
+        "runtime",
+        "verification"
+      ],
+      "lines": 517,
+      "path": "tests/unit/app_server/test_webhook_router_parent_conversation.py",
+      "sha256": "a9baace770ccb669920625abdceb68ea71c2302dc30e93c9d683783d7c9c84ea",
+      "size": 18447
+    },
+    {
+      "categories": [
+        "isolation",
+        "runtime",
+        "verification"
+      ],
+      "lines": 611,
+      "path": "tests/unit/app_server/test_webhook_router_stats.py",
+      "sha256": "7edb650b1d6d6050f282e6add02c83ccc2d448fa305ef5c7e91cfc9067f9b94e",
+      "size": 21815
+    },
+    {
+      "categories": [
+        "runtime",
+        "verification"
+      ],
+      "lines": 312,
+      "path": "tests/unit/app_server/test_webhook_router_tags.py",
+      "sha256": "88128be96bb536d266ebf224afec6060864f31d2f0f24fb0853c43228530b9dd",
+      "size": 10284
+    },
+    {
+      "categories": [
+        "runtime",
+        "verification"
+      ],
+      "lines": 150,
+      "path": "tests/unit/app_server/test_workspace_archive_packages.py",
+      "sha256": "8c40d3d6d556bfbb9f6fe6d45af4d8cff48ab0d37d949bda7f83e925b62b6d7c",
+      "size": 4701
+    },
+    {
+      "categories": [
+        "runtime",
+        "verification"
+      ],
+      "lines": 398,
+      "path": "tests/unit/app_server/utils/logger/test_logger.py",
+      "sha256": "66b1eb5b9b5b9510dcc9a8ccd3a495eb316682cf9ec79738f2c1c2bc7b403f23",
+      "size": 11620
+    },
+    {
+      "categories": [
+        "runtime",
+        "verification"
+      ],
+      "lines": 107,
+      "path": "tests/unit/app_server/utils/logger/test_logger_litellm.py",
+      "sha256": "3f8a11f05aee2baed013d3de4dd59a27b83c590d2196caa299d393f332237b7b",
+      "size": 4402
+    },
+    {
+      "categories": [
+        "runtime",
+        "verification"
+      ],
+      "lines": 180,
+      "path": "tests/unit/app_server/utils/logger/test_logging.py",
+      "sha256": "8530856a90e869bb37558022062e8259a208f0af362ad9896ce6daefa900d491",
+      "size": 5981
+    },
+    {
+      "categories": [
+        "runtime",
+        "verification"
+      ],
+      "lines": 91,
+      "path": "tests/unit/app_server/utils/test_env_var_validation.py",
+      "sha256": "603f80c909f786221d6120d90a4ca2f01015013e17b115a8876a67528d08de1b",
+      "size": 2179
+    },
+    {
+      "categories": [
+        "runtime",
+        "verification"
+      ],
+      "lines": 165,
+      "path": "tests/unit/app_server/utils/test_jsonpatch_compat.py",
+      "sha256": "16128082f87f75308540d3553f5aaba4032a14726eaeb0793a6739455afaf72f",
+      "size": 5758
+    }
+  ],
+  "generated_at": "2026-07-23T07:29:08.811892+00:00",
+  "llm": {
+    "affects_findings": false,
+    "execution_time_seconds": 0,
+    "model_name": null,
+    "status": "NOT_APPLICABLE",
+    "token_usage": null
+  },
+  "profile": {
+    "case_id": "openhands",
+    "schema_version": "repository-audit-profile/v1",
+    "sha256": "eaeebffd29eb768b14039552a8e4efd510cdba9e1c83585193e3906155f7ade3"
+  },
+  "report_kind": "repository_evidence_manifest",
+  "repository": {
+    "branch": "main",
+    "case_id": "openhands",
+    "commit": "96f902a9ac14bf5edfb2e47d759d75c91e4faf28",
+    "license": {
+      "blob_sha": "572bb259491e4e2adafee0c03db0d4ed419e6b9a",
+      "path": "LICENSE",
+      "spdx": "MIT"
+    },
+    "name": "OpenHands",
+    "url": "https://github.com/OpenHands/OpenHands"
+  },
+  "review": {
+    "required_before_publication": true,
+    "status": "APPROVED"
+  },
+  "runtime": {
+    "excludes": [
+      "clone",
+      "dependency_install",
+      "llm_network",
+      "manual_review"
+    ],
+    "max_seconds": 900.0,
+    "total_seconds": 0.518621,
+    "within_budget": true
+  },
+  "schema_version": "repository-evidence-manifest/v1",
+  "scope": {
+    "exclude": [
+      "enterprise/**",
+      "tests/**/enterprise/**",
+      "frontend/**",
+      "deployment/**",
+      "docs/**"
+    ],
+    "files_collected": 107,
+    "files_skipped": [],
+    "include": [
+      "pyproject.toml",
+      "openhands/app_server/app_conversation/**",
+      "openhands/app_server/sandbox/**",
+      "openhands/app_server/event/**",
+      "tests/unit/app_server/**"
+    ]
+  }
+}

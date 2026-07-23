@@ -29,6 +29,7 @@ from .evolution import CandidateError, default_registry, load_candidate
 from .policy_targets import PolicyTargetError, adopt_policy_candidate, apply_audit_profile, evaluate_trace_validator, gate_policy_candidate, propose_policy_candidate, replay_policy_candidate, review_policy_findings, stage_policy_candidate, validate_policy_transition
 from .quality import QualityError, diagnose_report, promote_regression
 from .gate_plan import GatePlanError
+from .repository_audit import RepositoryAuditError, is_repository_case, run_repository_audit
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -46,6 +47,8 @@ def build_parser() -> argparse.ArgumentParser:
     commands.choices["audit"].add_argument("--shadow-rulepack", type=Path, help="Run a candidate rule pack beside the official audit without affecting its output or exit code.")
     commands.choices["audit"].add_argument("--shadow-output", type=Path, help="Required private comparison artifact when --shadow-rulepack is used.")
     commands.choices["audit"].add_argument("--profile", type=Path, help="Optional bounded audit-profile/v1 JSON.")
+    commands.choices["audit"].add_argument("--repo", type=Path, help="Local checkout for a built-in repository showcase case.")
+    commands.choices["audit"].add_argument("--output-dir", type=Path, help="Bundle directory for a built-in repository showcase case (default: audit-result).")
     review_parser = commands.choices["review"]
     review_parser.add_argument("--base", required=True, help="Git revision to compare with the current worktree.")
     review_parser.add_argument("--intent", type=Path, default=Path("aet.intent.json"), help="Human-reviewed JSON intent contract (default: aet.intent.json).")
@@ -595,6 +598,36 @@ def main(argv: Sequence[str] | None = None) -> int:
         except EvolveError as error:
             raise SystemExit(f"aet: evolve failed: {error}") from error
         return 0
+    if args.command == "audit" and is_repository_case(args.path):
+        if args.repo is None:
+            raise SystemExit(f"aet: repository showcase case '{args.path}' requires --repo <local-checkout>")
+        incompatible = {
+            "--output": args.output,
+            "--config": args.config,
+            "--rulepack": args.rulepack,
+            "--shadow-rulepack": args.shadow_rulepack,
+            "--shadow-output": args.shadow_output,
+            "--profile": args.profile,
+            "--run": args.run,
+        }
+        used = [name for name, value in incompatible.items() if value is not None]
+        if used or args.format != "markdown":
+            rendered = ", ".join(used + (["--format"] if args.format != "markdown" else []))
+            raise SystemExit(f"aet: repository showcase cases do not accept legacy audit options: {rendered}")
+        try:
+            data = run_repository_audit(args.path, args.repo, args.output_dir or Path("audit-result"))
+        except RepositoryAuditError as error:
+            raise SystemExit(f"aet: repository showcase audit failed: {error}") from error
+        has_failure = data["summary"]["FAIL"] > 0
+        has_warning = any(
+            finding["severity"] == "WARN" and finding["status"] != "PASS"
+            for finding in data["findings"]
+        )
+        return 1 if has_failure or (args.strict and has_warning) else 0
+    if args.command == "audit" and args.repo is not None:
+        raise SystemExit("aet: --repo is only valid with swe-agent, google-adk, or openhands")
+    if args.command == "audit" and args.output_dir is not None:
+        raise SystemExit("aet: --output-dir is only valid with swe-agent, google-adk, or openhands")
     root = Path(args.path).resolve()
     if not root.is_dir():
         raise SystemExit(f"aet: root does not exist or is not a directory: {root}")

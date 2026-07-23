@@ -1,0 +1,157 @@
+{
+  "schema_version": "repository-audit-profile/v1",
+  "case_id": "openhands",
+  "repository": {
+    "name": "OpenHands",
+    "url": "https://github.com/OpenHands/OpenHands",
+    "branch": "main",
+    "commit": "96f902a9ac14bf5edfb2e47d759d75c91e4faf28",
+    "license": {
+      "spdx": "MIT",
+      "path": "LICENSE",
+      "blob_sha": "572bb259491e4e2adafee0c03db0d4ed419e6b9a"
+    }
+  },
+  "scope": {
+    "include": [
+      "pyproject.toml",
+      "openhands/app_server/app_conversation/**",
+      "openhands/app_server/sandbox/**",
+      "openhands/app_server/event/**",
+      "tests/unit/app_server/**"
+    ],
+    "exclude": [
+      "enterprise/**",
+      "tests/**/enterprise/**",
+      "frontend/**",
+      "deployment/**",
+      "docs/**"
+    ],
+    "prohibited": [
+      "enterprise/**",
+      "tests/**/enterprise/**"
+    ],
+    "extensions": [
+      ".json",
+      ".md",
+      ".py",
+      ".toml",
+      ".yaml",
+      ".yml"
+    ],
+    "max_file_bytes": 524288
+  },
+  "objectives": [
+    {
+      "title": "Application orchestration evidence is visible",
+      "required_categories": [
+        "agent",
+        "runtime",
+        "trajectory",
+        "verification"
+      ],
+      "pass_claim": "Static conversation, runtime, event, and verification evidence is present in the application-server scope.",
+      "unknown_claim": "The application-server scope does not prove the complete Agent execution flow.",
+      "impact": {
+        "level": "high"
+      },
+      "recommendation": "Keep cross-package Agent execution claims explicitly bound to versioned SDK and verification evidence.",
+      "localization": {
+        "zh-CN": {
+          "title": "应用编排证据可识别",
+          "pass_claim": "应用服务器范围内存在可定位的会话编排、运行、事件与验证证据。",
+          "unknown_claim": "应用服务器范围不足以证明完整的 Agent 执行流程。",
+          "recommendation": "将跨包的 Agent 执行声明明确关联到具体 SDK 版本和验证证据。"
+        }
+      }
+    },
+    {
+      "title": "Runtime isolation and recovery evidence is inspectable",
+      "required_categories": [
+        "runtime",
+        "isolation",
+        "recovery"
+      ],
+      "pass_claim": "Static runtime, isolation, and failure-handling evidence is present in the bounded scope.",
+      "unknown_claim": "The bounded scope does not prove isolation and recovery for every execution path.",
+      "impact": {
+        "level": "high"
+      },
+      "recommendation": "Bind sandbox actions and recovery paths to explicit, inspectable result evidence.",
+      "localization": {
+        "zh-CN": {
+          "title": "运行隔离与恢复证据可核查",
+          "pass_claim": "有界审查范围内存在可定位的运行、隔离与失败处理证据。",
+          "unknown_claim": "有界审查范围不足以证明所有执行路径均具备隔离与恢复机制。",
+          "recommendation": "将沙箱操作和恢复路径与明确、可核查的结果证据关联。"
+        }
+      }
+    },
+    {
+      "title": "The external Agent core remains outside this checkout",
+      "required_categories": [
+        "external",
+        "local_agent_definition"
+      ],
+      "pass_claim": "Both the external dependency and a local Agent-core definition are evidenced.",
+      "unknown_claim": "The checkout evidences an external Agent dependency but not a local Agent-core definition.",
+      "impact": {
+        "level": "medium"
+      },
+      "recommendation": "Audit the separately versioned Agent SDK before making end-to-end execution claims.",
+      "localization": {
+        "zh-CN": {
+          "title": "外部 Agent 核心不在当前检出版本中",
+          "pass_claim": "当前检出版本同时提供了外部依赖与本地 Agent 核心实现证据。",
+          "unknown_claim": "当前检出版本证明了外部 Agent 依赖，但未证明存在本地 Agent 核心实现。",
+          "recommendation": "在作出端到端执行声明前，应单独审查具有独立版本的 Agent SDK。"
+        }
+      }
+    }
+  ],
+  "flow": {
+    "nodes": [
+      {
+        "label": "Conversation",
+        "label_zh_cn": "会话",
+        "category": "agent"
+      },
+      {
+        "label": "App Server",
+        "label_zh_cn": "应用服务器",
+        "category": "runtime"
+      },
+      {
+        "label": "Sandbox",
+        "label_zh_cn": "沙箱",
+        "category": "isolation"
+      },
+      {
+        "label": "Event",
+        "label_zh_cn": "事件",
+        "category": "trajectory"
+      },
+      {
+        "label": "Verification",
+        "label_zh_cn": "验证",
+        "category": "verification"
+      }
+    ]
+  },
+  "runtime": {
+    "max_seconds": 900,
+    "starts_when": "local_repository_exists_and_dependencies_are_installed",
+    "includes": [
+      "evidence_collection",
+      "rule_analysis",
+      "artifact_generation",
+      "html_svg_rendering"
+    ],
+    "excludes": [
+      "clone",
+      "dependency_install",
+      "llm_network",
+      "manual_review"
+    ]
+  }
+}

@@ -328,3 +328,35 @@ deterministic core.
 - The v1.4 release gate requires 30 unit tests, a real pytest JUnit artifact
   dogfood trace/pack, strict self-audit, reviewed intent, a proof-bound release
   Evidence Pack, and an isolated wheel smoke test.
+
+## v1.12.0 Repository Audit Showcase release candidate — 2026-07-23
+
+- Added three commit-locked, static-only cases: SWE-agent
+  `3ea751c087f32b16e039a2233dd6eefecef325d5`, Google ADK
+  `67ab27f2547db48f7248b1689aab4c18502aee17`, and OpenHands
+  `96f902a9ac14bf5edfb2e47d759d75c91e4faf28`.
+- Added the independent `repository-audit-profile/v1` contract and
+  `aet audit swe-agent|google-adk|openhands --repo <checkout>`. Existing
+  `aet audit <path>` behavior and `audit-profile/v1` remain unchanged.
+- Each case writes two shared machine artifacts and five human-readable
+  artifacts under both `en/` and `zh-CN/`. Findings are deterministic,
+  evidence-located engineering observations; no holistic score, upstream code
+  execution, upstream test execution, source redistribution, or LLM-authored
+  Finding is permitted.
+- The measured runtime includes evidence collection, rule analysis, complete
+  report rendering, and staged artifact writes. Clone, dependency installation,
+  LLM network time, and manual review remain outside the 900-second contract.
+- OpenHands `enterprise/**` and `tests/**/enterprise/**` are prohibited. The
+  latest upstream has moved its Agent core into separately versioned
+  dependencies, so the local Agent-core claim remains `UNKNOWN`.
+- The maintainer approved all three bilingual report snapshots after
+  English/Chinese parity review and desktop/mobile visual inspection; their
+  tracked `review.status` is `APPROVED`. New runs still default to `PENDING`.
+- Acceptance evidence: 12 focused repository-audit tests passed; the full
+  regression gate passed 216 tests; the complete business-quality gate passed
+  75 tests and 237 subtests; the wheel built and returned version `1.12.0` in an
+  isolated environment. All three Chinese HTML reports passed a 390 × 844
+  viewport check with no overflow or broken images.
+- Remaining release work is operational: bind the final Diff in
+  `release-classification.json`, commit, tag, push, wait for exact-commit CI,
+  and publish GitHub Release `v1.12.0`. Do not publish to PyPI.

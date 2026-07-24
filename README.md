@@ -173,43 +173,93 @@ group:
 | Investigated AET | 90% | 25.0% | 1.63 | 18.32 s | 64,147 |
 | Grounding-aware investigation + Validator | 90% | 25.0% | 0.75 | 14.84 s | 38,831 |
 
-The result makes the trade-off visible: bounded investigation found more of
-the expected issues with a smaller share of incorrect emitted Claims in this
-small suite, but cost
-more time and Tokens than one-shot review. Grounding rejected zero claims in
-this sample, so it did not improve the measured rates; its rejection paths are
-proved separately by deterministic tests. Manual review time and user
-understanding remain `UNKNOWN` because no timed human annotations were supplied.
-These 64 Runs are one bounded Lab measurement produced by a repeatable Harness,
-not a general accuracy claim or permission to release code. The two investigated
-groups are different Agent configurations, so their cost difference must not be
-attributed to the Validator alone. The published, privacy-reviewed normalized
-Runs can be independently rescored; private Codex JSONL is not published.
+The comparison separates three effects:
 
-## Architecture
+1. Against one-shot review, the grounding-aware group gained 10 percentage
+   points of effective recall and reduced false discovery proportion by 13.5
+   points, at the cost of 0.75 tool calls, about 7.51 seconds, and 17,129
+   Tokens per Run.
+2. Against Investigated AET, it kept the same 90% recall and 25% false
+   discovery proportion while using about 54% fewer tools, 19% less time, and
+   39% fewer Tokens. This sampled efficiency belongs to the complete
+   grounding-aware Agent configuration, not to the Validator alone.
+3. The in-repository Validator is a deterministic acceptance boundary after
+   investigation: it checks references, real test success, counter-explanation,
+   authority, and budget. It rejected zero Claims in these 16 Runs, so this
+   table demonstrates no Validator-driven accuracy gain; deterministic unit
+   tests separately prove its rejection paths.
 
-![AET Quick evidence investigation architecture](docs/assets/aet-quick-architecture-en.png)
+Grounding-aware investigation changes **how the LLM investigates and structures
+a Claim**. The Validator decides **whether the recorded Claim meets the minimum
+engineering contract for rendering**. The two investigated groups use different
+prompts and structured-output requirements, so they are not a paired
+Validator-only ablation.
 
-The same checked architecture is available as an
-[animated SVG](docs/assets/aet-quick-architecture-en.svg). Watch the
-[9-second English introduction](docs/assets/aet-quick-intro-en.webm) or the
-[Simplified Chinese introduction](docs/assets/aet-quick-intro-zh-CN.webm).
-The [media manifest](docs/assets/aet-quick-media-manifest.json) binds the
-bilingual diagrams and videos by content hash. It also records the VP9
-properties measured during video generation; routine tests verify the bytes and
-hashes but do not independently decode the videos.
+Manual review time and user understanding remain `UNKNOWN` because no timed
+human annotations were supplied. These 64 Runs cover eight synthetic Scope
+scenarios: they are one bounded, independently rescorable Lab measurement, not
+a general accuracy claim or permission to release code. Privacy-reviewed
+normalized Runs are published; private Codex JSONL is not.
 
-The flow deliberately separates six responsibilities:
+## Architecture: one workflow, separate authority
 
-1. Four Quick Skills constrain the question and stop after their result.
-2. The CLI records deterministic Git, file, rule, command, hash, and freshness facts.
-3. The host LLM recovers intent, proposes competing hypotheses, and chooses authorized tools.
-4. The Investigation Ledger binds each useful question, tool result, observation, hypothesis effect, decision value, and cost.
-5. The Grounding Validator checks references, factual claims, support strength, permissions, and budget.
-6. The narrative separates confirmed facts, engineering judgment, counter-explanation, uncertainty, location, and the smallest next action.
+![AET Quick animated evidence investigation workflow](docs/assets/aet-quick-workflow-en.gif)
 
-`AET Lab` remains below an explicit opt-in boundary. Quick never enters it
-automatically.
+[Simplified Chinese GIF](docs/assets/aet-quick-workflow-zh-CN.gif) ·
+[scalable SVG](docs/assets/aet-quick-workflow-en.svg) ·
+[motion validation report](docs/assets/aet-quick-workflow-en.motion.json)
+
+The animated workflow answers how one Quick request moves:
+
+1. A Quick Skill bounds the question to Check, Scope, Proof, or Fresh, then stops.
+2. Deterministic tools record Git, file, rule, command, exit-code, hash, and freshness facts.
+3. The host LLM recovers intent, proposes a primary and competing explanation, and chooses authorized tools within budget.
+4. The Investigation Ledger binds questions, tool results, observations, and their effect on the judgment.
+5. The Grounding Validator checks references, facts, conclusion strength, authority, and budget.
+6. The renderer separates confirmed facts, engineering judgment, counter-explanation, uncertainty, location, and the smallest next action.
+7. A human decides whether to fix, split, or verify; AET never starts the next command automatically.
+
+### The current repository as a system
+
+![AET project architecture panorama](docs/assets/aet-project-panorama-en.png)
+
+[Simplified Chinese panorama](docs/assets/aet-project-panorama-zh-CN.png) ·
+[scalable SVG](docs/assets/aet-project-panorama-en.svg)
+
+The static panorama answers how that workflow maps to this repository:
+
+- **Arrows encode authority, not decorative adjacency.** Solid arrows show the
+  Quick request and result path. Dashed arrows show protocol support or the
+  separate human-authorized entrance to Lab; every arrow terminates at a named
+  component or authority boundary.
+- **Small surface, shared protocol.** `skills/aet-*` and `src/aet/quick/*`
+  expose four daily questions while sharing Evidence First states, proof
+  binding, freshness, schemas, budgets, and authority contracts.
+- **LLM and deterministic code have separate authority.**
+  `src/aet/investigation/*` lets the host explore competing explanations;
+  `grounding.py`, `quick/proof.py`, and `quick/fresh.py` retain final authority
+  over recorded references, execution, and applicability facts.
+- **Language cannot change evidence.** `src/aet/narrative/*` changes only
+  human-facing expression. Both languages must cite the same `result_ref` and
+  cannot rerun an investigation or strengthen a conclusion.
+- **Quick and Lab share a repository, not an automatic path.** Showcase,
+  Context, Decision, Evolve, Quality, Learn, Replay, Gate, Shadow, Stage, and
+  Adopt stay behind an explicit opt-in boundary.
+- **Tests and evaluation prove different things.** `tests/*` checks
+  deterministic rejection paths; `eval/*` measures sampled model trade-offs.
+  Neither becomes a holistic trust score or automatic release authority.
+
+### 30-second product introduction
+
+[Watch the English MP4](docs/assets/aet-product-intro-en.mp4) ·
+[观看中文 MP4](docs/assets/aet-product-intro-zh-CN.mp4)
+
+The video follows a daily AI-coding scenario from “the Agent says fixed”
+through the four commands, scope investigation, proof and freshness binding,
+the authority split, and the measured trade-off. The
+[media manifest](docs/assets/aet-quick-media-manifest.json) binds the bilingual
+GIFs, panoramas, and H.264 MP4 videos by SHA-256 and records their generated
+dimensions, frame counts, frame rates, and durations.
 
 ## Why the LLM is constrained, not disabled
 

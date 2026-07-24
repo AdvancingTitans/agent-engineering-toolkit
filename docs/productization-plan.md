@@ -51,7 +51,7 @@ Archaeologist、Prompt Diff、Memory Optimizer 与自动改写”。这个取舍
 | v0.2 Intent Gate | 完成（最小集） | `review`、路径预算、allowed paths、proof 文件存在性 | 仅 JSON；proof 未与实际 Trace 绑定；未建模依赖、配置、迁移、权限、公共 API 等影响面；没有 PR/交付摘要视图。 |
 | v0.3 Trace + Evidence Pack | 完成（最小集） | 显式 argv、日志脱敏、内容哈希、原子写、可缺失组件 | Evidence Pack 只有 JSON；trace 尚未映射到某一 required proof；没有 run manifest、可读交付摘要、签名/保留策略或跨 pack 一致性检查。 |
 | 跨 Agent Skill | 完成（基础版） | 可移植 `SKILL.md`、cross-agent contract | 缺少意图收集模板、场景化路由、示例、安装/升级验证矩阵及 `evolve` 路由。 |
-| Repo Archaeologist / `aet evolve` | 未开始 | 仅产品记忆中的保留决策 | 本方案的核心新增场景；需要本地 Git 与 GitHub 数据模型、来源适配器、关联规则、叙事证据合同及 fixture。 |
+| Repo Archaeologist / `aet evolve` | 未开始 | 仅产品记忆中的保留决策 | 本方案的核心新增场景；需要本地 Git 与 GitHub 数据模型、来源适配器、关联规则、叙事证据契约及 fixture。 |
 | 发布治理 | 部分完成 | 本地 wheel 验证、Git tag、项目记忆 | 尚未看到远端发布、CI release、兼容性矩阵、变更日志、安装遥测或升级检查。 |
 
 ### 当前必须先处理的卫生问题
@@ -61,7 +61,7 @@ Archaeologist、Prompt Diff、Memory Optimizer 与自动改写”。这个取舍
 2. 对仓库根目录执行 `aet audit . --strict` 会发现 `tests/fixtures/broken_project`
    的故意失败样本，并返回 `FAIL 3 / UNKNOWN 1`。这不是产品本身失效，但表明
    `audit` 还没有排除/配置边界，不能充当自己的根目录 CI gate。
-3. 目前 `aet.intent.json` 是一次性 release 合同，会被下一次变更覆盖。意图合同
+3. 目前 `aet.intent.json` 是一次性 release 契约，会被下一次变更覆盖。意图契约
    应当版本化放在 `.aet/intents/`（或可追踪的 `docs/intents/`），并在 Evidence
    Pack 中记录其精确哈希。
 
@@ -177,7 +177,7 @@ ownership/review、boundary/eval、operational assets、maintenance evidence 等
 
 ## Evidence IR 与证据等级
 
-所有报告统一使用版本化 envelope；它是 AET 的内部合同，不是用户必须手写的格式。
+所有报告统一使用版本化 envelope；它是 AET 的内部契约，不是用户必须手写的格式。
 
 ```json
 {
@@ -319,7 +319,7 @@ flowchart TD
 - 将故意失败 fixture 与真实待审资产隔离或在默认 config 中精确排除，新增“排除项
   必须有理由”的审计 finding，避免静默掩盖真实问题。
 - 删除 README 中已过期的 v0.3 planned 文案；把 v0.3 实现与范围表放到同一位置。
-- 把 intent 合同改为历史不可覆盖的路径，并把 contract hash 放入 review/pack。
+- 把 intent 契约改为历史不可覆盖的路径，并把 contract hash 放入 review/pack。
 - 增加 `aet audit . --strict` 自检、schema compatibility、README command smoke tests。
 
 **放行条件：** 根目录严格审计仅扫描真实资产且结果可解释；11+ 测试、wheel、fresh

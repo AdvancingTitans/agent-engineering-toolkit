@@ -1,58 +1,113 @@
 {
-  "schema_version": "aet-quick-media-manifest/v1",
-  "verified_with": "ffprobe 7.0.2-static",
+  "schema_version": "aet-quick-media-manifest/v2",
+  "verified_with": "ffprobe 7.0",
+  "generation": {
+    "workflow_animation": "fireworks-tech-graph style 5 / agent-orchestration",
+    "panorama_and_slides": "docs/assets/source/generate_readme_media.py",
+    "video": "FFmpeg libx264 + AAC"
+  },
   "assets": [
     {
-      "kind": "video",
-      "path": "aet-quick-intro-en.webm",
+      "kind": "workflow_animation",
+      "format": "gif",
+      "path": "aet-quick-workflow-en.gif",
       "language": "en",
-      "codec": "vp9",
-      "width": 1280,
-      "height": 720,
-      "frames": 270,
-      "frame_rate": "30/1",
-      "duration_seconds": 9.0,
-      "sha256": "f797cd53fc29023cd3b5abf64ea4d9c10a441600d24d7587becd6753e2d0bbe2"
+      "codec": "gif",
+      "width": 960,
+      "height": 700,
+      "frames": 115,
+      "frame_rate": "20/1",
+      "duration_seconds": 5.75,
+      "motion_report": "aet-quick-workflow-en.motion.json",
+      "sha256": "c4a5db1abc5335e014e028890e0714b9191fe8b54f25e99704f77a29549bb95b"
     },
     {
-      "kind": "video",
-      "path": "aet-quick-intro-zh-CN.webm",
+      "kind": "workflow_animation",
+      "format": "gif",
+      "path": "aet-quick-workflow-zh-CN.gif",
       "language": "zh-CN",
-      "codec": "vp9",
-      "width": 1280,
-      "height": 720,
-      "frames": 270,
-      "frame_rate": "30/1",
-      "duration_seconds": 9.0,
-      "sha256": "2598efa2ac234f2bc39b730a3ce7268aa56ce0d80c2ae425b81c3cbca2f10379"
+      "codec": "gif",
+      "width": 960,
+      "height": 700,
+      "frames": 115,
+      "frame_rate": "20/1",
+      "duration_seconds": 5.75,
+      "motion_report": "aet-quick-workflow-zh-CN.motion.json",
+      "sha256": "5223e1bb741fbacea394f450fdce68a368d6c2db78ca49caf0ee9658e9d45749"
     },
     {
-      "kind": "architecture",
-      "format": "png",
-      "path": "aet-quick-architecture-en.png",
-      "language": "en",
-      "sha256": "68b5bc4008bd28885bb0f645ae04e9ba459640fea5ed3c632faf2b24996df3bc"
-    },
-    {
-      "kind": "architecture",
+      "kind": "workflow_source",
       "format": "svg",
-      "path": "aet-quick-architecture-en.svg",
+      "path": "aet-quick-workflow-en.svg",
       "language": "en",
-      "sha256": "1aac98bd1f40f2e9089e9d14ccec487d880c93c696968ba09e004669dd0ff834"
+      "sha256": "da1e66d8e86baaee47150d970ecd0cc0b0e569e8b4b5888bd98cd2ef473a852d"
     },
     {
-      "kind": "architecture",
-      "format": "png",
-      "path": "aet-quick-architecture-zh-CN.png",
-      "language": "zh-CN",
-      "sha256": "be72f3dbd5f914e8cc5d9e4826fca41fa716ff4b4f61a5c6999f06fbe6090bdf"
-    },
-    {
-      "kind": "architecture",
+      "kind": "workflow_source",
       "format": "svg",
-      "path": "aet-quick-architecture-zh-CN.svg",
+      "path": "aet-quick-workflow-zh-CN.svg",
       "language": "zh-CN",
-      "sha256": "52a8654a469c104fbb9074bc25448f58ce0afc3cdeb4844f56ce705796f41d18"
+      "sha256": "7f5b1c3377dc63979d150bd959bfcc2740bd7a68e328a9b452f3a498d74403b6"
+    },
+    {
+      "kind": "project_panorama",
+      "format": "png",
+      "path": "aet-project-panorama-en.png",
+      "language": "en",
+      "width": 1600,
+      "height": 1000,
+      "sha256": "b1d28a0ca84d9785a250320bb9350419830884a575030c871f9628317e11efad"
+    },
+    {
+      "kind": "project_panorama",
+      "format": "png",
+      "path": "aet-project-panorama-zh-CN.png",
+      "language": "zh-CN",
+      "width": 1600,
+      "height": 1000,
+      "sha256": "676c1e1e366fbaee1c9836d2bcaf10e3e47252f3d59eaa7f438df1e251082ca0"
+    },
+    {
+      "kind": "project_panorama",
+      "format": "svg",
+      "path": "aet-project-panorama-en.svg",
+      "language": "en",
+      "sha256": "8027efd26d24313e7744c742d77af109393df9b771aae72d30651d334e1f6cfe"
+    },
+    {
+      "kind": "project_panorama",
+      "format": "svg",
+      "path": "aet-project-panorama-zh-CN.svg",
+      "language": "zh-CN",
+      "sha256": "17229bc764f6deb964942a5f8b9d88c1074fa6dc6e65239d242cd45b9df9e930"
+    },
+    {
+      "kind": "product_video",
+      "format": "mp4",
+      "path": "aet-product-intro-en.mp4",
+      "language": "en",
+      "video_codec": "h264",
+      "audio_codec": "aac",
+      "width": 1600,
+      "height": 900,
+      "frames": 900,
+      "frame_rate": "30/1",
+      "duration_seconds": 30.0,
+      "sha256": "3e58f66e3b648c78e4aada49217d8af1173a39c2b39008bf4c5a1f9bed5dd83c"
+    },
+    {
+      "kind": "product_video",
+      "format": "mp4",
+      "path": "aet-product-intro-zh-CN.mp4",
+      "language": "zh-CN",
+      "video_codec": "h264",
+      "audio_codec": "aac",
+      "width": 1600,
+      "height": 900,
+      "frames": 900,
+      "frame_rate": "30/1",
+      "duration_seconds": 30.0,
+      "sha256": "25eb893ea85531e0998e300923a7f5ae60ca750c4d30bf660a987f5e01cbd938"
     }
   ]
 }

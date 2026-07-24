@@ -425,3 +425,19 @@ deterministic core.
   `https://github.com/AdvancingTitans/agent-engineering-toolkit/releases/tag/v1.13.0`.
   Real Host Gate is `NOT_APPLICABLE` because this deterministic release adopts
   no governance asset and makes no release-authorizing Agent behavior claim.
+
+## README media refresh — 2026-07-25
+
+- Replaced the README architecture media with bilingual, motion-validated AET
+  Quick workflow GIFs and bilingual static project panoramas. The panorama
+  distinguishes the Quick request path, shared protocol support, human
+  authority, and the explicit AET Lab entrance; every arrow terminates at a
+  named component or authority boundary.
+- Replaced the former WebM introductions with exact 30-second English and
+  Simplified Chinese H.264/AAC MP4 videos. The tracked media manifest binds all
+  published GIF, SVG, PNG, and MP4 assets by SHA-256.
+- Reworked both READMEs around daily Agent coding problems, bounded product
+  promises, measurable evaluation trade-offs, the distinct roles of
+  grounding-aware investigation and the in-project Grounding Validator, and
+  Chinese explanations for internal evidence terminology. Chinese documentation
+  and generated media consistently use “契约”.

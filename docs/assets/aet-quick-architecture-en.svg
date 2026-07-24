@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">AET Quick evidence investigation architecture</title>
+  <desc id="desc">Four Quick Skills route a bounded request through deterministic preflight, host-led investigation, grounding validation, bilingual narrative, and human decision. AET Lab remains separately opt-in.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#080b12"/><stop offset="1" stop-color="#111827"/></linearGradient>
+    <linearGradient id="quick" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#15213b"/><stop offset="1" stop-color="#182b38"/></linearGradient>
+    <filter id="glow"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0 0L12 6L0 12Z" fill="#56d7c5"/></marker>
+    <style>
+      text{font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;fill:#f8fafc}
+      .muted{fill:#a7b0c0}.gold{fill:#f2c879}.cyan{fill:#70e1d2}.violet{fill:#b79cff}.small{font-size:18px}.label{font-size:20px;font-weight:600}.box{fill:url(#quick);stroke:#32445e;stroke-width:2}.fact{fill:#0d2425;stroke:#3bb6a6}.host{fill:#211a35;stroke:#8f72d9}.ground{fill:#282010;stroke:#d6aa53}.human{fill:#10283c;stroke:#4fa6da}
+      .flow{fill:none;stroke:#56d7c5;stroke-width:4;marker-end:url(#arrow);stroke-dasharray:16 10;animation:dash 2s linear infinite}.divider{stroke:#3a4558;stroke-width:2;stroke-dasharray:8 8}
+      @keyframes dash{to{stroke-dashoffset:-52}}
+    </style>
+  </defs>
+  <rect width="1600" height="900" fill="url(#bg)"/>
+  <text x="72" y="78" font-family="Georgia,serif" font-size="46" font-weight="700">AET Quick</text>
+  <text x="72" y="116" class="muted" font-size="22">bounded evidence investigation for everyday AI coding changes</text>
+  <text x="1528" y="82" text-anchor="end" class="gold label">facts stay deterministic · judgment stays reviewable</text>
+
+  <text x="72" y="174" class="gold label">ONE QUESTION, ONE SKILL, THEN STOP</text>
+  <g>
+    <rect class="box" x="72" y="196" width="330" height="112" rx="18"/><text x="102" y="238" class="cyan label">/aet-check</text><text x="102" y="273" class="muted small">Agent assets and verification gaps</text>
+    <rect class="box" x="424" y="196" width="330" height="112" rx="18"/><text x="454" y="238" class="cyan label">/aet-scope</text><text x="454" y="273" class="muted small">Task fit and justified expansion</text>
+    <rect class="box" x="776" y="196" width="330" height="112" rx="18"/><text x="806" y="238" class="cyan label">/aet-proof</text><text x="806" y="273" class="muted small">Real execution and bound receipt</text>
+    <rect class="box" x="1128" y="196" width="330" height="112" rx="18"/><text x="1158" y="238" class="cyan label">/aet-fresh</text><text x="1158" y="273" class="muted small">Does prior proof still apply?</text>
+  </g>
+
+  <path class="flow" d="M237 308V356H230"/>
+  <path class="flow" d="M589 308V340H470V356"/>
+  <path class="flow" d="M941 308V340H710V356"/>
+  <path class="flow" d="M1293 308V340H950V356"/>
+
+  <g>
+    <rect class="fact" x="72" y="356" width="360" height="144" rx="18"/>
+    <text x="102" y="398" class="cyan label">Deterministic preflight</text>
+    <text x="102" y="433" class="muted small">Git · files · rules · tests · hashes</text>
+    <text x="102" y="466" class="small">PASS / FAIL / UNKNOWN / N/A</text>
+  </g>
+  <path class="flow" d="M432 428H500"/>
+  <g>
+    <rect class="host" x="500" y="356" width="360" height="144" rx="18"/>
+    <text x="530" y="398" class="violet label">Host-led investigation</text>
+    <text x="530" y="433" class="muted small">intent → competing hypotheses</text>
+    <text x="530" y="466" class="muted small">authorized tools → counter-evidence</text>
+  </g>
+  <path class="flow" d="M860 428H928"/>
+  <g>
+    <rect class="ground" x="928" y="356" width="360" height="144" rx="18"/>
+    <text x="958" y="398" class="gold label">Investigation Ledger</text>
+    <text x="958" y="433" class="muted small">question · result_ref · observation</text>
+    <text x="958" y="466" class="muted small">hypothesis effect · value · cost</text>
+  </g>
+  <path class="flow" d="M1288 428H1354V544H1110"/>
+
+  <g>
+    <rect class="ground" x="750" y="544" width="360" height="144" rx="18"/>
+    <text x="780" y="586" class="gold label">Grounding Validator</text>
+    <text x="780" y="621" class="muted small">refs · facts · strength · authority</text>
+    <text x="780" y="654" class="muted small">blocks fabricated or hidden conflicts</text>
+  </g>
+  <path class="flow" d="M750 616H682"/>
+  <g>
+    <rect class="host" x="322" y="544" width="360" height="144" rx="18"/>
+    <text x="352" y="586" class="violet label">Evidence narrative</text>
+    <text x="352" y="621" class="muted small">facts · judgment · counter-case</text>
+    <text x="352" y="654" class="muted small">uncertainty · location · next action</text>
+  </g>
+  <path class="flow" d="M322 616H254"/>
+  <g>
+    <rect class="human" x="72" y="544" width="182" height="144" rx="18"/>
+    <text x="102" y="586" class="label">Human</text>
+    <text x="102" y="621" class="muted small">decides</text>
+    <text x="102" y="654" class="muted small">what happens next</text>
+  </g>
+
+  <line class="divider" x1="72" y1="742" x2="1528" y2="742"/>
+  <text x="72" y="784" class="gold label">AET LAB — EXPLICIT OPT-IN ONLY</text>
+  <text x="72" y="822" class="muted small">Evidence Pack · Repository Audit Showcase · Evolve · Quality · Learn · Replay · Gate · Shadow · Stage · Adopt</text>
+  <text x="1528" y="858" text-anchor="end" class="muted small">local · provenance-bound · read-only by default · human authority retained</text>
+</svg>

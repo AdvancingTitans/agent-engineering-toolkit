@@ -1,4 +1,4 @@
 interface:
   display_name: "Agent Engineering Toolkit"
-  short_description: "Opt-in evidence controls for high-assurance Agent work."
-  default_prompt: "Use $agent-engineering-toolkit only because I explicitly opted in for this task. Select the smallest AET surface that establishes the requested claim; do not expand to real-host evaluation or asset evolution unless I request it."
+  short_description: "Compatibility route for AET Quick and opt-in AET Lab."
+  default_prompt: "Use $agent-engineering-toolkit only because I explicitly opted in for this task. Prefer one dedicated AET Quick Skill and stop after its result; enter legacy or Lab workflows only when I explicitly request them."

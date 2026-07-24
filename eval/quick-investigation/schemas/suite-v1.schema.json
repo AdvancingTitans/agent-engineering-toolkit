@@ -1,0 +1,95 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://advancingtitans.github.io/aet/eval/quick-investigation/schemas/suite-v1.schema.json",
+  "title": "AET Quick Investigation Benchmark Suite v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "suite_id", "groups", "claim_catalog", "scenarios"],
+  "properties": {
+    "schema_version": {"const": "quick-investigation-suite/v1"},
+    "suite_id": {"type": "string", "minLength": 1},
+    "groups": {
+      "const": [
+        "pure_rules",
+        "one_shot_llm",
+        "investigated_aet",
+        "investigated_grounded"
+      ]
+    },
+    "claim_catalog": {
+      "const": [
+        "scope_expansion",
+        "insufficient_intent",
+        "unrelated_dependency",
+        "bounded_result"
+      ]
+    },
+    "scenarios": {
+      "type": "array",
+      "minItems": 8,
+      "maxItems": 8,
+      "items": {"$ref": "#/$defs/scenario"}
+    }
+  },
+  "$defs": {
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "kind", "statement"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "kind": {"type": "string", "minLength": 1},
+        "statement": {"type": "string", "minLength": 1}
+      }
+    },
+    "claim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["claim_id", "assessment_state", "evidence_refs"],
+      "properties": {
+        "claim_id": {"type": "string", "minLength": 1},
+        "assessment_state": {"type": "string", "minLength": 1},
+        "evidence_refs": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "scenario": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "scenario_id",
+        "category",
+        "task",
+        "evidence",
+        "rule_findings",
+        "expected_claim_ids"
+      ],
+      "properties": {
+        "scenario_id": {"type": "string", "pattern": "^SCOPE-[0-9]{3}$"},
+        "category": {
+          "enum": [
+            "explicit_scope_violation",
+            "justified_shared_module_change",
+            "ambiguous_intent",
+            "later_authorization",
+            "unrelated_dependency",
+            "interface_migration",
+            "unsupported_counter_hypothesis",
+            "budget_exhausted"
+          ]
+        },
+        "task": {"type": "string", "minLength": 1},
+        "evidence": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/evidence"}},
+        "rule_findings": {"type": "array", "items": {"$ref": "#/$defs/claim"}},
+        "expected_claim_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        }
+      }
+    }
+  }
+}

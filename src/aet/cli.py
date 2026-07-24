@@ -30,6 +30,8 @@ from .policy_targets import PolicyTargetError, adopt_policy_candidate, apply_aud
 from .quality import QualityError, diagnose_report, promote_regression
 from .gate_plan import GatePlanError
 from .repository_audit import RepositoryAuditError, is_repository_case, run_repository_audit
+from .narrative import render_quick_result, select_language
+from .quick import quick_check, quick_fresh, quick_proof, quick_scope
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -309,6 +311,40 @@ def build_parser() -> argparse.ArgumentParser:
         command.add_argument("--run", required=True, type=Path)
         command.add_argument("--format", choices=("markdown", "json"), default="markdown")
         command.add_argument("--output", type=Path)
+    quick_parser = commands.add_parser("quick", help="Run one bounded AET Quick surface.")
+    quick_commands = quick_parser.add_subparsers(dest="quick_command", required=True)
+    quick_check_parser = quick_commands.add_parser("check", help="Collect a bounded Agent engineering preflight.")
+    quick_check_parser.add_argument("path", nargs="?", default=".")
+    quick_check_parser.add_argument("--format", choices=("markdown", "json"), default="markdown")
+    quick_check_parser.add_argument("--request", default="", help="Original host request used only for language routing.")
+    quick_check_parser.add_argument("--slash-command", action="store_true", help="Declare that the host request used a slash command.")
+    quick_check_parser.add_argument("--max-findings", type=int, default=5)
+    quick_scope_parser = quick_commands.add_parser("scope", help="Collect intent and diff facts for bounded investigation.")
+    quick_scope_parser.add_argument("path", nargs="?", default=".")
+    quick_scope_parser.add_argument("--base", required=True)
+    quick_scope_parser.add_argument("--intent", type=Path)
+    quick_scope_parser.add_argument("--format", choices=("markdown", "json"), default="markdown")
+    quick_scope_parser.add_argument("--request", default="")
+    quick_scope_parser.add_argument("--slash-command", action="store_true")
+    quick_proof_parser = quick_commands.add_parser("proof", help="Execute explicit argv and write one minimal proof receipt.")
+    quick_proof_parser.add_argument("--output", required=True, type=Path)
+    quick_proof_parser.add_argument("--relevant-path", action="append", default=[])
+    quick_proof_parser.add_argument("--artifact", action="append", default=[])
+    quick_proof_parser.add_argument(
+        "--env-binding",
+        action="append",
+        default=[],
+        help="Bind one named environment input by status and SHA-256 without storing its value.",
+    )
+    quick_proof_parser.add_argument("--redact-pattern", action="append", default=[])
+    quick_proof_parser.add_argument("--request", default="")
+    quick_proof_parser.add_argument("--slash-command", action="store_true")
+    quick_proof_parser.add_argument("argv", nargs=argparse.REMAINDER)
+    quick_fresh_parser = quick_commands.add_parser("fresh", help="Check whether a proof still applies to the current workspace.")
+    quick_fresh_parser.add_argument("--proof", required=True, type=Path)
+    quick_fresh_parser.add_argument("--format", choices=("markdown", "json"), default="markdown")
+    quick_fresh_parser.add_argument("--request", default="")
+    quick_fresh_parser.add_argument("--slash-command", action="store_true")
     return parser
 
 
@@ -318,6 +354,49 @@ def main(argv: Sequence[str] | None = None) -> int:
         return _audit_feedback_record(raw_argv[3:])
     parser = build_parser()
     args = parser.parse_args(raw_argv)
+    if args.command == "quick":
+        try:
+            language = select_language(
+                request=args.request,
+                slash_command=args.slash_command,
+            )
+            if args.quick_command == "check":
+                if args.max_findings < 1 or args.max_findings > 5:
+                    raise ValueError("quick check --max-findings must be between 1 and 5")
+                root = Path(args.path).resolve()
+                if not root.is_dir():
+                    raise ValueError(f"root does not exist or is not a directory: {root}")
+                result = quick_check(root, max_findings=args.max_findings)
+            elif args.quick_command == "scope":
+                root = Path(args.path).resolve()
+                if not root.is_dir():
+                    raise ValueError(f"root does not exist or is not a directory: {root}")
+                result = quick_scope(root, base=args.base, intent_path=args.intent)
+            elif args.quick_command == "proof":
+                if "--" not in raw_argv:
+                    parser.error("quick proof requires -- before the command argv")
+                proof_argv = args.argv[1:] if args.argv[:1] == ["--"] else args.argv
+                result, exit_code = quick_proof(
+                    proof_argv,
+                    args.output,
+                    relevant_paths=args.relevant_path,
+                    artifact_paths=args.artifact,
+                    redaction_patterns=args.redact_pattern,
+                    environment_names=args.env_binding,
+                )
+                print(render_quick_result(result, language), end="")
+                return exit_code
+            else:
+                result = quick_fresh(args.proof)
+            rendered = render_json(result) if args.format == "json" else render_quick_result(result, language)
+            print(rendered, end="")
+            has_failure = result.get("authoritative_status") == "FAIL"
+            summary = result.get("summary")
+            if isinstance(summary, dict) and summary.get("FAIL", 0) > 0:
+                has_failure = True
+            return 1 if has_failure else 0
+        except (ConfigError, EvidenceError, ReviewError, RulePackError, ValueError) as error:
+            raise SystemExit(f"aet: quick {args.quick_command} failed: {error}") from error
     if args.command == "context":
         try:
             if args.context_command == "discover":

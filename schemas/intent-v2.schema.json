@@ -1,0 +1,127 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://advancingtitans.github.io/aet/schemas/intent-v2.schema.json",
+  "$comment": "Plan sections 5.2 and 6.2: every intent statement carries provenance; inference is never explicit authorization.",
+  "title": "AET Intent v2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "goal",
+    "constraints",
+    "allowed_surfaces",
+    "uncertain_terms",
+    "source_refs"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "aet-intent/v2"
+    },
+    "goal": {
+      "$ref": "#/$defs/sourcedStatement"
+    },
+    "constraints": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["explicit", "implicit"],
+      "properties": {
+        "explicit": {
+          "type": "array",
+          "items": {
+            "allOf": [
+              {"$ref": "#/$defs/sourcedStatement"},
+              {
+                "properties": {
+                  "source_type": {
+                    "enum": ["explicit_user", "explicit_project"]
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "implicit": {
+          "type": "array",
+          "items": {
+            "allOf": [
+              {"$ref": "#/$defs/sourcedStatement"},
+              {
+                "properties": {
+                  "source_type": {
+                    "const": "inferred"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "allowed_surfaces": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/sourcedStatement"
+      }
+    },
+    "uncertain_terms": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/sourcedStatement"
+      }
+    },
+    "source_refs": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/sourceReference"
+      }
+    }
+  },
+  "$defs": {
+    "sourceType": {
+      "enum": ["explicit_user", "explicit_project", "inferred", "unknown"]
+    },
+    "sourceReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ref", "source_type"],
+      "properties": {
+        "ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source_type": {
+          "$ref": "#/$defs/sourceType"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      }
+    },
+    "sourcedStatement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["text", "source_type", "source_refs"],
+      "properties": {
+        "text": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source_type": {
+          "$ref": "#/$defs/sourceType"
+        },
+        "source_refs": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    }
+  }
+}

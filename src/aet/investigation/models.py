@@ -1,0 +1,29 @@
+"""Semantic investigation states kept separate from authoritative evidence status."""
+
+from __future__ import annotations
+
+from enum import StrEnum
+
+
+class FindingOrigin(StrEnum):
+    DETERMINISTIC = "DETERMINISTIC_FINDING"
+    INVESTIGATED = "INVESTIGATED_FINDING"
+    HYPOTHESIS = "HYPOTHESIS"
+
+
+class SupportState(StrEnum):
+    CONFIRMED = "CONFIRMED"
+    SUPPORTED = "SUPPORTED"
+    SUPPORTED_WITH_LIMITS = "SUPPORTED_WITH_LIMITS"
+    CONFLICTED = "CONFLICTED"
+    UNSUPPORTED = "UNSUPPORTED"
+    UNKNOWN = "UNKNOWN"
+    NOT_APPLICABLE = "NOT_APPLICABLE"
+
+
+class ScopeDisposition(StrEnum):
+    IN_SCOPE = "IN_SCOPE"
+    JUSTIFIED_EXPANSION = "JUSTIFIED_EXPANSION"
+    POSSIBLE_SCOPE_EXPANSION = "POSSIBLE_SCOPE_EXPANSION"
+    OUT_OF_SCOPE = "OUT_OF_SCOPE"
+    INSUFFICIENT_INTENT = "INSUFFICIENT_INTENT"

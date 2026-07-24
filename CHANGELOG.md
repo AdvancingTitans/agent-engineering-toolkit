@@ -1,5 +1,34 @@
 # Changelog
 
+## 1.13.0 — 2026-07-25
+- Added the four bounded AET Quick surfaces: Check, Scope, Proof, and Fresh,
+  while preserving the legacy 1.x `audit`, `review`, `trace`, receipt, and Lab
+  commands.
+- Added host-neutral Intent, Investigation Ledger, Investigation Contract,
+  Investigated Finding, and Command Budget contracts plus deterministic
+  grounding, permission, source, search-scope, recorded-conflict, contract-shape,
+  and stop-policy validation.
+- Added relevant-file, artifact, runtime, and lockfile binding to minimal Quick
+  proof receipts, with seven explicit freshness states.
+- Added dedicated portable Skills and deterministic language routing: a Chinese
+  slash-command request receives natural Simplified Chinese narrative; every
+  other request defaults to English. Machine statuses and evidence references
+  remain language-neutral.
+- Rebuilt the English and Simplified Chinese product entrypoints around AET
+  Quick, with synchronized static/animated architecture, bilingual introduction
+  videos, and the existing commit-locked Repository Audit Showcase retained as
+  an explicit AET Lab case library.
+- Added an opt-in AET Lab comparison across pure rules, one-shot LLM,
+  investigated AET, and a distinct Grounding-aware Agent configuration plus the
+  shipped Grounding Validator. The eight-case, two-repetition result publishes
+  64 privacy-reviewed normalized Runs for independent rescoring and records
+  recall, false discovery proportion, ungrounded conclusions, tool calls, wall
+  time, and Tokens while leaving unmeasured human-review and understanding
+  metrics `UNKNOWN`.
+- Added a tracked 30-sample local performance report with raw Check, Scope, and
+  Fresh timings, nearest-rank P95, environment, repository size, and explicit
+  limits.
+
 ## 1.12.0 — 2026-07-23
 
 - Added the Repository Audit Showcase for commit-locked SWE-agent, Google ADK,

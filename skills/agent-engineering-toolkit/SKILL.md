@@ -1,11 +1,11 @@
 ---
 name: agent-engineering-toolkit
-description: Opt-in AET quality controls for evidence-backed Agent delivery and governance-asset evolution. Use only when the user explicitly asks to use AET for the current task; never auto-enable for ordinary coding, review, testing, or repository work.
+description: Compatibility entrypoint for AET Quick and advanced AET Lab workflows. Prefer the four dedicated Quick Skills for daily work; use this Skill only when the user explicitly asks for legacy CLI or Lab capabilities.
 ---
 
 # Agent Engineering Toolkit
 
-Current Skill version: `1.12.0` (Evidence → Quality → conditional Gate → bounded Evolution)
+Current Skill version: `1.13.0` (Quick compatibility + opt-in Lab)
 
 ## Activation policy
 
@@ -16,14 +16,10 @@ repository containing AET files, a generic request to test/review a change, or
 the availability of the `aet` executable is not opt-in. Do not carry opt-in
 across tasks.
 
-After explicit activation, choose only the smallest surface needed. Prefer
-`aet evidence receipt` when a compact status is sufficient. A successful Trace
-may be reused only through explicit `aet trace --reuse-if-fresh`, which refuses
-command, proof, artifact, log, or workspace drift without executing anything.
-Do not run
-real-host replay, Gate, tournament, or Sleep unless the user separately asks
-for governance-asset evaluation or evolution. Do not repeat a proof command
-that already has fresh, hash-bound evidence for the unchanged workspace.
+After explicit activation, choose only the smallest surface needed. Daily work
+should route to `/aet-check`, `/aet-scope`, `/aet-proof`, or `/aet-fresh`.
+Each Quick Skill emits one bounded result and stops. It never enters another
+Quick Skill or AET Lab automatically.
 
 Use the `aet` CLI as the source of truth. The host agent may choose its own
 shell or package runner, but must preserve the commands' exit status and attach
@@ -36,26 +32,30 @@ may propose, replay, gate, and stage a Constitution-bound asset candidate, but
 it never adopts a candidate, commits it, pushes it, or lowers an evidence contract automatically.
 <!-- aet-learn:end -->
 
-## Route the request
+## Quick routes
 
 This section applies only after explicit activation. Choose one initial surface.
 If the requested AET surface is ambiguous, ask which claim needs evidence;
 do not infer permission for a broader workflow.
 
-| User need | Initial command | Output |
+| User need | Preferred Skill | Deterministic CLI |
 | --- | --- | --- |
-| Trust current instructions / Skills | `aet audit . --strict` | Audit report |
-| Inspect a commit-locked public Agent repository case | `aet audit <case> --repo <checkout>` | 12-file bilingual static Showcase bundle |
-| Check a proposed or completed diff | `aet review . --base <base>` | Review report |
-| Prove a command ran and retain a declared text report | `aet trace --proof <id> --artifact <path> … -- <argv>` | Trace + pack |
-| Understand why a repo changed | `aet evolve plan/collect/build/report` | Evolution Pack |
-| Record which local context was available | `aet context discover/record/verify` | Context Manifest |
-| Preserve a source-backed project decision | `aet decision init/add/verify` | Decision Ledger |
-| Map structured failures to an owner and repair surface | `aet quality diagnose` | Deterministic diagnosis; source status is unchanged |
-| Stage a confirmed badcase as a regression candidate | `aet quality promote` | Validation-only Task v2 bundle for human review |
-| Improve a bounded Skill or audit asset | `aet learn target list`, then `harvest/inspect/mine/propose/replay/gate/stage` | Staged candidate + target-specific Gate report |
+| Check Agent instructions and Skills | `/aet-check` | `aet quick check` |
+| Investigate whether a diff fits the task | `/aet-scope` | `aet quick scope` |
+| Execute and record one real verification | `/aet-proof` | `aet quick proof` |
+| Check whether a proof still applies | `/aet-fresh` | `aet quick fresh` |
 
-Repo Archaeologist example: “Explain why this repository adopted a plugin architecture; link releases, PRs, Issues, commits, and README changes, and separate direct evidence from candidates.” Use `aet evolve`; never invent author intent.
+When a slash command and its question are both Chinese, the host explanation
+uses natural Simplified Chinese while code and required technical terms remain
+English. Every other request uses English.
+
+## Advanced and Lab compatibility
+
+The legacy `audit`, `review`, `trace`, Evidence Pack, Context, Decision,
+Repository Audit Showcase, Evolve, Quality, Learn, Gate, Shadow, Stage, and
+Adopt surfaces remain available for 1.x compatibility. They are not default
+Quick routes. Load only the matching reference after the user explicitly asks
+for that advanced capability.
 
 ## Load one workflow reference
 

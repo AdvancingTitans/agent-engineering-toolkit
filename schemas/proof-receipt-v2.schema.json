@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://advancingtitans.github.io/aet/schemas/proof-receipt-v2.schema.json",
+  "$comment": "Plan section 5.3: one minimal execution receipt with workspace, relevant-path, artifact, and environment bindings.",
+  "title": "AET Proof Receipt v2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "tool_version",
+    "report_kind",
+    "proof_id",
+    "command",
+    "authoritative_status",
+    "result",
+    "binding",
+    "artifacts",
+    "coverage",
+    "provenance"
+  ],
+  "properties": {
+    "schema_version": {"const": "aet-proof-receipt/v2"},
+    "tool_version": {"type": "string", "minLength": 1},
+    "report_kind": {"const": "quick_proof"},
+    "proof_id": {"type": "string", "minLength": 1},
+    "command": {
+      "type": "object",
+      "required": ["argv", "argv_sha256", "cwd", "started_at", "ended_at", "exit_code"],
+      "properties": {
+        "argv": {"type": "array", "items": {"type": "string"}},
+        "argv_sha256": {"type": ["string", "null"]},
+        "cwd": {"type": "string", "minLength": 1},
+        "started_at": {"type": "string"},
+        "ended_at": {"type": "string"},
+        "exit_code": {"type": "integer"}
+      }
+    },
+    "authoritative_status": {"enum": ["PASS", "FAIL", "UNKNOWN", "NOT_APPLICABLE"]},
+    "result": {"type": "object"},
+    "binding": {
+      "type": "object",
+      "required": ["workspace_snapshot", "relevant_paths", "environment"],
+      "properties": {
+        "workspace_snapshot": {"type": "object"},
+        "relevant_paths": {"type": "array"},
+        "environment": {"type": "object"}
+      }
+    },
+    "artifacts": {"type": "array"},
+    "coverage": {"type": "object"},
+    "provenance": {"type": "object"}
+  }
+}

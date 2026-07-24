@@ -1,0 +1,2388 @@
+{
+  "schema_version": "quick-investigation-normalized-runs/v1",
+  "privacy": "Raw Codex JSONL, stderr, final response, and workspace paths are omitted.",
+  "runs": [
+    {
+      "group": "investigated_aet",
+      "model": "gpt-5.6-sol",
+      "model_parameters": {
+        "model_reasoning_effort": "medium"
+      },
+      "output": {
+        "claims": [
+          {
+            "assessment_state": "FAIL",
+            "claim_id": "scope_expansion",
+            "evidence_refs": [
+              "intent",
+              "diff",
+              "dependency"
+            ]
+          }
+        ],
+        "schema_version": "quick-investigation-output/v1",
+        "status": "COMPLETE"
+      },
+      "raw_jsonl": null,
+      "repetition": 0,
+      "run_id": "investigated_aet-SCOPE-001-000",
+      "runner": "codex",
+      "scenario_id": "SCOPE-001",
+      "schema_version": "quick-investigation-run/v1",
+      "suite_id": "aet-scope-eight-cases",
+      "tool_calls": 0,
+      "usage": {
+        "input_tokens": 21492,
+        "output_tokens": 196,
+        "reasoning_tokens": 147,
+        "status": "EVIDENCED",
+        "total_tokens": 21688
+      },
+      "wall_time_seconds": 11.126755707897246
+    },
+    {
+      "group": "investigated_aet",
+      "model": "gpt-5.6-sol",
+      "model_parameters": {
+        "model_reasoning_effort": "medium"
+      },
+      "output": {
+        "claims": [
+          {
+            "assessment_state": "OUT_OF_SCOPE",
+            "claim_id": "scope_expansion",
+            "evidence_refs": [
+              "intent",
+              "diff"
+            ]
+          }
+        ],
+        "schema_version": "quick-investigation-output/v1",
+        "status": "COMPLETE"
+      },
+      "raw_jsonl": null,
+      "repetition": 1,
+      "run_id": "investigated_aet-SCOPE-001-001",
+      "runner": "codex",
+      "scenario_id": "SCOPE-001",
+      "schema_version": "quick-investigation-run/v1",
+      "suite_id": "aet-scope-eight-cases",
+      "tool_calls": 1,
+      "usage": {
+        "input_tokens": 44308,
+        "output_tokens": 256,
+        "reasoning_tokens": 84,
+        "status": "EVIDENCED",
+        "total_tokens": 44564
+      },
+      "wall_time_seconds": 12.980048375204206
+    },
+    {
+      "group": "investigated_aet",
+      "model": "gpt-5.6-sol",
+      "model_parameters": {
+        "model_reasoning_effort": "medium"
+      },
+      "output": {
+        "claims": [],
+        "schema_version": "quick-investigation-output/v1",
+        "status": "COMPLETE"
+      },
+      "raw_jsonl": null,
+      "repetition": 0,
+      "run_id": "investigated_aet-SCOPE-002-000",
+      "runner": "codex",
+      "scenario_id": "SCOPE-002",
+      "schema_version": "quick-investigation-run/v1",
+      "suite_id": "aet-scope-eight-cases",
+      "tool_calls": 3,
+      "usage": {
+        "input_tokens": 89293,
+        "output_tokens": 423,
+        "reasoning_tokens": 112,
+        "status": "EVIDENCED",
+        "total_tokens": 89716
+      },
+      "wall_time_seconds": 21.487078874371946
+    },
+    {
+      "group": "investigated_aet",
+      "model": "gpt-5.6-sol",
+      "model_parameters": {
+        "model_reasoning_effort": "medium"
+      },
+      "output": {
+        "claims": [],
+        "schema_version": "quick-investigation-output/v1",
+        "status": "COMPLETE"
+      },
+      "raw_jsonl": null,
+      "repetition": 1,
+      "run_id": "investigated_aet-SCOPE-002-001",
+      "runner": "codex",
+      "scenario_id": "SCOPE-002",
+      "schema_version": "quick-investigation-run/v1",
+      "suite_id": "aet-scope-eight-cases",
+      "tool_calls": 3,
+      "usage": {
+        "input_tokens": 87481,
+        "output_tokens": 403,
+        "reasoning_tokens": 92,
+        "status": "EVIDENCED",
+        "total_tokens": 87884
+      },
+      "wall_time_seconds": 19.263162375427783
+    },
+    {
+      "group": "investigated_aet",
+      "model": "gpt-5.6-sol",
+      "model_parameters": {
+        "model_reasoning_effort": "medium"
+      },
+      "output": {
+        "claims": [
+          {
+            "assessment_state": "FAIL",
+            "claim_id": "insufficient_intent",
+            "evidence_refs": [
+              "intent"
+            ]
+          },
+          {
+            "assessment_state": "FAIL",
+            "claim_id": "scope_expansion",
+            "evidence_refs": [
+              "intent",
+              "diff"
+            ]
+          }
+        ],
+        "schema_version": "quick-investigation-output/v1",
+        "status": "COMPLETE"
+      },
+      "raw_jsonl": null,
+      "repetition": 0,
+      "run_id": "investigated_aet-SCOPE-003-000",
+      "runner": "codex",
+      "scenario_id": "SCOPE-003",
+      "schema_version": "quick-investigation-run/v1",
+      "suite_id": "aet-scope-eight-cases",
+      "tool_calls": 0,
+      "usage": {
+        "input_tokens": 21896,
+        "output_tokens": 583,
+        "reasoning_tokens": 516,
+        "status": "EVIDENCED",
+        "total_tokens": 22479
+      },
+      "wall_time_seconds": 16.831997917033732
+    },
+    {
+      "group": "investigated_aet",
+      "model": "gpt-5.6-sol",
+      "model_parameters": {
+        "model_reasoning_effort": "medium"
+      },
+      "output": {
+        "claims": [
+          {
+            "assessment_state": "FAIL",
+            "claim_id": "insufficient_intent",
+            "evidence_refs": [
+              "intent"
+            ]
+          },
+          {
+            "assessment_state": "FAIL",
+            "claim_id": "scope_expansion",
+            "evidence_refs": [
+              "intent",
+              "diff"
+            ]
+          }
+        ],
+        "schema_version": "quick-investigation-output/v1",
+        "status": "COMPLETE"
+      },
+      "raw_jsonl": null,
+      "repetition": 1,
+      "run_id": "investigated_aet-SCOPE-003-001",
+      "runner": "codex",
+      "scenario_id": "SCOPE-003",
+      "schema_version": "quick-investigation-run/v1",
+      "suite_id": "aet-scope-eight-cases",
+      "tool_calls": 0,
+      "usage": {
+        "input_tokens": 21457,
+        "output_tokens": 205,
+        "reasoning_tokens": 138,
+        "status": "EVIDENCED",
+        "total_tokens": 21662
+      },
+      "wall_time_seconds": 9.909424415789545
+    },
+    {
+      "group": "investigated_aet",
+      "model": "gpt-5.6-sol",
+      "model_parameters": {
+        "model_reasoning_effort": "medium"
+      },
+      "output": {
+        "claims": [],
+        "schema_version": "quick-investigation-output/v1",
+        "status": "COMPLETE"
+      },
+      "raw_jsonl": null,
+      "repetition": 0,
+      "run_id": "investigated_aet-SCOPE-004-000",
+      "runner": "codex",
+      "scenario_id": "SCOPE-004",
+      "schema_version": "quick-investigation-run/v1",
+      "suite_id": "aet-scope-eight-cases",
+      "tool_calls": 3,
+      "usage": {
+        "input_tokens": 89430,
+        "output_tokens": 469,
+        "reasoning_tokens": 123,
+        "status": "EVIDENCED",
+        "total_tokens": 89899
+      },
+      "wall_time_seconds": 22.163504332304
+    },
+    {
+      "group": "investigated_aet",
+      "model": "gpt-5.6-sol",
+      "model_parameters": {
+        "model_reasoning_effort": "medium"
+      },
+      "output": {
+        "claims": [],
+        "schema_version": "quick-investigation-output/v1",
+        "status": "COMPLETE"
+      },
+      "raw_jsonl": null,
+      "repetition": 1,
+      "run_id": "investigated_aet-SCOPE-004-001",
+      "runner": "codex",
+      "scenario_id": "SCOPE-004",
+      "schema_version": "quick-investigation-run/v1",
+      "suite_id": "aet-scope-eight-cases",
+      "tool_calls": 3,
+      "usage": {
+        "input_tokens": 89337,
+        "output_tokens": 474,
+        "reasoning_tokens": 135,
+        "status": "EVIDENCED",
+        "total_tokens": 89811
+      },
+      "wall_time_seconds": 28.613111667335033
+    },
+    {
+      "group": "investigated_aet",
+      "model": "gpt-5.6-sol",
+      "model_parameters": {
+        "model_reasoning_effort": "medium"
+      },
+      "output": {
+        "claims": [
+          {
+            "assessment_state": "OUT_OF_SCOPE",
+            "claim_id": "unrelated_dependency",
+            "evidence_refs": [
+              "intent",
+              "manifest"
+            ]
+          }
+        ],
+        "schema_version": "quick-investigation-output/v1",
+        "status": "COMPLETE"
+      },
+      "raw_jsonl": null,
+      "repetition": 0,
+      "run_id": "investigated_aet-SCOPE-005-000",
+      "runner": "codex",
+      "scenario_id": "SCOPE-005",
+      "schema_version": "quick-investigation-run/v1",
+      "suite_id": "aet-scope-eight-cases",
+      "tool_calls": 1,
+      "usage": {
+        "input_tokens": 44230,
+        "output_tokens": 198,
+        "reasoning_tokens": 62,
+        "status": "EVIDENCED",
+        "total_tokens": 44428
+      },
+      "wall_time_seconds": 10.995126750320196
+    },
+    {
+      "group": "investigated_aet",
+      "model": "gpt-5.6-sol",
+      "model_parameters": {
+        "model_reasoning_effort": "medium"
+      },
+      "output": {
+        "claims": [
+          {
+            "assessment_state": "FAIL",
+            "claim_id": "unrelated_dependency",
+            "evidence_refs": [
+              "intent",
+              "manifest",
+              "usage"
+            ]
+          }
+        ],
+        "schema_version": "quick-investigation-output/v1",
+        "status": "COMPLETE"
+      },
+      "raw_jsonl": null,
+      "repetition": 1,
+      "run_id": "investigated_aet-SCOPE-005-001",
+      "runner": "codex",
+      "scenario_id": "SCOPE-005",
+      "schema_version": "quick-investigation-run/v1",
+      "suite_id": "aet-scope-eight-cases",
+      "tool_calls": 0,
+      "usage": {
+        "input_tokens": 21927,
+        "output_tokens": 264,
+        "reasoning_tokens": 215,
+        "status": "EVIDENCED",
+        "total_tokens": 22191
+      },
+      "wall_time_seconds": 11.919948041439056
+    },
+    {
+      "group": "investigated_aet",
+      "model": "gpt-5.6-sol",
+      "model_parameters": {
+        "model_reasoning_effort": "medium"
+      },
+      "output": {
+        "claims": [],
+        "schema_version": "quick-investigation-output/v1",
+        "status": "COMPLETE"
+      },
+      "raw_jsonl": null,
+      "repetition": 0,
+      "run_id": "investigated_aet-SCOPE-006-000",
+      "runner": "codex",
+      "scenario_id": "SCOPE-006",
+      "schema_version": "quick-investigation-run/v1",
+      "suite_id": "aet-scope-eight-cases",
+      "tool_calls": 0,
+      "usage": {
+        "input_tokens": 21939,
+        "output_tokens": 61,
+        "reasoning_tokens": 36,
+        "status": "EVIDENCED",
+        "total_tokens": 22000
+      },
+      "wall_time_seconds": 8.172685084864497
+    },
+    {
+      "group": "investigated_aet",
+      "model": "gpt-5.6-sol",
+      "model_parameters": {
+        "model_reasoning_effort": "medium"
+      },
+      "output": {
+        "claims": [],
+        "schema_version": "quick-investigation-output/v1",
+        "status": "COMPLETE"
+      },
+      "raw_jsonl": null,
+      "repetition": 1,
+      "run_id": "investigated_aet-SCOPE-006-001",
+      "runner": "codex",
+      "scenario_id": "SCOPE-006",
+      "schema_version": "quick-investigation-run/v1",
+      "suite_id": "aet-scope-eight-cases",
+      "tool_calls": 0,
+      "usage": {
+        "input_tokens": 21939,
+        "output_tokens": 126,
+        "reasoning_tokens": 101,
+        "status": "EVIDENCED",
+        "total_tokens": 22065
+      },
+      "wall_time_seconds": 8.261677917093039
+    },
+    {
+      "group": "investigated_aet",
+      "model": "gpt-5.6-sol",
+      "model_parameters": {
+        "model_reasoning_effort": "medium"
+      },
+      "output": {
+        "claims": [
+          {
+            "assessment_state": "POSSIBLE_SCOPE_EXPANSION",
+            "claim_id": "scope_expansion",
+            "evidence_refs": [
+              "diff"
+            ]
+          }
+        ],
+        "schema_version": "quick-investigation-output/v1",
+        "status": "COMPLETE"
+      },
+      "raw_jsonl": null,
+      "repetition": 0,
+      "run_id": "investigated_aet-SCOPE-007-000",
+      "runner": "codex",
+      "scenario_id": "SCOPE-007",
+      "schema_version": "quick-investigation-run/v1",
+      "suite_id": "aet-scope-eight-cases",
+      "tool_calls": 1,
+      "usage": {
+        "input_tokens": 43518,
+        "output_tokens": 292,
+        "reasoning_tokens": 154,
+        "status": "EVIDENCED",
+        "total_tokens": 43810
+      },
+      "wall_time_seconds": 12.238551707938313
+    },
+    {
+      "group": "investigated_aet",
+      "model": "gpt-5.6-sol",
+      "model_parameters": {
+        "model_reasoning_effort": "medium"
+      },
+      "output": {
+        "claims": [
+          {
+            "assessment_state": "FAIL",
+            "claim_id": "scope_expansion",
+            "evidence_refs": [
+              "intent",
+              "diff",
+              "counter_search",
+              "tests"
+            ]
+          }
+        ],
+        "schema_version": "quick-investigation-output/v1",
+        "status": "COMPLETE"
+      },
+      "raw_jsonl": null,
+      "repetition": 1,
+      "run_id": "investigated_aet-SCOPE-007-001",
+      "runner": "codex",
+      "scenario_id": "SCOPE-007",
+      "schema_version": "quick-investigation-run/v1",
+      "suite_id": "aet-scope-eight-cases",
+      "tool_calls": 0,
+      "usage": {
+        "input_tokens": 21524,
+        "output_tokens": 548,
+        "reasoning_tokens": 496,
+        "status": "EVIDENCED",
+        "total_tokens": 22072
+      },
+      "wall_time_seconds": 17.457752333022654
+    },
+    {
+      "group": "investigated_aet",
+      "model": "gpt-5.6-sol",
+      "model_parameters": {
+        "model_reasoning_effort": "medium"
+      },
+      "output": {
+        "claims": [
+          {
+            "assessment_state": "SUPPORTED_WITH_LIMITS",
+            "claim_id": "bounded_result",
+            "evidence_refs": [
+              "budget",
+              "surface"
+            ]
+          }
+        ],
+        "schema_version": "quick-investigation-output/v1",
+        "status": "COMPLETE"
+      },
+      "raw_jsonl": null,
+      "repetition": 0,
+      "run_id": "investigated_aet-SCOPE-008-000",
+      "runner": "codex",
+      "scenario_id": "SCOPE-008",
+      "schema_version": "quick-investigation-run/v1",
+      "suite_id": "aet-scope-eight-cases",
+      "tool_calls": 11,
+      "usage": {
+        "input_tokens": 357919,
+        "output_tokens": 2040,
+        "reasoning_tokens": 451,
+        "status": "EVIDENCED",
+        "total_tokens": 359959
+      },
+      "wall_time_seconds": 70.49149566609412
+    },
+    {
+      "group": "investigated_aet",
+      "model": "gpt-5.6-sol",
+      "model_parameters": {
+        "model_reasoning_effort": "medium"
+      },
+      "output": {
+        "claims": [
+          {
+            "assessment_state": "FAIL",
+            "claim_id": "scope_expansion",
+            "evidence_refs": [
+              "intent",
+              "budget",
+              "surface"
+            ]
+          }
+        ],
+        "schema_version": "quick-investigation-output/v1",
+        "status": "COMPLETE"
+      },
+      "raw_jsonl": null,
+      "repetition": 1,
+      "run_id": "investigated_aet-SCOPE-008-001",
+      "runner": "codex",
+      "scenario_id": "SCOPE-008",
+      "schema_version": "quick-investigation-run/v1",
+      "suite_id": "aet-scope-eight-cases",
+      "tool_calls": 0,
+      "usage": {
+        "input_tokens": 21940,
+        "output_tokens": 190,
+        "reasoning_tokens": 141,
+        "status": "EVIDENCED",
+        "total_tokens": 22130
+      },
+      "wall_time_seconds": 11.202450791373849
+    },
+    {
+      "grounding": {
+        "accepted_claims": 1,
+        "rejected_claims": [],
+        "status": "PASS"
+      },
+      "group": "investigated_grounded",
+      "model": "gpt-5.6-sol",
+      "model_parameters": {
+        "model_reasoning_effort": "medium"
+      },
+      "output": {
+        "claims": [
+          {
+            "assessment_state": "FAIL",
+            "claim_id": "scope_expansion",
+            "counter_evidence_refs": [
+              "dependency"
+            ],
+            "counter_explanation": "A reasonable counter-hypothesis is that the payment-symbol change indirectly fixes the login timeout, but the available symbol search found no login-path reference to that symbol.",
+            "evidence_refs": [
+              "intent",
+              "diff",
+              "dependency"
+            ],
+            "remaining_uncertainty": [
+              "The available evidence does not resolve whether runtime or dynamic coupling exists outside the searched symbol references."
+            ]
+          }
+        ],
+        "schema_version": "quick-investigation-output/v1",
+        "status": "COMPLETE"
+      },
+      "raw_jsonl": null,
+      "repetition": 0,
+      "run_id": "investigated_grounded-SCOPE-001-000",
+      "runner": "codex",
+      "scenario_id": "SCOPE-001",
+      "schema_version": "quick-investigation-run/v1",
+      "suite_id": "aet-scope-eight-cases",
+      "tool_calls": 0,
+      "usage": {
+        "input_tokens": 21988,
+        "output_tokens": 245,
+        "reasoning_tokens": 127,
+        "status": "EVIDENCED",
+        "total_tokens": 22233
+      },
+      "wall_time_seconds": 11.206020624376833
+    },
+    {
+      "grounding": {
+        "accepted_claims": 1,
+        "rejected_claims": [],
+        "status": "PASS"
+      },
+      "group": "investigated_grounded",
+      "model": "gpt-5.6-sol",
+      "model_parameters": {
+        "model_reasoning_effort": "medium"
+      },
+      "output": {
+        "claims": [
+          {
+            "assessment_state": "FAIL",
+            "claim_id": "scope_expansion",
+            "counter_evidence_refs": [
+              "dependency"
+            ],
+            "counter_explanation": "A reasonable counter-hypothesis is that the payment edit is required indirectly for the login-timeout fix; this is not supported because the symbol search found no login path referencing the changed payment symbol.",
+            "evidence_refs": [
+              "intent",
+              "diff",
+              "dependency"
+            ],
+            "remaining_uncertainty": [
+              "The available evidence does not establish whether another indirect runtime relationship exists beyond the searched symbol references."
+            ]
+          }
+        ],
+        "schema_version": "quick-investigation-output/v1",
+        "status": "COMPLETE"
+      },
+      "raw_jsonl": null,
+      "repetition": 1,
+      "run_id": "investigated_grounded-SCOPE-001-001",
+      "runner": "codex",
+      "scenario_id": "SCOPE-001",
+      "schema_version": "quick-investigation-run/v1",
+      "suite_id": "aet-scope-eight-cases",
+      "tool_calls": 0,
+      "usage": {
+        "input_tokens": 21549,
+        "output_tokens": 258,
+        "reasoning_tokens": 133,
+        "status": "EVIDENCED",
+        "total_tokens": 21807
+      },
+      "wall_time_seconds": 10.001214416697621
+    },
+    {
+      "grounding": {
+        "accepted_claims": 0,
+        "rejected_claims": [],
+        "status": "PASS"
+      },
+      "group": "investigated_grounded",
+      "model": "gpt-5.6-sol",
+      "model_parameters": {
+        "model_reasoning_effort": "medium"
+      },
+      "output": {
+        "claims": [],
+        "schema_version": "quick-investigation-output/v1",
+        "status": "COMPLETE"
+      },
+      "raw_jsonl": null,
+      "repetition": 0,
+      "run_id": "investigated_grounded-SCOPE-002-000",
+      "runner": "codex",
+      "scenario_id": "SCOPE-002",
+      "schema_version": "quick-investigation-run/v1",
+      "suite_id": "aet-scope-eight-cases",
+      "tool_calls": 3,
+      "usage": {
+        "input_tokens": 88899,
+        "output_tokens": 506,
+        "reasoning_tokens": 126,
+        "status": "EVIDENCED",
+        "total_tokens": 89405
+      },
+      "wall_time_seconds": 20.055348499678075
+    },
+    {
+      "grounding": {
+        "accepted_claims": 0,
+        "rejected_claims": [],
+        "status": "PASS"
+      },
+      "group": "investigated_grounded",
+      "model": "gpt-5.6-sol",
+      "model_parameters": {
+        "model_reasoning_effort": "medium"
+      },
+      "output": {
+        "claims": [],
+        "schema_version": "quick-investigation-output/v1",
+        "status": "COMPLETE"
+      },
+      "raw_jsonl": null,
+      "repetition": 1,
+      "run_id": "investigated_grounded-SCOPE-002-001",
+      "runner": "codex",
+      "scenario_id": "SCOPE-002",
+      "schema_version": "quick-investigation-run/v1",
+      "suite_id": "aet-scope-eight-cases",
+      "tool_calls": 0,
+      "usage": {
+        "input_tokens": 21581,
+        "output_tokens": 135,
+        "reasoning_tokens": 110,
+        "status": "EVIDENCED",
+        "total_tokens": 21716
+      },
+      "wall_time_seconds": 9.482349791564047
+    },
+    {
+      "grounding": {
+        "accepted_claims": 2,
+        "rejected_claims": [],
+        "status": "PASS"
+      },
+      "group": "investigated_grounded",
+      "model": "gpt-5.6-sol",
+      "model_parameters": {
+        "model_reasoning_effort": "medium"
+      },
+      "output": {
+        "claims": [
+          {
+            "assessment_state": "FAIL",
+            "claim_id": "insufficient_intent",
+            "counter_evidence_refs": [
+              "diff"
+            ],
+            "counter_explanation": "The edited auth, cache, and API response code could reflect an inferred implementation approach, but it does not establish measurable behavior or authorization.",
+            "evidence_refs": [
+              "intent"
+            ],
+            "remaining_uncertainty": [
+              "What session behavior should improve",
+              "How improvement should be measured",
+              "Which code surfaces are authorized"
+            ]
+          },
+          {
+            "assessment_state": "UNKNOWN",
+            "claim_id": "scope_expansion",
+            "counter_evidence_refs": [
+              "diff"
+            ],
+            "counter_explanation": "Auth, cache, and API response code may all reasonably participate in session behavior, so the breadth of the change alone does not prove unauthorized expansion.",
+            "evidence_refs": [
+              "diff",
+              "intent"
+            ],
+            "remaining_uncertainty": [
+              "Whether each edited surface is necessary for the intended session behavior",
+              "Whether the user authorizes changes across all three surfaces"
+            ]
+          }
+        ],
+        "schema_version": "quick-investigation-output/v1",
+        "status": "COMPLETE"
+      },
+      "raw_jsonl": null,
+      "repetition": 0,
+      "run_id": "investigated_grounded-SCOPE-003-000",
+      "runner": "codex",
+      "scenario_id": "SCOPE-003",
+      "schema_version": "quick-investigation-run/v1",
+      "suite_id": "aet-scope-eight-cases",
+      "tool_calls": 0,
+      "usage": {
+        "input_tokens": 21953,
+        "output_tokens": 365,
+        "reasoning_tokens": 165,
+        "status": "EVIDENCED",
+        "total_tokens": 22318
+      },
+      "wall_time_seconds": 17.878751541487873
+    },
+    {
+      "grounding": {
+        "accepted_claims": 2,
+        "rejected_claims": [],
+        "status": "PASS"
+      },
+      "group": "investigated_grounded",
+      "model": "gpt-5.6-sol",
+      "model_parameters": {
+        "model_reasoning_effort": "medium"
+      },
+      "output": {
+        "claims": [
+          {
+            "assessment_state": "FAIL",
+            "claim_id": "insufficient_intent",
+            "counter_evidence_refs": [
+              "diff",
+              "intent"
+            ],
+            "counter_explanation": "The edits may reflect an implicit interpretation of session behavior, but no measurable behavior or authorized surface is supplied.",
+            "evidence_refs": [
+              "intent"
+            ],
+            "remaining_uncertainty": [
+              "Which session behavior should change",
+              "What acceptance criteria apply",
+              "Which code surfaces are authorized"
+            ]
+          },
+          {
+            "assessment_state": "UNKNOWN",
+            "claim_id": "scope_expansion",
+            "counter_evidence_refs": [
+              "diff"
+            ],
+            "counter_explanation": "Auth, cache, and API response edits may all be reasonably necessary for a single session-behavior change.",
+            "evidence_refs": [
+              "intent",
+              "diff"
+            ],
+            "remaining_uncertainty": [
+              "Whether each edited area is necessary",
+              "Whether any edited area exceeds the intended scope"
+            ]
+          }
+        ],
+        "schema_version": "quick-investigation-output/v1",
+        "status": "COMPLETE"
+      },
+      "raw_jsonl": null,
+      "repetition": 1,
+      "run_id": "investigated_grounded-SCOPE-003-001",
+      "runner": "codex",
+      "scenario_id": "SCOPE-003",
+      "schema_version": "quick-investigation-run/v1",
+      "suite_id": "aet-scope-eight-cases",
+      "tool_calls": 0,
+      "usage": {
+        "input_tokens": 21514,
+        "output_tokens": 498,
+        "reasoning_tokens": 317,
+        "status": "EVIDENCED",
+        "total_tokens": 22012
+      },
+      "wall_time_seconds": 17.001549375243485
+    },
+    {
+      "grounding": {
+        "accepted_claims": 0,
+        "rejected_claims": [],
+        "status": "PASS"
+      },
+      "group": "investigated_grounded",
+      "model": "gpt-5.6-sol",
+      "model_parameters": {
+        "model_reasoning_effort": "medium"
+      },
+      "output": {
+        "claims": [],
+        "schema_version": "quick-investigation-output/v1",
+        "status": "COMPLETE"
+      },
+      "raw_jsonl": null,
+      "repetition": 0,
+      "run_id": "investigated_grounded-SCOPE-004-000",
+      "runner": "codex",
+      "scenario_id": "SCOPE-004",
+      "schema_version": "quick-investigation-run/v1",
+      "suite_id": "aet-scope-eight-cases",
+      "tool_calls": 3,
+      "usage": {
+        "input_tokens": 89621,
+        "output_tokens": 486,
+        "reasoning_tokens": 105,
+        "status": "EVIDENCED",
+        "total_tokens": 90107
+      },
+      "wall_time_seconds": 20.70232141762972
+    },
+    {
+      "grounding": {
+        "accepted_claims": 0,
+        "rejected_claims": [],
+        "status": "PASS"
+      },
+      "group": "investigated_grounded",
+      "model": "gpt-5.6-sol",
+      "model_parameters": {
+        "model_reasoning_effort": "medium"
+      },
+      "output": {
+        "claims": [],
+        "schema_version": "quick-investigation-output/v1",
+        "status": "COMPLETE"
+      },
+      "raw_jsonl": null,
+      "repetition": 1,
+      "run_id": "investigated_grounded-SCOPE-004-001",
+      "runner": "codex",
+      "scenario_id": "SCOPE-004",
+      "schema_version": "quick-investigation-run/v1",
+      "suite_id": "aet-scope-eight-cases",
+      "tool_calls": 0,
+      "usage": {
+        "input_tokens": 21564,
+        "output_tokens": 208,
+        "reasoning_tokens": 183,
+        "status": "EVIDENCED",
+        "total_tokens": 21772
+      },
+      "wall_time_seconds": 11.309266041964293
+    },
+    {
+      "grounding": {
+        "accepted_claims": 1,
+        "rejected_claims": [],
+        "status": "PASS"
+      },
+      "group": "investigated_grounded",
+      "model": "gpt-5.6-sol",
+      "model_parameters": {
+        "model_reasoning_effort": "medium"
+      },
+      "output": {
+        "claims": [
+          {
+            "assessment_state": "FAIL",
+            "claim_id": "unrelated_dependency",
+            "counter_evidence_refs": [
+              "usage"
+            ],
+            "counter_explanation": "A reasonable counter-hypothesis is that the charting dependency is required for the login-timeout fix, but the available symbol-search evidence places its only reference in an unrelated dashboard file.",
+            "evidence_refs": [
+              "intent",
+              "manifest",
+              "usage"
+            ],
+            "remaining_uncertainty": [
+              "The supplied evidence does not establish whether the manifest addition was accidental or part of a separate intended change."
+            ]
+          }
+        ],
+        "schema_version": "quick-investigation-output/v1",
+        "status": "COMPLETE"
+      },
+      "raw_jsonl": null,
+      "repetition": 0,
+      "run_id": "investigated_grounded-SCOPE-005-000",
+      "runner": "codex",
+      "scenario_id": "SCOPE-005",
+      "schema_version": "quick-investigation-run/v1",
+      "suite_id": "aet-scope-eight-cases",
+      "tool_calls": 0,
+      "usage": {
+        "input_tokens": 21545,
+        "output_tokens": 288,
+        "reasoning_tokens": 163,
+        "status": "EVIDENCED",
+        "total_tokens": 21833
+      },
+      "wall_time_seconds": 10.481559083797038
+    },
+    {
+      "grounding": {
+        "accepted_claims": 1,
+        "rejected_claims": [],
+        "status": "PASS"
+      },
+      "group": "investigated_grounded",
+      "model": "gpt-5.6-sol",
+      "model_parameters": {
+        "model_reasoning_effort": "medium"
+      },
+      "output": {
+        "claims": [
+          {
+            "assessment_state": "FAIL",
+            "claim_id": "unrelated_dependency",
+            "counter_evidence_refs": [
+              "manifest",
+              "usage"
+            ],
+            "counter_explanation": "A reasonable counter-hypothesis is that the charting dependency is necessary for the login-timeout fix, but the available symbol search finds it referenced only by an unrelated dashboard file.",
+            "evidence_refs": [
+              "intent",
+              "manifest",
+              "usage"
+            ],
+            "remaining_uncertainty": [
+              "The bounded evidence does not establish whether an undocumented indirect runtime relationship exists between the dashboard and login flow."
+            ]
+          }
+        ],
+        "schema_version": "quick-investigation-output/v1",
+        "status": "COMPLETE"
+      },
+      "raw_jsonl": null,
+      "repetition": 1,
+      "run_id": "investigated_grounded-SCOPE-005-001",
+      "runner": "codex",
+      "scenario_id": "SCOPE-005",
+      "schema_version": "quick-investigation-run/v1",
+      "suite_id": "aet-scope-eight-cases",
+      "tool_calls": 0,
+      "usage": {
+        "input_tokens": 21545,
+        "output_tokens": 338,
+        "reasoning_tokens": 212,
+        "status": "EVIDENCED",
+        "total_tokens": 21883
+      },
+      "wall_time_seconds": 12.070284208282828
+    },
+    {
+      "grounding": {
+        "accepted_claims": 0,
+        "rejected_claims": [],
+        "status": "PASS"
+      },
+      "group": "investigated_grounded",
+      "model": "gpt-5.6-sol",
+      "model_parameters": {
+        "model_reasoning_effort": "medium"
+      },
+      "output": {
+        "claims": [],
+        "schema_version": "quick-investigation-output/v1",
+        "status": "COMPLETE"
+      },
+      "raw_jsonl": null,
+      "repetition": 0,
+      "run_id": "investigated_grounded-SCOPE-006-000",
+      "runner": "codex",
+      "scenario_id": "SCOPE-006",
+      "schema_version": "quick-investigation-run/v1",
+      "suite_id": "aet-scope-eight-cases",
+      "tool_calls": 0,
+      "usage": {
+        "input_tokens": 21557,
+        "output_tokens": 91,
+        "reasoning_tokens": 66,
+        "status": "EVIDENCED",
+        "total_tokens": 21648
+      },
+      "wall_time_seconds": 8.136247292160988
+    },
+    {
+      "grounding": {
+        "accepted_claims": 0,
+        "rejected_claims": [],
+        "status": "PASS"
+      },
+      "group": "investigated_grounded",
+      "model": "gpt-5.6-sol",
+      "model_parameters": {
+        "model_reasoning_effort": "medium"
+      },
+      "output": {
+        "claims": [],
+        "schema_version": "quick-investigation-output/v1",
+        "status": "COMPLETE"
+      },
+      "raw_jsonl": null,
+      "repetition": 1,
+      "run_id": "investigated_grounded-SCOPE-006-001",
+      "runner": "codex",
+      "scenario_id": "SCOPE-006",
+      "schema_version": "quick-investigation-run/v1",
+      "suite_id": "aet-scope-eight-cases",
+      "tool_calls": 3,
+      "usage": {
+        "input_tokens": 88812,
+        "output_tokens": 569,
+        "reasoning_tokens": 175,
+        "status": "EVIDENCED",
+        "total_tokens": 89381
+      },
+      "wall_time_seconds": 20.588651125319302
+    },
+    {
+      "grounding": {
+        "accepted_claims": 1,
+        "rejected_claims": [],
+        "status": "PASS"
+      },
+      "group": "investigated_grounded",
+      "model": "gpt-5.6-sol",
+      "model_parameters": {
+        "model_reasoning_effort": "medium"
+      },
+      "output": {
+        "claims": [
+          {
+            "assessment_state": "FAIL",
+            "claim_id": "scope_expansion",
+            "counter_evidence_refs": [
+              "counter_search",
+              "tests"
+            ],
+            "counter_explanation": "A reasonable counter-hypothesis is that the payment-helper changes are required by the login-timeout fix; counter_search and tests do not support that dependency or test relationship.",
+            "evidence_refs": [
+              "intent",
+              "diff"
+            ],
+            "remaining_uncertainty": [
+              "The available evidence does not establish why the payment helpers were renamed and restructured."
+            ]
+          }
+        ],
+        "schema_version": "quick-investigation-output/v1",
+        "status": "COMPLETE"
+      },
+      "raw_jsonl": null,
+      "repetition": 0,
+      "run_id": "investigated_grounded-SCOPE-007-000",
+      "runner": "codex",
+      "scenario_id": "SCOPE-007",
+      "schema_version": "quick-investigation-run/v1",
+      "suite_id": "aet-scope-eight-cases",
+      "tool_calls": 0,
+      "usage": {
+        "input_tokens": 22020,
+        "output_tokens": 247,
+        "reasoning_tokens": 128,
+        "status": "EVIDENCED",
+        "total_tokens": 22267
+      },
+      "wall_time_seconds": 9.61510454211384
+    },
+    {
+      "grounding": {
+        "accepted_claims": 1,
+        "rejected_claims": [],
+        "status": "PASS"
+      },
+      "group": "investigated_grounded",
+      "model": "gpt-5.6-sol",
+      "model_parameters": {
+        "model_reasoning_effort": "medium"
+      },
+      "output": {
+        "claims": [
+          {
+            "assessment_state": "FAIL",
+            "claim_id": "scope_expansion",
+            "counter_evidence_refs": [
+              "counter_search",
+              "tests"
+            ],
+            "counter_explanation": "A reasonable counter-hypothesis is that the payment-helper changes are required by the login-timeout fix; however, the searched dependency relationship and test relationship do not support that explanation.",
+            "evidence_refs": [
+              "intent",
+              "diff"
+            ],
+            "remaining_uncertainty": [
+              "Whether an unobserved dependency outside the searched interface requires the payment-helper changes."
+            ]
+          }
+        ],
+        "schema_version": "quick-investigation-output/v1",
+        "status": "COMPLETE"
+      },
+      "raw_jsonl": null,
+      "repetition": 1,
+      "run_id": "investigated_grounded-SCOPE-007-001",
+      "runner": "codex",
+      "scenario_id": "SCOPE-007",
+      "schema_version": "quick-investigation-run/v1",
+      "suite_id": "aet-scope-eight-cases",
+      "tool_calls": 0,
+      "usage": {
+        "input_tokens": 21581,
+        "output_tokens": 253,
+        "reasoning_tokens": 132,
+        "status": "EVIDENCED",
+        "total_tokens": 21834
+      },
+      "wall_time_seconds": 9.718969417735934
+    },
+    {
+      "grounding": {
+        "accepted_claims": 1,
+        "rejected_claims": [],
+        "status": "PASS"
+      },
+      "group": "investigated_grounded",
+      "model": "gpt-5.6-sol",
+      "model_parameters": {
+        "model_reasoning_effort": "medium"
+      },
+      "output": {
+        "claims": [
+          {
+            "assessment_state": "UNKNOWN",
+            "claim_id": "bounded_result",
+            "counter_evidence_refs": [
+              "budget",
+              "surface"
+            ],
+            "counter_explanation": "A reasonable counter-hypothesis is that the cross-service changes are necessary, but the 100-file inspection budget cannot validate all 140 changed files.",
+            "evidence_refs": [
+              "intent",
+              "budget",
+              "surface"
+            ],
+            "remaining_uncertainty": [
+              "[intent, surface] Whether all twelve services are required for the login timeout fix.",
+              "[budget, surface] What the 40 uninspectable changed files contain."
+            ]
+          }
+        ],
+        "schema_version": "quick-investigation-output/v1",
+        "status": "COMPLETE"
+      },
+      "raw_jsonl": null,
+      "repetition": 0,
+      "run_id": "investigated_grounded-SCOPE-008-000",
+      "runner": "codex",
+      "scenario_id": "SCOPE-008",
+      "schema_version": "quick-investigation-run/v1",
+      "suite_id": "aet-scope-eight-cases",
+      "tool_calls": 3,
+      "usage": {
+        "input_tokens": 87690,
+        "output_tokens": 707,
+        "reasoning_tokens": 249,
+        "status": "EVIDENCED",
+        "total_tokens": 88397
+      },
+      "wall_time_seconds": 26.86946045793593
+    },
+    {
+      "grounding": {
+        "accepted_claims": 1,
+        "rejected_claims": [],
+        "status": "PASS"
+      },
+      "group": "investigated_grounded",
+      "model": "gpt-5.6-sol",
+      "model_parameters": {
+        "model_reasoning_effort": "medium"
+      },
+      "output": {
+        "claims": [
+          {
+            "assessment_state": "UNKNOWN",
+            "claim_id": "scope_expansion",
+            "counter_evidence_refs": [
+              "intent",
+              "budget",
+              "surface"
+            ],
+            "counter_explanation": "The twelve-service breadth might be necessary for the login timeout change, but [intent], [budget], and [surface] provide no dependency evidence confirming that counter-hypothesis.",
+            "evidence_refs": [
+              "intent",
+              "budget",
+              "surface"
+            ],
+            "remaining_uncertainty": [
+              "Because [surface] reports 140 changed files while [budget] permits inspection of 100, the necessity of the complete change cannot be validated within the stated bound.",
+              "Whether dependencies across the twelve services require all 140 changed files is not established by [intent], [budget], or [surface]."
+            ]
+          }
+        ],
+        "schema_version": "quick-investigation-output/v1",
+        "status": "COMPLETE"
+      },
+      "raw_jsonl": null,
+      "repetition": 1,
+      "run_id": "investigated_grounded-SCOPE-008-001",
+      "runner": "codex",
+      "scenario_id": "SCOPE-008",
+      "schema_version": "quick-investigation-run/v1",
+      "suite_id": "aet-scope-eight-cases",
+      "tool_calls": 0,
+      "usage": {
+        "input_tokens": 21997,
+        "output_tokens": 682,
+        "reasoning_tokens": 516,
+        "status": "EVIDENCED",
+        "total_tokens": 22679
+      },
+      "wall_time_seconds": 22.25393475033343
+    },
+    {
+      "group": "one_shot_llm",
+      "model": "gpt-5.6-sol",
+      "model_parameters": {
+        "model_reasoning_effort": "medium"
+      },
+      "output": {
+        "claims": [
+          {
+            "assessment_state": "FAIL",
+            "claim_id": "scope_expansion",
+            "evidence_refs": [
+              "intent",
+              "diff",
+              "dependency"
+            ]
+          }
+        ],
+        "schema_version": "quick-investigation-output/v1",
+        "status": "COMPLETE"
+      },
+      "raw_jsonl": null,
+      "repetition": 0,
+      "run_id": "one_shot_llm-SCOPE-001-000",
+      "runner": "codex",
+      "scenario_id": "SCOPE-001",
+      "schema_version": "quick-investigation-run/v1",
+      "suite_id": "aet-scope-eight-cases",
+      "tool_calls": 0,
+      "usage": {
+        "input_tokens": 21918,
+        "output_tokens": 47,
+        "reasoning_tokens": 0,
+        "status": "EVIDENCED",
+        "total_tokens": 21965
+      },
+      "wall_time_seconds": 7.86778225004673
+    },
+    {
+      "group": "one_shot_llm",
+      "model": "gpt-5.6-sol",
+      "model_parameters": {
+        "model_reasoning_effort": "medium"
+      },
+      "output": {
+        "claims": [
+          {
+            "assessment_state": "FAIL",
+            "claim_id": "scope_expansion",
+            "evidence_refs": [
+              "intent",
+              "diff",
+              "dependency"
+            ]
+          }
+        ],
+        "schema_version": "quick-investigation-output/v1",
+        "status": "COMPLETE"
+      },
+      "raw_jsonl": null,
+      "repetition": 1,
+      "run_id": "one_shot_llm-SCOPE-001-001",
+      "runner": "codex",
+      "scenario_id": "SCOPE-001",
+      "schema_version": "quick-investigation-run/v1",
+      "suite_id": "aet-scope-eight-cases",
+      "tool_calls": 0,
+      "usage": {
+        "input_tokens": 21479,
+        "output_tokens": 47,
+        "reasoning_tokens": 0,
+        "status": "EVIDENCED",
+        "total_tokens": 21526
+      },
+      "wall_time_seconds": 5.668964666314423
+    },
+    {
+      "group": "one_shot_llm",
+      "model": "gpt-5.6-sol",
+      "model_parameters": {
+        "model_reasoning_effort": "medium"
+      },
+      "output": {
+        "claims": [],
+        "schema_version": "quick-investigation-output/v1",
+        "status": "COMPLETE"
+      },
+      "raw_jsonl": null,
+      "repetition": 0,
+      "run_id": "one_shot_llm-SCOPE-002-000",
+      "runner": "codex",
+      "scenario_id": "SCOPE-002",
+      "schema_version": "quick-investigation-run/v1",
+      "suite_id": "aet-scope-eight-cases",
+      "tool_calls": 0,
+      "usage": {
+        "input_tokens": 21511,
+        "output_tokens": 58,
+        "reasoning_tokens": 33,
+        "status": "EVIDENCED",
+        "total_tokens": 21569
+      },
+      "wall_time_seconds": 6.7560950005427
+    },
+    {
+      "group": "one_shot_llm",
+      "model": "gpt-5.6-sol",
+      "model_parameters": {
+        "model_reasoning_effort": "medium"
+      },
+      "output": {
+        "claims": [],
+        "schema_version": "quick-investigation-output/v1",
+        "status": "COMPLETE"
+      },
+      "raw_jsonl": null,
+      "repetition": 1,
+      "run_id": "one_shot_llm-SCOPE-002-001",
+      "runner": "codex",
+      "scenario_id": "SCOPE-002",
+      "schema_version": "quick-investigation-run/v1",
+      "suite_id": "aet-scope-eight-cases",
+      "tool_calls": 0,
+      "usage": {
+        "input_tokens": 21511,
+        "output_tokens": 23,
+        "reasoning_tokens": 0,
+        "status": "EVIDENCED",
+        "total_tokens": 21534
+      },
+      "wall_time_seconds": 5.407617459073663
+    },
+    {
+      "group": "one_shot_llm",
+      "model": "gpt-5.6-sol",
+      "model_parameters": {
+        "model_reasoning_effort": "medium"
+      },
+      "output": {
+        "claims": [
+          {
+            "assessment_state": "FAIL",
+            "claim_id": "insufficient_intent",
+            "evidence_refs": [
+              "intent"
+            ]
+          },
+          {
+            "assessment_state": "FAIL",
+            "claim_id": "scope_expansion",
+            "evidence_refs": [
+              "diff"
+            ]
+          }
+        ],
+        "schema_version": "quick-investigation-output/v1",
+        "status": "COMPLETE"
+      },
+      "raw_jsonl": null,
+      "repetition": 0,
+      "run_id": "one_shot_llm-SCOPE-003-000",
+      "runner": "codex",
+      "scenario_id": "SCOPE-003",
+      "schema_version": "quick-investigation-run/v1",
+      "suite_id": "aet-scope-eight-cases",
+      "tool_calls": 0,
+      "usage": {
+        "input_tokens": 21483,
+        "output_tokens": 63,
+        "reasoning_tokens": 0,
+        "status": "EVIDENCED",
+        "total_tokens": 21546
+      },
+      "wall_time_seconds": 6.121564207598567
+    },
+    {
+      "group": "one_shot_llm",
+      "model": "gpt-5.6-sol",
+      "model_parameters": {
+        "model_reasoning_effort": "medium"
+      },
+      "output": {
+        "claims": [
+          {
+            "assessment_state": "FAIL",
+            "claim_id": "insufficient_intent",
+            "evidence_refs": [
+              "intent",
+              "diff"
+            ]
+          }
+        ],
+        "schema_version": "quick-investigation-output/v1",
+        "status": "COMPLETE"
+      },
+      "raw_jsonl": null,
+      "repetition": 1,
+      "run_id": "one_shot_llm-SCOPE-003-001",
+      "runner": "codex",
+      "scenario_id": "SCOPE-003",
+      "schema_version": "quick-investigation-run/v1",
+      "suite_id": "aet-scope-eight-cases",
+      "tool_calls": 0,
+      "usage": {
+        "input_tokens": 21444,
+        "output_tokens": 46,
+        "reasoning_tokens": 0,
+        "status": "EVIDENCED",
+        "total_tokens": 21490
+      },
+      "wall_time_seconds": 5.6986272083595395
+    },
+    {
+      "group": "one_shot_llm",
+      "model": "gpt-5.6-sol",
+      "model_parameters": {
+        "model_reasoning_effort": "medium"
+      },
+      "output": {
+        "claims": [],
+        "schema_version": "quick-investigation-output/v1",
+        "status": "COMPLETE"
+      },
+      "raw_jsonl": null,
+      "repetition": 0,
+      "run_id": "one_shot_llm-SCOPE-004-000",
+      "runner": "codex",
+      "scenario_id": "SCOPE-004",
+      "schema_version": "quick-investigation-run/v1",
+      "suite_id": "aet-scope-eight-cases",
+      "tool_calls": 0,
+      "usage": {
+        "input_tokens": 21494,
+        "output_tokens": 23,
+        "reasoning_tokens": 0,
+        "status": "EVIDENCED",
+        "total_tokens": 21517
+      },
+      "wall_time_seconds": 5.468741958960891
+    },
+    {
+      "group": "one_shot_llm",
+      "model": "gpt-5.6-sol",
+      "model_parameters": {
+        "model_reasoning_effort": "medium"
+      },
+      "output": {
+        "claims": [],
+        "schema_version": "quick-investigation-output/v1",
+        "status": "COMPLETE"
+      },
+      "raw_jsonl": null,
+      "repetition": 1,
+      "run_id": "one_shot_llm-SCOPE-004-001",
+      "runner": "codex",
+      "scenario_id": "SCOPE-004",
+      "schema_version": "quick-investigation-run/v1",
+      "suite_id": "aet-scope-eight-cases",
+      "tool_calls": 0,
+      "usage": {
+        "input_tokens": 21494,
+        "output_tokens": 23,
+        "reasoning_tokens": 0,
+        "status": "EVIDENCED",
+        "total_tokens": 21517
+      },
+      "wall_time_seconds": 5.332794792018831
+    },
+    {
+      "group": "one_shot_llm",
+      "model": "gpt-5.6-sol",
+      "model_parameters": {
+        "model_reasoning_effort": "medium"
+      },
+      "output": {
+        "claims": [
+          {
+            "assessment_state": "FAIL",
+            "claim_id": "unrelated_dependency",
+            "evidence_refs": [
+              "intent",
+              "manifest",
+              "usage"
+            ]
+          }
+        ],
+        "schema_version": "quick-investigation-output/v1",
+        "status": "COMPLETE"
+      },
+      "raw_jsonl": null,
+      "repetition": 0,
+      "run_id": "one_shot_llm-SCOPE-005-000",
+      "runner": "codex",
+      "scenario_id": "SCOPE-005",
+      "schema_version": "quick-investigation-run/v1",
+      "suite_id": "aet-scope-eight-cases",
+      "tool_calls": 0,
+      "usage": {
+        "input_tokens": 21914,
+        "output_tokens": 47,
+        "reasoning_tokens": 0,
+        "status": "EVIDENCED",
+        "total_tokens": 21961
+      },
+      "wall_time_seconds": 10.534019250422716
+    },
+    {
+      "group": "one_shot_llm",
+      "model": "gpt-5.6-sol",
+      "model_parameters": {
+        "model_reasoning_effort": "medium"
+      },
+      "output": {
+        "claims": [
+          {
+            "assessment_state": "FAIL",
+            "claim_id": "scope_expansion",
+            "evidence_refs": [
+              "intent",
+              "manifest"
+            ]
+          },
+          {
+            "assessment_state": "FAIL",
+            "claim_id": "unrelated_dependency",
+            "evidence_refs": [
+              "manifest",
+              "usage"
+            ]
+          }
+        ],
+        "schema_version": "quick-investigation-output/v1",
+        "status": "COMPLETE"
+      },
+      "raw_jsonl": null,
+      "repetition": 1,
+      "run_id": "one_shot_llm-SCOPE-005-001",
+      "runner": "codex",
+      "scenario_id": "SCOPE-005",
+      "schema_version": "quick-investigation-run/v1",
+      "suite_id": "aet-scope-eight-cases",
+      "tool_calls": 0,
+      "usage": {
+        "input_tokens": 21914,
+        "output_tokens": 66,
+        "reasoning_tokens": 0,
+        "status": "EVIDENCED",
+        "total_tokens": 21980
+      },
+      "wall_time_seconds": 7.605338375084102
+    },
+    {
+      "group": "one_shot_llm",
+      "model": "gpt-5.6-sol",
+      "model_parameters": {
+        "model_reasoning_effort": "medium"
+      },
+      "output": {
+        "claims": [],
+        "schema_version": "quick-investigation-output/v1",
+        "status": "COMPLETE"
+      },
+      "raw_jsonl": null,
+      "repetition": 0,
+      "run_id": "one_shot_llm-SCOPE-006-000",
+      "runner": "codex",
+      "scenario_id": "SCOPE-006",
+      "schema_version": "quick-investigation-run/v1",
+      "suite_id": "aet-scope-eight-cases",
+      "tool_calls": 0,
+      "usage": {
+        "input_tokens": 21487,
+        "output_tokens": 23,
+        "reasoning_tokens": 0,
+        "status": "EVIDENCED",
+        "total_tokens": 21510
+      },
+      "wall_time_seconds": 10.841771208681166
+    },
+    {
+      "group": "one_shot_llm",
+      "model": "gpt-5.6-sol",
+      "model_parameters": {
+        "model_reasoning_effort": "medium"
+      },
+      "output": {
+        "claims": [
+          {
+            "assessment_state": "PASS",
+            "claim_id": "bounded_result",
+            "evidence_refs": [
+              "intent",
+              "diff",
+              "typecheck"
+            ]
+          }
+        ],
+        "schema_version": "quick-investigation-output/v1",
+        "status": "COMPLETE"
+      },
+      "raw_jsonl": null,
+      "repetition": 1,
+      "run_id": "one_shot_llm-SCOPE-006-001",
+      "runner": "codex",
+      "scenario_id": "SCOPE-006",
+      "schema_version": "quick-investigation-run/v1",
+      "suite_id": "aet-scope-eight-cases",
+      "tool_calls": 0,
+      "usage": {
+        "input_tokens": 21487,
+        "output_tokens": 114,
+        "reasoning_tokens": 65,
+        "status": "EVIDENCED",
+        "total_tokens": 21601
+      },
+      "wall_time_seconds": 13.503636041656137
+    },
+    {
+      "group": "one_shot_llm",
+      "model": "gpt-5.6-sol",
+      "model_parameters": {
+        "model_reasoning_effort": "medium"
+      },
+      "output": {
+        "claims": [
+          {
+            "assessment_state": "CONFIRMED",
+            "claim_id": "scope_expansion",
+            "evidence_refs": [
+              "intent",
+              "diff",
+              "counter_search",
+              "tests"
+            ]
+          }
+        ],
+        "schema_version": "quick-investigation-output/v1",
+        "status": "COMPLETE"
+      },
+      "raw_jsonl": null,
+      "repetition": 0,
+      "run_id": "one_shot_llm-SCOPE-007-000",
+      "runner": "codex",
+      "scenario_id": "SCOPE-007",
+      "schema_version": "quick-investigation-run/v1",
+      "suite_id": "aet-scope-eight-cases",
+      "tool_calls": 0,
+      "usage": {
+        "input_tokens": 21950,
+        "output_tokens": 52,
+        "reasoning_tokens": 0,
+        "status": "EVIDENCED",
+        "total_tokens": 22002
+      },
+      "wall_time_seconds": 7.279148750007153
+    },
+    {
+      "group": "one_shot_llm",
+      "model": "gpt-5.6-sol",
+      "model_parameters": {
+        "model_reasoning_effort": "medium"
+      },
+      "output": {
+        "claims": [
+          {
+            "assessment_state": "SUPPORTED",
+            "claim_id": "scope_expansion",
+            "evidence_refs": [
+              "intent",
+              "diff",
+              "counter_search",
+              "tests"
+            ]
+          }
+        ],
+        "schema_version": "quick-investigation-output/v1",
+        "status": "COMPLETE"
+      },
+      "raw_jsonl": null,
+      "repetition": 1,
+      "run_id": "one_shot_llm-SCOPE-007-001",
+      "runner": "codex",
+      "scenario_id": "SCOPE-007",
+      "schema_version": "quick-investigation-run/v1",
+      "suite_id": "aet-scope-eight-cases",
+      "tool_calls": 0,
+      "usage": {
+        "input_tokens": 21950,
+        "output_tokens": 50,
+        "reasoning_tokens": 0,
+        "status": "EVIDENCED",
+        "total_tokens": 22000
+      },
+      "wall_time_seconds": 6.3251689579337835
+    },
+    {
+      "group": "one_shot_llm",
+      "model": "gpt-5.6-sol",
+      "model_parameters": {
+        "model_reasoning_effort": "medium"
+      },
+      "output": {
+        "claims": [
+          {
+            "assessment_state": "UNKNOWN",
+            "claim_id": "scope_expansion",
+            "evidence_refs": [
+              "intent",
+              "budget",
+              "surface"
+            ]
+          }
+        ],
+        "schema_version": "quick-investigation-output/v1",
+        "status": "COMPLETE"
+      },
+      "raw_jsonl": null,
+      "repetition": 0,
+      "run_id": "one_shot_llm-SCOPE-008-000",
+      "runner": "codex",
+      "scenario_id": "SCOPE-008",
+      "schema_version": "quick-investigation-run/v1",
+      "suite_id": "aet-scope-eight-cases",
+      "tool_calls": 0,
+      "usage": {
+        "input_tokens": 21927,
+        "output_tokens": 47,
+        "reasoning_tokens": 0,
+        "status": "EVIDENCED",
+        "total_tokens": 21974
+      },
+      "wall_time_seconds": 6.374929624609649
+    },
+    {
+      "group": "one_shot_llm",
+      "model": "gpt-5.6-sol",
+      "model_parameters": {
+        "model_reasoning_effort": "medium"
+      },
+      "output": {
+        "claims": [
+          {
+            "assessment_state": "UNKNOWN",
+            "claim_id": "scope_expansion",
+            "evidence_refs": [
+              "intent",
+              "budget",
+              "surface"
+            ]
+          }
+        ],
+        "schema_version": "quick-investigation-output/v1",
+        "status": "COMPLETE"
+      },
+      "raw_jsonl": null,
+      "repetition": 1,
+      "run_id": "one_shot_llm-SCOPE-008-001",
+      "runner": "codex",
+      "scenario_id": "SCOPE-008",
+      "schema_version": "quick-investigation-run/v1",
+      "suite_id": "aet-scope-eight-cases",
+      "tool_calls": 0,
+      "usage": {
+        "input_tokens": 21488,
+        "output_tokens": 47,
+        "reasoning_tokens": 0,
+        "status": "EVIDENCED",
+        "total_tokens": 21535
+      },
+      "wall_time_seconds": 6.433782542124391
+    },
+    {
+      "group": "pure_rules",
+      "model": null,
+      "model_parameters": {},
+      "output": {
+        "claims": [
+          {
+            "assessment_state": "OUT_OF_SCOPE",
+            "claim_id": "scope_expansion",
+            "evidence_refs": [
+              "intent",
+              "diff"
+            ]
+          }
+        ],
+        "schema_version": "quick-investigation-output/v1",
+        "status": "COMPLETE"
+      },
+      "raw_jsonl": null,
+      "repetition": 0,
+      "run_id": "pure_rules-SCOPE-001-000",
+      "runner": "deterministic",
+      "scenario_id": "SCOPE-001",
+      "schema_version": "quick-investigation-run/v1",
+      "suite_id": "aet-scope-eight-cases",
+      "tool_calls": 0,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "reasoning_tokens": 0,
+        "status": "EVIDENCED",
+        "total_tokens": 0
+      },
+      "wall_time_seconds": 8.335337042808533E-7
+    },
+    {
+      "group": "pure_rules",
+      "model": null,
+      "model_parameters": {},
+      "output": {
+        "claims": [
+          {
+            "assessment_state": "OUT_OF_SCOPE",
+            "claim_id": "scope_expansion",
+            "evidence_refs": [
+              "intent",
+              "diff"
+            ]
+          }
+        ],
+        "schema_version": "quick-investigation-output/v1",
+        "status": "COMPLETE"
+      },
+      "raw_jsonl": null,
+      "repetition": 1,
+      "run_id": "pure_rules-SCOPE-001-001",
+      "runner": "deterministic",
+      "scenario_id": "SCOPE-001",
+      "schema_version": "quick-investigation-run/v1",
+      "suite_id": "aet-scope-eight-cases",
+      "tool_calls": 0,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "reasoning_tokens": 0,
+        "status": "EVIDENCED",
+        "total_tokens": 0
+      },
+      "wall_time_seconds": 5.420297384262085E-7
+    },
+    {
+      "group": "pure_rules",
+      "model": null,
+      "model_parameters": {},
+      "output": {
+        "claims": [
+          {
+            "assessment_state": "OUT_OF_SCOPE",
+            "claim_id": "scope_expansion",
+            "evidence_refs": [
+              "diff"
+            ]
+          }
+        ],
+        "schema_version": "quick-investigation-output/v1",
+        "status": "COMPLETE"
+      },
+      "raw_jsonl": null,
+      "repetition": 0,
+      "run_id": "pure_rules-SCOPE-002-000",
+      "runner": "deterministic",
+      "scenario_id": "SCOPE-002",
+      "schema_version": "quick-investigation-run/v1",
+      "suite_id": "aet-scope-eight-cases",
+      "tool_calls": 0,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "reasoning_tokens": 0,
+        "status": "EVIDENCED",
+        "total_tokens": 0
+      },
+      "wall_time_seconds": 3.7439167499542236E-7
+    },
+    {
+      "group": "pure_rules",
+      "model": null,
+      "model_parameters": {},
+      "output": {
+        "claims": [
+          {
+            "assessment_state": "OUT_OF_SCOPE",
+            "claim_id": "scope_expansion",
+            "evidence_refs": [
+              "diff"
+            ]
+          }
+        ],
+        "schema_version": "quick-investigation-output/v1",
+        "status": "COMPLETE"
+      },
+      "raw_jsonl": null,
+      "repetition": 1,
+      "run_id": "pure_rules-SCOPE-002-001",
+      "runner": "deterministic",
+      "scenario_id": "SCOPE-002",
+      "schema_version": "quick-investigation-run/v1",
+      "suite_id": "aet-scope-eight-cases",
+      "tool_calls": 0,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "reasoning_tokens": 0,
+        "status": "EVIDENCED",
+        "total_tokens": 0
+      },
+      "wall_time_seconds": 2.915039658546448E-7
+    },
+    {
+      "group": "pure_rules",
+      "model": null,
+      "model_parameters": {},
+      "output": {
+        "claims": [],
+        "schema_version": "quick-investigation-output/v1",
+        "status": "COMPLETE"
+      },
+      "raw_jsonl": null,
+      "repetition": 0,
+      "run_id": "pure_rules-SCOPE-003-000",
+      "runner": "deterministic",
+      "scenario_id": "SCOPE-003",
+      "schema_version": "quick-investigation-run/v1",
+      "suite_id": "aet-scope-eight-cases",
+      "tool_calls": 0,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "reasoning_tokens": 0,
+        "status": "EVIDENCED",
+        "total_tokens": 0
+      },
+      "wall_time_seconds": 2.9243528842926025E-7
+    },
+    {
+      "group": "pure_rules",
+      "model": null,
+      "model_parameters": {},
+      "output": {
+        "claims": [],
+        "schema_version": "quick-investigation-output/v1",
+        "status": "COMPLETE"
+      },
+      "raw_jsonl": null,
+      "repetition": 1,
+      "run_id": "pure_rules-SCOPE-003-001",
+      "runner": "deterministic",
+      "scenario_id": "SCOPE-003",
+      "schema_version": "quick-investigation-run/v1",
+      "suite_id": "aet-scope-eight-cases",
+      "tool_calls": 0,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "reasoning_tokens": 0,
+        "status": "EVIDENCED",
+        "total_tokens": 0
+      },
+      "wall_time_seconds": 1.6763806343078613E-7
+    },
+    {
+      "group": "pure_rules",
+      "model": null,
+      "model_parameters": {},
+      "output": {
+        "claims": [
+          {
+            "assessment_state": "OUT_OF_SCOPE",
+            "claim_id": "scope_expansion",
+            "evidence_refs": [
+              "initial_intent",
+              "diff"
+            ]
+          }
+        ],
+        "schema_version": "quick-investigation-output/v1",
+        "status": "COMPLETE"
+      },
+      "raw_jsonl": null,
+      "repetition": 0,
+      "run_id": "pure_rules-SCOPE-004-000",
+      "runner": "deterministic",
+      "scenario_id": "SCOPE-004",
+      "schema_version": "quick-investigation-run/v1",
+      "suite_id": "aet-scope-eight-cases",
+      "tool_calls": 0,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "reasoning_tokens": 0,
+        "status": "EVIDENCED",
+        "total_tokens": 0
+      },
+      "wall_time_seconds": 1.2479722499847412E-7
+    },
+    {
+      "group": "pure_rules",
+      "model": null,
+      "model_parameters": {},
+      "output": {
+        "claims": [
+          {
+            "assessment_state": "OUT_OF_SCOPE",
+            "claim_id": "scope_expansion",
+            "evidence_refs": [
+              "initial_intent",
+              "diff"
+            ]
+          }
+        ],
+        "schema_version": "quick-investigation-output/v1",
+        "status": "COMPLETE"
+      },
+      "raw_jsonl": null,
+      "repetition": 1,
+      "run_id": "pure_rules-SCOPE-004-001",
+      "runner": "deterministic",
+      "scenario_id": "SCOPE-004",
+      "schema_version": "quick-investigation-run/v1",
+      "suite_id": "aet-scope-eight-cases",
+      "tool_calls": 0,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "reasoning_tokens": 0,
+        "status": "EVIDENCED",
+        "total_tokens": 0
+      },
+      "wall_time_seconds": 2.0954757928848267E-7
+    },
+    {
+      "group": "pure_rules",
+      "model": null,
+      "model_parameters": {},
+      "output": {
+        "claims": [
+          {
+            "assessment_state": "OUT_OF_SCOPE",
+            "claim_id": "unrelated_dependency",
+            "evidence_refs": [
+              "intent",
+              "manifest"
+            ]
+          }
+        ],
+        "schema_version": "quick-investigation-output/v1",
+        "status": "COMPLETE"
+      },
+      "raw_jsonl": null,
+      "repetition": 0,
+      "run_id": "pure_rules-SCOPE-005-000",
+      "runner": "deterministic",
+      "scenario_id": "SCOPE-005",
+      "schema_version": "quick-investigation-run/v1",
+      "suite_id": "aet-scope-eight-cases",
+      "tool_calls": 0,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "reasoning_tokens": 0,
+        "status": "EVIDENCED",
+        "total_tokens": 0
+      },
+      "wall_time_seconds": 1.6670674085617065E-7
+    },
+    {
+      "group": "pure_rules",
+      "model": null,
+      "model_parameters": {},
+      "output": {
+        "claims": [
+          {
+            "assessment_state": "OUT_OF_SCOPE",
+            "claim_id": "unrelated_dependency",
+            "evidence_refs": [
+              "intent",
+              "manifest"
+            ]
+          }
+        ],
+        "schema_version": "quick-investigation-output/v1",
+        "status": "COMPLETE"
+      },
+      "raw_jsonl": null,
+      "repetition": 1,
+      "run_id": "pure_rules-SCOPE-005-001",
+      "runner": "deterministic",
+      "scenario_id": "SCOPE-005",
+      "schema_version": "quick-investigation-run/v1",
+      "suite_id": "aet-scope-eight-cases",
+      "tool_calls": 0,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "reasoning_tokens": 0,
+        "status": "EVIDENCED",
+        "total_tokens": 0
+      },
+      "wall_time_seconds": 2.0954757928848267E-7
+    },
+    {
+      "group": "pure_rules",
+      "model": null,
+      "model_parameters": {},
+      "output": {
+        "claims": [
+          {
+            "assessment_state": "OUT_OF_SCOPE",
+            "claim_id": "scope_expansion",
+            "evidence_refs": [
+              "diff"
+            ]
+          }
+        ],
+        "schema_version": "quick-investigation-output/v1",
+        "status": "COMPLETE"
+      },
+      "raw_jsonl": null,
+      "repetition": 0,
+      "run_id": "pure_rules-SCOPE-006-000",
+      "runner": "deterministic",
+      "scenario_id": "SCOPE-006",
+      "schema_version": "quick-investigation-run/v1",
+      "suite_id": "aet-scope-eight-cases",
+      "tool_calls": 0,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "reasoning_tokens": 0,
+        "status": "EVIDENCED",
+        "total_tokens": 0
+      },
+      "wall_time_seconds": 2.076849341392517E-7
+    },
+    {
+      "group": "pure_rules",
+      "model": null,
+      "model_parameters": {},
+      "output": {
+        "claims": [
+          {
+            "assessment_state": "OUT_OF_SCOPE",
+            "claim_id": "scope_expansion",
+            "evidence_refs": [
+              "diff"
+            ]
+          }
+        ],
+        "schema_version": "quick-investigation-output/v1",
+        "status": "COMPLETE"
+      },
+      "raw_jsonl": null,
+      "repetition": 1,
+      "run_id": "pure_rules-SCOPE-006-001",
+      "runner": "deterministic",
+      "scenario_id": "SCOPE-006",
+      "schema_version": "quick-investigation-run/v1",
+      "suite_id": "aet-scope-eight-cases",
+      "tool_calls": 0,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "reasoning_tokens": 0,
+        "status": "EVIDENCED",
+        "total_tokens": 0
+      },
+      "wall_time_seconds": 2.076849341392517E-7
+    },
+    {
+      "group": "pure_rules",
+      "model": null,
+      "model_parameters": {},
+      "output": {
+        "claims": [
+          {
+            "assessment_state": "POSSIBLE_SCOPE_EXPANSION",
+            "claim_id": "scope_expansion",
+            "evidence_refs": [
+              "diff"
+            ]
+          }
+        ],
+        "schema_version": "quick-investigation-output/v1",
+        "status": "COMPLETE"
+      },
+      "raw_jsonl": null,
+      "repetition": 0,
+      "run_id": "pure_rules-SCOPE-007-000",
+      "runner": "deterministic",
+      "scenario_id": "SCOPE-007",
+      "schema_version": "quick-investigation-run/v1",
+      "suite_id": "aet-scope-eight-cases",
+      "tool_calls": 0,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "reasoning_tokens": 0,
+        "status": "EVIDENCED",
+        "total_tokens": 0
+      },
+      "wall_time_seconds": 1.6763806343078613E-7
+    },
+    {
+      "group": "pure_rules",
+      "model": null,
+      "model_parameters": {},
+      "output": {
+        "claims": [
+          {
+            "assessment_state": "POSSIBLE_SCOPE_EXPANSION",
+            "claim_id": "scope_expansion",
+            "evidence_refs": [
+              "diff"
+            ]
+          }
+        ],
+        "schema_version": "quick-investigation-output/v1",
+        "status": "COMPLETE"
+      },
+      "raw_jsonl": null,
+      "repetition": 1,
+      "run_id": "pure_rules-SCOPE-007-001",
+      "runner": "deterministic",
+      "scenario_id": "SCOPE-007",
+      "schema_version": "quick-investigation-run/v1",
+      "suite_id": "aet-scope-eight-cases",
+      "tool_calls": 0,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "reasoning_tokens": 0,
+        "status": "EVIDENCED",
+        "total_tokens": 0
+      },
+      "wall_time_seconds": 1.6670674085617065E-7
+    },
+    {
+      "group": "pure_rules",
+      "model": null,
+      "model_parameters": {},
+      "output": {
+        "claims": [],
+        "schema_version": "quick-investigation-output/v1",
+        "status": "COMPLETE"
+      },
+      "raw_jsonl": null,
+      "repetition": 0,
+      "run_id": "pure_rules-SCOPE-008-000",
+      "runner": "deterministic",
+      "scenario_id": "SCOPE-008",
+      "schema_version": "quick-investigation-run/v1",
+      "suite_id": "aet-scope-eight-cases",
+      "tool_calls": 0,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "reasoning_tokens": 0,
+        "status": "EVIDENCED",
+        "total_tokens": 0
+      },
+      "wall_time_seconds": 4.153698682785034E-7
+    },
+    {
+      "group": "pure_rules",
+      "model": null,
+      "model_parameters": {},
+      "output": {
+        "claims": [],
+        "schema_version": "quick-investigation-output/v1",
+        "status": "COMPLETE"
+      },
+      "raw_jsonl": null,
+      "repetition": 1,
+      "run_id": "pure_rules-SCOPE-008-001",
+      "runner": "deterministic",
+      "scenario_id": "SCOPE-008",
+      "schema_version": "quick-investigation-run/v1",
+      "suite_id": "aet-scope-eight-cases",
+      "tool_calls": 0,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "reasoning_tokens": 0,
+        "status": "EVIDENCED",
+        "total_tokens": 0
+      },
+      "wall_time_seconds": 2.505257725715637E-7
+    }
+  ]
+}

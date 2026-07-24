@@ -1,0 +1,12 @@
+{
+  "schema_version": "quick-investigation-annotations/v1",
+  "annotations": [
+    {
+      "run_id": "investigated_grounded-SCOPE-001-000",
+      "manual_review_seconds": 42.5,
+      "user_understanding": "CORRECT",
+      "reviewer": "human-reviewer-id",
+      "notes": "Replace this example with an actual timed review and comprehension check."
+    }
+  ]
+}

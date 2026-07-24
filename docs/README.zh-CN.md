@@ -8,34 +8,280 @@
 
 **[English](../README.md) · [简体中文](README.zh-CN.md)**
 
-> **不要再相信 Coding Agent 口头说“测试通过”，让它提交可复核证据。**
+> **AET 让 AI 编码审查既有调查能力，也不允许模型编造证据。**
 
-Agent 可以运行命令并展示一份绿色日志。但只要 Workspace 随后发生变化，这份日志就
-不再能证明当前代码。AET 记录精确命令、退出状态、声明的 Artifact、人的 Intent 和
-Git Workspace Snapshot，并在 Handoff 或 Release 前重新检查 Evidence 是否仍然 Fresh。
+AI 编码 Agent 说任务已经修好、测试已经通过。AET 帮你回答三个具体问题：
+
+1. 本次改动是否与用户任务相关？
+2. 声称的验证是否真的在当前 Workspace 执行？
+3. 这份 Proof 现在是否仍能代表当前代码？
+
+工具产生可复现事实；宿主 LLM 可以恢复 Intent、提出竞争假设、调用授权工具、检查反方解释，
+并形成有条件的工程判断。AET 校验证据引用、权限、结论强度和预算。最终下一步由人决定。
 
 ```text
-Agent Claim → 精确执行证据 → 实时 Freshness 检查 → Human Decision
+确定性事实 → 有界 LLM 调查 → Grounding 校验 → 人工决定
 ```
 
-AET 是一个本地、MIT License 的 CLI 和 Portable Skill，可用于 Codex、Claude Code、
-Cursor 及其他 Coding Agent。它不替代 Agent、测试或 CI，也不会把缺失证据解释成通过。
+## 四个 Quick Skill
+
+每个 Skill 只回答一个问题，输出一个有界结果，然后停止。
+
+| Skill | 使用时机 | 主要结果 |
+| --- | --- | --- |
+| `/aet-check` | Agent 指令、Skill 或完成规则可能危险、矛盾或不可验证 | 最多五个有证据的问题 |
+| `/aet-scope` | 需要判断 Diff 是否符合任务，包括必要的跨模块改动 | 每组改动的范围结论和反方解释 |
+| `/aet-proof` | 需要现在执行命令并与当前 Workspace 绑定 | 一个最小 JSON Proof Receipt |
+| `/aet-fresh` | 需要判断旧 Proof 是否仍然有效 | 精确匹配、相关文件、Artifact、环境变化或 Unknown |
+
+可移植宿主 Skill 位于：
+[`skills/aet-check`](../skills/aet-check)、
+[`skills/aet-scope`](../skills/aet-scope)、
+[`skills/aet-proof`](../skills/aet-proof) 和
+[`skills/aet-fresh`](../skills/aet-fresh)。确定性 CLI 用法：
+
+```bash
+aet quick check .
+aet quick scope . --base main --intent aet.intent.json
+aet quick proof --output .aet/proofs/auth.json \
+  --relevant-path src/auth/session.py -- pytest tests/auth
+aet quick fresh --proof .aet/proofs/auth.json
+```
+
+旧版 `aet audit`、`review`、`trace` 和 `evidence receipt` 在整个 1.x 周期保持兼容；
+它们属于高级原生命令，不再是 Quick 默认产品入口。
+
+## 30 秒看懂
+
+### 调查范围，但不把路径差异直接当成越界
+
+```bash
+aet quick scope . --base main --intent aet.intent.json --format json
+```
+
+如果修复登录问题时修改了支付文件，确定性预检只记录路径不匹配，**不会**直接判定越界。
+宿主继续调查直接调用、共享接口、测试、后续授权和合理反方假设，然后选择：
+
+```text
+IN_SCOPE
+JUSTIFIED_EXPANSION
+POSSIBLE_SCOPE_EXPANSION
+OUT_OF_SCOPE
+INSUFFICIENT_INTENT
+```
+
+### 记录 Proof，然后发现漂移
+
+```bash
+aet quick proof --output .aet/proofs/auth.json \
+  --relevant-path src/auth/session.py -- pytest tests/auth
+
+# 修改 src/auth/session.py
+
+aet quick fresh --proof .aet/proofs/auth.json
+```
+
+历史命令结果不会被改写，但当前适用性变为 `RELEVANT_FILES_CHANGED`。AET 建议只重跑受影响的
+Proof，而不是继续把旧绿色日志当成当前代码的证明。
+
+仓库还提供可运行的 [Stale Proof Demo](../examples/stale-proof-demo.sh) 和
+[中文完整案例](case-studies/stale-proof.zh-CN.md)。
+
+## 一个日常 Coding 示例
+
+以下为说明性示例，不是真实仓库测量结果。
+
+你对 Agent 说：
+
+> 修复偶发的登录超时，不要修改支付业务，也不要新增生产依赖。
+
+Agent 实际修改：
+
+```text
+src/auth/session.py
+src/cache/session_cache.py
+src/payment/order.py
+tests/auth/test_session.py
+```
+
+没有 AET 时，审查往往退化成两种简单判断：要么认为 `auth/` 外的文件都越界，要么直接相信
+Agent 所说的“共享缓存和支付改动都是必要的”。`/aet-scope` 会把每组改动作为待调查假设：
+
+```text
+src/auth/session.py          IN_SCOPE
+src/cache/session_cache.py   JUSTIFIED_EXPANSION
+src/payment/order.py         POSSIBLE_SCOPE_EXPANSION
+tests/auth/test_session.py   IN_SCOPE
+```
+
+缓存结论引用登录调用路径和聚焦回归测试；支付结论会记录合理反方解释——例如共享接口是否要求
+同步修改——以及已检查的引用为什么没有支持它。结果还会明确保留“其他会话可能追加过授权”
+这一不确定性，并建议拆出支付整理或补充授权。随后 `/aet-scope` 停止，不会自行跑测试或改代码。
+
+如果你决定验证修复，`/aet-proof` 会记录真实命令与 Workspace 绑定。Agent 后续再修改
+`session.py` 时，`/aet-fresh` 会把适用性改为 `RELEVANT_FILES_CHANGED`，但不会改写历史退出码。
+
+## 引入 AET 后有什么不同
+
+| 日常场景 | 没有 AET | 使用 AET Quick |
+| --- | --- | --- |
+| 修复跨出原目录 | 路径规则容易误判，或只能相信 Agent 的解释 | 调查共享改动的必要性，让无依据扩张保持可见 |
+| “测试已经通过” | 一句话或旧日志很容易被重复引用 | 记录 argv、退出码、Workspace、相关文件、Artifact 和环境绑定 |
+| 测试后代码继续变化 | 旧结果看起来仍是绿色 | 适用性变为精确的 Freshness 状态 |
+| LLM 审查意见 | 事实、推断、反方解释和建议混在一起 | 分层输出，并引用已记录 Evidence |
+| 调查不断扩大 | Agent 可能持续读取和调用工具 | 预算与停止条件返回有界结果 |
+
+| AET Quick 能做 | AET Quick 不能做 |
+| --- | --- |
+| 记录可复现的 Git、命令、哈希和 Freshness 事实 | 证明所有代码绝对正确 |
+| 调查改动是否是完成任务所必需 | 仅凭路径差异直接判定越界 |
+| 执行并绑定用户明确要求的验证命令 | 把未执行测试写成通过 |
+| 保留冲突、缺失事实与 `UNKNOWN` | 隐藏已记录反证或生成综合 Trust Score |
+| 建议最小下一步 | 自动修复、Merge、Push、Publish 或进入 AET Lab |
+
+## 可量化的取舍，不是 Trust Score
+
+可选的 [Quick 调查对照评测](../eval/quick-investigation/README.md)按设计要求，在八个合成 Scope
+场景中比较四种审查模式。已追踪的
+[v1.13.0 结果](../eval/quick-investigation/results/v1.13.0.json)固定使用
+`gpt-5.6-sol`、`medium` Reasoning，每个场景重复 2 次，每组 16 个 Run：
+
+| 模式 | 有效召回 | 错误发现占比 | 平均工具调用 | 平均耗时 | 平均 Token |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| 纯规则 | 60% | 50.0% | 0.00 | <0.001 秒 | 0 |
+| 一次性 LLM | 80% | 38.5% | 0.00 | 7.33 秒 | 21,702 |
+| 调查式 AET | 90% | 25.0% | 1.63 | 18.32 秒 | 64,147 |
+| Grounding-aware 调查 + 项目内 Validator | 90% | 25.0% | 0.75 | 14.84 秒 | 38,831 |
+
+结果把取舍直接展示出来：在这组小型场景中，有界调查找到了更多预期问题，错误 Claim 在全部
+已输出 Claim 中的占比更低，但耗时和
+Token 都高于一次性审查。Grounding 在本次样本中没有拒绝 Claim，因此没有改善上述比率；
+它的拒绝路径由确定性单元测试单独证明。由于没有实际计时的人工标注，人工复核时间与用户理解
+继续保持 `UNKNOWN`。这 64 个 Run 是由可重复 Harness 产生的一次有界 Lab 测量，不是通用
+准确率声明，也不授权发布代码。两个调查组使用不同的 Agent 配置，因此不能把它们的成本差异
+单独归因于 Validator。已发布、经过隐私检查的规范化 Run 可以独立重新评分；私有 Codex JSONL
+不会发布。
+
+## 架构
+
+![AET Quick 证据调查架构](assets/aet-quick-architecture-zh-CN.png)
+
+同一份已核对架构还提供[动态 SVG](assets/aet-quick-architecture-zh-CN.svg)。可以观看
+[约 9 秒中文介绍视频](assets/aet-quick-intro-zh-CN.webm)或
+[English introduction](assets/aet-quick-intro-en.webm)。[媒体清单](assets/aet-quick-media-manifest.json)
+用内容哈希绑定双语架构图和视频，也记录视频生成时测得的 VP9 尺寸、帧数和时长；常规测试核对
+文件字节与哈希，但不会重新解码视频。
+
+这条链路刻意分离六种职责：
+
+1. 四个 Quick Skill 限定问题，输出结果后停止；
+2. CLI 记录确定性的 Git、文件、规则、命令、哈希和 Freshness 事实；
+3. 宿主 LLM 恢复 Intent、提出竞争假设并选择授权工具；
+4. Investigation Ledger 绑定问题、工具结果、观察、假设影响、决策价值和成本；
+5. Grounding Validator 在渲染前校验已记录引用、事实、结论强度、权限和声明的预算用量；
+6. 叙事层分开呈现已确认事实、工程判断、反方解释、不确定性、位置和最小下一步。
+
+`AET Lab` 位于独立的显式启用边界之后。Quick 不会自动进入 Lab。
+
+只有 `/aet-proof` 会由 AET 自身执行命令并生成 Receipt。其他本地或 MCP 工具结果由 Agent
+Host 写入 Ledger：规范化 Payload 的哈希可以发现后续篡改，但不能独立证明外部 Host 确实
+执行过调用。Host 必须保留该 Provenance，并在渲染前调用
+`aet.investigation.validate_investigated_finding`；否则结果只能保持为
+`HYPOTHESIS`/`UNKNOWN`。
+
+## 为什么约束 LLM，而不是禁用 LLM
+
+纯路径规则无法判断共享缓存改动是否是修复登录问题所必需；完全自由的 LLM 又可能在没有依据时
+写出很有说服力的结论。AET 同时使用两者，并严格分配权限：
+
+| 能力 | 确定性运行时 | 宿主 LLM |
+| --- | --- | --- |
+| Git Diff、哈希、退出码、Artifact、Freshness 事实 | 负责 | 不得改写 |
+| Intent 恢复与竞争假设 | 提供来源 | 负责，但必须标注来源 |
+| 工具选择 | 执行权限与预算校验 | 规划授权调用 |
+| 工程判断 | 校验 Grounding | 有条件负责 |
+| Merge、Publish、Adopt、Release 权限 | 不授予 | 不授予 |
+
+Finding 来源保持显式：
+
+- `DETERMINISTIC_FINDING`：由规则、命令或确定性比较直接产生；
+- `INVESTIGATED_FINDING`：完成可追溯工具调查后形成；
+- `HYPOTHESIS`：继续调查的方向，绝不能直接成为阻断结果。
+
+Evidence 权威状态继续使用 `PASS`、`FAIL`、`UNKNOWN`、`NOT_APPLICABLE`。语义支持强度单独记录为
+`CONFIRMED`、`SUPPORTED`、`SUPPORTED_WITH_LIMITS`、`CONFLICTED`、`UNSUPPORTED`、
+`UNKNOWN` 或 `NOT_APPLICABLE`。自然语言叙事不能覆盖机器事实。
+
+## 命令边界与预算
+
+| Quick Skill | 默认边界 | 默认预算 |
+| --- | --- | --- |
+| `/aet-check` | 读取 Agent 资产和相关配置；不执行项目、不扫完整历史、不访问远端、不写文件 | 30 秒、3 轮、≤2 次 LLM、≤6 次工具、≤1 次高成本调用、≤5 个问题 |
+| `/aet-scope` | 检查 Intent 与当前 Diff；不写代码；最多一个能区分假设的低成本测试 | 45 秒、4 轮、≤2 次 LLM、≤8 次工具、≤2 次授权远端只读、≤1 次高成本调用 |
+| `/aet-proof` | 只执行显式 argv；默认唯一写入是用户要求的 JSON Receipt | 取决于命令；仅在定位命令时最多 1 次 LLM |
+| `/aet-fresh` | 比较指定 Proof；不执行、不联网、不写入 | 3 秒，默认 0 次 LLM |
+
+已追踪的 [v1.13.0 本地性能证据](../eval/quick-performance/results/v1.13.0.json)
+在当前 253 个已追踪文件的仓库中保留每个确定性命令 30 个原始样本：Check P95 0.622 秒、
+Scope P95 0.059 秒、Fresh P95 0.037 秒。[Harness 与限制](../eval/quick-performance/README.md)
+使结果可在本地重算；它不是跨仓库或模型服务延迟声明。
+
+当主导解释及合理反方解释已被检查、新证据不再改变动作、连续两次调用没有决策价值、预算耗尽、
+需要新增授权、只有用户能补充事实或工具不可用时，调查停止。
+
+预算耗尽时，AET 返回有界结果并说明未检查范围，不会静默升级为全仓库审计。
+
+机器合同详见：
+[命令边界](command-boundaries.md)、
+[调查模型](investigation-model.md) 和
+[Quick/Lab 边界](quick-vs-lab-boundary.md)。
+
+## 语言行为
+
+语言只改变面向人的叙事，不改变状态 Token、Evidence Reference、哈希或 Schema 字段。
+
+- 用户输入斜杠式命令并使用中文提问时，宿主使用自然的简体中文解释，代码和必要技术词汇保留英文；
+- 其他情况一律使用英文。
+
+中英文叙事必须引用完全相同的事实和 `result_ref`。切换语言不能重新触发调查，也不能升级结论。
+
+## 最小 Proof 与 Freshness
+
+`/aet-proof` 记录：
+
+- 精确脱敏 argv 及其摘要；
+- cwd、起止时间、退出码和日志摘要；
+- Git/Worktree Snapshot；
+- 声明的相关文件哈希；
+- Python/Platform 标识和依赖 Lockfile 哈希；
+- 声明的 Artifact 哈希；
+- 有界覆盖声明。
+
+`/aet-fresh` 返回：
+
+```text
+EXACT_MATCH
+RELEVANT_FILES_MATCH
+HEAD_CHANGED_RELEVANT_FILES_MATCH
+RELEVANT_FILES_CHANGED
+ARTIFACT_CHANGED
+ENVIRONMENT_CHANGED
+UNKNOWN
+```
+
+旧 Trace 与 Canonical Evidence Report 继续可读。旧证据缺少相关文件或环境绑定时，AET 保留
+Unknown，不会伪造并不存在的精确度。
 
 ## 真实仓库审查案例库
 
-AET 现在内置三个公开 Agent 仓库的 commit 锁定审查案例。每个案例只扫描本地仓库中
-明确限定的范围，运行确定性规则，并生成带证据位置的工程观察、HTML 报告与 SVG
-视图；不提供项目评分或排名。
+Repository Audit Showcase 继续作为受支持的 **AET Lab** 案例库，但不属于 Quick 默认流程。
+它包含三个公开 Agent 仓库的 commit 锁定、纯静态审查：
 
-| 案例 | 有界审查展示内容 | 生成报告 |
-| --- | --- | --- |
-| SWE-agent | Agent 循环、工具交互、Trajectory 与完成证据 | [简体中文](../repository-audit-showcase/reports/swe-agent/audit-result/zh-CN/audit-report.md) · [English](../repository-audit-showcase/reports/swe-agent/audit-result/en/audit-report.md) |
-| Google ADK | Agent 架构、工具治理与评估反馈 | [简体中文](../repository-audit-showcase/reports/google-adk/audit-result/zh-CN/audit-report.md) · [English](../repository-audit-showcase/reports/google-adk/audit-result/en/audit-report.md) |
-| OpenHands | 应用编排、运行隔离与外部 Agent 核心边界 | [简体中文](../repository-audit-showcase/reports/openhands/audit-result/zh-CN/audit-report.md) · [English](../repository-audit-showcase/reports/openhands/audit-result/en/audit-report.md) |
-
-![OpenHands 有界 Agent 流程](../repository-audit-showcase/reports/openhands/audit-result/zh-CN/diagrams/agent-flow.svg)
-
-针对与锁定版本一致的本地 checkout 运行：
+| 案例 | 有界审查范围 | Evidence 结果 | 报告 |
+| --- | --- | --- | --- |
+| SWE-agent | Agent 循环、工具交互、Trajectory、完成证据 | 4 个 `PASS`、1 个 `UNKNOWN` | [简体中文](../repository-audit-showcase/reports/swe-agent/audit-result/zh-CN/audit-report.md) · [English](../repository-audit-showcase/reports/swe-agent/audit-result/en/audit-report.md) |
+| Google ADK | Agent 架构、工具治理、评估反馈 | 5 个 `PASS` | [简体中文](../repository-audit-showcase/reports/google-adk/audit-result/zh-CN/audit-report.md) · [English](../repository-audit-showcase/reports/google-adk/audit-result/en/audit-report.md) |
+| OpenHands | 应用编排、运行隔离、外部 Agent-core 边界 | 4 个 `PASS`、1 个 `UNKNOWN` | [简体中文](../repository-audit-showcase/reports/openhands/audit-result/zh-CN/audit-report.md) · [English](../repository-audit-showcase/reports/openhands/audit-result/en/audit-report.md) |
 
 ```bash
 aet audit swe-agent --repo /path/to/SWE-agent
@@ -43,460 +289,72 @@ aet audit google-adk --repo /path/to/adk-python
 aet audit openhands --repo /path/to/OpenHands
 ```
 
-每次运行在 `audit-result/` 中写出两项共享的机器产物，并在 `en/` 与 `zh-CN/`
-下各生成五项人类可读产物：仓库摘要、Markdown 和 HTML 报告，以及两张 SVG 图。
-15 分钟预算从本地 checkout 与 AET
-已准备完毕后开始计算。AET 不执行上游代码或测试，不安装上游依赖，不把源码正文
-复制进报告，也不允许 LLM 创建或改变 Finding。`UNKNOWN` 保持显式，生成报告必须
-先经维护者审核才能发布。详见
+每次运行只扫描锁定的本地 Checkout，不执行上游代码或测试，不安装上游依赖，不复制源码正文，
+也不允许 LLM 创建或修改 Showcase Finding。每个案例写出两个共享机器产物，并为 `en/` 与
+`zh-CN/` 各生成五项经过审核的人类可读产物。详见
 [范围与发布边界](../repository-audit-showcase/docs/scope-and-publication.md)。
+这些状态统计描述的是有界 Evidence Contract，不是对上游仓库的综合质量评分。
 
-## 运行 Stale Proof Demo
+## AET Quick 与 AET Lab
 
-安装当前 Release，然后运行仓库中的 Demo：
-
-```bash
-uv tool install https://github.com/AdvancingTitans/agent-engineering-toolkit/releases/download/v1.12.0/agent_engineering_toolkit-1.12.0-py3-none-any.whl
-git clone https://github.com/AdvancingTitans/agent-engineering-toolkit.git
-cd agent-engineering-toolkit
-./examples/stale-proof-demo.sh
-```
-
-大约 60 秒内，它会记录一次真实通过的测试，在不重新执行测试的情况下修改 Workspace，
-然后再次检查同一份 Evidence：
-
-```text
-freshness: EXACT_MATCH
-# Workspace 发生变化
-freshness: HEAD_MATCH_WORKTREE_DIFFERS
-```
-
-历史命令确实通过了；AET 报告的是 Evidence 已经 Stale，而不是改写历史或继续相信旧日志。
-完整过程参见 [Stale Proof Case Study](case-studies/stale-proof.md)。
-
-## 从一个 Claim 开始
-
-每个任务只启用能回答当前问题的最小能力面：
-
-| 需要验证的 Claim | Command | 结果 |
-| --- | --- | --- |
-| “这些 Agent 指令与 Skills 可用。” | `aet audit . --strict` | 带 Source Evidence 的 Findings |
-| “这个 Diff 没超出批准范围。” | `aet review . --base main --intent aet.intent.json` | Path 与 Proof Contract Review |
-| “这条命令在这些代码字节上运行过。” | `aet trace … -- <argv>` | Hash-bound Trace Evidence |
-| “附带的 Proof 仍匹配当前 Workspace。” | `aet evidence receipt --report <trace.json>` | 实时 Freshness State |
-
-AET 默认应保持 **Off**。只在高价值 PR、多 Agent Handoff、Release 或安全敏感变更中，
-当某个 Claim 需要 Portable Proof 时启用。普通修改继续使用项目原有测试与 CI。
-
-## 参与建设 AET
-
-最合适的第一份贡献不要求先理解整个 Control Plane：
-
-- 用一个小型公开 Fixture 复现 False Positive 或 False Negative；
-- 在公开仓库 Dogfood AET，并贡献脱敏 Case Study；
-- 为 Codex、Claude Code、Cursor 或 GitHub Actions 添加最小 Integration Recipe。
-
-可以从 [`good first issue`](https://github.com/AdvancingTitans/agent-engineering-toolkit/issues/1)
-开始，或阅读 [CONTRIBUTING](../CONTRIBUTING.md)。AET 1.x 的兼容承诺见
-[Stability Contract](stability.md)。
-
-## 先看结果，而不是口号
-
-v1.9 Release 使用真实 Codex CLI `0.144.1`，在三个字节隔离的 Suite 上执行发布门禁；
-每套均包含 6 组 baseline/candidate 配对 rollout。
-
-| 真实宿主发布门禁 | Baseline | 受限 Candidate | 绝对提升 | Infra 失败 | 精确配对 p |
-| --- | ---: | ---: | ---: | ---: | ---: |
-| Core | 0 / 6 | **6 / 6** | +100 pp | 0 | 0.03125 |
-| Validation | 0 / 6 | **6 / 6** | +100 pp | 0 | 0.03125 |
-| Held-out | 0 / 6 | **6 / 6** | +100 pp | 0 | 0.03125 |
-| **连续成功** | **0 / 18** | **18 / 18** | **+100 pp** | **0** | — |
-
-18 次 Candidate 成功运行全部只执行了 1 条授权的 `aet trace` 命令；Candidate 被限制在
-676 字符的 edit budget 内，无权修改 Task Suite 或 evaluator，最终 Adoption 仍属于人。
-
-这是一项 AET 自身 Release Gate 案例，不是用一个小任务宣称模型普遍优于其他产品。
-它验证的是 AET 最核心的工程能力：**治理资产可以在隔离、统计、provenance 绑定且人工受控的
-评估中，稳定改善真实 Agent 行为。** 可复现 Suite 与 Producer 位于
-[`eval/real-agent`](../eval/real-agent) 和
-[真实宿主 Workflow](../.github/workflows/real-host-gate.yml)。
-
-这也是该受限 Candidate 的历史证据，而不是每个 AET 软件版本的通用发布前置。Runtime 与
-确定性 Evidence 变更使用确定性 CI；完整配对 Real Host Gate 只用于治理资产 Adoption，或新的
-真实 Agent 行为声明。
-
-v1.11 在不放松上述边界的前提下消除可避免成本，并由测试与 Workflow 契约直接约束：
-
-| 成本面 | v1.10 | v1.11 |
-| --- | ---: | ---: |
-| 通用 Release Rollout 常量 | 3 Suite × 6 Pair × 2 = 36 | 取消；由风险、声明与功效规划 |
-| 无效 Candidate 的 Host 调用 | 仍可能执行 Suite | **0 次** |
-| 完全一致的 Observed Replay | 重新执行 | 显式 `--resume` 后 **0 次重复调用** |
-| Tournament 最终候选 Core/Validation | 执行两次 | **精确绑定后只执行一次** |
-| CI pytest 次数 | 3 次 | **1 次全量 Suite** |
-| Release 重建与重测 | 独立 Build + 重复 Test | **提升同一份 CI Artifact** |
-| Portable 根 Skill | 262 行 / 14,401 bytes | **99 行 / 5,926 bytes**，Reference 按需加载 |
-
-成功 Candidate 的样本要求不会被盲目减少：声明效应较小或风险较高时，新 Plan 可能要求超过
-36 次。真正无损的节省来自 `NOT_APPLICABLE`、确定性预检、精确复用、合法的有效/无效边界，
-以及消除重复工程工作。
-
-## AET 为什么不同
-
-很多 Agent 质量方案从 transcript 或分数开始；AET 从信任边界开始。
-
-| 工程问题 | 常见捷径 | AET 的契约 |
-| --- | --- | --- |
-| Proof | Agent 说“测试通过”。 | `trace` 记录精确 argv、退出码、日志、声明 Artifact 与 proof binding。 |
-| Freshness | 一份历史通过日志被永久当成有效。 | “命令曾成功”与“当前工作区仍匹配”是两个独立事实。 |
-| 不确定性 | 缺失证据被压进一个分数。 | `UNKNOWN` 是一等状态，也是阻断发布的验证缺口。 |
-| Diagnosis | 让模型猜根因。 | 显式 Policy 把问题现象映射到受限 owner/repair surface，且不改写源状态。 |
-| Improvement | Candidate 改 Prompt 后自己给自己打分。 | Candidate 写入面、Evaluator、Held-out、证据语义和 Adoption 权限彼此隔离。 |
-| Reliability | 跑通一次就算成功。 | 同时报告 any-success、all-success、Wilson 95% 与配对精确 McNemar。 |
-| Privacy | 默认把原始对话变成数据湖。 | 原始 rollout 保持私有；只有去标识的 Evidence Only 记录可以流转。 |
-| Authority | Optimizer 通过后自动部署自己。 | Gate → Stage → 人工审阅 → 显式 `adopt --yes`；绝不自动提交、推送或发布。 |
-
-这是一种有意设计的非对称权限：Agent 可以执行工作，但不能给自己授予 Evidence、重定义
-`PASS`、替换 evaluator，或批准自己的 Adoption。
-
-## 架构
-
-![AET evidence-driven Agent 工程控制平面](assets/aet-architecture-zh-cn.png)
-
-可离线编辑的源文件：[中文 HTML](assets/aet-architecture-zh-cn.html) ·
-[English HTML](assets/aet-architecture-en.html)。
-
-### 动态架构
-
-下面的聚焦动画把完整控制平面压缩为宏观证据流，用于快速理解系统边界；它不会替代上方
-静态全景图中的交付、来源、质量与治理细节。
-
-![AET 动态证据流](assets/aet-architecture-dark-luxury-zh-cn.gif)
-
-[English animation](assets/aet-architecture-dark-luxury.gif) ·
-[语义 SVG 源文件](assets/aet-architecture-dark-luxury-zh-cn.svg)
-
-这张图按从上到下阅读：人保留范围约定和最终采用权；外部编程 Agent 在仓库中工作，
-调用项目原有的测试、CI 等工具；AET 作为本地控制层记录并评估由此产生的证据。
-它不是另一个 Agent Runtime，也不替代测试和 CI。
-
-整个架构进一步把三条不能合并成自治循环的链路显式分开，并保留独立的本地来源记录：
-
-1. **交付证据链。** Audit、Review 与 Trace 报告投影为 Evidence IR，并可编译为
-   Evidence Pack。Component 载入、Finding 状态、Proof 绑定与 Snapshot 绑定始终是不同事实。
-   可选 Run Manifest 只附加既有产物并推进显式生命周期，不负责执行。
-2. **独立 Provenance 链。** Context Manifest、Decision Ledger 与 Evolve 仓库考古各自拥有
-   独立验证语义；它们不是隐藏的 Evidence Pack 输入，也不是可互换的“记忆”。
-3. **Quality 回归暂存链。** 确定性 Diagnosis 保留源状态；Promotion 必须同时消费匹配的
-   Diagnosis 与 Confirmed Badcase，只写 canonical、validation-only 的人工复核暂存包。
-   Promotion 不等于 Adoption，也绝不写正式 Suite。
-4. **治理资产演进链。** Evidence Only 记录先经过筛选、存储、Inspect 与确定性 Mine，再由
-   显式 Target Adapter 构建 Candidate IR v2；目标专属 Replay 与 Gate 通过后才能 Stage。
-   Shadow 只是 Audit Rule 的额外 Adoption brake。
-5. **人工权限边界。** Stage 重验精确的 Gate/Candidate 绑定；Adoption 重验实时 Baseline 并要求
-   显式授权。`sleep` 最多到 Stage，不能 Adopt、Commit、Push 或 Release。
-6. **条件化证据预算。** `gate-plan/v2` 在执行前绑定 Claim、风险、功效、Candidate、Runner、
-   Scorer、Task 与 Fixture 字节。Core 保留契约；Validation/Held-out 使用预注册的定向配对目标与
-   Alpha-spending 序贯 Look。历史证据只用于规划，新鲜 Pair 才能形成 PASS。
-
-系统终点不只是报告，而是一组持续增厚的工程资产：Evidence Pack、Regression Candidate、
-Diagnosis Record、Gate/Shadow Evidence、Rejection Memory、Context Manifest、Run Manifest
-与 Decision Ledger。
-
-## 产品能力面
-
-从能回答问题的最小能力面开始。
-
-| 需要回答的问题 | 命令 | 能建立的事实 |
-| --- | --- | --- |
-| Agent 指令和 Skill 在结构上是否可用？ | `aet audit` | 确定性 Finding、来源证据、RulePack Identity 与 Remediation。 |
-| Diff 是否在人工批准的变更契约内？ | `aet review` | Intent、路径预算、Proof 声明与可选 Review Policy。 |
-| 这条精确 Proof 命令是否运行并生成该 Artifact？ | `aet trace -- <argv>` | 命令、退出状态、日志、Artifact、脱敏与工作区 Snapshot。 |
-| 证据能否随 Handoff 流转？ | `aet evidence pack` | Portable Evidence Pack 与可选静态 Viewer。 |
-| Proof 之后仓库是否变化？ | `aet run verify` | Fresh、Stale 或显式 Unknown 的生命周期状态。 |
-| 哪些 Context 与 Decision 真的被记录？ | `aet context`、`aet decision` | 哈希绑定 Manifest 与有来源的项目记忆。 |
-| 仓库为什么演进为当前状态？ | `aet evolve` | 有引用的本地/显式远端考古，不虚构作者意图。 |
-| 哪条受限路径对应结构化失败？ | `aet quality diagnose` | 保留状态的 Owner/Action/Repair Mapping 与人工复核路由。 |
-| 已确认失败能否变成回归资产？ | `aet quality promote` | Validation-only Task v2 暂存包，不写生产资产。 |
-| 反复失败能否安全改进治理资产？ | `aet learn` | Evidence Only 挖掘、目标专属 Replay/Gate、Stage 与人工 Adoption。 |
-| 当前声明需要多少真实行为证据？ | `aet learn plan` | 哈希绑定的风险、覆盖、效应、功效与停止契约。 |
-| 可比历史 Gate 能否辅助规划？ | `aet learn history assess` | 显式漂移与敏感性分析；历史永不进入 PASS。 |
-
-## 可信交付 Workflow Reference
-
-### 启用策略与适用项目
-
-**AET 是显式启用工具，普通 Agent 工作默认关闭。** 安装 CLI 或 Portable Skill 不代表
-Agent 获得运行授权。只有用户针对当前任务明确要求使用 AET 时才启用；该授权不能自动延续到
-后续任务。
-
-| 工作负载 | 建议的 AET 级别 |
-| --- | --- |
-| 日常编码、原型、小改动、探索性工作 | **关闭**（默认）；使用项目原有 Test 与 CI。 |
-| 高价值 PR 或多 Agent Handoff，交付声明需要可携带 Proof | 只运行明确要求的 Audit、Review、Trace 或 Evidence Pack。 |
-| Release、监管、安全敏感或高爆炸半径的 Agent 变更 | 使用相关完整交付契约与新鲜的声明 Proof。 |
-| 治理资产优化 | 显式启用 `aet learn`；Real-host Gate/Shadow 只用于 Adoption 决策。 |
-
-这也是成本边界。每个新鲜 Pair 都必须执行 Baseline 和 Candidate，因此真实宿主成本无法凭空消失。
-v1.9 的 **36 次真实 Agent 运行**是一个 Release Profile，不是统计定律。v1.10 引入精确 Trace
-复用与紧凑 Receipt；v1.11 进一步加入：首个 Host 调用前的全 Task 预检、显式且字节绑定的
-Observed Replay Resume/Reuse、Tournament/Sleep 去重、CI 一次 Build 与 Release 同 Artifact 提升。
-Gate Plan 在执行前冻结适用性、Suite 目标、覆盖、Alpha、Power、效应假设、样本上下限和 Look。
-禁止反复偷看普通固定样本 p 值；硬回归、Infra、数学上不可能通过的 Futility 或预注册成功边界
-可以提前停止。达到最大预算仍证据不足时保持 `INCONCLUSIVE`。历史证据只生成规划敏感性报告，
-永远不会降低新鲜 Pair 的 PASS 统计要求。
-
-安装当前 Release：
-
-```bash
-uv tool install https://github.com/AdvancingTitans/agent-engineering-toolkit/releases/download/v1.12.0/agent_engineering_toolkit-1.12.0-py3-none-any.whl
-aet --version
-```
-
-创建可审阅契约、审计指令、检查 Diff，再通过 Trace 执行声明的 Proof：
-
-```bash
-aet init --output aet.toml
-
-aet audit . --strict --format json \
-  --output .aet/evidence/audit.json
-
-aet review . --base main --intent aet.intent.json --format json \
-  --output .aet/evidence/review.json
-
-aet trace --proof unit-tests --intent aet.intent.json \
-  --artifact reports/pytest.txt \
-  --output .aet/evidence/trace.json \
-  -- python -m pytest -q
-
-aet evidence pack \
-  --audit .aet/evidence/audit.json \
-  --review .aet/evidence/review.json \
-  --trace .aet/evidence/trace.json \
-  --output .aet/evidence/evidence-pack.json
-
-# 仅复用精确且新鲜的成功 Trace；验证失败时绝不自动执行。
-aet trace --reuse-if-fresh --proof unit-tests --intent aet.intent.json \
-  --artifact reports/pytest.txt --output .aet/evidence/trace.json \
-  -- python -m pytest -q
-
-# Canonical Evidence 留在磁盘，只给 Agent 紧凑索引。
-aet evidence receipt --report .aet/evidence/evidence-pack.json \
-  --output .aet/evidence/receipt.json
-```
-
-`audit` 与 `review` 永远不会执行声明的 Proof。Audit 即使发现真实问题，也会先写报告再以
-非零退出；应先读 Finding。Trace 必须显式启用，会拒绝不安全 Artifact 路径，独立脱敏声明的
-UTF-8 Artifact，并把“子命令成功”和“Artifact 验证缺口”作为两个事实保存。
-
-## 从 Badcase 到 Regression Asset
-
-Quality 必须先确定，再生成：
-
-```bash
-aet quality diagnose \
-  --report .aet/evidence/failure.json \
-  --policy quality-mapping.json \
-  --output .aet/quality/diagnosis.json
-
-aet quality promote \
-  --badcase confirmed-badcase.json \
-  --diagnosis .aet/quality/diagnosis.json \
-  --policy quality-mapping.json \
-  --output .aet/quality/staged-regressions
-```
-
-Diagnosis 是显式 Policy Lookup，不是语义 RCA。Promotion 有意保持狭窄：样本必须已确认、
-可复现、已脱敏、有代表性且不重复。它只写入 content-addressed validation candidate 与
-provenance sidecar，不会修改生产 Skill、正式 Suite、工单或 Prompt。
-
-## Evidence-Gated Evolution
-
-AET 当前可以演进六类已注册治理资产：
-
-| Target | Candidate 写入面 | Evaluator | 额外刹车 |
+| 层级 | 用户 | 能力 | 默认状态 |
 | --- | --- | --- | --- |
-| Skill | 带标记的 editable block | 静态契约或真实 Codex/Claude 行为 | 配对统计 + 人工 Adoption |
-| Audit Rule | 声明式、不可执行 Detector 选择 | Core / Validation / Held-out / Adversarial Fixture | Adoption-grade 多仓库 Shadow |
-| Audit Profile | 单调配置 | 目标专属 Policy Suite | 不能禁用 Rule 或降低 Severity |
-| Review Policy | 受限 JSON Patch | Review Policy Suite | 不能扩大 Scope 或删除 Proof |
-| Trace Validator | 白名单 Validator Policy | Validator Suite | 不能削弱 Evidence 语义 |
-| Triage Policy | 排序 Policy | Triage Suite | 可以重排，不能隐藏或改写 Finding |
+| AET Quick | 日常使用 Coding Agent 的开发者 | Check、Scope、Proof、Fresh | 分别安装与调用 |
+| 可选扩展 | 需要项目 Provenance 的团队 | Context、Decision、Evolve | 显式请求 |
+| AET Lab | Agent 工程师、Skill/平台作者 | Evidence Pack、Showcase、Quality、Learn、Replay、Gate、Tournament、Shadow、Stage、Adopt、统计分析 | 仅显式启用 |
 
-标准闭环被显式拆分：
+现有 Lab 命令和 canonical
+[`agent-engineering-toolkit` 兼容 Skill](../skills/agent-engineering-toolkit)
+继续保留。Quick 不会预加载其 Reference，不会执行真实宿主 Rollout，不会生成大型 HTML/SVG
+Bundle，也不会执行治理资产 Adoption。
 
-```bash
-aet learn harvest --evidence .aet/evidence \
-  --output .aet/learn/experiences.json
-aet learn mine --experiences .aet/learn/experiences.json \
-  --target-type skill --output .aet/learn/patterns.json
-aet learn propose --engine rules --patterns .aet/learn/patterns.json \
-  --target skills/agent-engineering-toolkit/SKILL.md \
-  --output .aet/learn/candidates/CAND-001
+## 安全与权限
 
-aet learn gate --candidate .aet/learn/candidates/CAND-001 \
-  --core eval/core --validation eval/validation --held-out eval/held-out \
-  --output .aet/learn/gates/CAND-001.json
+- 默认本地、只读；
+- `/aet-proof` 只执行 `--` 后的显式 argv；
+- 显式 Proof 请求只授权写入对应 Receipt，不授权其他写入；
+- Quick 不需要 Credential，凭据不得进入持久 Evidence；
+- 禁止远端写入、`git push`、发布、关闭 Issue、破坏性 Shell、自动修复和自动 Adoption；
+- 远端只读与项目执行必须符合当前 Skill 的策略和预算；
+- 缺失证据保持 `UNKNOWN`，不生成综合 Trust Score；
+- 模型生成的判断绝不能成为唯一 Release Gate。
 
-aet learn stage --candidate .aet/learn/candidates/CAND-001 \
-  --gate .aet/learn/gates/CAND-001.json \
-  --output .aet/learn/staged
-```
+详见[安全与保留策略](security-and-retention.md)和
+[稳定性契约](stability.md)。
 
-`stage` 不等于 Adoption。`adopt --yes` 会重新校验不可变字节与当前 Target Hash。AET 不会
-自我调度、上传 Transcript、创建工单、Commit、Push 或发布 Release。
+## 安装与开发
 
-### 真实宿主评测
-
-Static Replay 只检查文档契约，绝不会被描述成真实 Agent 行为。真实宿主评测应当是例外：只有
-采纳 Suite 实际评估的精确 Skill/Prompt/治理 Candidate、修改了 Suite 实际覆盖的行为，或发布新的真实行为声明时才运行。
-普通 Runtime、Evidence、Packaging、文档或确定性 Policy Release 不应触发它。需要行为证据时
-必须显式指定 Runner：
+从当前源码 Checkout 安装 Quick Runtime：
 
 ```bash
-aet learn runner list
-
-aet learn replay --candidate .aet/learn/candidates/CAND-001 \
-  --suite eval/real-agent/core --runner codex --rollouts 3 \
-  --runner-config runner.json \
-  --output .aet/learn/replays/CAND-001
-
-aet learn plan --candidate .aet/learn/candidates/CAND-001 \
-  --core eval/real-agent/core --validation eval/real-agent/validation \
-  --held-out eval/real-agent/held-out --runner codex \
-  --runner-config runner.json --risk-class R3 \
-  --claim TRACE.ROUTING.EXACT-COMMAND --output .aet/learn/gate-plan.json
-
-aet learn gate --candidate .aet/learn/candidates/CAND-001 \
-  --core eval/real-agent/core --validation eval/real-agent/validation \
-  --held-out eval/real-agent/held-out --runner codex \
-  --runner-config runner.json --gate-plan .aet/learn/gate-plan.json \
-  --output .aet/learn/gates/CAND-001.json
+uv tool install .
 ```
 
-Core 是契约保留检查，不冒充统计非劣声明：每个 Candidate Task 都必须成功，且不得新增硬 Finding。
-Validation 与 Held-out 使用预注册的 Candidate-better 单侧精确配对目标和 MCID。整体 Adoption
-采用 intersection-union：所有声明目标必须同时 PASS。每个序贯 Look 消耗固定的 Family Alpha，
-因此不能把 Legacy 固定样本 p 值用于 Optional Stopping。
+根据 Agent Host 的能力安装或复制需要的 Quick Skill 文件夹。没有原生 Skill Loader 的宿主，
+可以把对应 `SKILL.md` 作为任务指令加载，并调用相同 CLI。
 
-已验证历史的权限更弱：
-
-```bash
-aet learn history assess --registry gate-history.json \
-  --gate-plan .aet/learn/gate-plan.json --suite validation \
-  --output .aet/learn/history-assessment.json
-```
-
-Registry 会拒绝未验证、重复或身份漂移的 Entry。折扣有效样本和 Leave-one-release-out
-敏感性只属于规划元数据；Plan 最大样本不会因此降低，Gate 统计只消费新鲜 Pair。
-
-宿主启动、认证失败、Timeout、空 Structured Event 或不支持的隔离能力必须保持
-`INFRASTRUCTURE_ERROR`、`UNKNOWN` 或 `INCONCLUSIVE`，绝不会变成 Candidate PASS。
-Raw Output 与 Normalized Event 保持在私有 Rollout 目录；只有派生的 Evidence Only
-Phenomenon、Score 和 Hash 可以导出。
-
-### Release 分类
-
-每个 Tag 都携带受版本控制的 `release-classification.json` 契约，绑定 Base Tag、完整变更路径摘要、
-分类、声明/采纳，以及行为敏感路径的 `NOT_APPLICABLE` 例外与确定性 Proof。GitHub Release Workflow
-先验证该契约，再接受显式选择的类型：
-
-| 类型 | Real Host Gate | Release Evidence |
-| --- | --- | --- |
-| `deterministic` | 必须省略 | 以理由记录 `NOT_APPLICABLE`；CI 将全量测试、Suite、Audit、Wheel 与哈希绑定到 Release Commit。 |
-| `governance-adoption` | 必须提供 | 发布前重新验证成功 Workflow Run ID、Commit、Runner、Candidate 与 Suite 字节。 |
-
-Dispatch 选择无法覆盖 Tag 内的契约。Workflow 还会拒绝为 deterministic Release 提供 Gate Run ID、
-拒绝没有 Gate 的 governance-adoption Release、Candidate SHA 或覆盖 Suite ID 与结构化声明绑定不一致的
-Gate、未解释的敏感路径或过期 Diff 摘要。每个 Release
-都会发布分类契约、绑定 Commit 的验证结果、CI Candidate Artifact Manifest 与
-`release-evidence.json`；governance Release 还会长期
-保留已验证的 Real Host Gate Manifest。因此未运行模型 Gate 是可审查的 `NOT_APPLICABLE`，不会被静默当成 `PASS`。
-
-## AET 在工具链中的位置
-
-AET 与现有工具协作，而不是假装替代它们。
-
-| 工具类别 | 它负责什么 | AET 负责什么 |
-| --- | --- | --- |
-| Codex、Claude Code、Copilot 等 Runtime | 在仓库中规划并执行工作 | 围绕 Runtime 交付声明建立 Evidence 与 Authority |
-| Test、CI、Lint、安全扫描器 | 各自领域的检查 | 绑定检查的精确执行、Artifact、Intent 与 Freshness |
-| LangSmith、Braintrust、DeepEval、可观测平台 | 广泛实验、Trace 与 Fleet Analytics | 本地工程证据语义，以及受限治理资产的 Adoption |
-| OPA 等 Policy Engine | 通用、预定义 Policy 执行 | AET 专属单调 Policy 与 Evidence-Gated Evolution |
-| Skill 创作与优化系统 | 创建或训练 Skill 内容 | 证明在用行为，并约束什么可以评估、Stage 和 Adopt |
-| 工单与业务看板 | 运营流转和线上结果 | 可供其消费的结构化本地 Evidence |
-
-当 Coding Agent Handoff 不能只靠“看起来不错”、当 `FAIL` 与 `UNKNOWN` 必须保持不同、
-或当反复失败需要改进治理资产却不能让 Candidate 掌控自己的 Evaluator 时，选择 AET。
-
-不要把 AET 当作 Agent Runtime、通用 Benchmark、LLM Judge 中心、自动语义 RCA/Evidence
-Graph、聚类平台、Skill Quality YAML 标准、托管 Transcript 服务、业务看板或自动发布 Bot。
-
-## 安全与信任边界
-
-- **只有 Trace 执行。** `audit`、`review`、Quality Diagnosis、Evidence Pack 与
-  Deterministic Replay 都不会执行 Proof 命令。
-- **Trace Evidence 会被独立校验。** Scorer 绑定 trusted wrapper、outer child argv、
-  Trace argv、Intent Proof Command、Artifact、Log、Redaction Rule 与前后 Snapshot；
-  长得像命令的文本不是 Proof。
-- **Fixture Copy 不跟随链接。** Nested Symlink、Special File、Outside-root Source 与
-  Copy 后 Hash Drift 都会被拒绝。
-- **环境权限必须显式声明。** Task 指定允许继承的环境变量；Process Runner 对 `HOME`
-  还要求 `inherit_home: true`。允许继承不等于允许导出。
-- **Network Posture 必须诚实。** 无法提供 OS-level Deny 的 Runner 报告 `PARTIAL`；
-  `enforced-deny` Task 会在执行前失败。
-- **Candidate 权限受限。** Evaluator Code、Held-out Case、Constitution、Evidence State
-  与 Human Adoption 都不在 Candidate 写入面内。
-
-这些约束降低 Candidate 对判定的影响，但不会声称存在“不可能被利用”的 evaluator、完美 Sandbox，
-也不会因为一份指令被发现就断言模型真正理解了它。
-
-## Portable Skill 与仓库考古
-
-工具中立的 canonical Skill 位于
-[`skills/agent-engineering-toolkit`](../skills/agent-engineering-toolkit)。Wheel 只包含 CLI，
-不携带 Skill 资源。请从源码 Checkout 复制完整目录，而不是只复制 `SKILL.md`：
+本地开发：
 
 ```bash
 git clone https://github.com/AdvancingTitans/agent-engineering-toolkit.git
 cd agent-engineering-toolkit
-cp -R skills/agent-engineering-toolkit ~/.codex/skills/
+uv run --no-editable python -m unittest discover -s tests
 ```
 
-同时给宿主 Agent 配置等价的启用规则：
+AET 使用 Python 3.11+，确定性运行时保持轻依赖。贡献新规则时必须同时提供 clean/failing Fixture，
+保留 Evidence Provenance，并且不能把 Quick 命令扩张为另一个问题。参见
+[CONTRIBUTING](../CONTRIBUTING.md)。
 
-> AET 默认关闭。普通任务不要加载或运行；只有用户针对当前任务明确要求使用 AET 时才启用，
-> 且只选择能够建立所需事实的最小能力面。
+## 高级文档
 
-若要从 Codex 卸载，删除完整的 `~/.codex/skills/agent-engineering-toolkit` 目录，并新建任务以
-重新加载 Skill Catalog。删除 Skill 不会同时卸载独立的 `aet` CLI。
+- [Rule Catalog](rule-catalog.md)
+- [Evidence 与交付 Workflow](../skills/agent-engineering-toolkit/references/delivery-workflow.md)
+- [Repository Audit Showcase](../skills/agent-engineering-toolkit/references/repository-audit-showcase.md)
+- [Provenance Workflow](../skills/agent-engineering-toolkit/references/provenance-workflow.md)
+- [Quality Workflow](../skills/agent-engineering-toolkit/references/quality-workflow.md)
+- [Lab Evolution Workflow](../skills/agent-engineering-toolkit/references/evolution-workflow.md)
+- [Changelog](../CHANGELOG.md)
 
-对于有来源的项目历史，`aet evolve plan/collect/build/report` 默认只收集本地 Git 与文档；
-只有显式传入 `--remote github` 才访问 GitHub。缺失远端证据保持 `UNKNOWN`，AET 不会仅凭
-Commit 文本虚构作者意图。
+## License
 
-## 验证
-
-Release 自带可运行的验证路径：
-
-```bash
-uv run --with pytest python -m pytest -q
-uv run --with pytest python -m pytest tests/test_business_quality_flows.py -q
-uv run --no-editable --reinstall-package agent-engineering-toolkit \
-  aet audit . --strict --format json --output .aet/evidence/release-audit.json
-uv build
-uv run --isolated --with dist/agent_engineering_toolkit-1.12.0-py3-none-any.whl \
-  aet --version
-```
-
-详细契约参见 [CHANGELOG](../CHANGELOG.md)、
-[Evolution Boundary](evolution-boundary.md) 与
-[v1.9 实施方案](superpowers/plans/2026-07-13-v1-9-quality-loop.md)。
-
-## 贡献
-
-欢迎 Issue 与 Pull Request。请保留 AET 的定义性约束：确定性检查先于模型判断、显式
-`UNKNOWN`、Candidate 与 Evaluator 隔离、Raw Evidence 私有、Target-specific Gate，
-以及人对 Adoption 的最终权限。
-
-项目采用 [MIT License](../LICENSE)。
+[MIT](../LICENSE)

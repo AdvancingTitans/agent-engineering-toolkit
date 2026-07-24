@@ -8,37 +8,322 @@
 
 **[English](README.md) · [简体中文](docs/README.zh-CN.md)**
 
-> **Stop coding Agents from claiming “tests passed” without verifiable proof.**
+> **AET makes AI coding review investigative without letting the model invent
+> the evidence.**
 
-An Agent can run a command and show a green log. That log stops proving the
-current code as soon as the workspace changes. AET records the exact command,
-exit status, declared artifacts, human intent and Git workspace snapshot, then
-checks whether the evidence is still fresh before a handoff or release.
+An AI coding Agent says it fixed the task and ran the tests. AET helps answer
+three concrete questions:
+
+1. Did the change stay relevant to the user's task?
+2. Did the claimed verification actually run on this workspace?
+3. Does that proof still apply to the current code?
+
+Tools produce reproducible facts. The host LLM may recover intent, form
+competing hypotheses, call authorized tools, test counter-explanations, and
+make a conditional engineering judgment. AET's deterministic Grounding API
+validates the recorded references, permissions, evidence strength, and declared
+budget usage before rendering. A human decides what happens next.
 
 ```text
-Agent claim → exact execution evidence → live freshness check → human decision
+deterministic facts → bounded LLM investigation → grounding validation → human decision
 ```
 
-AET is a local, MIT-licensed CLI and portable Skill for Codex, Claude Code,
-Cursor and other coding Agents. It does not replace your Agent, tests or CI, and
-it never turns missing evidence into a pass.
+## Four Quick Skills
+
+Each Skill answers one question, emits one bounded result, and stops.
+
+| Skill | Use it when | Main result |
+| --- | --- | --- |
+| `/aet-check` | Agent instructions, Skills, or completion rules may be unsafe or unverifiable | Up to five evidence-backed engineering findings |
+| `/aet-scope` | You need to know whether a diff fits the task, including necessary cross-module work | A disposition for each change group, with counter-explanation |
+| `/aet-proof` | A command must be executed now and bound to the current workspace | One minimal JSON proof receipt |
+| `/aet-fresh` | You need to know whether an older proof still applies | Exact, relevant-file, artifact, environment, or unknown freshness |
+
+The portable host Skills live in
+[`skills/aet-check`](skills/aet-check),
+[`skills/aet-scope`](skills/aet-scope),
+[`skills/aet-proof`](skills/aet-proof), and
+[`skills/aet-fresh`](skills/aet-fresh). The deterministic runtime is:
+
+```bash
+aet quick check .
+aet quick scope . --base main --intent aet.intent.json
+aet quick proof --output .aet/proofs/auth.json \
+  --relevant-path src/auth/session.py -- pytest tests/auth
+aet quick fresh --proof .aet/proofs/auth.json
+```
+
+The legacy `aet audit`, `review`, `trace`, and `evidence receipt` commands
+remain compatible throughout 1.x. They are advanced native vocabulary, not the
+default Quick product surface.
+
+## See it in 30 seconds
+
+### Investigate scope without treating paths as guilt
+
+```bash
+aet quick scope . --base main --intent aet.intent.json --format json
+```
+
+If a payment file changes during an authentication fix, the preflight records a
+path mismatch but does **not** declare it out of scope. The host investigates
+direct calls, shared interfaces, tests, later authorization, and a reasonable
+counter-hypothesis before choosing one of:
+
+```text
+IN_SCOPE
+JUSTIFIED_EXPANSION
+POSSIBLE_SCOPE_EXPANSION
+OUT_OF_SCOPE
+INSUFFICIENT_INTENT
+```
+
+### Record proof, then detect drift
+
+```bash
+aet quick proof --output .aet/proofs/auth.json \
+  --relevant-path src/auth/session.py -- pytest tests/auth
+
+# edit src/auth/session.py
+
+aet quick fresh --proof .aet/proofs/auth.json
+```
+
+The historical command result remains unchanged. The current applicability
+becomes `RELEVANT_FILES_CHANGED`, so AET recommends rerunning only the affected
+proof instead of pretending the old green log still represents the code.
+
+The repository also includes a runnable
+[stale-proof demo](examples/stale-proof-demo.sh) and a
+[case study](docs/case-studies/stale-proof.md).
+
+## An everyday coding example
+
+The following is an illustrative example, not a measured repository result.
+
+You ask an Agent:
+
+> Fix the intermittent login timeout. Do not change payment behavior and do
+> not add a production dependency.
+
+The Agent changes:
+
+```text
+src/auth/session.py
+src/cache/session_cache.py
+src/payment/order.py
+tests/auth/test_session.py
+```
+
+Without AET, the review usually collapses into one of two weak shortcuts:
+“everything outside `auth/` is out of scope,” or “the Agent says the shared
+cache and payment edits were necessary.” `/aet-scope` instead treats each
+change group as a hypothesis to investigate:
+
+```text
+src/auth/session.py          IN_SCOPE
+src/cache/session_cache.py   JUSTIFIED_EXPANSION
+src/payment/order.py         POSSIBLE_SCOPE_EXPANSION
+tests/auth/test_session.py   IN_SCOPE
+```
+
+The cache result cites the direct login call path and the focused regression
+test. The payment result records the counter-explanation—perhaps a shared
+interface required synchronized work—and why the inspected references did not
+support it. The result names the unresolved possibility of authorization in
+another conversation and recommends splitting the payment cleanup or supplying
+that authorization. Then `/aet-scope` stops; it does not run tests or edit code.
+
+If you choose to verify the fix, `/aet-proof` records the real command and
+workspace binding. If the Agent edits `session.py` afterward, `/aet-fresh`
+changes applicability to `RELEVANT_FILES_CHANGED` without rewriting the
+historical test exit code.
+
+## What changes after adding AET
+
+| Daily situation | Without AET | With AET Quick |
+| --- | --- | --- |
+| A fix crosses directories | A path rule over-rejects it, or the Agent's explanation is accepted on trust | Necessary shared work is investigated; unsupported expansion stays visible |
+| “Tests passed” | A green sentence or old log is easy to reuse | argv, exit code, workspace, relevant files, artifacts, and environment bindings are recorded |
+| Code changes after testing | The old result still looks green | Applicability changes to a precise Freshness state |
+| LLM review | Facts, inference, counter-case, and advice blur together | Each layer is rendered separately and cites recorded evidence |
+| Investigation grows | The Agent may keep reading and calling tools | Budgets and stop conditions return a bounded result |
+
+| AET Quick can | AET Quick cannot |
+| --- | --- |
+| Record reproducible Git, command, hash, and Freshness facts | Prove that all code is correct |
+| Investigate whether a change is necessary for the task | Declare scope violation from path mismatch alone |
+| Execute and bind an explicitly requested verification command | Turn an unexecuted test into a pass |
+| Preserve conflicts, missing facts, and `UNKNOWN` | Hide recorded counter-evidence or invent a holistic trust score |
+| Recommend the smallest next action | Auto-fix, merge, push, publish, or enter AET Lab |
+
+## Measured trade-offs, not a trust score
+
+The opt-in [Quick investigation benchmark](eval/quick-investigation/README.md)
+compares the four review modes required by the design across eight synthetic Scope
+scenarios. The tracked
+[v1.13.0 result](eval/quick-investigation/results/v1.13.0.json) used
+`gpt-5.6-sol`, `medium` reasoning, two repetitions per scenario, and 16 Runs per
+group:
+
+| Mode | Effective recall | False discovery proportion | Mean tools | Mean time | Mean Tokens |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Pure rules | 60% | 50.0% | 0.00 | <0.001 s | 0 |
+| One-shot LLM | 80% | 38.5% | 0.00 | 7.33 s | 21,702 |
+| Investigated AET | 90% | 25.0% | 1.63 | 18.32 s | 64,147 |
+| Grounding-aware investigation + Validator | 90% | 25.0% | 0.75 | 14.84 s | 38,831 |
+
+The result makes the trade-off visible: bounded investigation found more of
+the expected issues with a smaller share of incorrect emitted Claims in this
+small suite, but cost
+more time and Tokens than one-shot review. Grounding rejected zero claims in
+this sample, so it did not improve the measured rates; its rejection paths are
+proved separately by deterministic tests. Manual review time and user
+understanding remain `UNKNOWN` because no timed human annotations were supplied.
+These 64 Runs are one bounded Lab measurement produced by a repeatable Harness,
+not a general accuracy claim or permission to release code. The two investigated
+groups are different Agent configurations, so their cost difference must not be
+attributed to the Validator alone. The published, privacy-reviewed normalized
+Runs can be independently rescored; private Codex JSONL is not published.
+
+## Architecture
+
+![AET Quick evidence investigation architecture](docs/assets/aet-quick-architecture-en.png)
+
+The same checked architecture is available as an
+[animated SVG](docs/assets/aet-quick-architecture-en.svg). Watch the
+[9-second English introduction](docs/assets/aet-quick-intro-en.webm) or the
+[Simplified Chinese introduction](docs/assets/aet-quick-intro-zh-CN.webm).
+The [media manifest](docs/assets/aet-quick-media-manifest.json) binds the
+bilingual diagrams and videos by content hash. It also records the VP9
+properties measured during video generation; routine tests verify the bytes and
+hashes but do not independently decode the videos.
+
+The flow deliberately separates six responsibilities:
+
+1. Four Quick Skills constrain the question and stop after their result.
+2. The CLI records deterministic Git, file, rule, command, hash, and freshness facts.
+3. The host LLM recovers intent, proposes competing hypotheses, and chooses authorized tools.
+4. The Investigation Ledger binds each useful question, tool result, observation, hypothesis effect, decision value, and cost.
+5. The Grounding Validator checks references, factual claims, support strength, permissions, and budget.
+6. The narrative separates confirmed facts, engineering judgment, counter-explanation, uncertainty, location, and the smallest next action.
+
+`AET Lab` remains below an explicit opt-in boundary. Quick never enters it
+automatically.
+
+## Why the LLM is constrained, not disabled
+
+Pure path rules cannot tell whether a shared cache change is necessary for an
+authentication fix. An unconstrained LLM can sound persuasive without proving
+anything. AET uses both, with distinct authority:
+
+| Capability | Deterministic runtime | Host LLM |
+| --- | --- | --- |
+| Git diff, hashes, exit code, artifact and freshness facts | Owns | Cannot rewrite |
+| Intent recovery and competing hypotheses | Supplies sources | Owns, with provenance |
+| Tool choice | Validates recorded policy and budget usage | Plans authorized calls |
+| Engineering judgment | Validates grounding | Owns, conditionally |
+| Merge, publish, adopt, or release authority | Never grants | Never grants |
+
+Finding origin is explicit:
+
+- `DETERMINISTIC_FINDING`: directly produced by a rule, command, or comparison.
+- `INVESTIGATED_FINDING`: produced after a traceable tool investigation.
+- `HYPOTHESIS`: a direction for further investigation; never a blocking result.
+
+Only `/aet-proof` is an AET-executed command receipt. Other local or MCP tool
+results enter the Ledger through the Agent host: their canonical payload hash
+detects later mutation, but does not independently prove that an external host
+performed the call. Hosts must preserve that provenance and run
+`aet.investigation.validate_investigated_finding` before rendering; otherwise
+the result remains `HYPOTHESIS`/`UNKNOWN`.
+
+Evidence remains authoritative as `PASS`, `FAIL`, `UNKNOWN`, or
+`NOT_APPLICABLE`. Semantic support is stored separately as `CONFIRMED`,
+`SUPPORTED`, `SUPPORTED_WITH_LIMITS`, `CONFLICTED`, `UNSUPPORTED`, `UNKNOWN`,
+or `NOT_APPLICABLE`. A semantic narrative cannot overwrite machine evidence.
+
+## Command boundaries and budgets
+
+| Quick Skill | Default boundary | Default budget |
+| --- | --- | --- |
+| `/aet-check` | Read Agent assets and relevant configuration; no project execution, history scan, remote access, or writes | 30 s, 3 rounds, ≤2 LLM, ≤6 tools, ≤1 expensive call, ≤5 findings |
+| `/aet-scope` | Inspect intent and current diff; no code writes; at most one discriminating low-cost test | 45 s, 4 rounds, ≤2 LLM, ≤8 tools, ≤2 authorized remote reads, ≤1 expensive call |
+| `/aet-proof` | Execute only explicit argv; the requested JSON receipt is the only default write | Command duration; ≤1 LLM only when locating the command |
+| `/aet-fresh` | Compare the supplied proof; no execution, network, or writes | 3 s, 0 LLM by default |
+
+The tracked [v1.13.0 local performance evidence](eval/quick-performance/results/v1.13.0.json)
+retains 30 raw samples per deterministic command on this 253-tracked-file
+repository: Check P95 0.622 s, Scope P95 0.059 s, and Fresh P95 0.037 s. The
+[Harness and limits](eval/quick-performance/README.md) make this a reproducible
+local acceptance check, not a cross-repository or model-service latency claim.
+
+Investigation stops when a dominant explanation and reasonable counter-case
+have been checked, new evidence would not change the action, two calls add no
+decision value, the budget is exhausted, user authority is required, only the
+user can supply a missing fact, or a tool is unavailable.
+
+On exhaustion, AET returns a bounded result and names uninspected surfaces. It
+does not silently escalate into a repository-wide audit.
+
+The machine-readable contracts are documented in
+[command boundaries](docs/command-boundaries.md),
+[the investigation model](docs/investigation-model.md), and
+[the Quick/Lab boundary](docs/quick-vs-lab-boundary.md).
+
+## Language behavior
+
+Language changes only the human narrative, never status tokens, evidence
+references, hashes, or schema fields.
+
+- When the user invokes a slash command and asks in Chinese, the host explains
+  the result in natural Simplified Chinese while keeping code and necessary
+  technical terms in English.
+- Every other request uses English.
+
+English and Chinese narratives must cite the same facts and `result_ref`
+values. Switching language cannot trigger another investigation or strengthen
+a conclusion.
+
+## Minimal proof and freshness
+
+`/aet-proof` records:
+
+- exact redacted argv and its digest;
+- cwd, start/end timestamps, exit code, and log digests;
+- Git/worktree snapshot;
+- declared relevant-file hashes;
+- Python/platform identity and dependency lockfile hashes;
+- declared artifact hashes;
+- a bounded coverage statement.
+
+`/aet-fresh` returns one of:
+
+```text
+EXACT_MATCH
+RELEVANT_FILES_MATCH
+HEAD_CHANGED_RELEVANT_FILES_MATCH
+RELEVANT_FILES_CHANGED
+ARTIFACT_CHANGED
+ENVIRONMENT_CHANGED
+UNKNOWN
+```
+
+Legacy Trace and canonical evidence reports remain readable. When old evidence
+does not contain relevant-file or environment bindings, AET preserves the
+uncertainty instead of inventing precision.
 
 ## Real-world Repository Audit Showcase
 
-AET now ships three commit-locked audits of public Agent repositories. Each
-case scans only a bounded local checkout, applies deterministic rules, and
-produces evidence-backed engineering observations plus HTML and SVG views.
-There is no project score or ranking.
+The Repository Audit Showcase remains a supported **AET Lab** case library,
+not the default Quick workflow. It contains three commit-locked, static-only
+audits of public Agent repositories:
 
-| Case | What the bounded audit demonstrates | Generated report |
-| --- | --- | --- |
-| SWE-agent | Agent loop, tool interaction, trajectory and completion evidence | [English](repository-audit-showcase/reports/swe-agent/audit-result/en/audit-report.md) · [简体中文](repository-audit-showcase/reports/swe-agent/audit-result/zh-CN/audit-report.md) |
-| Google ADK | Agent architecture, tool governance and evaluation feedback | [English](repository-audit-showcase/reports/google-adk/audit-result/en/audit-report.md) · [简体中文](repository-audit-showcase/reports/google-adk/audit-result/zh-CN/audit-report.md) |
-| OpenHands | Application orchestration, runtime isolation and the external Agent-core boundary | [English](repository-audit-showcase/reports/openhands/audit-result/en/audit-report.md) · [简体中文](repository-audit-showcase/reports/openhands/audit-result/zh-CN/audit-report.md) |
-
-![OpenHands bounded Agent flow](repository-audit-showcase/reports/openhands/audit-result/en/diagrams/agent-flow.svg)
-
-Run a case against the matching locked local checkout:
+| Case | Bounded audit surface | Evidence result | Reports |
+| --- | --- | --- | --- |
+| SWE-agent | Agent loop, tool interaction, trajectory, completion evidence | 4 `PASS`, 1 `UNKNOWN` | [English](repository-audit-showcase/reports/swe-agent/audit-result/en/audit-report.md) · [简体中文](repository-audit-showcase/reports/swe-agent/audit-result/zh-CN/audit-report.md) |
+| Google ADK | Agent architecture, tool governance, evaluation feedback | 5 `PASS` | [English](repository-audit-showcase/reports/google-adk/audit-result/en/audit-report.md) · [简体中文](repository-audit-showcase/reports/google-adk/audit-result/zh-CN/audit-report.md) |
+| OpenHands | Application orchestration, runtime isolation, external Agent-core boundary | 4 `PASS`, 1 `UNKNOWN` | [English](repository-audit-showcase/reports/openhands/audit-result/en/audit-report.md) · [简体中文](repository-audit-showcase/reports/openhands/audit-result/zh-CN/audit-report.md) |
 
 ```bash
 aet audit swe-agent --repo /path/to/SWE-agent
@@ -46,525 +331,77 @@ aet audit google-adk --repo /path/to/adk-python
 aet audit openhands --repo /path/to/OpenHands
 ```
 
-Each run writes two shared machine artifacts plus five human-readable artifacts
-for each of `en/` and `zh-CN/`: repository summaries, Markdown and HTML reports,
-and two SVG diagrams. The 15-minute budget starts with the local checkout and AET
-already installed. AET does not run upstream code or tests, install upstream
-dependencies, copy source text into reports, or use an LLM to create or change
-a Finding. `UNKNOWN` remains explicit, and generated reports require maintainer
-review before publication. See the [scope and publication boundary](repository-audit-showcase/docs/scope-and-publication.md).
-
-## Try the stale-proof demo
-
-Install the current release and run the repository demo:
-
-```bash
-uv tool install https://github.com/AdvancingTitans/agent-engineering-toolkit/releases/download/v1.12.0/agent_engineering_toolkit-1.12.0-py3-none-any.whl
-git clone https://github.com/AdvancingTitans/agent-engineering-toolkit.git
-cd agent-engineering-toolkit
-./examples/stale-proof-demo.sh
-```
-
-In about 60 seconds it records a real passing test, changes the workspace without
-rerunning the test, and checks the same evidence again:
-
-```text
-freshness: EXACT_MATCH
-# workspace changes
-freshness: HEAD_MATCH_WORKTREE_DIFFERS
-```
-
-The command did pass historically. AET reports that the proof is now stale
-instead of rewriting history or trusting an old green log. See the complete
-[stale-proof case study](docs/case-studies/stale-proof.md).
-
-## Start with one claim
-
-Use only the smallest surface needed for the current task:
-
-| Claim to verify | Command | Result |
-| --- | --- | --- |
-| “These Agent instructions and Skills are usable.” | `aet audit . --strict` | Source-backed findings |
-| “This diff stayed inside the approved scope.” | `aet review . --base main --intent aet.intent.json` | Path and proof contract review |
-| “This exact command ran on these exact bytes.” | `aet trace … -- <argv>` | Hash-bound Trace evidence |
-| “The attached proof still matches the workspace.” | `aet evidence receipt --report <trace.json>` | Live freshness state |
-
-AET is normally **off**. Use it for high-value PRs, multi-Agent handoffs,
-releases, or security-sensitive changes where a claim needs portable proof.
-Ordinary edits should keep using the project's normal tests and CI.
-
-## Help build AET
-
-The best first contributions do not require learning the whole control plane:
-
-- reproduce a false positive or false negative with a small public fixture;
-- dogfood AET on a public repository and contribute a sanitized case study;
-- add a minimal integration recipe for Codex, Claude Code, Cursor or GitHub Actions.
-
-Start with the [`good first issue`](https://github.com/AdvancingTitans/agent-engineering-toolkit/issues/1)
-or read [CONTRIBUTING.md](CONTRIBUTING.md). The compatibility promise for 1.x is
-documented in the [stability contract](docs/stability.md).
-
-## The result, not the promise
-
-The v1.9 release was gated with real Codex CLI `0.144.1` behavior on three
-byte-separated suites. Each suite used six paired baseline/candidate rollouts.
-
-| Real-host release gate | Baseline | Bounded candidate | Absolute gain | Infra failures | Exact paired p |
-| --- | ---: | ---: | ---: | ---: | ---: |
-| Core | 0 / 6 | **6 / 6** | +100 pp | 0 | 0.03125 |
-| Validation | 0 / 6 | **6 / 6** | +100 pp | 0 | 0.03125 |
-| Held-out | 0 / 6 | **6 / 6** | +100 pp | 0 | 0.03125 |
-| **Continuous success** | **0 / 18** | **18 / 18** | **+100 pp** | **0** | — |
-
-Every successful candidate rollout used exactly one authorized `aet trace`
-command. The candidate remained inside a 676-character edit budget, could not
-modify the Task suites or evaluator, and still required human adoption.
-
-This is an AET release-gate case study—not a claim that one small task proves
-general model superiority. It demonstrates the property AET is designed to
-provide: **a governance asset can improve real Agent behavior under isolated,
-statistical, provenance-bound and human-controlled evaluation.** The tracked
-suites and producer are in [`eval/real-agent`](eval/real-agent) and
-[the real-host workflow](.github/workflows/real-host-gate.yml).
-
-It is also historical evidence for that bounded candidate, not a universal
-prerequisite for every AET package release. Runtime and deterministic-evidence
-changes use deterministic CI; a full paired Real Host Gate is reserved for
-governance-asset adoption or a new claim about observed Agent behavior.
-
-v1.11 removes avoidable cost without weakening that boundary. The changes are
-directly enforced by tests and workflow contracts:
-
-| Cost surface | v1.10 | v1.11 |
-| --- | ---: | ---: |
-| Universal release rollout constant | 3 suites × 6 pairs × 2 = 36 | None; risk/claim/power-bound Gate Plan |
-| Invalid candidate before Host calls | Suites could still execute | **0 Host calls** |
-| Exact completed observed replay | Re-executed | **0 repeated Host calls with explicit `--resume`** |
-| Finalist Core/Validation in Tournament | Executed twice | **Reused once with exact binding** |
-| CI pytest invocations | 3 | **1 full suite** |
-| Release rebuild/retest | Separate build + repeated tests | **Promotes the exact CI Artifact** |
-| Portable root Skill | 262 lines / 14,401 bytes | **99 lines / 5,926 bytes**, references loaded on demand |
-
-The successful-candidate sample requirement is not blindly reduced. A planned
-Gate may require more than 36 executions when the declared effect or risk needs
-it; savings come from `NOT_APPLICABLE`, preflight, exact reuse, safe efficacy or
-futility stopping, and removing duplicate engineering work.
-
-## Why AET is different
-
-Most Agent quality stacks start with a transcript or a score. AET starts with
-the trust boundary.
-
-| Engineering concern | A common shortcut | AET's contract |
-| --- | --- | --- |
-| Proof | The Agent says “tests passed.” | `trace` records the exact argv, exit code, logs, declared artifacts and proof binding. |
-| Freshness | A passing log is treated as permanently valid. | Proof success and current workspace freshness are separate facts. |
-| Uncertainty | Missing evidence is folded into a score. | `UNKNOWN` remains a first-class, release-blocking verification gap. |
-| Diagnosis | A model guesses the root cause. | Explicit policies map observed phenomena to bounded owners and repair surfaces without rewriting source status. |
-| Improvement | The candidate edits its prompt and judges itself. | Candidate writes, evaluator bytes, held-out suites, evidence semantics and adoption authority are separated. |
-| Reliability | One successful run is enough. | any-success, all-success, Wilson 95% intervals and paired exact McNemar are reported together. |
-| Privacy | Raw transcripts become the default data lake. | Raw rollout output stays private; only de-identified Evidence Only records may travel. |
-| Authority | A passing optimizer deploys its own change. | Gate → stage → human review → explicit `adopt --yes`; never auto-commit, push or release. |
-
-The design is deliberately asymmetric: the Agent may act, but it cannot grant
-itself evidence, redefine `PASS`, replace the evaluator, or authorize adoption.
-
-## Architecture
-
-![AET evidence-driven Agent engineering control plane](docs/assets/aet-architecture-en.png)
-
-Editable, offline source: [English HTML](docs/assets/aet-architecture-en.html) ·
-[Chinese HTML](docs/assets/aet-architecture-zh-cn.html).
-
-### Animated architecture
-
-This focused animation compresses the detailed control plane into its macro
-evidence flow. It complements the full static diagram above rather than
-replacing its delivery, provenance, quality, and governance detail.
-
-![Animated AET evidence flow](docs/assets/aet-architecture-dark-luxury.gif)
-
-[简体中文动画](docs/assets/aet-architecture-dark-luxury-zh-cn.gif) ·
-[Semantic SVG source](docs/assets/aet-architecture-dark-luxury.svg)
-
-Read the diagram from top to bottom: humans retain scope and adoption authority;
-an external coding Agent works in the repository through the project's existing
-tools; AET is the local control plane that records and evaluates the resulting
-evidence. It is not another Agent runtime or a replacement for tests and CI.
-
-The architecture then separates three flows that must not be collapsed into one
-autonomous loop, plus independent local provenance records:
-
-1. **Delivery evidence.** Audit, Review and Trace reports are projected into
-   Evidence IR and may be compiled into an Evidence Pack. Component ingestion,
-   finding status, proof binding and snapshot binding remain separate facts.
-   An optional Run Manifest attaches existing artifacts through an explicit
-   lifecycle; it does not execute them.
-2. **Independent provenance.** Context Manifest, Decision Ledger and Evolve
-   archaeology each have their own verification semantics. They are not hidden
-   Evidence Pack inputs and are not interchangeable forms of memory.
-3. **Quality regression staging.** Deterministic diagnosis preserves source
-   status. Promotion requires a matching diagnosis and confirmed badcase, then
-   writes only a canonical, validation-only staging bundle for human review;
-   promotion is not adoption and never writes formal suites.
-4. **Governance asset evolution.** Evidence Only records are filtered, stored,
-   inspected and deterministically mined before an explicit target adapter
-   builds Candidate IR v2. Target-specific replay and Gates precede staging.
-   Shadow is an additional adoption brake for audit rules only.
-5. **Human authority.** Stage rechecks exact Gate and candidate bindings;
-   adoption rechecks the live baseline and requires explicit authorization.
-   `sleep` can stop at Stage but cannot adopt, commit, push or release.
-6. **Conditional evidence budget.** `gate-plan/v2` binds Claim, risk, power,
-   Candidate, Runner, Scorer, Task and Fixture bytes before execution. Core
-   retains the contract; Validation and Held-out use pre-registered directional
-   paired objectives with alpha-spent sequential looks. Verified history is
-   planning-only: fresh pairs alone can produce PASS.
-
-The output is not merely a report. It is a growing set of reusable engineering
-assets: Evidence Packs, regression candidates, diagnosis records, Gate and
-Shadow evidence, rejection memory, Context Manifests, Run Manifests and
-Decision Ledger entries.
-
-## Product surfaces
-
-Start with the smallest surface that answers the question.
-
-| Question | Command | What it establishes |
-| --- | --- | --- |
-| Are the Agent's instructions and Skills structurally usable? | `aet audit` | Deterministic findings, source evidence, RulePack identity and remediation. |
-| Is this diff inside the human-approved change contract? | `aet review` | Intent, path budget, proof declarations and optional Review Policy. |
-| Did this exact proof command run and produce this artifact? | `aet trace -- <argv>` | Command, exit status, logs, artifacts, redaction and workspace snapshot. |
-| Can the evidence travel with a handoff? | `aet evidence pack` | Portable Evidence Pack and optional static Viewer. |
-| Did the repository change after the proof? | `aet run verify` | Fresh, stale or explicitly unknown lifecycle state. |
-| What context and decisions were actually recorded? | `aet context`, `aet decision` | Hash-bound manifests and source-backed project memory. |
-| Why did this repository evolve this way? | `aet evolve` | Cited local/explicit-remote archaeology, not invented author intent. |
-| Which bounded route matches a structured failure? | `aet quality diagnose` | Status-preserving owner/action/repair mapping and review routing. |
-| Can a confirmed failure become a regression asset? | `aet quality promote` | Validation-only Task v2 staging bundle; no production write. |
-| Can recurring failures improve a governance asset? | `aet learn` | Evidence Only mining, target-specific replay/Gate, stage and human adoption. |
-| How much observed evidence is required for this claim? | `aet learn plan` | A hash-bound risk, coverage, effect, power and stopping contract. |
-| Can comparable historical Gates inform planning? | `aet learn history assess` | Drift-explicit sensitivity only; history never enters PASS. |
-
-## Delivery workflow reference
-
-### Activation and project fit
-
-**AET is opt-in and should remain off for ordinary Agent work.** Installing the
-CLI or portable Skill does not authorize an Agent to run it. Enable it for one
-task only when the user explicitly asks for AET; do not carry that permission
-into later tasks.
-
-| Workload | Recommended AET level |
-| --- | --- |
-| Routine coding, prototypes, small changes, exploratory work | **Off** (default); use the project's normal tests and CI. |
-| High-value PR or multi-Agent handoff where claims need portable proof | Run only the requested delivery surface: Audit, Review, Trace, or Evidence Pack. |
-| Release, regulated, security-sensitive, or high-blast-radius Agent change | Use the relevant full delivery contract and fresh declared proofs. |
-| Governance-asset optimization | Explicitly opt into `aet learn`; reserve real-host Gate/Shadow for adoption decisions. |
-
-This boundary is also a cost boundary. Real-host evaluation is inherently
-expensive because every fresh pair executes both baseline and candidate. The
-v1.9 case study required **36 real Agent runs**, but 36 was a Release profile,
-not a statistical law. v1.10 introduced exact Trace reuse and compact Receipts;
-v1.11 turns the remaining safe reductions into explicit contracts:
-`trace --reuse-if-fresh` skips execution only after exact command, proof,
-artifact, validator, sealed-report, log and workspace verification; `evidence
-receipt` provides a compact hash-bound index with a live freshness check;
-observed replay resume/reuse is explicit and byte-bound; deterministic failures
-stop before a Host call; Tournament/Sleep do not repeat the same Replay; and
-Release promotes the exact CI-built Artifact. A Gate Plan freezes applicability,
-suite objectives, coverage, alpha, power, effect assumption, sample bounds and
-stopping looks before execution. Ordinary fixed-sample p-values may not be
-repeatedly peeked. `FAIL`, infrastructure failure, safe mathematical futility,
-and a pre-registered efficacy boundary may stop early. Reaching the maximum
-without evidence remains `INCONCLUSIVE`. Historical evidence can only produce a
-planning sensitivity report and never reduces the fresh-pair PASS statistic.
-
-Install the current release:
-
-```bash
-uv tool install https://github.com/AdvancingTitans/agent-engineering-toolkit/releases/download/v1.12.0/agent_engineering_toolkit-1.12.0-py3-none-any.whl
-aet --version
-```
-
-Create a reviewable contract, audit the instructions, review the diff, and run
-the declared proof through Trace:
-
-```bash
-aet init --output aet.toml
-
-aet audit . --strict --format json \
-  --output .aet/evidence/audit.json
-
-aet review . --base main --intent aet.intent.json --format json \
-  --output .aet/evidence/review.json
-
-aet trace --proof unit-tests --intent aet.intent.json \
-  --artifact reports/pytest.txt \
-  --output .aet/evidence/trace.json \
-  -- python -m pytest -q
-
-aet evidence pack \
-  --audit .aet/evidence/audit.json \
-  --review .aet/evidence/review.json \
-  --trace .aet/evidence/trace.json \
-  --output .aet/evidence/evidence-pack.json
-
-# Explicitly reuse only an exact, fresh successful Trace; never auto-executes.
-aet trace --reuse-if-fresh --proof unit-tests --intent aet.intent.json \
-  --artifact reports/pytest.txt --output .aet/evidence/trace.json \
-  -- python -m pytest -q
-
-# Give an Agent a compact index while retaining canonical evidence on disk.
-aet evidence receipt --report .aet/evidence/evidence-pack.json \
-  --output .aet/evidence/receipt.json
-```
-
-`audit` and `review` never execute a declared proof. A non-zero Audit exit still
-writes its report; inspect the finding before deciding what to fix. Trace is
-opt-in, rejects unsafe artifact paths, independently redacts declared UTF-8
-artifacts, and preserves a successful child exit separately from an artifact
-verification gap.
-
-## From badcase to regression asset
-
-Quality is deterministic before it becomes generative:
-
-```bash
-aet quality diagnose \
-  --report .aet/evidence/failure.json \
-  --policy quality-mapping.json \
-  --output .aet/quality/diagnosis.json
-
-aet quality promote \
-  --badcase confirmed-badcase.json \
-  --diagnosis .aet/quality/diagnosis.json \
-  --policy quality-mapping.json \
-  --output .aet/quality/staged-regressions
-```
-
-Diagnosis is explicit policy lookup, not semantic RCA. Promotion is intentionally
-narrow: the sample must be confirmed, reproducible, de-identified,
-representative and non-duplicate. It writes a content-addressed validation
-candidate and provenance sidecar—not a production Skill, test suite, ticket or
-auto-fix.
-
-## Evidence-gated evolution
-
-AET can evolve six registered governance targets:
-
-| Target | Candidate surface | Evaluator | Additional brake |
+Each run scans only the locked local checkout, runs no upstream code or tests,
+installs no upstream dependencies, copies no source text into reports, and
+does not allow an LLM to create or change a Showcase Finding. Each case writes
+two shared machine artifacts and five reviewed human artifacts for each of
+`en/` and `zh-CN/`. See the
+[scope and publication boundary](repository-audit-showcase/docs/scope-and-publication.md).
+These status counts describe the bounded evidence contract, not an overall
+quality grade for the upstream repository.
+
+## AET Quick and AET Lab
+
+| Layer | Audience | Capabilities | Default |
 | --- | --- | --- | --- |
-| Skill | Marked editable block | Static contract or real Codex/Claude behavior | Paired statistics + human adoption |
-| Audit Rule | Declarative, non-executable detector selection | Core / validation / held-out / adversarial fixtures | Adoption-grade multi-repository Shadow |
-| Audit Profile | Monotonic configuration | Target-specific policy suite | Cannot disable rules or lower severity |
-| Review Policy | Bounded JSON Patch | Review-policy suite | Cannot expand scope or remove proof |
-| Trace Validator | Allowlisted validator policy | Validator suite | Cannot weaken evidence semantics |
-| Triage Policy | Ordering policy | Triage suite | May reorder; never hide or rewrite findings |
+| AET Quick | Developers using coding Agents day to day | Check, Scope, Proof, Fresh | Installed and invoked individually |
+| Optional extensions | Teams needing project provenance | Context, Decision, Evolve | Explicit request |
+| AET Lab | Agent engineers and Skill/platform authors | Evidence Pack, Showcase, Quality, Learn, Replay, Gate, Tournament, Shadow, Stage, Adopt, statistics | Explicit opt-in only |
 
-The standard loop is explicit and separable:
+Existing Lab commands and the canonical
+[`agent-engineering-toolkit` compatibility Skill](skills/agent-engineering-toolkit)
+remain available. Quick does not preload their references, run real-host
+rollouts, create large HTML/SVG bundles, or perform governance-asset adoption.
 
-```bash
-aet learn harvest --evidence .aet/evidence \
-  --output .aet/learn/experiences.json
-aet learn mine --experiences .aet/learn/experiences.json \
-  --target-type skill --output .aet/learn/patterns.json
-aet learn propose --engine rules --patterns .aet/learn/patterns.json \
-  --target skills/agent-engineering-toolkit/SKILL.md \
-  --output .aet/learn/candidates/CAND-001
+## Security and authority
 
-aet learn gate --candidate .aet/learn/candidates/CAND-001 \
-  --core eval/core --validation eval/validation --held-out eval/held-out \
-  --output .aet/learn/gates/CAND-001.json
+- Local and read-only by default.
+- `/aet-proof` executes only argv explicitly placed after `--`.
+- The explicit proof request authorizes its receipt, not unrelated writes.
+- Credentials are never required for Quick and must not enter persisted evidence.
+- Remote writes, `git push`, release publication, Issue closure, destructive shell actions, automatic repair, and automatic adoption are forbidden.
+- Remote reads and project execution must match the selected Skill's policy and budget.
+- Missing evidence remains `UNKNOWN`; there is no holistic trust score.
+- A model-generated judgment is never the sole release gate.
 
-aet learn stage --candidate .aet/learn/candidates/CAND-001 \
-  --gate .aet/learn/gates/CAND-001.json \
-  --output .aet/learn/staged
-```
+Read [security and retention](docs/security-and-retention.md) and the
+[stability contract](docs/stability.md) for the detailed boundary.
 
-`stage` is not adoption. `adopt --yes` rechecks immutable bytes and the target's
-current hash. AET never schedules itself, uploads a transcript, opens a ticket,
-commits, pushes or publishes a release.
+## Install and develop
 
-### Real-host evaluation
-
-Static replay checks document contracts; it is never presented as observed
-Agent behavior. Real-host evaluation is deliberately exceptional: use it when
-adopting the exact Skill/Prompt/governance candidate evaluated by the suites,
-changing behavior that those suites actually cover, or publishing a new
-observed-behavior claim. Do not run it for
-ordinary runtime, evidence, packaging, documentation, or deterministic-policy
-releases. Name a real runner when behavior matters:
+Install the current Quick implementation from this source checkout:
 
 ```bash
-aet learn runner list
-
-aet learn replay --candidate .aet/learn/candidates/CAND-001 \
-  --suite eval/real-agent/core --runner codex --rollouts 3 \
-  --runner-config runner.json \
-  --output .aet/learn/replays/CAND-001
-
-aet learn plan --candidate .aet/learn/candidates/CAND-001 \
-  --core eval/real-agent/core --validation eval/real-agent/validation \
-  --held-out eval/real-agent/held-out --runner codex \
-  --runner-config runner.json --risk-class R3 \
-  --claim TRACE.ROUTING.EXACT-COMMAND --output .aet/learn/gate-plan.json
-
-aet learn gate --candidate .aet/learn/candidates/CAND-001 \
-  --core eval/real-agent/core --validation eval/real-agent/validation \
-  --held-out eval/real-agent/held-out --runner codex \
-  --runner-config runner.json --gate-plan .aet/learn/gate-plan.json \
-  --output .aet/learn/gates/CAND-001.json
+uv tool install .
 ```
 
-Core is a contract-retention check, not a claim of statistical
-non-inferiority: every candidate Task must succeed and no new hard finding may
-appear. Validation and Held-out use the pre-registered candidate-better,
-one-sided exact paired objective plus MCID. The overall adoption Gate is an
-intersection-union decision—all declared objectives must pass. Each sequential
-look spends a fixed share of family alpha, so optional stopping cannot reuse the
-legacy fixed-sample p-value.
+Install or copy only the Quick Skill folders supported by your Agent host.
+Hosts without native Skill loading can load the relevant `SKILL.md` as task
+instructions and call the same CLI.
 
-Verified history is deliberately weaker:
-
-```bash
-aet learn history assess --registry gate-history.json \
-  --gate-plan .aet/learn/gate-plan.json --suite validation \
-  --output .aet/learn/history-assessment.json
-```
-
-The registry rejects unverified, duplicate or identity-drifted entries. Its
-discounted effective sample and leave-one-release-out sensitivity are planning
-metadata only; the planned maximum is never lowered and fresh pairs alone enter
-the Gate statistic.
-
-Host startup, authentication failure, timeout, empty structured events and
-unsupported isolation remain `INFRASTRUCTURE_ERROR`, `UNKNOWN` or
-`INCONCLUSIVE`; they never become a candidate pass. Raw outputs and normalized
-events stay inside private rollout directories. Only derived Evidence Only
-phenomena, scores and hashes are eligible for export.
-
-### Release classification
-
-Every tag carries a tracked `release-classification.json` contract binding its
-base tag, complete changed-path digest, class, claims/adoptions, and any
-behavior-sensitive `NOT_APPLICABLE` exceptions to deterministic proofs. The
-GitHub Release workflow verifies that contract before accepting its explicit
-class:
-
-| Class | Real Host Gate | Release evidence |
-| --- | --- | --- |
-| `deterministic` | Must be omitted | `NOT_APPLICABLE` with a reason; CI binds full tests, suites, Audit, wheel and hashes to the release commit. |
-| `governance-adoption` | Required | A successful workflow Run ID, commit, runner, candidate and suite bytes are all reverified before release. |
-
-The dispatch choice cannot override the tag contract. The workflow also rejects
-a Gate Run ID on a deterministic release, a governance-adoption release without
-one, a Gate whose Candidate SHA or covered Suite IDs differ from its structured
-claim binding, an unacknowledged sensitive path, or a stale Diff digest. Every Release
-publishes the contract, its commit-bound verification, the exact CI candidate
-Artifact manifest, and
-`release-evidence.json`; governance releases additionally retain the verified
-Real Host Gate manifest as a durable Release asset. Absence of a model Gate is
-therefore reviewable `NOT_APPLICABLE`, never silently treated as `PASS`.
-
-## Where AET fits
-
-AET complements existing tools instead of pretending to replace them.
-
-| Tool category | It owns | AET owns |
-| --- | --- | --- |
-| Codex, Claude Code, Copilot and other runtimes | Planning and executing repository work | Evidence and authority around the runtime's delivery claims |
-| Tests, CI, linters and security scanners | Domain-specific checks | Exact execution proof, artifact binding, intent and freshness around those checks |
-| LangSmith, Braintrust, DeepEval and observability stacks | Broad experiment, trace and fleet analytics | Local engineering evidence semantics and bounded governance-asset adoption |
-| OPA and policy engines | General pre-authored policy enforcement | AET-specific monotonic policies and evidence-gated evolution |
-| Skill authoring and optimization systems | Creating or training Skill content | Proving in-use behavior and constraining what may be evaluated, staged and adopted |
-| Ticketing and business dashboards | Operational workflow and online outcome tracking | Structured local evidence that those systems may consume |
-
-Choose AET when a coding-agent handoff needs more than “looks good,” when
-`FAIL` and `UNKNOWN` must remain different, or when a recurring failure should
-improve a governance asset without giving the candidate control of its own
-evaluation.
-
-Do not choose AET as an Agent runtime, general benchmark, LLM-Judge center,
-automatic semantic RCA/Evidence Graph, clustering platform, Skill quality-YAML
-standard, hosted transcript service, business dashboard or autonomous release
-bot.
-
-## Security and trust boundaries
-
-- **Only Trace executes.** `audit`, `review`, quality diagnosis, Evidence Pack
-  compilation and deterministic replay are read-only with respect to the proof
-  command.
-- **Trace evidence is independently checked.** The scorer binds the trusted
-  wrapper, outer child argv, Trace argv, Intent proof command, artifacts, logs,
-  redaction rules and before/after snapshots. Command-shaped text is not proof.
-- **Fixtures are copied without following links.** Nested symlinks, special
-  files, outside-root sources and post-copy hash drift are rejected.
-- **Environment permission is explicit.** A Task names allowed environment
-  variables; process runners also require `inherit_home: true` for `HOME`.
-  Authorization to inherit a value never authorizes exporting it.
-- **Network posture is truthful.** A runner that cannot enforce OS-level denial
-  reports `PARTIAL`; an `enforced-deny` Task fails before execution.
-- **Candidate authority is bounded.** Evaluator code, held-out cases,
-  Constitution, evidence states and human adoption are immutable to the
-  candidate.
-
-These controls reduce the candidate's influence. They do not claim an
-impossible-to-game evaluator, perfect sandbox, or proof that a model understood
-every discovered instruction.
-
-## Portable Skill and repository archaeology
-
-The canonical tool-neutral Skill lives in
-[`skills/agent-engineering-toolkit`](skills/agent-engineering-toolkit). The
-wheel contains the CLI, not the Skill resources. From a source checkout, copy
-the complete directory rather than only `SKILL.md`:
+For local development:
 
 ```bash
 git clone https://github.com/AdvancingTitans/agent-engineering-toolkit.git
 cd agent-engineering-toolkit
-cp -R skills/agent-engineering-toolkit ~/.codex/skills/
+uv run --no-editable python -m unittest discover -s tests
 ```
 
-Configure the host with an equivalent activation rule:
+AET uses Python 3.11+ and keeps the deterministic runtime dependency-light.
+Contributions should add clean and failing fixtures, preserve evidence
+provenance, and avoid broadening a Quick command beyond its question. See
+[CONTRIBUTING.md](CONTRIBUTING.md).
 
-> AET is opt-in. Do not load or run it for ordinary tasks. Use it only when the
-> user explicitly asks to use AET for the current task, and select the smallest
-> requested surface.
+## Advanced documentation
 
-To uninstall it from Codex, remove the complete
-`~/.codex/skills/agent-engineering-toolkit` directory and start a new task so
-the Skill catalog is reloaded. Removing the Skill does not uninstall the
-separate `aet` CLI.
+- [Rule catalog](docs/rule-catalog.md)
+- [Evidence and delivery workflow](skills/agent-engineering-toolkit/references/delivery-workflow.md)
+- [Repository Audit Showcase](skills/agent-engineering-toolkit/references/repository-audit-showcase.md)
+- [Provenance workflows](skills/agent-engineering-toolkit/references/provenance-workflow.md)
+- [Quality workflow](skills/agent-engineering-toolkit/references/quality-workflow.md)
+- [Lab evolution workflow](skills/agent-engineering-toolkit/references/evolution-workflow.md)
+- [Changelog](CHANGELOG.md)
 
-For source-backed project history, `aet evolve plan/collect/build/report`
-collects local Git and documentation by default. GitHub access occurs only with
-explicit `--remote github`. Missing remote evidence stays `UNKNOWN`; AET never
-invents author intent from commit text alone.
+## License
 
-## Verification
-
-The release itself leaves runnable checks behind:
-
-```bash
-uv run --with pytest python -m pytest -q
-uv run --with pytest python -m pytest tests/test_business_quality_flows.py -q
-uv run --no-editable --reinstall-package agent-engineering-toolkit \
-  aet audit . --strict --format json --output .aet/evidence/release-audit.json
-uv build
-uv run --isolated --with dist/agent_engineering_toolkit-1.12.0-py3-none-any.whl \
-  aet --version
-```
-
-See [CHANGELOG.md](CHANGELOG.md), the
-[evolution boundary](docs/evolution-boundary.md), and the
-[v1.9 implementation plan](docs/superpowers/plans/2026-07-13-v1-9-quality-loop.md)
-for the detailed contracts behind the architecture.
-
-## Contributing
-
-Issues and pull requests are welcome. Preserve the defining constraints:
-deterministic checks before model judgment, explicit `UNKNOWN`, candidate and
-evaluator separation, private raw evidence, target-specific Gates, and human
-authority over adoption.
-
-Released under the [MIT License](LICENSE).
+[MIT](LICENSE)

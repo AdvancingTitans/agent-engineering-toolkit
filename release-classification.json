@@ -1,65 +1,158 @@
 {
   "schema_version": "release-classification/v1",
-  "release_tag": "v1.12.0",
-  "base_tag": "v1.11.1",
-  "changed_paths_sha256": "f26b95dfb5c97027ae8fe470adf31eab99f2061ed8e6bec1359b15e7e2db3094",
-  "changed_content_sha256": "b682bf418afdef1d7d289743af03547798c726d5c50497b20438a0e423bb2823",
+  "release_tag": "v1.13.0",
+  "base_tag": "v1.12.0",
+  "changed_paths_sha256": "d970a7f4320d0f8f92e1628bb1c8c56d8bf6519deb755c007e61d336aef300f1",
+  "changed_content_sha256": "007afcbf57cc39d552f797539fc9f497f5f81496e46449289196eefd4385cec0",
   "release_class": "deterministic",
   "real_host_gate": "NOT_APPLICABLE",
   "observed_behavior_claims": [],
   "governance_asset_adoptions": [],
   "not_applicable_exceptions": [
     {
-      "path": "aet.intent.json",
-      "reason": "The reviewed intent binds the complete three-case Showcase scope and its deterministic local proof commands; it makes no changed Agent-behavior claim.",
-      "deterministic_proofs": [
-        "tests/test_business_quality_flows.py",
-        "tests/test_repository_audit.py"
-      ]
+      "path": "release-classification.json",
+      "reason": "This contract binds the complete v1.13.0 Diff and declares no governance adoption or release-authorizing Agent behavior claim.",
+      "deterministic_proofs": ["tests/test_business_quality_flows.py"]
     },
     {
-      "path": "release-classification.json",
-      "reason": "This tracked contract binds the complete v1.12.0 Diff to deterministic proofs and explicitly declares no changed Agent behavior or governance adoption.",
-      "deterministic_proofs": [
-        "tests/test_business_quality_flows.py"
-      ]
+      "path": "schemas/command-budget-v1.schema.json",
+      "reason": "This machine contract records the bounded Quick command counters and exhaustion behavior without adopting a learned governance asset.",
+      "deterministic_proofs": ["tests/test_quick_docs.py"]
+    },
+    {
+      "path": "schemas/intent-v2.schema.json",
+      "reason": "This machine contract separates explicit, project, inferred, and unknown Intent sources and makes no observed Agent behavior claim.",
+      "deterministic_proofs": ["tests/test_quick_docs.py", "tests/test_quick.py"]
+    },
+    {
+      "path": "schemas/investigated-finding-v1.schema.json",
+      "reason": "This machine contract separates Evidence First status, semantic support, fact kinds, counter-explanation, and uncertainty.",
+      "deterministic_proofs": ["tests/test_investigation.py"]
+    },
+    {
+      "path": "schemas/investigation-contract-v1.schema.json",
+      "reason": "This machine contract defines mandatory investigation directions, grounding requirements, prohibitions, and bounded stop conditions.",
+      "deterministic_proofs": ["tests/test_investigation.py"]
+    },
+    {
+      "path": "schemas/investigation-ledger-v1.schema.json",
+      "reason": "This machine contract records hash-bound tool results, evidence class, hypotheses, conflicts, budgets, and stop disposition.",
+      "deterministic_proofs": ["tests/test_investigation.py"]
+    },
+    {
+      "path": "schemas/proof-receipt-v2.schema.json",
+      "reason": "This machine contract records explicit argv execution and workspace, file, artifact, runtime, and environment bindings.",
+      "deterministic_proofs": ["tests/test_quick.py", "tests/test_quick_docs.py"]
+    },
+    {
+      "path": "skills/aet-check/SKILL.md",
+      "reason": "This portable Skill exposes only the bounded Check investigation, follows language routing, and stops after its report.",
+      "deterministic_proofs": ["tests/test_quick_docs.py", "tests/test_quick.py"]
+    },
+    {
+      "path": "skills/aet-fresh/SKILL.md",
+      "reason": "This portable Skill exposes only deterministic Proof freshness comparison, follows language routing, and stops after its report.",
+      "deterministic_proofs": ["tests/test_quick_docs.py", "tests/test_quick.py"]
+    },
+    {
+      "path": "skills/aet-proof/SKILL.md",
+      "reason": "This portable Skill executes only explicit user argv and writes the requested compact Receipt before stopping.",
+      "deterministic_proofs": ["tests/test_quick_docs.py", "tests/test_quick.py"]
+    },
+    {
+      "path": "skills/aet-scope/SKILL.md",
+      "reason": "This portable Skill exposes bounded scope investigation and forbids path mismatch alone from establishing a scope violation.",
+      "deterministic_proofs": ["tests/test_quick_docs.py", "tests/test_quick.py"]
     },
     {
       "path": "skills/agent-engineering-toolkit/SKILL.md",
-      "reason": "The Skill adds an explicit route to the bounded Repository Audit Showcase while preserving default-off activation and human publication authority.",
-      "deterministic_proofs": [
-        "tests/test_productization.py",
-        "tests/test_repository_audit.py"
-      ]
+      "reason": "The compatibility Skill routes users to one dedicated Quick surface and keeps all legacy Lab behavior explicitly opt-in.",
+      "deterministic_proofs": ["tests/test_quick_docs.py", "tests/test_productization.py"]
     },
     {
-      "path": "skills/agent-engineering-toolkit/references/repository-audit-showcase.md",
-      "reason": "The new reference documents only the three commit-locked static cases, evidence boundaries, runtime scope, and mandatory human review state.",
-      "deterministic_proofs": [
-        "tests/test_productization.py",
-        "tests/test_repository_audit.py"
-      ]
+      "path": "skills/agent-engineering-toolkit/agents/openai.yaml",
+      "reason": "The interface metadata describes the Quick-first compatibility route and does not adopt or modify a learned governance asset.",
+      "deterministic_proofs": ["tests/test_productization.py"]
     },
     {
       "path": "src/aet/__init__.py",
-      "reason": "The module change is the package version declaration only and makes no claim about changed Agent behavior.",
-      "deterministic_proofs": [
-        "tests/test_productization.py"
-      ]
+      "reason": "This module change advances only the package version required for the v1.13.0 deterministic release artifact.",
+      "deterministic_proofs": ["tests/test_productization.py"]
     },
     {
       "path": "src/aet/cli.py",
-      "reason": "The CLI adds three explicit repository-case aliases and preserves legacy path audit behavior; deterministic tests cover dispatch and invalid combinations.",
-      "deterministic_proofs": [
-        "tests/test_repository_audit.py"
-      ]
+      "reason": "The CLI registers exactly four Quick subcommands while preserving legacy command compatibility and explicit argv boundaries.",
+      "deterministic_proofs": ["tests/test_quick.py", "tests/test_productization.py"]
     },
     {
-      "path": "src/aet/repository_audit.py",
-      "reason": "The new static repository auditor is deterministic, read-only, Evidence First, bounded by locked profiles, and never executes upstream code or tests.",
-      "deterministic_proofs": [
-        "tests/test_repository_audit.py"
-      ]
+      "path": "src/aet/investigation/__init__.py",
+      "reason": "This module exports only the deterministic Ledger, Grounding Validator, typed states, and bounded stop policy.",
+      "deterministic_proofs": ["tests/test_investigation.py"]
+    },
+    {
+      "path": "src/aet/investigation/grounding.py",
+      "reason": "The validator deterministically checks references, fact kinds, evidence classes, conflicts, permissions, strength, and Contract stops.",
+      "deterministic_proofs": ["tests/test_investigation.py", "tests/test_quick_benchmark.py"]
+    },
+    {
+      "path": "src/aet/investigation/ledger.py",
+      "reason": "The Ledger deterministically validates result hashes, hypotheses, material conflicts, usage budgets, and traceable tool steps.",
+      "deterministic_proofs": ["tests/test_investigation.py"]
+    },
+    {
+      "path": "src/aet/investigation/models.py",
+      "reason": "These enums separate Finding origin and semantic support from the authoritative Evidence First status domain.",
+      "deterministic_proofs": ["tests/test_investigation.py"]
+    },
+    {
+      "path": "src/aet/investigation/stop_policy.py",
+      "reason": "This deterministic policy implements the declared value, budget, authority, information, and tool availability stop conditions.",
+      "deterministic_proofs": ["tests/test_investigation.py"]
+    },
+    {
+      "path": "src/aet/narrative/__init__.py",
+      "reason": "This module exports deterministic language selection and bilingual rendering without changing evidence or assessment state.",
+      "deterministic_proofs": ["tests/test_quick.py", "tests/test_investigation.py"]
+    },
+    {
+      "path": "src/aet/narrative/renderer.py",
+      "reason": "The renderer separates confirmed facts, engineering judgment, counter-explanation, uncertainty, location, action, and references.",
+      "deterministic_proofs": ["tests/test_quick.py", "tests/test_investigation.py"]
+    },
+    {
+      "path": "src/aet/narrative/terminology.py",
+      "reason": "This deterministic router selects Chinese only for a Chinese slash-command request and English for every other request.",
+      "deterministic_proofs": ["tests/test_quick.py"]
+    },
+    {
+      "path": "src/aet/quick/__init__.py",
+      "reason": "This module exports exactly the four bounded deterministic Quick execution surfaces and no Lab workflow.",
+      "deterministic_proofs": ["tests/test_quick.py"]
+    },
+    {
+      "path": "src/aet/quick/check.py",
+      "reason": "Quick Check performs a bounded read-only deterministic preflight and preserves the four Evidence First statuses.",
+      "deterministic_proofs": ["tests/test_quick.py", "tests/test_quick_performance.py"]
+    },
+    {
+      "path": "src/aet/quick/common.py",
+      "reason": "These helpers provide path-safe hashing and atomic JSON writes used by deterministic Quick receipts and reports.",
+      "deterministic_proofs": ["tests/test_quick.py"]
+    },
+    {
+      "path": "src/aet/quick/fresh.py",
+      "reason": "Quick Fresh deterministically compares Proof bindings and emits one of seven explicit freshness states without executing code.",
+      "deterministic_proofs": ["tests/test_quick.py", "tests/test_quick_performance.py"]
+    },
+    {
+      "path": "src/aet/quick/proof.py",
+      "reason": "Quick Proof executes only explicit argv and binds exit status, workspace, relevant files, artifacts, runtime, and environment.",
+      "deterministic_proofs": ["tests/test_quick.py"]
+    },
+    {
+      "path": "src/aet/quick/scope.py",
+      "reason": "Quick Scope records Intent and Diff facts while preserving path mismatch as a question requiring semantic investigation.",
+      "deterministic_proofs": ["tests/test_quick.py", "tests/test_quick_performance.py"]
     }
   ]
 }

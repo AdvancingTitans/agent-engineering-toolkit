@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://advancingtitans.github.io/aet/eval/quick-investigation/schemas/annotations-v1.schema.json",
+  "title": "AET Quick Investigation Human Annotations v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "annotations"],
+  "properties": {
+    "schema_version": {"const": "quick-investigation-annotations/v1"},
+    "annotations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["run_id"],
+        "properties": {
+          "run_id": {"type": "string", "minLength": 1},
+          "manual_review_seconds": {"type": "number", "minimum": 0},
+          "user_understanding": {"enum": ["CORRECT", "PARTIAL", "INCORRECT"]},
+          "reviewer": {"type": "string", "minLength": 1},
+          "notes": {"type": "string"}
+        },
+        "anyOf": [
+          {"required": ["manual_review_seconds"]},
+          {"required": ["user_understanding"]}
+        ]
+      }
+    }
+  }
+}

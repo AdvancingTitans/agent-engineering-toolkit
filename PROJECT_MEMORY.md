@@ -360,3 +360,62 @@ deterministic core.
 - Remaining release work is operational: bind the final Diff in
   `release-classification.json`, commit, tag, push, wait for exact-commit CI,
   and publish GitHub Release `v1.12.0`. Do not publish to PyPI.
+
+## Unreleased AET Quick implementation — 2026-07-24
+
+- Reframed the default product surface around four independent, bounded Skills:
+  `/aet-check`, `/aet-scope`, `/aet-proof`, and `/aet-fresh`. Each emits one
+  result and stops. Existing 1.x CLI and AET Lab surfaces remain compatible and
+  require explicit opt-in.
+- Added `aet quick check|scope|proof|fresh`. The new layer reuses the existing
+  deterministic audit, Git, Trace, snapshot, redaction, and receipt core rather
+  than changing legacy command semantics.
+- Added host-neutral investigation contracts and standard-library validation
+  for Intent provenance, competing hypotheses, immutable result references,
+  counter-explanation requirements, Finding strength, tool authority, write and
+  execution permission, command budgets, and stop conditions.
+- Preserved `PASS`/`FAIL`/`UNKNOWN`/`NOT_APPLICABLE` as authoritative evidence
+  status. Finding origin and semantic support remain in the Investigated
+  Finding contract; Scope disposition and Freshness state remain command-level
+  fields and cannot overwrite source evidence.
+- Quick Proof writes one compact JSON receipt after an explicit request and
+  records argv, exit status, workspace snapshot, relevant paths, artifacts,
+  the selected executable identity, explicitly named environment-input hashes,
+  Python/platform identity, and dependency lockfile hashes. Quick Fresh
+  distinguishes exact, unrelated-workspace, HEAD-only, relevant-file, artifact,
+  environment, and unknown drift while retaining legacy evidence fallback.
+- Added deterministic narrative routing: only a Chinese slash-command request
+  defaults to Simplified Chinese; all other requests use English. Rendering
+  changes no machine state or evidence reference.
+- Rebuilt the English and Simplified Chinese README around Quick, added four
+  dedicated portable Skills, six JSON Schemas, synchronized static and
+  animated SVG architecture sources, 1600 × 900 PNG renders, and English and
+  Chinese WebM introductions. The three commit-locked Repository Audit Showcase
+  cases remain unchanged and are documented as AET Lab.
+- Completed the full Investigation Contract runtime: contract shape,
+  `finding_type`, explicit-user source references, negative-search coverage,
+  material recorded conflicts, semantic disclosure, and allowed stop reasons
+  are now checked by the standard-library Grounding Validator. The Validator
+  always validates the supplied Ledger before trusting its references.
+- Added the opt-in `eval/quick-investigation/` AET Lab harness with the four
+  frozen comparison groups and eight Scope scenarios. A real `gpt-5.6-sol`
+  / medium, two-repetition run produced 64 observations. Effective recall /
+  false discovery proportions were 60% / 50% for pure rules, 80% / 38.5% for
+  one-shot LLM, and 90% / 25% for both investigated groups. The Grounded
+  group used the shipped Validator and rejected zero claims in this sample.
+  The tracked result records time, tools, and Tokens; unmeasured manual-review
+  time and user understanding remain `UNKNOWN`.
+- Acceptance evidence in the working tree: 260 unit tests passed; strict
+  self-audit returned zero findings; an isolated wheel contained the Quick,
+  investigation, narrative, built-in RulePack, and new Schema assets, exposed
+  all four Quick subcommands, reported version `1.13.0`, and passed a legacy
+  Audit smoke test. The runnable stale-proof demo produced `EXACT_MATCH` and
+  then `RELEVANT_FILES_CHANGED`.
+  The tracked 30-sample performance report measured Check P95 0.622 s, Scope
+  P95 0.059 s, and Fresh P95 0.037 s on the recorded local environment. These
+  are local bounded checks, not cross-repository or model-service P95 claims.
+- The source version and lock were advanced to `1.13.0` so non-editable and
+  isolated installs cannot resolve to the pre-Quick `1.12.0` build. No release,
+  tag, push, persistent Skill installation, or PyPI publication was performed.
+  Resume from final independent compliance review and diff-bound release
+  classification.

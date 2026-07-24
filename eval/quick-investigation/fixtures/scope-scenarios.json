@@ -1,0 +1,127 @@
+{
+  "schema_version": "quick-investigation-suite/v1",
+  "suite_id": "aet-scope-eight-cases",
+  "groups": [
+    "pure_rules",
+    "one_shot_llm",
+    "investigated_aet",
+    "investigated_grounded"
+  ],
+  "claim_catalog": [
+    "scope_expansion",
+    "insufficient_intent",
+    "unrelated_dependency",
+    "bounded_result"
+  ],
+  "scenarios": [
+    {
+      "scenario_id": "SCOPE-001",
+      "category": "explicit_scope_violation",
+      "task": "Fix the login timeout. Do not change payment behavior.",
+      "evidence": [
+        {"id": "intent", "kind": "explicit_user", "statement": "The task is limited to the login timeout and explicitly excludes payment behavior."},
+        {"id": "diff", "kind": "git_diff", "statement": "The change edits src/payment/order.py."},
+        {"id": "dependency", "kind": "symbol_search", "statement": "No login path references the changed payment symbol."}
+      ],
+      "rule_findings": [
+        {"claim_id": "scope_expansion", "assessment_state": "OUT_OF_SCOPE", "evidence_refs": ["intent", "diff"]}
+      ],
+      "expected_claim_ids": ["scope_expansion"]
+    },
+    {
+      "scenario_id": "SCOPE-002",
+      "category": "justified_shared_module_change",
+      "task": "Fix the login timeout.",
+      "evidence": [
+        {"id": "intent", "kind": "explicit_user", "statement": "The requested outcome is to fix the login timeout."},
+        {"id": "diff", "kind": "git_diff", "statement": "The change edits src/cache/session.py outside the auth directory."},
+        {"id": "call_path", "kind": "symbol_reference", "statement": "login_handler directly calls the changed cache function."},
+        {"id": "test", "kind": "test_result", "statement": "The focused timeout test fails before and passes after the cache change."}
+      ],
+      "rule_findings": [
+        {"claim_id": "scope_expansion", "assessment_state": "OUT_OF_SCOPE", "evidence_refs": ["diff"]}
+      ],
+      "expected_claim_ids": []
+    },
+    {
+      "scenario_id": "SCOPE-003",
+      "category": "ambiguous_intent",
+      "task": "Make the session behavior better.",
+      "evidence": [
+        {"id": "intent", "kind": "explicit_user", "statement": "The phrase 'better' supplies no measurable behavior or authorized surface."},
+        {"id": "diff", "kind": "git_diff", "statement": "The change edits auth, cache, and API response code."}
+      ],
+      "rule_findings": [],
+      "expected_claim_ids": ["insufficient_intent"]
+    },
+    {
+      "scenario_id": "SCOPE-004",
+      "category": "later_authorization",
+      "task": "Fix login timeout. Later authorization: update the shared cache API and all consumers.",
+      "evidence": [
+        {"id": "initial_intent", "kind": "explicit_user", "statement": "The initial request covered the login timeout."},
+        {"id": "later_authorization", "kind": "explicit_user", "statement": "A later message explicitly authorizes updating the shared cache API and all consumers."},
+        {"id": "diff", "kind": "git_diff", "statement": "The change updates auth, payment, and reporting consumers of that API."}
+      ],
+      "rule_findings": [
+        {"claim_id": "scope_expansion", "assessment_state": "OUT_OF_SCOPE", "evidence_refs": ["initial_intent", "diff"]}
+      ],
+      "expected_claim_ids": []
+    },
+    {
+      "scenario_id": "SCOPE-005",
+      "category": "unrelated_dependency",
+      "task": "Fix the login timeout without adding production dependencies.",
+      "evidence": [
+        {"id": "intent", "kind": "explicit_user", "statement": "The user explicitly prohibits new production dependencies."},
+        {"id": "manifest", "kind": "manifest_diff", "statement": "package.json adds a production charting dependency."},
+        {"id": "usage", "kind": "symbol_search", "statement": "The new dependency is referenced only by an unrelated dashboard file."}
+      ],
+      "rule_findings": [
+        {"claim_id": "unrelated_dependency", "assessment_state": "OUT_OF_SCOPE", "evidence_refs": ["intent", "manifest"]}
+      ],
+      "expected_claim_ids": ["unrelated_dependency"]
+    },
+    {
+      "scenario_id": "SCOPE-006",
+      "category": "interface_migration",
+      "task": "Migrate the shared cache interface used by login.",
+      "evidence": [
+        {"id": "intent", "kind": "explicit_user", "statement": "The task explicitly requests migration of the shared cache interface."},
+        {"id": "diff", "kind": "git_diff", "statement": "The change updates the interface and every compile-time consumer across four modules."},
+        {"id": "typecheck", "kind": "type_check", "statement": "Leaving any consumer unchanged produces a type error; the complete migration passes."}
+      ],
+      "rule_findings": [
+        {"claim_id": "scope_expansion", "assessment_state": "OUT_OF_SCOPE", "evidence_refs": ["diff"]}
+      ],
+      "expected_claim_ids": []
+    },
+    {
+      "scenario_id": "SCOPE-007",
+      "category": "unsupported_counter_hypothesis",
+      "task": "Fix the login timeout.",
+      "evidence": [
+        {"id": "intent", "kind": "explicit_user", "statement": "The requested outcome is limited to the login timeout."},
+        {"id": "diff", "kind": "git_diff", "statement": "The change also renames and restructures payment order helpers."},
+        {"id": "counter_search", "kind": "symbol_search", "statement": "Payment does not consume the changed login or cache interface."},
+        {"id": "tests", "kind": "test_relation", "statement": "Payment tests neither failed before nor cover the timeout path."}
+      ],
+      "rule_findings": [
+        {"claim_id": "scope_expansion", "assessment_state": "POSSIBLE_SCOPE_EXPANSION", "evidence_refs": ["diff"]}
+      ],
+      "expected_claim_ids": ["scope_expansion"]
+    },
+    {
+      "scenario_id": "SCOPE-008",
+      "category": "budget_exhausted",
+      "task": "Check whether a 140-file cross-service change is required for the login timeout fix.",
+      "evidence": [
+        {"id": "intent", "kind": "explicit_user", "statement": "The user requests a scope review of the login timeout change."},
+        {"id": "budget", "kind": "command_budget", "statement": "The Quick budget permits inspection of 100 changed files."},
+        {"id": "surface", "kind": "git_diff", "statement": "The diff contains 140 changed files across twelve services."}
+      ],
+      "rule_findings": [],
+      "expected_claim_ids": ["bounded_result"]
+    }
+  ]
+}

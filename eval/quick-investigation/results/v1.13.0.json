@@ -1,0 +1,81 @@
+{
+  "schema_version": "quick-investigation-published-result/v1",
+  "suite_id": "aet-scope-eight-cases",
+  "release": "v1.13.0",
+  "run_date": "2026-07-25",
+  "runner": {
+    "name": "codex",
+    "version": "codex-cli 0.144.1",
+    "model": "gpt-5.6-sol",
+    "model_parameters": {
+      "model_reasoning_effort": "medium"
+    },
+    "platform": "macOS-26.5-arm64",
+    "python": "3.14.6"
+  },
+  "method": {
+    "scenario_count": 8,
+    "repetitions_per_group": 2,
+    "runs_per_group": 16,
+    "total_runs": 64,
+    "grounded_group_uses_shipped_validator": true,
+    "grounded_group_uses_distinct_prompt": true,
+    "grounding_ledger_source": "fixture_synthesized",
+    "normalized_runs_published": true,
+    "normalized_runs_sha256": "be5622fdecfe668d33584c14fa40bb9f6f65828ab6224d5b450067e416062d40",
+    "rescored_report_sha256": "a199d68120c413d8c18e3b5a341ffafcea0112ec764a1ed582da9cc7630895e9",
+    "raw_codex_jsonl_published": false
+  },
+  "groups": {
+    "pure_rules": {
+      "effective_recall": 0.6,
+      "false_discovery_proportion": 0.5,
+      "ungrounded_conclusion_rate": 0.0,
+      "grounding_rejections": 0,
+      "mean_tool_calls": 0.0,
+      "mean_wall_time_seconds": 0.00000028923386707901955,
+      "mean_total_tokens": 0.0
+    },
+    "one_shot_llm": {
+      "effective_recall": 0.8,
+      "false_discovery_proportion": 0.38461538461538464,
+      "ungrounded_conclusion_rate": 0.0,
+      "grounding_rejections": 0,
+      "mean_tool_calls": 0.0,
+      "mean_wall_time_seconds": 7.326248893339653,
+      "mean_total_tokens": 21701.6875
+    },
+    "investigated_aet": {
+      "effective_recall": 0.9,
+      "false_discovery_proportion": 0.25,
+      "ungrounded_conclusion_rate": 0.0,
+      "grounding_rejections": 0,
+      "mean_tool_calls": 1.625,
+      "mean_wall_time_seconds": 18.319673247344326,
+      "mean_total_tokens": 64147.375
+    },
+    "investigated_grounded": {
+      "effective_recall": 0.9,
+      "false_discovery_proportion": 0.25,
+      "ungrounded_conclusion_rate": 0.0,
+      "grounding_rejections": 0,
+      "mean_tool_calls": 0.75,
+      "mean_wall_time_seconds": 14.835689536645077,
+      "mean_total_tokens": 38830.75
+    }
+  },
+  "human_metrics": {
+    "manual_review_seconds": "UNKNOWN",
+    "user_understanding": "UNKNOWN",
+    "reason": "No timed human annotations were supplied; the scorer does not infer them."
+  },
+  "interpretation_limits": [
+    "The result describes only eight synthetic scope scenarios and two repetitions.",
+    "All scenario facts were supplied up front; tool use measures investigation behavior rather than discovery of new repository evidence.",
+    "The investigated groups use different Agent prompts and are not a paired Validator ablation.",
+    "The Grounding Validator consumed fixture-synthesized Ledgers rather than model-produced repository Ledgers.",
+    "It is not a holistic trust score or a release/adoption gate.",
+    "Grounding rejected zero claims in this sample; deterministic rejection paths are covered separately by unit tests.",
+    "Privacy-reviewed normalized Runs are published for independent rescoring; raw Codex JSONL is retained locally because it can contain host context."
+  ]
+}

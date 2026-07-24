@@ -1,0 +1,58 @@
+{
+  "schema_version": "aet-quick-media-manifest/v1",
+  "verified_with": "ffprobe 7.0.2-static",
+  "assets": [
+    {
+      "kind": "video",
+      "path": "aet-quick-intro-en.webm",
+      "language": "en",
+      "codec": "vp9",
+      "width": 1280,
+      "height": 720,
+      "frames": 270,
+      "frame_rate": "30/1",
+      "duration_seconds": 9.0,
+      "sha256": "f797cd53fc29023cd3b5abf64ea4d9c10a441600d24d7587becd6753e2d0bbe2"
+    },
+    {
+      "kind": "video",
+      "path": "aet-quick-intro-zh-CN.webm",
+      "language": "zh-CN",
+      "codec": "vp9",
+      "width": 1280,
+      "height": 720,
+      "frames": 270,
+      "frame_rate": "30/1",
+      "duration_seconds": 9.0,
+      "sha256": "2598efa2ac234f2bc39b730a3ce7268aa56ce0d80c2ae425b81c3cbca2f10379"
+    },
+    {
+      "kind": "architecture",
+      "format": "png",
+      "path": "aet-quick-architecture-en.png",
+      "language": "en",
+      "sha256": "68b5bc4008bd28885bb0f645ae04e9ba459640fea5ed3c632faf2b24996df3bc"
+    },
+    {
+      "kind": "architecture",
+      "format": "svg",
+      "path": "aet-quick-architecture-en.svg",
+      "language": "en",
+      "sha256": "1aac98bd1f40f2e9089e9d14ccec487d880c93c696968ba09e004669dd0ff834"
+    },
+    {
+      "kind": "architecture",
+      "format": "png",
+      "path": "aet-quick-architecture-zh-CN.png",
+      "language": "zh-CN",
+      "sha256": "be72f3dbd5f914e8cc5d9e4826fca41fa716ff4b4f61a5c6999f06fbe6090bdf"
+    },
+    {
+      "kind": "architecture",
+      "format": "svg",
+      "path": "aet-quick-architecture-zh-CN.svg",
+      "language": "zh-CN",
+      "sha256": "52a8654a469c104fbb9074bc25448f58ce0afc3cdeb4844f56ce705796f41d18"
+    }
+  ]
+}

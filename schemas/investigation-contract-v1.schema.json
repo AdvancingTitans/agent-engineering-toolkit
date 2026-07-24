@@ -1,0 +1,106 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://advancingtitans.github.io/aet/schemas/investigation-contract-v1.schema.json",
+  "$comment": "Plan section 7: contracts define required investigation directions and grounding behavior, not fixed evidence counts.",
+  "title": "AET Investigation Contract v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "finding_type",
+    "required_investigation",
+    "factual_grounding",
+    "semantic_judgment",
+    "prohibited",
+    "stop_conditions"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "aet-investigation-contract/v1"
+    },
+    "finding_type": {
+      "type": "string",
+      "minLength": 1
+    },
+    "required_investigation": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "factual_grounding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tool_claims_require_result_ref",
+        "user_constraints_require_source_ref",
+        "negative_claims_require_search_scope"
+      ],
+      "properties": {
+        "tool_claims_require_result_ref": {
+          "const": true
+        },
+        "user_constraints_require_source_ref": {
+          "const": true
+        },
+        "negative_claims_require_search_scope": {
+          "const": true
+        }
+      }
+    },
+    "semantic_judgment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "must_distinguish_fact_and_inference",
+        "must_present_counter_explanation",
+        "must_disclose_unresolved_assumptions"
+      ],
+      "properties": {
+        "must_distinguish_fact_and_inference": {
+          "const": true
+        },
+        "must_present_counter_explanation": {
+          "const": true
+        },
+        "must_disclose_unresolved_assumptions": {
+          "const": true
+        }
+      }
+    },
+    "prohibited": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "llm_similarity_as_sole_evidence",
+          "unexecuted_test_as_passed",
+          "unread_file_citation",
+          "hidden_conflicting_evidence",
+          "unsupported_authorization_inference",
+          "invented_tool_result"
+        ]
+      }
+    },
+    "stop_conditions": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "dominant_explanation_established",
+          "remaining_uncertainty_does_not_change_action",
+          "evidence_value_exhausted",
+          "investigation_budget_exhausted",
+          "user_authority_required",
+          "user_information_required",
+          "tool_unavailable"
+        ]
+      }
+    }
+  }
+}

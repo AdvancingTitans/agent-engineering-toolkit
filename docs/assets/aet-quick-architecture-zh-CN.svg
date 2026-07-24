@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">AET Quick 证据调查架构</title>
+  <desc id="desc">四个 Quick Skill 将有界请求依次交给确定性预检、宿主主导调查、证据落账、Grounding 校验、中英文叙事和人工决策；AET Lab 保持独立显式启用。</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#080b12"/><stop offset="1" stop-color="#111827"/></linearGradient>
+    <linearGradient id="quick" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#15213b"/><stop offset="1" stop-color="#182b38"/></linearGradient>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0 0L12 6L0 12Z" fill="#56d7c5"/></marker>
+    <style>
+      text{font-family:Inter,"PingFang SC","Microsoft YaHei",ui-sans-serif,system-ui,sans-serif;fill:#f8fafc}
+      .muted{fill:#a7b0c0}.gold{fill:#f2c879}.cyan{fill:#70e1d2}.violet{fill:#b79cff}.small{font-size:18px}.label{font-size:20px;font-weight:600}.box{fill:url(#quick);stroke:#32445e;stroke-width:2}.fact{fill:#0d2425;stroke:#3bb6a6}.host{fill:#211a35;stroke:#8f72d9}.ground{fill:#282010;stroke:#d6aa53}.human{fill:#10283c;stroke:#4fa6da}
+      .flow{fill:none;stroke:#56d7c5;stroke-width:4;marker-end:url(#arrow);stroke-dasharray:16 10;animation:dash 2s linear infinite}.divider{stroke:#3a4558;stroke-width:2;stroke-dasharray:8 8}
+      @keyframes dash{to{stroke-dashoffset:-52}}
+    </style>
+  </defs>
+  <rect width="1600" height="900" fill="url(#bg)"/>
+  <text x="72" y="78" font-family="Georgia,serif" font-size="46" font-weight="700">AET Quick</text>
+  <text x="72" y="116" class="muted" font-size="22">面向日常 AI 编码改动的有界证据调查</text>
+  <text x="1528" y="82" text-anchor="end" class="gold label">事实保持确定 · 判断可以复核</text>
+
+  <text x="72" y="174" class="gold label">一个问题，一个 Skill，完成后停止</text>
+  <g>
+    <rect class="box" x="72" y="196" width="330" height="112" rx="18"/><text x="102" y="238" class="cyan label">/aet-check</text><text x="102" y="273" class="muted small">Agent 资产与验证缺口</text>
+    <rect class="box" x="424" y="196" width="330" height="112" rx="18"/><text x="454" y="238" class="cyan label">/aet-scope</text><text x="454" y="273" class="muted small">任务相关性与合理扩展</text>
+    <rect class="box" x="776" y="196" width="330" height="112" rx="18"/><text x="806" y="238" class="cyan label">/aet-proof</text><text x="806" y="273" class="muted small">真实执行与绑定记录</text>
+    <rect class="box" x="1128" y="196" width="330" height="112" rx="18"/><text x="1158" y="238" class="cyan label">/aet-fresh</text><text x="1158" y="273" class="muted small">旧证据现在是否仍有效</text>
+  </g>
+
+  <path class="flow" d="M237 308V356H230"/>
+  <path class="flow" d="M589 308V340H470V356"/>
+  <path class="flow" d="M941 308V340H710V356"/>
+  <path class="flow" d="M1293 308V340H950V356"/>
+
+  <g>
+    <rect class="fact" x="72" y="356" width="360" height="144" rx="18"/>
+    <text x="102" y="398" class="cyan label">确定性预检</text>
+    <text x="102" y="433" class="muted small">Git · 文件 · 规则 · 测试 · 哈希</text>
+    <text x="102" y="466" class="small">PASS / FAIL / UNKNOWN / N/A</text>
+  </g>
+  <path class="flow" d="M432 428H500"/>
+  <g>
+    <rect class="host" x="500" y="356" width="360" height="144" rx="18"/>
+    <text x="530" y="398" class="violet label">宿主 LLM 主导调查</text>
+    <text x="530" y="433" class="muted small">Intent → 竞争假设</text>
+    <text x="530" y="466" class="muted small">授权工具 → 主动寻找反证</text>
+  </g>
+  <path class="flow" d="M860 428H928"/>
+  <g>
+    <rect class="ground" x="928" y="356" width="360" height="144" rx="18"/>
+    <text x="958" y="398" class="gold label">Investigation Ledger</text>
+    <text x="958" y="433" class="muted small">问题 · result_ref · 观察</text>
+    <text x="958" y="466" class="muted small">假设影响 · 决策价值 · 成本</text>
+  </g>
+  <path class="flow" d="M1288 428H1354V544H1110"/>
+
+  <g>
+    <rect class="ground" x="750" y="544" width="360" height="144" rx="18"/>
+    <text x="780" y="586" class="gold label">Grounding Validator</text>
+    <text x="780" y="621" class="muted small">引用 · 事实 · 强度 · 权限</text>
+    <text x="780" y="654" class="muted small">阻止伪造事实或隐藏已记录冲突</text>
+  </g>
+  <path class="flow" d="M750 616H682"/>
+  <g>
+    <rect class="host" x="322" y="544" width="360" height="144" rx="18"/>
+    <text x="352" y="586" class="violet label">证据叙事</text>
+    <text x="352" y="621" class="muted small">事实 · 判断 · 反方解释</text>
+    <text x="352" y="654" class="muted small">不确定性 · 位置 · 下一步</text>
+  </g>
+  <path class="flow" d="M322 616H254"/>
+  <g>
+    <rect class="human" x="72" y="544" width="182" height="144" rx="18"/>
+    <text x="102" y="586" class="label">人</text>
+    <text x="102" y="621" class="muted small">决定</text>
+    <text x="102" y="654" class="muted small">下一步行动</text>
+  </g>
+
+  <line class="divider" x1="72" y1="742" x2="1528" y2="742"/>
+  <text x="72" y="784" class="gold label">AET LAB — 仅显式启用</text>
+  <text x="72" y="822" class="muted small">Evidence Pack · 真实仓库案例库 · Evolve · Quality · Learn · Replay · Gate · Shadow · Stage · Adopt</text>
+  <text x="1528" y="858" text-anchor="end" class="muted small">本地优先 · provenance 绑定 · 默认只读 · 人保留最终权限</text>
+</svg>

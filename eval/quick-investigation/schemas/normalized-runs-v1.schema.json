@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://advancingtitans.github.io/aet/eval/quick-investigation/schemas/normalized-runs-v1.schema.json",
+  "title": "AET Quick Investigation Privacy-reviewed Runs Bundle v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "privacy", "runs"],
+  "properties": {
+    "schema_version": {"const": "quick-investigation-normalized-runs/v1"},
+    "privacy": {"type": "string", "minLength": 1},
+    "runs": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "run-v1.schema.json"}
+    }
+  }
+}

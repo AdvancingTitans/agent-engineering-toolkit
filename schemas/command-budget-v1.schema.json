@@ -1,0 +1,160 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://advancingtitans.github.io/aet/schemas/command-budget-v1.schema.json",
+  "$comment": "Plan sections 8.3 and 10: Quick investigations are bounded and never silently escalate.",
+  "title": "AET Command Budget v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "command",
+    "limits",
+    "scope",
+    "writes",
+    "on_exhaustion"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "aet-command-budget/v1"
+    },
+    "command": {
+      "enum": ["aet-check", "aet-scope", "aet-proof", "aet-fresh"]
+    },
+    "limits": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "wall_time_seconds",
+        "llm_calls",
+        "tool_calls",
+        "remote_calls",
+        "expensive_calls",
+        "findings"
+      ],
+      "properties": {
+        "wall_time_seconds": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "llm_calls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "tool_calls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "remote_calls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "expensive_calls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "findings": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "max_changed_files",
+        "max_context_files",
+        "max_git_history_commits"
+      ],
+      "properties": {
+        "max_changed_files": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "max_context_files": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "max_git_history_commits": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "writes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["allowed"],
+      "properties": {
+        "allowed": {
+          "type": "boolean"
+        },
+        "receipt_only": {
+          "type": "boolean"
+        },
+        "output_path": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "on_exhaustion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "emit_bounded_result",
+        "disclose_uninspected_surfaces",
+        "do_not_escalate_automatically"
+      ],
+      "properties": {
+        "emit_bounded_result": {
+          "const": true
+        },
+        "disclose_uninspected_surfaces": {
+          "const": true
+        },
+        "do_not_escalate_automatically": {
+          "const": true
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "command": {
+            "const": "aet-proof"
+          }
+        },
+        "required": ["command"]
+      },
+      "then": {
+        "properties": {
+          "writes": {
+            "properties": {
+              "allowed": {
+                "const": true
+              },
+              "receipt_only": {
+                "const": true
+              }
+            },
+            "required": ["receipt_only", "output_path"]
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "writes": {
+            "properties": {
+              "allowed": {
+                "const": false
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

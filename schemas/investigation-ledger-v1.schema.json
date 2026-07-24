@@ -1,0 +1,229 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://advancingtitans.github.io/aet/schemas/investigation-ledger-v1.schema.json",
+  "$comment": "Plan section 6.6: a tool call is conclusion evidence only when its question, result, observation, and hypothesis effect are traceable.",
+  "title": "AET Investigation Ledger v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "investigation_id",
+    "command",
+    "hypotheses",
+    "completed_investigations",
+    "material_conflicting_evidence_refs",
+    "budget",
+    "usage",
+    "steps",
+    "stop"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "aet-investigation-ledger/v1"
+    },
+    "investigation_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "command": {
+      "enum": ["aet-check", "aet-scope", "aet-proof", "aet-fresh"]
+    },
+    "hypotheses": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/hypothesis"
+      }
+    },
+    "completed_investigations": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "material_conflicting_evidence_refs": {
+      "$ref": "#/$defs/hypothesisIds"
+    },
+    "budget": {
+      "$ref": "#/$defs/budgetCounters"
+    },
+    "usage": {
+      "$ref": "#/$defs/budgetCounters"
+    },
+    "steps": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/step"
+      }
+    },
+    "stop": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["reason", "bounded_result"],
+      "properties": {
+        "reason": {
+          "enum": [
+            "DOMINANT_EXPLANATION",
+            "ACTION_UNCHANGED",
+            "NO_NEW_DECISION_VALUE",
+            "BUDGET_EXHAUSTED",
+            "AUTHORIZATION_REQUIRED",
+            "USER_INPUT_REQUIRED",
+            "TOOL_UNAVAILABLE",
+            "REPORT_COMPLETE"
+          ]
+        },
+        "bounded_result": {
+          "type": "boolean"
+        },
+        "uninspected_surfaces": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "hypothesis": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "statement", "state"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "statement": {
+          "type": "string",
+          "minLength": 1
+        },
+        "state": {
+          "enum": ["OPEN", "SUPPORTED", "WEAKENED", "REJECTED", "UNRESOLVED"]
+        }
+      }
+    },
+    "hypothesisIds": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "step": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "step_id",
+        "question",
+        "tool",
+        "input",
+        "result",
+        "result_ref",
+        "result_sha256",
+        "observation",
+        "hypothesis_effect",
+        "decision_value",
+        "cost"
+      ],
+      "properties": {
+        "step_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "question": {
+          "type": "string",
+          "minLength": 1
+        },
+        "tool": {
+          "type": "string",
+          "minLength": 1
+        },
+        "evidence_class": {
+          "enum": [
+            "deterministic_tool",
+            "explicit_user",
+            "explicit_project",
+            "llm_similarity",
+            "host_attestation"
+          ]
+        },
+        "input": {
+          "type": "object"
+        },
+        "result": {},
+        "result_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "result_sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "observation": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["summary"],
+          "properties": {
+            "summary": {
+              "type": "string",
+              "minLength": 1
+            },
+            "fact_refs": {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        },
+        "hypothesis_effect": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["supports", "weakens"],
+          "properties": {
+            "supports": {
+              "$ref": "#/$defs/hypothesisIds"
+            },
+            "weakens": {
+              "$ref": "#/$defs/hypothesisIds"
+            }
+          }
+        },
+        "decision_value": {
+          "enum": ["low", "medium", "high"]
+        },
+        "cost": {
+          "enum": ["low", "medium", "high"]
+        }
+      }
+    }
+    ,
+    "budgetCounters": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "wall_time_seconds",
+        "llm_calls",
+        "tool_calls",
+        "remote_calls",
+        "expensive_calls",
+        "findings"
+      ],
+      "properties": {
+        "wall_time_seconds": {"type": "number", "minimum": 0},
+        "llm_calls": {"type": "integer", "minimum": 0},
+        "tool_calls": {"type": "integer", "minimum": 0},
+        "remote_calls": {"type": "integer", "minimum": 0},
+        "expensive_calls": {"type": "integer", "minimum": 0},
+        "findings": {"type": "integer", "minimum": 0}
+      }
+    }
+  }
+}

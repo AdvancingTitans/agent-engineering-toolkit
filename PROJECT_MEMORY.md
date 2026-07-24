@@ -19,17 +19,20 @@ updated.
 
 ## Product decision
 
-`aet` is an Evidence First, read-only engineering gate for coding-agent
-context and Skills. It proves what can be inspected locally and reports
-unknowns; it never invents a holistic trust score.
+`aet` is an Evidence First toolkit for lightweight investigation of AI coding
+scope, real command execution, and proof freshness. Quick is read-only by
+default; only an explicit `/aet-proof` argv executes project code and writes
+the requested compact Receipt. AET reports unknowns and never invents a
+holistic trust score.
 
 Primary users are individual developers and small teams using Codex, Claude
 Code, Cursor, Copilot, or compatible agent Skills across multiple repositories.
 
-The final distributable form is the canonical cross-agent Skill in
-`skills/agent-engineering-toolkit/`; the `aet` CLI is its deterministic local
-runtime. Every shipped capability must be exposed through this tool-neutral
-Skill and retain JSON/SARIF evidence contracts so any agent host can invoke it.
+The default product surface is four dedicated cross-agent Skills:
+`aet-check`, `aet-scope`, `aet-proof`, and `aet-fresh`; the `aet` CLI is their
+deterministic local runtime. The canonical `agent-engineering-toolkit` Skill is
+the compatibility and explicit AET Lab route. Every shipped capability retains
+machine-readable evidence contracts so any Agent Host can invoke it.
 
 Out of scope: an agent runtime, a Skill marketplace, automatic prompt rewrites,
 and model-dependent prompt regression. The only retained later expansion is
@@ -414,8 +417,11 @@ deterministic core.
   The tracked 30-sample performance report measured Check P95 0.622 s, Scope
   P95 0.059 s, and Fresh P95 0.037 s on the recorded local environment. These
   are local bounded checks, not cross-repository or model-service P95 claims.
-- The source version and lock were advanced to `1.13.0` so non-editable and
-  isolated installs cannot resolve to the pre-Quick `1.12.0` build. No release,
-  tag, push, persistent Skill installation, or PyPI publication was performed.
-  Resume from final independent compliance review and diff-bound release
-  classification.
+- Released `v1.13.0` from commit
+  `2683479cc742775674be75483fdb1606b62b3e60` on 2026-07-25. Exact-commit CI
+  Run `30113760362` and GitHub Release Run `30113835956` passed; the Release
+  publishes the Wheel, sdist, CI manifest, Diff-bound classification, verified
+  classification, and release-evidence record at
+  `https://github.com/AdvancingTitans/agent-engineering-toolkit/releases/tag/v1.13.0`.
+  Real Host Gate is `NOT_APPLICABLE` because this deterministic release adopts
+  no governance asset and makes no release-authorizing Agent behavior claim.

@@ -483,8 +483,14 @@ deterministic core.
   independently recomputed; strict Hermes/Ollama responses were independently
   reparsed and rescored; README links, forbidden-name scan, and
   `git diff --check` passed.
-- Resume point: complete the Diff-bound deterministic release classification,
-  build and smoke-test wheel/sdist artifacts, commit/tag `v1.14.0`, push the
-  exact commit, wait for exact-commit CI, and publish the GitHub Release. No
-  governance asset is adopted and the Real Host Gate remains
-  `NOT_APPLICABLE`.
+- Released `v1.14.0` from commit
+  `fee324fe1ee5681035e15b146d3fab8ccaee7f12`. Exact-tag CI Run
+  `30171294767` passed, the Diff-bound classification verified all 58
+  behavior-sensitive paths, and the public GitHub Release is available at
+  `https://github.com/AdvancingTitans/agent-engineering-toolkit/releases/tag/v1.14.0`.
+  Its five assets include the exact CI wheel and sdist, CI Manifest, release
+  classification, and classification verification report. No governance asset
+  was adopted and the Real Host Gate is `NOT_APPLICABLE`.
+- Resume point: begin the next change from `v1.14.0`; preserve the Portable
+  Evidence Bundle v1 compatibility and do not reinterpret the bounded
+  Hermes/Ollama/Codex fixture results as a general accuracy claim.

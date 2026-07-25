@@ -1,0 +1,1 @@
+{"id":"ledger-001","timestamp":"2026-01-02T03:04:05Z","question":"声明的验证命令是否在绑定工作区中成功执行？","hypothesis_ref":"primary","action":"inspect_proof","tool_name":"proof.inspect","output_ref":"ev-001","observation_refs":["obs-001"],"evidence_candidate_refs":[],"effect":"supports_primary","explanation":"已存在的确定性命令回执记录退出码 0。"}

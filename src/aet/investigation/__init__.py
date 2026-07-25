@@ -7,6 +7,12 @@ from .models import (
     ScopeDisposition,
     SupportState,
 )
+from .portable import (
+    PortableInvestigationError,
+    investigate_run,
+    validate_investigation_result,
+    write_investigation_result,
+)
 from .stop_policy import CommandBudget, StopDecision, evaluate_stop
 
 __all__ = [
@@ -14,9 +20,13 @@ __all__ = [
     "FindingOrigin",
     "GroundingError",
     "InvestigationLedger",
+    "PortableInvestigationError",
     "ScopeDisposition",
     "StopDecision",
     "SupportState",
     "evaluate_stop",
+    "investigate_run",
+    "validate_investigation_result",
     "validate_investigated_finding",
+    "write_investigation_result",
 ]

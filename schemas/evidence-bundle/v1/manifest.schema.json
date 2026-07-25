@@ -1,0 +1,106 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://advancingtitans.github.io/agent-engineering-toolkit/schemas/evidence-bundle/v1/manifest.schema.json",
+  "title": "Portable Evidence Bundle Manifest v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["protocol", "bundle", "task", "producer", "investigation", "contents", "integrity"],
+  "properties": {
+    "extensions": {"type": "object", "additionalProperties": true},
+    "protocol": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "version", "schema_uri"],
+      "properties": {
+        "name": {"const": "portable-evidence-bundle"},
+        "version": {"const": "1.0"},
+        "schema_uri": {"type": "string", "minLength": 1}
+      }
+    },
+    "bundle": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "created_at", "content_hash"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "created_at": {
+          "type": "string",
+          "format": "date-time",
+          "pattern": "(Z|\\+00:00)$"
+        },
+        "content_hash": {"$ref": "#/$defs/sha256"},
+        "parent_bundle_id": {"type": "string", "minLength": 1}
+      }
+    },
+    "task": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["task_id", "request"],
+      "properties": {
+        "task_id": {"type": "string", "minLength": 1},
+        "request": {"type": "string", "minLength": 1},
+        "repository": {"type": "string"},
+        "workspace_id": {"type": "string"},
+        "base_ref": {"type": "string"},
+        "head_ref": {"type": "string"}
+      }
+    },
+    "producer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "version"],
+      "properties": {
+        "name": {"const": "agent-engineering-toolkit"},
+        "version": {"type": "string", "minLength": 1}
+      }
+    },
+    "investigation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["investigation_id", "investigation_type", "question", "scope", "limitations", "completed"],
+      "properties": {
+        "investigation_id": {"type": "string", "minLength": 1},
+        "investigation_type": {
+          "enum": ["scope", "verification", "freshness", "security", "authorization", "general"]
+        },
+        "question": {"type": "string", "minLength": 1},
+        "scope": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+        "limitations": {"type": "array", "items": {"type": "string"}},
+        "completed": {"type": "boolean"}
+      }
+    },
+    "contents": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["index", "claims", "evidence", "observations", "sources", "diagnostics", "conflicts", "ledger", "policy", "consumer_guide", "report"],
+      "properties": {
+        "index": {"type": "string", "minLength": 1},
+        "claims": {"type": "string", "minLength": 1},
+        "evidence": {"type": "string", "minLength": 1},
+        "observations": {"type": "string", "minLength": 1},
+        "sources": {"type": "string", "minLength": 1},
+        "diagnostics": {"type": "string", "minLength": 1},
+        "conflicts": {"type": "string", "minLength": 1},
+        "ledger": {"type": "string", "minLength": 1},
+        "policy": {"type": "string", "minLength": 1},
+        "consumer_guide": {"type": "string", "minLength": 1},
+        "report": {"type": "string", "minLength": 1}
+      }
+    },
+    "integrity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["algorithm", "file_hashes"],
+      "properties": {
+        "algorithm": {"const": "sha256"},
+        "file_hashes": {
+          "type": "object",
+          "additionalProperties": {"$ref": "#/$defs/sha256"}
+        }
+      }
+    }
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}

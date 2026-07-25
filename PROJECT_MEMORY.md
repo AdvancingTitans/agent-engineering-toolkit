@@ -441,3 +441,50 @@ deterministic core.
   grounding-aware investigation and the in-project Grounding Validator, and
   Chinese explanations for internal evidence terminology. Chinese documentation
   and generated media consistently use “契约”.
+
+## v1.14.0 Portable Evidence Bundle release candidate — 2026-07-26
+
+- Added Codex and Claude Code Run Normalizers, stable source identity,
+  incremental ingestion, tool-call/result linking, generation boundaries, and
+  fail-visible diagnostics. Run Records establish only what the normalized run
+  contains.
+- Added strict Observation, Evidence Candidate, Verified Evidence, and Portable
+  Claim boundaries. Every exported Observation declares what it proves and
+  does not prove; model reasoning and recorded tool output cannot become
+  reproduced evidence without deterministic verification.
+- Added deterministic Candidate verification for explicitly authorized AET
+  Proof receipts. Command, workspace, budget, path, receipt integrity, and
+  Freshness bindings are enforced; stale results remain historical and cannot
+  become current proof. Added the bounded OptimizationCandidate entry contract
+  with independent-task/high-severity evidence prerequisites and mandatory
+  isolated evaluation.
+- Added the read-only Portable Investigator, immutable investigation ledger,
+  JSON Schemas, Bundle Compiler, strict loader/validator, canonical hashing,
+  redaction, Index/Core/Archive layout, content-addressed Blobs, deterministic
+  Markdown, Review Result validation, bounded MCP server, and optional Python
+  and TypeScript SDKs. A reviewer can consume the Bundle without installing
+  AET or either SDK.
+- Real prompt-only consumption checks used ten deterministic synthetic Bundles.
+  Codex CLI 0.144.1 / `gpt-5.6-sol`, Hermes Agent 0.17.0 / `kimi-k2.6`, and
+  Ollama 0.32.3 / `qwen3:8b` each produced strict, independently rescorable JSON
+  for all ten scenarios: 62 `PASS`, 38 `NOT_APPLICABLE`, zero `FAIL`, and zero
+  `UNKNOWN`. Runtime, model, elapsed time, command-argv digest, response,
+  report, and publication integrity are tracked. These results are a bounded
+  interoperability check, not a general accuracy claim or trust score.
+- The English and Simplified Chinese READMEs now describe the complete Quick
+  and portable handoff surfaces. Their static SVG/PNG panoramas, 115-frame
+  motion-validated GIFs, exact 30-second H.264/AAC videos, and media Manifest
+  reflect v1.14.0.
+- Acceptance evidence: 418 Python unit tests passed after a non-editable
+  reinstall; the TypeScript Bundle SDK passed 11 adversarial tests, Node 20
+  build/compatibility checks, and package dry-runs; the Python wheel and sdist
+  built successfully and the isolated wheel validated a Bundle plus the
+  packaged Optimization Schema; all Bundle result and media hashes were
+  independently recomputed; strict Hermes/Ollama responses were independently
+  reparsed and rescored; README links, forbidden-name scan, and
+  `git diff --check` passed.
+- Resume point: complete the Diff-bound deterministic release classification,
+  build and smoke-test wheel/sdist artifacts, commit/tag `v1.14.0`, push the
+  exact commit, wait for exact-commit CI, and publish the GitHub Release. No
+  governance asset is adopted and the Real Host Gate remains
+  `NOT_APPLICABLE`.

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "agent-engineering-toolkit"
-version = "1.13.0"
+version = "1.14.0"
 description = "Lightweight evidence investigation for AI coding scope, real verification, and proof freshness."
 readme = "PYPI_README.md"
 requires-python = ">=3.11"
@@ -48,6 +48,10 @@ aet = ["rulepacks_builtin.json"]
 
 [tool.setuptools.data-files]
 "share/aet/schemas" = ["schemas/*.json"]
+"share/aet/schemas/evidence-bundle/v1" = ["schemas/evidence-bundle/v1/*.json"]
+"share/aet/schemas/run-record/v1" = ["schemas/run-record/v1/*.json"]
+"share/aet/schemas/investigation/v1" = ["schemas/investigation/v1/*.json"]
+"share/aet/schemas/optimization/v1" = ["schemas/optimization/v1/*.json"]
 "share/aet/evolution/audit/core" = ["tests/evolution/audit/core/*.json"]
 "share/aet/evolution/audit/validation" = ["tests/evolution/audit/validation/*.json"]
 "share/aet/evolution/audit/held_out" = ["tests/evolution/audit/held_out/*.json"]

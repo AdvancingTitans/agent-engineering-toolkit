@@ -44,65 +44,66 @@
     </style>
   </defs>
   <rect data-graph-role="background" width="960.0" height="700.0" fill="#0f172a"/>
-  <text x="480.0" y="56" text-anchor="middle" class="title">AET Quick · Bounded Evidence Investigation</text>
-  <text x="480.0" y="82" text-anchor="middle" class="subtitle">facts stay deterministic · the LLM investigates · the validator checks · the human decides</text>
+  <text x="480.0" y="56" text-anchor="middle" class="title">AET · Portable Evidence Handoff</text>
+  <text x="480.0" y="82" text-anchor="middle" class="subtitle">normalize Agent runs · investigate within policy · export evidence any reviewer can read</text>
   <g id="question" data-graph-role="container" data-container-id="question" data-semantic-role="boundary" data-graph-bounds="40,110,920,220">
   <rect data-graph-role="container" x="40.0" y="110.0" width="880.0" height="110.0" rx="16.0" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.20)" stroke-width="1.4" stroke-dasharray="7 6"/>
-  <text x="58.0" y="134.0" class="section">1 · BOUND THE QUESTION</text>
-    <rect id="question-header" data-graph-role="reserved" data-reserved-kind="container-header" x="48" y="116" width="181.06" height="30" fill="none" stroke="none"/>
+  <text x="58.0" y="134.0" class="section">1 · NORMALIZE THE RUN</text>
+    <rect id="question-header" data-graph-role="reserved" data-reserved-kind="container-header" x="48" y="116" width="176.64" height="30" fill="none" stroke="none"/>
   </g>
   <g id="investigate" data-graph-role="container" data-container-id="investigate" data-semantic-role="boundary" data-graph-bounds="40,270,920,410">
   <rect data-graph-role="container" x="40.0" y="270.0" width="880.0" height="140.0" rx="16.0" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.20)" stroke-width="1.4" stroke-dasharray="7 6"/>
-  <text x="58.0" y="294.0" class="section">2 · INVESTIGATE WITH TRACEABLE FACTS</text>
-    <rect id="investigate-header" data-graph-role="reserved" data-reserved-kind="container-header" x="48" y="276" width="280.12" height="30" fill="none" stroke="none"/>
+  <text x="58.0" y="294.0" class="section">2 · EVIDENCE INVESTIGATION</text>
+    <rect id="investigate-header" data-graph-role="reserved" data-reserved-kind="container-header" x="48" y="276" width="203.94" height="30" fill="none" stroke="none"/>
   </g>
   <g id="decide" data-graph-role="container" data-container-id="decide" data-semantic-role="boundary" data-graph-bounds="40,450,920,590">
   <rect data-graph-role="container" x="40.0" y="450.0" width="880.0" height="140.0" rx="16.0" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.20)" stroke-width="1.4" stroke-dasharray="7 6"/>
-  <text x="58.0" y="474.0" class="section">3 · VALIDATE</text>
-    <rect id="decide-header" data-graph-role="reserved" data-reserved-kind="container-header" x="48" y="456" width="111.38" height="30" fill="none" stroke="none"/>
+  <text x="58.0" y="474.0" class="section">3 · HAND OFF</text>
+    <rect id="decide-header" data-graph-role="reserved" data-reserved-kind="container-header" x="48" y="456" width="111.9" height="30" fill="none" stroke="none"/>
   </g>
   <path id="brief" data-graph-role="edge" data-edge-id="brief" data-source="request" data-target="coordinator" data-edge-kind="flow" data-topic-id="" data-flow="read" data-motion-role="ingress" data-motion-stage="1" data-motion-order="0" data-protocol="" data-via="" data-critical-path-id="" data-critical-hop="" data-critical-hops="" data-critical="false" data-bends="0" data-route-stretch="1.0" data-bridges="" d="M 220,173 L 390,173" fill="none" stroke="#60a5fa" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrowC)"/>
   <path id="a-delegate-research" data-graph-role="edge" data-edge-id="a-delegate-research" data-source="coordinator" data-target="research" data-edge-kind="flow" data-topic-id="" data-flow="control" data-motion-role="delegate" data-motion-stage="2" data-motion-order="0" data-protocol="" data-via="" data-critical-path-id="" data-critical-hop="" data-critical-hops="" data-critical="false" data-bends="2" data-route-stretch="1.0" data-bridges="" d="M 472,200 L 472,306 L 170,306 L 170,330" fill="none" stroke="#c084fc" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrowA)"/>
-  <path id="b-delegate-coding" data-graph-role="edge" data-edge-id="b-delegate-coding" data-source="coordinator" data-target="coding" data-edge-kind="flow" data-topic-id="" data-flow="control" data-motion-role="delegate" data-motion-stage="2" data-motion-order="1" data-protocol="" data-via="" data-critical-path-id="" data-critical-hop="" data-critical-hops="" data-critical="false" data-bends="0" data-route-stretch="1.0" data-bridges="" d="M 490,200 L 490,330" fill="none" stroke="#c084fc" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrowA)"/>
+  <path id="b-delegate-coding" data-graph-role="edge" data-edge-id="b-delegate-coding" data-source="coordinator" data-target="coding" data-edge-kind="flow" data-topic-id="" data-flow="control" data-motion-role="delegate" data-motion-stage="2" data-motion-order="1" data-protocol="" data-via="" data-critical-path-id="" data-critical-hop="" data-critical-hops="" data-critical="false" data-bends="2" data-route-stretch="1.0" data-bridges="" d="M 490,200 L 490,309.6 L 460,309.6 L 460,330" fill="none" stroke="#c084fc" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrowA)"/>
   <path id="c-delegate-review" data-graph-role="edge" data-edge-id="c-delegate-review" data-source="coordinator" data-target="review" data-edge-kind="flow" data-topic-id="" data-flow="control" data-motion-role="delegate" data-motion-stage="2" data-motion-order="2" data-protocol="" data-via="" data-critical-path-id="" data-critical-hop="" data-critical-hops="" data-critical="false" data-bends="2" data-route-stretch="1.0" data-bridges="" d="M 508,200 L 508,220.4 L 790,220.4 L 790,330" fill="none" stroke="#c084fc" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrowA)"/>
   <path id="research-write" data-graph-role="edge" data-edge-id="research-write" data-source="research" data-target="memory" data-edge-kind="flow" data-topic-id="" data-flow="write" data-motion-role="evidence" data-motion-stage="3" data-motion-order="0" data-protocol="" data-via="" data-critical-path-id="" data-critical-hop="" data-critical-hops="" data-critical="false" data-bends="0" data-route-stretch="1.0" data-bridges="" d="M 170,390 L 170,510" fill="none" stroke="#34d399" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrowB)"/>
-  <path id="memory-merge" data-graph-role="edge" data-edge-id="memory-merge" data-source="memory" data-target="synthesis" data-edge-kind="flow" data-topic-id="" data-flow="read" data-motion-role="context" data-motion-stage="4" data-motion-order="0" data-protocol="" data-via="" data-critical-path-id="" data-critical-hop="" data-critical-hops="" data-critical="false" data-bends="0" data-route-stretch="1.0" data-bridges="" d="M 260,540 L 390,540" fill="none" stroke="#60a5fa" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrowC)"/>
-  <path id="coding-merge" data-graph-role="edge" data-edge-id="coding-merge" data-source="coding" data-target="synthesis" data-edge-kind="flow" data-topic-id="" data-flow="write" data-motion-role="artifact" data-motion-stage="3" data-motion-order="1" data-protocol="" data-via="" data-critical-path-id="" data-critical-hop="" data-critical-hops="" data-critical="false" data-bends="0" data-route-stretch="1.0" data-bridges="" d="M 490,390 L 490,510" fill="none" stroke="#34d399" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrowB)"/>
+  <path id="memory-merge" data-graph-role="edge" data-edge-id="memory-merge" data-source="memory" data-target="synthesis" data-edge-kind="flow" data-topic-id="" data-flow="read" data-motion-role="context" data-motion-stage="4" data-motion-order="0" data-protocol="" data-via="" data-critical-path-id="" data-critical-hop="" data-critical-hops="" data-critical="false" data-bends="0" data-route-stretch="1.0" data-bridges="" d="M 260,540 L 360,540" fill="none" stroke="#60a5fa" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrowC)"/>
+  <path id="coding-merge" data-graph-role="edge" data-edge-id="coding-merge" data-source="coding" data-target="synthesis" data-edge-kind="flow" data-topic-id="" data-flow="write" data-motion-role="artifact" data-motion-stage="3" data-motion-order="1" data-protocol="" data-via="" data-critical-path-id="" data-critical-hop="" data-critical-hops="" data-critical="false" data-bends="0" data-route-stretch="1.0" data-bridges="" d="M 460,390 L 460,510" fill="none" stroke="#34d399" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrowB)"/>
   <path id="review-output" data-graph-role="edge" data-edge-id="review-output" data-source="review" data-target="response" data-edge-kind="flow" data-topic-id="" data-flow="feedback" data-motion-role="approval" data-motion-stage="5" data-motion-order="1" data-protocol="" data-via="" data-critical-path-id="" data-critical-hop="" data-critical-hops="" data-critical="false" data-bends="0" data-route-stretch="1.0" data-bridges="" d="M 790,390 L 790,510" fill="none" stroke="#f59e0b" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrowG)"/>
-  <path id="deliver" data-graph-role="edge" data-edge-id="deliver" data-source="synthesis" data-target="response" data-edge-kind="flow" data-topic-id="" data-flow="feedback" data-motion-role="deliver" data-motion-stage="5" data-motion-order="0" data-protocol="" data-via="" data-critical-path-id="" data-critical-hop="" data-critical-hops="" data-critical="false" data-bends="0" data-route-stretch="1.0" data-bridges="" d="M 590,540 L 700,540" fill="none" stroke="#f59e0b" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrowG)"/>
+  <path id="deliver" data-graph-role="edge" data-edge-id="deliver" data-source="synthesis" data-target="response" data-edge-kind="flow" data-topic-id="" data-flow="feedback" data-motion-role="deliver" data-motion-stage="5" data-motion-order="0" data-protocol="" data-via="" data-critical-path-id="" data-critical-hop="" data-critical-hops="" data-critical="false" data-bends="0" data-route-stretch="1.0" data-bridges="" d="M 560,540 L 700,540" fill="none" stroke="#f59e0b" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrowG)"/>
   <g id="node-request" data-graph-role="node" data-node-id="request" data-semantic-role="speech" data-motion-role="" data-motion-stage="" data-motion-order="" data-parent="" data-deployment-id="" data-topic-id="" data-span-id="" data-station-order="" data-status="" data-start-ms="" data-duration-ms="" data-parent-span="" data-graph-bounds="60,146,220,200">
   <path d="M 78.0 146.0 L 202.0 146.0 Q 220.0 146.0 220.0 164.0 L 220.0 182.0 Q 220.0 200.0 202.0 200.0 L 86.0 200.0 L 72.0 218.0 L 76.0 200.0 L 78.0 200.0 Q 60.0 200.0 60.0 182.0 L 60.0 164.0 Q 60.0 146.0 78.0 146.0 Z" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.35)" stroke-width="2.0"/>
-  <text x="140.0" y="173.0" text-anchor="middle" class="node-title" font-size="12.98">Developer Question</text>
-  <text x="140.0" y="195.0" text-anchor="middle" class="node-sub">task + constraints</text>
+  <text x="140.0" y="173.0" text-anchor="middle" class="node-title" font-size="18.0">Executor Run</text>
+  <text x="140.0" y="195.0" text-anchor="middle" class="node-sub">Codex · Claude · other</text>
   </g>
   <g id="node-coordinator" data-graph-role="node" data-node-id="coordinator" data-semantic-role="double_rect" data-motion-role="" data-motion-stage="" data-motion-order="" data-parent="" data-deployment-id="" data-topic-id="" data-span-id="" data-station-order="" data-status="" data-start-ms="" data-duration-ms="" data-parent-span="" data-graph-bounds="390,146,590,200">
   <rect x="390.0" y="146.0" width="200.0" height="54.0" rx="18.0" fill="rgba(255,255,255,0.12)" stroke="#c084fc" stroke-width="2.0" filter="url(#shadowGlass)"/>
   <rect x="396.0" y="152.0" width="188.0" height="42.0" rx="15.0" fill="none" stroke="#c084fc" stroke-width="1.2" opacity="0.65"/>
-  <text x="490.0" y="164.0" text-anchor="middle" class="node-type">ONE QUESTION</text>
-  <text x="490.0" y="179.0" text-anchor="middle" class="node-title" font-size="18.0">AET Quick Skill</text>
+  <text x="490.0" y="164.0" text-anchor="middle" class="node-type">CANONICAL</text>
+  <text x="490.0" y="179.0" text-anchor="middle" class="node-title" font-size="18.0">Run Normalizer</text>
+  <text x="490.0" y="201.0" text-anchor="middle" class="node-sub">stable IDs + diagnostics</text>
   </g>
   <g id="node-research" data-graph-role="node" data-node-id="research" data-semantic-role="rect" data-motion-role="" data-motion-stage="" data-motion-order="" data-parent="" data-deployment-id="" data-topic-id="" data-span-id="" data-station-order="" data-status="" data-start-ms="" data-duration-ms="" data-parent-span="" data-graph-bounds="80,330,260,390">
   <rect x="80.0" y="330.0" width="180.0" height="60.0" rx="18.0" fill="rgba(255,255,255,0.12)" stroke="#60a5fa" stroke-width="1.8" filter="url(#shadowGlass)"/>
-  <text x="170.0" y="348.0" text-anchor="middle" class="node-type">DETERMINISTIC</text>
-  <text x="170.0" y="366.0" text-anchor="middle" class="node-title" font-size="18.0">Tool Facts</text>
-  <text x="170.0" y="388.0" text-anchor="middle" class="node-sub">Git · files · tests · hashes</text>
+  <text x="170.0" y="348.0" text-anchor="middle" class="node-type">RECORDED</text>
+  <text x="170.0" y="366.0" text-anchor="middle" class="node-title" font-size="18.0">Observations</text>
+  <text x="170.0" y="388.0" text-anchor="middle" class="node-sub">what the run shows</text>
   </g>
-  <g id="node-coding" data-graph-role="node" data-node-id="coding" data-semantic-role="terminal" data-motion-role="" data-motion-stage="" data-motion-order="" data-parent="" data-deployment-id="" data-topic-id="" data-span-id="" data-station-order="" data-status="" data-start-ms="" data-duration-ms="" data-parent-span="" data-graph-bounds="390,330,590,390">
-  <rect x="390.0" y="330.0" width="200.0" height="60.0" rx="18.0" fill="#0f172a" stroke="rgba(255,255,255,0.24)" stroke-width="2.0" filter="url(#shadowGlass)"/>
-  <rect x="390.0" y="330.0" width="200.0" height="18" rx="18.0" fill="rgba(255,255,255,0.12)" opacity="0.95"/>
-  <circle cx="406.0" cy="339.0" r="4" fill="#ef4444"/>
-  <circle cx="420.0" cy="339.0" r="4" fill="#f59e0b"/>
-  <circle cx="434.0" cy="339.0" r="4" fill="#10b981"/>
-  <text x="408.0" y="374.0" font-size="28" font-weight="700" fill="#10b981">$</text>
-  <text x="428.0" y="374.0" font-size="22" font-weight="500" fill="#cbd5e1">_</text>
-  <text x="490.0" y="376.0" text-anchor="middle" class="node-title" font-size="18.0">Bounded LLM</text>
-  <text x="490.0" y="410.0" text-anchor="middle" class="node-sub">hypothesis + counter-case</text>
+  <g id="node-coding" data-graph-role="node" data-node-id="coding" data-semantic-role="terminal" data-motion-role="" data-motion-stage="" data-motion-order="" data-parent="" data-deployment-id="" data-topic-id="" data-span-id="" data-station-order="" data-status="" data-start-ms="" data-duration-ms="" data-parent-span="" data-graph-bounds="360,330,560,390">
+  <rect x="360.0" y="330.0" width="200.0" height="60.0" rx="18.0" fill="#0f172a" stroke="rgba(255,255,255,0.24)" stroke-width="2.0" filter="url(#shadowGlass)"/>
+  <rect x="360.0" y="330.0" width="200.0" height="18" rx="18.0" fill="rgba(255,255,255,0.12)" opacity="0.95"/>
+  <circle cx="376.0" cy="339.0" r="4" fill="#ef4444"/>
+  <circle cx="390.0" cy="339.0" r="4" fill="#f59e0b"/>
+  <circle cx="404.0" cy="339.0" r="4" fill="#10b981"/>
+  <text x="378.0" y="374.0" font-size="28" font-weight="700" fill="#10b981">$</text>
+  <text x="398.0" y="374.0" font-size="22" font-weight="500" fill="#cbd5e1">_</text>
+  <text x="460.0" y="376.0" text-anchor="middle" class="node-title" font-size="13.85">Read-only Investigator</text>
+  <text x="460.0" y="410.0" text-anchor="middle" class="node-sub">hypothesis + counter-case</text>
   </g>
   <g id="node-review" data-graph-role="node" data-node-id="review" data-semantic-role="rect" data-motion-role="" data-motion-stage="" data-motion-order="" data-parent="" data-deployment-id="" data-topic-id="" data-span-id="" data-station-order="" data-status="" data-start-ms="" data-duration-ms="" data-parent-span="" data-graph-bounds="700,330,880,390">
   <rect x="700.0" y="330.0" width="180.0" height="60.0" rx="18.0" fill="rgba(255,255,255,0.12)" stroke="#34d399" stroke-width="1.8" filter="url(#shadowGlass)"/>
-  <text x="790.0" y="348.0" text-anchor="middle" class="node-type">TRACEABLE</text>
-  <text x="790.0" y="366.0" text-anchor="middle" class="node-title" font-size="13.62">Investigation Record</text>
-  <text x="790.0" y="388.0" text-anchor="middle" class="node-sub">question · result · effect</text>
+  <text x="790.0" y="348.0" text-anchor="middle" class="node-type">DETERMINISTIC</text>
+  <text x="790.0" y="366.0" text-anchor="middle" class="node-title" font-size="14.89">Evidence Authority</text>
+  <text x="790.0" y="388.0" text-anchor="middle" class="node-sub">Proof · Freshness · Git</text>
   </g>
   <g id="node-memory" data-graph-role="node" data-node-id="memory" data-semantic-role="cylinder" data-motion-role="" data-motion-stage="" data-motion-order="" data-parent="" data-deployment-id="" data-topic-id="" data-span-id="" data-station-order="" data-status="" data-start-ms="" data-duration-ms="" data-parent-span="" data-graph-bounds="80,510,260,570">
   <ellipse cx="170.0" cy="517.5" rx="45.0" ry="7.5" fill="rgba(255,255,255,0.08)" stroke="#34d399" stroke-width="2.2"/>
@@ -110,69 +111,69 @@
   <ellipse cx="170.0" cy="562.5" rx="45.0" ry="7.5" fill="rgba(255,255,255,0.08)" stroke="#34d399" stroke-width="2.2"/>
   <ellipse cx="170.0" cy="532.8" rx="45.0" ry="7.5" fill="none" stroke="#34d399" stroke-opacity="0.45" stroke-width="1.2"/>
   <ellipse cx="170.0" cy="546.0" rx="45.0" ry="7.5" fill="none" stroke="#34d399" stroke-opacity="0.25" stroke-width="1.2"/>
-  <text x="170.0" y="534.0" text-anchor="middle" class="node-title" font-size="16.41">Evidence Records</text>
-  <text x="170.0" y="558.0" text-anchor="middle" class="node-sub">immutable references</text>
+  <text x="170.0" y="534.0" text-anchor="middle" class="node-title" font-size="16.41">Portable Records</text>
+  <text x="170.0" y="558.0" text-anchor="middle" class="node-sub">Claim · Evidence · Observation</text>
   </g>
-  <g id="node-synthesis" data-graph-role="node" data-node-id="synthesis" data-semantic-role="double_rect" data-motion-role="" data-motion-stage="" data-motion-order="" data-parent="" data-deployment-id="" data-topic-id="" data-span-id="" data-station-order="" data-status="" data-start-ms="" data-duration-ms="" data-parent-span="" data-graph-bounds="390,510,590,570">
-  <rect x="390.0" y="510.0" width="200.0" height="60.0" rx="18.0" fill="rgba(255,255,255,0.12)" stroke="#c084fc" stroke-width="2.0" filter="url(#shadowGlass)"/>
-  <rect x="396.0" y="516.0" width="188.0" height="48.0" rx="15.0" fill="none" stroke="#c084fc" stroke-width="1.2" opacity="0.65"/>
-  <text x="490.0" y="528.0" text-anchor="middle" class="node-type">CHECKED</text>
-  <text x="490.0" y="546.0" text-anchor="middle" class="node-title" font-size="15.52">Grounding Validator</text>
-  <text x="490.0" y="568.0" text-anchor="middle" class="node-sub">facts · authority · budget</text>
+  <g id="node-synthesis" data-graph-role="node" data-node-id="synthesis" data-semantic-role="double_rect" data-motion-role="" data-motion-stage="" data-motion-order="" data-parent="" data-deployment-id="" data-topic-id="" data-span-id="" data-station-order="" data-status="" data-start-ms="" data-duration-ms="" data-parent-span="" data-graph-bounds="360,510,560,570">
+  <rect x="360.0" y="510.0" width="200.0" height="60.0" rx="18.0" fill="rgba(255,255,255,0.12)" stroke="#c084fc" stroke-width="2.0" filter="url(#shadowGlass)"/>
+  <rect x="366.0" y="516.0" width="188.0" height="48.0" rx="15.0" fill="none" stroke="#c084fc" stroke-width="1.2" opacity="0.65"/>
+  <text x="460.0" y="528.0" text-anchor="middle" class="node-type">INTEGRITY</text>
+  <text x="460.0" y="546.0" text-anchor="middle" class="node-title" font-size="18.0">Bundle Compiler</text>
+  <text x="460.0" y="568.0" text-anchor="middle" class="node-sub">select · redact · hash</text>
   </g>
   <g id="node-response" data-graph-role="node" data-node-id="response" data-semantic-role="speech" data-motion-role="" data-motion-stage="" data-motion-order="" data-parent="" data-deployment-id="" data-topic-id="" data-span-id="" data-station-order="" data-status="" data-start-ms="" data-duration-ms="" data-parent-span="" data-graph-bounds="700,510,880,570">
   <path d="M 718.0 510.0 L 862.0 510.0 Q 880.0 510.0 880.0 528.0 L 880.0 552.0 Q 880.0 570.0 862.0 570.0 L 726.0 570.0 L 712.0 588.0 L 716.0 570.0 L 718.0 570.0 Q 700.0 570.0 700.0 552.0 L 700.0 528.0 Q 700.0 510.0 718.0 510.0 Z" fill="rgba(255,255,255,0.12)" stroke="#f59e0b" stroke-width="2.0"/>
-  <text x="790.0" y="540.0" text-anchor="middle" class="node-title" font-size="18.0">Human Decision</text>
-  <text x="790.0" y="562.0" text-anchor="middle" class="node-sub">smallest next action</text>
+  <text x="790.0" y="540.0" text-anchor="middle" class="node-title" font-size="13.3">Independent Reviewer</text>
+  <text x="790.0" y="562.0" text-anchor="middle" class="node-sub">no AET install required</text>
   </g>
-  <g id="brief-label" data-graph-role="label" data-owner="brief" data-graph-bounds="271.72,142,338.28,162">
-  <rect x="271.72" y="142.0" width="66.56" height="20" rx="6" fill="rgba(15,23,42,0.7)" opacity="1"/>
-  <text x="305.0" y="156.0" text-anchor="middle" class="arrow-label">question</text>
+  <g id="brief-label" data-graph-role="label" data-owner="brief" data-graph-bounds="252.16,142,357.84,162">
+  <rect x="252.16" y="142.0" width="105.67999999999999" height="20" rx="6" fill="rgba(15,23,42,0.7)" opacity="1"/>
+  <text x="305.0" y="156.0" text-anchor="middle" class="arrow-label">native records</text>
   </g>
-  <g id="a-delegate-research-label" data-graph-role="label" data-owner="a-delegate-research" data-graph-bounds="292.76,313,349.24,333">
-  <rect x="292.76" y="313.0" width="56.480000000000004" height="20" rx="6" fill="rgba(15,23,42,0.7)" opacity="1"/>
-  <text x="321.0" y="327.0" text-anchor="middle" class="arrow-label">collect</text>
+  <g id="a-delegate-research-label" data-graph-role="label" data-owner="a-delegate-research" data-graph-bounds="289.64,275,352.36,295">
+  <rect x="289.64" y="275.0" width="62.72" height="20" rx="6" fill="rgba(15,23,42,0.7)" opacity="1"/>
+  <text x="321.0" y="289.0" text-anchor="middle" class="arrow-label">observe</text>
   </g>
-  <g id="b-delegate-coding-label" data-graph-role="label" data-owner="b-delegate-coding" data-graph-bounds="370.68,255,455,275">
-  <rect x="370.68" y="255.0" width="84.32000000000001" height="20" rx="6" fill="rgba(15,23,42,0.7)" opacity="1"/>
-  <text x="412.84" y="269.0" text-anchor="middle" class="arrow-label">investigate</text>
+  <g id="b-delegate-coding-label" data-graph-role="label" data-owner="b-delegate-coding" data-graph-bounds="370.68,244.8,455,264.8">
+  <rect x="370.68" y="244.8" width="84.32000000000001" height="20" rx="6" fill="rgba(15,23,42,0.7)" opacity="1"/>
+  <text x="412.84" y="258.8" text-anchor="middle" class="arrow-label">investigate</text>
   </g>
-  <g id="c-delegate-review-label" data-graph-role="label" data-owner="c-delegate-review" data-graph-bounds="621.12,189.4,676.88,209.4">
-  <rect x="621.12" y="189.4" width="55.76" height="20" rx="6" fill="rgba(15,23,42,0.7)" opacity="1"/>
-  <text x="649.0" y="203.4" text-anchor="middle" class="arrow-label">record</text>
+  <g id="c-delegate-review-label" data-graph-role="label" data-owner="c-delegate-review" data-graph-bounds="622.68,189.4,675.32,209.4">
+  <rect x="622.68" y="189.4" width="52.64" height="20" rx="6" fill="rgba(15,23,42,0.7)" opacity="1"/>
+  <text x="649.0" y="203.4" text-anchor="middle" class="arrow-label">verify</text>
   </g>
-  <g id="research-write-label" data-graph-role="label" data-owner="research-write" data-graph-bounds="100.44,426,167,446">
-  <rect x="100.44" y="426.0" width="66.56" height="20" rx="6" fill="rgba(15,23,42,0.7)" opacity="1"/>
-  <text x="133.72" y="440.0" text-anchor="middle" class="arrow-label">evidence</text>
+  <g id="research-write-label" data-graph-role="label" data-owner="research-write" data-graph-bounds="51.24,426,167,446">
+  <rect x="51.24" y="426.0" width="115.76" height="20" rx="6" fill="rgba(15,23,42,0.7)" opacity="1"/>
+  <text x="109.12" y="440.0" text-anchor="middle" class="arrow-label">bounded context</text>
   </g>
-  <g id="memory-merge-label" data-graph-role="label" data-owner="memory-merge" data-graph-bounds="283.2,509,366.8,529">
-  <rect x="283.2" y="509.0" width="83.6" height="20" rx="6" fill="rgba(15,23,42,0.7)" opacity="1"/>
-  <text x="325.0" y="523.0" text-anchor="middle" class="arrow-label">references</text>
+  <g id="memory-merge-label" data-graph-role="label" data-owner="memory-merge" data-graph-bounds="278.64,509,341.36,529">
+  <rect x="278.64" y="509.0" width="62.72" height="20" rx="6" fill="rgba(15,23,42,0.7)" opacity="1"/>
+  <text x="310.0" y="523.0" text-anchor="middle" class="arrow-label">records</text>
   </g>
-  <g id="coding-merge-label" data-graph-role="label" data-owner="coding-merge" data-graph-bounds="417.32,436,487,456">
-  <rect x="417.32" y="436.0" width="69.67999999999999" height="20" rx="6" fill="rgba(15,23,42,0.7)" opacity="1"/>
-  <text x="452.16" y="450.0" text-anchor="middle" class="arrow-label">judgment</text>
+  <g id="coding-merge-label" data-graph-role="label" data-owner="coding-merge" data-graph-bounds="359.48,436,457,456">
+  <rect x="359.48" y="436.0" width="97.52000000000001" height="20" rx="6" fill="rgba(15,23,42,0.7)" opacity="1"/>
+  <text x="408.24" y="450.0" text-anchor="middle" class="arrow-label">claims + limits</text>
   </g>
-  <g id="review-output-label" data-graph-role="label" data-owner="review-output" data-graph-bounds="708.44,436,787,456">
-  <rect x="708.44" y="436.0" width="78.56" height="20" rx="6" fill="rgba(15,23,42,0.7)" opacity="1"/>
-  <text x="747.72" y="450.0" text-anchor="middle" class="arrow-label">audit trail</text>
+  <g id="review-output-label" data-graph-role="label" data-owner="review-output" data-graph-bounds="684.44,436,787,456">
+  <rect x="684.44" y="436.0" width="102.56" height="20" rx="6" fill="rgba(15,23,42,0.7)" opacity="1"/>
+  <text x="735.72" y="450.0" text-anchor="middle" class="arrow-label">verified facts</text>
   </g>
-  <g id="deliver-label" data-graph-role="label" data-owner="deliver" data-graph-bounds="588.32,486,701.68,506">
-  <rect x="588.32" y="486.0" width="113.36000000000001" height="20" rx="6" fill="rgba(15,23,42,0.7)" opacity="1"/>
-  <text x="645.0" y="500.0" text-anchor="middle" class="arrow-label">validated result</text>
+  <g id="deliver-label" data-graph-role="label" data-owner="deliver" data-graph-bounds="575.24,509,684.76,529">
+  <rect x="575.24" y="509.0" width="109.52000000000001" height="20" rx="6" fill="rgba(15,23,42,0.7)" opacity="1"/>
+  <text x="630.0" y="523.0" text-anchor="middle" class="arrow-label">Evidence Bundle</text>
   </g>
   <g id="legend" data-graph-role="legend">
-    <rect id="legend-zone" data-graph-role="reserved" data-reserved-kind="legend" x="38" y="611" width="672.16" height="46" rx="10" fill="none" stroke="none"/>
+    <rect id="legend-zone" data-graph-role="reserved" data-reserved-kind="legend" x="38" y="611" width="739.36" height="46" rx="10" fill="none" stroke="none"/>
     <line data-graph-role="decoration" x1="48.0" y1="625.0" x2="78.0" y2="625.0" stroke="#60a5fa" stroke-width="2.2" marker-end="url(#arrowC)"/>
-    <text data-graph-role="decoration" x="88.0" y="629.0" class="legend">input / references</text>
-    <line data-graph-role="decoration" x1="232.88" y1="625.0" x2="262.88" y2="625.0" stroke="#c084fc" stroke-width="2.2" marker-end="url(#arrowA)"/>
-    <text data-graph-role="decoration" x="272.88" y="629.0" class="legend">bounded control</text>
-    <line data-graph-role="decoration" x1="399.52" y1="625.0" x2="429.52" y2="625.0" stroke="#34d399" stroke-width="2.2" marker-end="url(#arrowB)"/>
-    <text data-graph-role="decoration" x="439.52" y="629.0" class="legend">recorded work</text>
-    <line data-graph-role="decoration" x1="555.36" y1="625.0" x2="585.36" y2="625.0" stroke="#f59e0b" stroke-width="2.2" marker-end="url(#arrowG)"/>
-    <text data-graph-role="decoration" x="595.36" y="629.0" class="legend">checked output</text>
+    <text data-graph-role="decoration" x="88.0" y="629.0" class="legend">records / references</text>
+    <line data-graph-role="decoration" x1="249.92000000000002" y1="625.0" x2="279.92" y2="625.0" stroke="#c084fc" stroke-width="2.2" marker-end="url(#arrowA)"/>
+    <text data-graph-role="decoration" x="289.92" y="629.0" class="legend">bounded investigation</text>
+    <line data-graph-role="decoration" x1="452.08000000000004" y1="625.0" x2="482.08000000000004" y2="625.0" stroke="#34d399" stroke-width="2.2" marker-end="url(#arrowB)"/>
+    <text data-graph-role="decoration" x="492.08000000000004" y="629.0" class="legend">portable records</text>
+    <line data-graph-role="decoration" x1="625.6800000000001" y1="625.0" x2="655.6800000000001" y2="625.0" stroke="#f59e0b" stroke-width="2.2" marker-end="url(#arrowG)"/>
+    <text data-graph-role="decoration" x="665.6800000000001" y="629.0" class="legend">review handoff</text>
   </g>
-  <g id="footer" data-graph-role="reserved" data-graph-bounds="48,668,720,684">
-  <text x="48.0" y="680.0" class="footnote">AET Quick · local-first · read-only by default · no automatic merge, push, release, or Lab entry</text>
+  <g id="footer" data-graph-role="reserved" data-graph-bounds="48,668,713,684">
+  <text x="48.0" y="680.0" class="footnote">AET v1.14 · local-first · reviewer needs no AET SDK · no automatic fix, merge, push, or release</text>
   </g>
 </svg>

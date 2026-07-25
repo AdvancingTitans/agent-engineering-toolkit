@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://advancingtitans.github.io/agent-engineering-toolkit/schemas/evidence-bundle/v1/claim.schema.json",
+  "title": "Portable Claim v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "statement", "status", "status_definition", "evidence_refs", "counter_evidence_refs", "observation_refs", "basis", "limitations"],
+  "properties": {
+    "extensions": {"type": "object", "additionalProperties": true},
+    "id": {"type": "string", "minLength": 1},
+    "statement": {"type": "string", "minLength": 1},
+    "status": {"enum": ["supported", "partially_supported", "unsupported", "conflicted", "unknown"]},
+    "status_definition": {"type": "string", "minLength": 1},
+    "evidence_refs": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "counter_evidence_refs": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "observation_refs": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "basis": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "explanation"],
+      "properties": {
+        "type": {"enum": ["deterministic", "reproduced", "corroborated", "observational", "mixed"]},
+        "explanation": {"type": "string", "minLength": 1}
+      }
+    },
+    "limitations": {"type": "array", "items": {"type": "string"}},
+    "smallest_next_action": {"type": "string", "minLength": 1}
+  }
+}

@@ -70,6 +70,10 @@ class QuickDocumentationTests(unittest.TestCase):
 
     def test_bilingual_workflow_panorama_and_intro_media_are_real_files(self) -> None:
         assets = ROOT / "docs" / "assets"
+        expected_workflow_titles = {
+            "en": "Portable Evidence Handoff",
+            "zh-CN": "可移植证据交接",
+        }
         for locale in ("en", "zh-CN"):
             workflow_svg = assets / f"aet-quick-workflow-{locale}.svg"
             workflow_gif = assets / f"aet-quick-workflow-{locale}.gif"
@@ -81,7 +85,10 @@ class QuickDocumentationTests(unittest.TestCase):
                     encoding="utf-8"
                 )
             )
-            self.assertIn("AET Quick", workflow_svg.read_text(encoding="utf-8"))
+            self.assertIn(
+                expected_workflow_titles[locale],
+                workflow_svg.read_text(encoding="utf-8"),
+            )
             self.assertEqual(workflow_gif.read_bytes()[:6], b"GIF89a")
             self.assertTrue(motion["ok"])
             self.assertEqual(motion["source_checks"]["composition"]["ok"], True)

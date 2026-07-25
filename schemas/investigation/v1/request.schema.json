@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://advancingtitans.github.io/agent-engineering-toolkit/schemas/investigation/v1/request.schema.json",
+  "title": "Portable Investigation Request v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["protocol_version", "investigation_id", "question", "task", "hypotheses", "requested_evidence", "run_sources", "policy"],
+  "properties": {
+    "protocol_version": {"const": "1.0"},
+    "investigation_id": {"type": "string", "minLength": 1},
+    "question": {"type": "string", "minLength": 1},
+    "task": {
+      "type": "object",
+      "required": ["task_id", "request"],
+      "properties": {
+        "task_id": {"type": "string", "minLength": 1},
+        "request": {"type": "string", "minLength": 1},
+        "repository": {"type": "string"},
+        "workspace_id": {"type": "string"},
+        "base_ref": {"type": "string"},
+        "head_ref": {"type": "string"}
+      },
+      "additionalProperties": false
+    },
+    "hypotheses": {
+      "type": "object",
+      "required": ["primary", "competing"],
+      "properties": {
+        "primary": {"type": "string", "minLength": 1},
+        "competing": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1},
+          "minItems": 1,
+          "uniqueItems": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "requested_evidence": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+    "run_sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "source_type", "run_group_id"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "source_type": {"type": "string", "minLength": 1},
+          "run_group_id": {"type": "string", "minLength": 1},
+          "extensions": {"type": "object", "additionalProperties": true}
+        }
+      },
+      "minItems": 1
+    },
+    "policy": {
+      "$ref": "../../evidence-bundle/v1/policy.schema.json"
+    }
+  }
+}

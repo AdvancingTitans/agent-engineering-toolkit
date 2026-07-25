@@ -1,0 +1,1 @@
+{"id":"claim-001","statement":"当前工作区的目标验证命令已成功完成。","status":"supported","status_definition":"存在绑定当前工作区且未过期的复现证据。","evidence_refs":["ev-001"],"counter_evidence_refs":[],"observation_refs":["obs-001"],"basis":{"type":"reproduced","explanation":"证据记录了当前工作区中的实际命令结果。"},"limitations":["该结论只覆盖声明的验证命令。"],"smallest_next_action":"审查者可引用 ev-001 形成有边界结论。"}

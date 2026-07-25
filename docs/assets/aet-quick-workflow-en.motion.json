@@ -308,7 +308,7 @@
     "topology_draw_on": true
   },
   "artifact": {
-    "bytes": 394142,
+    "bytes": 391907,
     "encoder": "ffmpeg/gif-palette",
     "format": "gif",
     "mime_type": "image/gif",
@@ -327,7 +327,7 @@
       "r_frame_rate": "20/1",
       "width": 960
     },
-    "sha256": "c4a5db1abc5335e014e028890e0714b9191fe8b54f25e99704f77a29549bb95b",
+    "sha256": "af8b2b26100b97eafbf02eef81631d07d70fd1aa644b7cc668d26e2a7c3126f0",
     "source_frame_count": 115
   },
   "dry_run": false,
@@ -357,14 +357,14 @@
     "adjacent_duplicate_count": 0,
     "all_frames_unique": true,
     "delta_quality": {
-      "adjacent_max": 0.0019833450980392157,
-      "adjacent_median": 0.0006673137254901961,
+      "adjacent_max": 0.002096094117647059,
+      "adjacent_median": 0.0006647921568627451,
       "adjacent_min": 6.547607843137255e-06,
-      "adjacent_p95": 0.0007820901960784314,
+      "adjacent_p95": 0.000782686274509804,
       "changed_area_method": "accumulated adjacent luma delta greater than 2 percent",
-      "changed_area_ratio": 0.042154901960784315,
+      "changed_area_ratio": 0.0436278431372549,
       "metric": "normalized-luma-mean-absolute-difference",
-      "seam": 0.00019844196078431373,
+      "seam": 0.0002135270588235294,
       "seam_within_adjacent_p95": true
     },
     "embedded_loop_count": 0,
@@ -373,13 +373,13 @@
       "adjacent_duplicate_pairs": [],
       "algorithm": "framemd5",
       "all_frames_unique": true,
-      "first_frame_hash": "876b34e057dd6554da395ca1ef2c9463",
+      "first_frame_hash": "b02337b7b516a9decd7a2a47990433a0",
       "frame_count": 115,
       "intentional_reset_boundary_opacity": 1.0,
       "intentional_reset_boundary_repeat_count": 0,
       "intentional_reset_boundary_repeat_evidence": [],
       "intentional_reset_boundary_repeat_frame": 110,
-      "last_frame_hash": "69e715bdd47fe6a73f9e69322049099d",
+      "last_frame_hash": "b6a4b82d8ebb8062925c7f536bd04781",
       "minimum_unique_frame_count": 75,
       "opening_construction_and_reset_tail_globally_distinct": true,
       "repeat_scope": [
@@ -393,10 +393,10 @@
       "repeats_confined_to_permitted_scope": true,
       "unique_frame_count": 115
     },
-    "first_frame_sha256": "eaf34fc30540f3d5ea3d88f03b4af28c25de4a2033583a9609db6dd9cd6b0202",
+    "first_frame_sha256": "ff8ce350cae025fabc91f851c5bfab06630d3d8f10b9373a01d07d271e091b73",
     "intentional_reset_boundary_repeat_count": 0,
     "intentional_reset_boundary_repeat_evidence": [],
-    "last_frame_sha256": "4f2fc24a8c8455ca9ae72218698632535ceaa3f23d58836e868114a4aba67fc1",
+    "last_frame_sha256": "a5c58aa9a114dae71982be22bf1027de5488eefd96ab18b81ed204ba2231e9b1",
     "minimum_unique_frame_count": 75,
     "opening_construction_and_reset_tail_globally_distinct": true,
     "playback": "embedded-infinite",
@@ -405,13 +405,13 @@
       "adjacent_duplicate_pairs": [],
       "algorithm": "sha256",
       "all_frames_unique": true,
-      "first_frame_hash": "eaf34fc30540f3d5ea3d88f03b4af28c25de4a2033583a9609db6dd9cd6b0202",
+      "first_frame_hash": "ff8ce350cae025fabc91f851c5bfab06630d3d8f10b9373a01d07d271e091b73",
       "frame_count": 115,
       "intentional_reset_boundary_opacity": 1.0,
       "intentional_reset_boundary_repeat_count": 0,
       "intentional_reset_boundary_repeat_evidence": [],
       "intentional_reset_boundary_repeat_frame": 110,
-      "last_frame_hash": "4f2fc24a8c8455ca9ae72218698632535ceaa3f23d58836e868114a4aba67fc1",
+      "last_frame_hash": "a5c58aa9a114dae71982be22bf1027de5488eefd96ab18b81ed204ba2231e9b1",
       "minimum_unique_frame_count": 75,
       "opening_construction_and_reset_tail_globally_distinct": true,
       "repeat_scope": [
@@ -1820,7 +1820,7 @@
           "appended_below_labels_and_nodes": true,
           "center_travel_range": [
             15,
-            115
+            145
           ],
           "direction": "source-to-target",
           "edge_id": "b-delegate-coding",
@@ -1854,7 +1854,7 @@
           "initial_tangent_rotation": 90,
           "marker_free": true,
           "path_advance_per_rendered_frame": 6,
-          "path_length": 130,
+          "path_length": 160,
           "primitive": "glass-task-capsule",
           "rendered_frames": [
             36,
@@ -2013,7 +2013,7 @@
           "geometry_rear_extent": 7,
           "initial_path_distance": 39,
           "initial_point": {
-            "x": 490,
+            "x": 460,
             "y": 429
           },
           "initial_tangent_rotation": 90,
@@ -2040,7 +2040,7 @@
           "appended_below_labels_and_nodes": true,
           "center_travel_range": [
             15,
-            115
+            85
           ],
           "direction": "source-to-target",
           "edge_id": "memory-merge",
@@ -2074,7 +2074,7 @@
           "initial_tangent_rotation": 0,
           "marker_free": true,
           "path_advance_per_rendered_frame": 6,
-          "path_length": 130,
+          "path_length": 100,
           "primitive": "glass-task-capsule",
           "rendered_frames": [
             36,
@@ -2095,7 +2095,7 @@
           "appended_below_labels_and_nodes": true,
           "center_travel_range": [
             15,
-            95
+            125
           ],
           "direction": "source-to-target",
           "edge_id": "deliver",
@@ -2123,13 +2123,13 @@
           "geometry_rear_extent": 7,
           "initial_path_distance": 50,
           "initial_point": {
-            "x": 640,
+            "x": 610,
             "y": 540
           },
           "initial_tangent_rotation": 0,
           "marker_free": true,
           "path_advance_per_rendered_frame": 6,
-          "path_length": 110,
+          "path_length": 140,
           "primitive": "glass-task-capsule",
           "rendered_frames": [
             36,
@@ -2217,8 +2217,8 @@
     "encoders": [
       "gif"
     ],
-    "ffmpeg": "/Users/yjw/.cache/uv/archive-v0/srxjinI55WNKvnwK/lib/python3.13/site-packages/static_ffmpeg/bin/darwin_arm64/ffmpeg",
-    "ffprobe": "/Users/yjw/.cache/uv/archive-v0/srxjinI55WNKvnwK/lib/python3.13/site-packages/static_ffmpeg/bin/darwin_arm64/ffprobe",
+    "ffmpeg": "/tmp/aet-media-bin/ffmpeg",
+    "ffprobe": "/tmp/aet-media-bin/ffprobe",
     "format": {
       "gif": true
     },
@@ -2360,12 +2360,12 @@
     }
   },
   "source_integrity": {
-    "sha256": "da1e66d8e86baaee47150d970ecd0cc0b0e569e8b4b5888bd98cd2ef473a852d",
-    "sha256_after": "da1e66d8e86baaee47150d970ecd0cc0b0e569e8b4b5888bd98cd2ef473a852d",
-    "sha256_before": "da1e66d8e86baaee47150d970ecd0cc0b0e569e8b4b5888bd98cd2ef473a852d",
+    "sha256": "7d229da60479fe5ff9debcec0f086d8d46e330574b566694d5864a00be0a0442",
+    "sha256_after": "7d229da60479fe5ff9debcec0f086d8d46e330574b566694d5864a00be0a0442",
+    "sha256_before": "7d229da60479fe5ff9debcec0f086d8d46e330574b566694d5864a00be0a0442",
     "unchanged": true
   },
-  "source_sha256": "da1e66d8e86baaee47150d970ecd0cc0b0e569e8b4b5888bd98cd2ef473a852d",
+  "source_sha256": "7d229da60479fe5ff9debcec0f086d8d46e330574b566694d5864a00be0a0442",
   "style_contract": {
     "approval_recorded_on": "2026-07-16",
     "scope": "signature-speed-path-geometry-and-construction-schedule",

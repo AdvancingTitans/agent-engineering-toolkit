@@ -1,0 +1,33 @@
+{
+  "schema_version": "portable-evidence-bundle-fixture-scenarios/1.0",
+  "cases": [
+    {
+      "id": "conflicted",
+      "claim_status": "conflicted",
+      "freshness_status": "current",
+      "truncated": false,
+      "requires_counter_evidence": true
+    },
+    {
+      "id": "unknown",
+      "claim_status": "unknown",
+      "freshness_status": "unknown",
+      "truncated": false,
+      "requires_counter_evidence": false
+    },
+    {
+      "id": "stale",
+      "claim_status": "partially_supported",
+      "freshness_status": "relevant_files_changed",
+      "truncated": false,
+      "requires_counter_evidence": false
+    },
+    {
+      "id": "truncated",
+      "claim_status": "partially_supported",
+      "freshness_status": "current",
+      "truncated": true,
+      "requires_counter_evidence": false
+    }
+  ]
+}

@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000" role="img" aria-label="AET 项目架构全景">
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000" role="img" aria-label="AET v1.14 项目架构全景">
 <defs>
 <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#070a12"/><stop offset=".55" stop-color="#0d1324"/><stop offset="1" stop-color="#07111c"/></linearGradient>
 <radialGradient id="blueGlow"><stop stop-color="#2563eb" stop-opacity=".20"/><stop offset="1" stop-color="#2563eb" stop-opacity="0"/></radialGradient>
@@ -16,134 +16,135 @@
 <circle data-graph-role="decoration" data-owner="canvas" cx="288" cy="250" r="512" fill="url(#blueGlow)"/>
 <circle data-graph-role="decoration" data-owner="canvas" cx="1312" cy="550" r="448" fill="url(#purpleGlow)"/>
 <rect width="1600" height="1000" fill="url(#grid)"/>
-<text x="60" y="60" font-size="34" font-weight="800" fill="#f8fafc">AET 项目架构全景</text>
-<text x="60" y="88" font-size="16" fill="#94a3b8">四个日常入口，共享一套证据协议；LLM 调查与确定性校验分权；Lab 始终显式启用</text>
-<text x="1540" y="62" text-anchor="end" class="mono" font-size="13" fill="#34d399">AET QUICK / LAB · v1.13+</text>
+<text x="60" y="60" font-size="34" font-weight="800" fill="#f8fafc">AET v1.14 项目架构全景</text>
+<text x="60" y="88" font-size="16" fill="#94a3b8">从多 Agent 运行记录到可移植证据交接；观察、证据与判断保持分层</text>
+<text x="1540" y="62" text-anchor="end" class="mono" font-size="13" fill="#34d399">PORTABLE EVIDENCE · v1.14</text>
 <rect x="40" y="115" width="1520" height="150" rx="24" fill="#ffffff" fill-opacity=".025" stroke="#60a5fa" stroke-opacity=".32" stroke-dasharray="7 8"/>
 <circle cx="70" cy="143" r="16" fill="#60a5fa" fill-opacity=".18" stroke="#60a5fa"/>
 <text x="70" y="149" text-anchor="middle" font-size="13" font-weight="800" fill="#60a5fa">01</text>
-<text x="98" y="150" font-size="18" font-weight="750" fill="#f8fafc">用户入口</text>
+<text x="98" y="150" font-size="18" font-weight="750" fill="#f8fafc">采集与标准化</text>
 <rect x="40" y="295" width="1520" height="200" rx="24" fill="#ffffff" fill-opacity=".025" stroke="#c084fc" stroke-opacity=".32" stroke-dasharray="7 8"/>
 <circle cx="70" cy="323" r="16" fill="#c084fc" fill-opacity=".18" stroke="#c084fc"/>
 <text x="70" y="329" text-anchor="middle" font-size="13" font-weight="800" fill="#c084fc">02</text>
-<text x="98" y="330" font-size="18" font-weight="750" fill="#f8fafc">Quick 运行时</text>
+<text x="98" y="330" font-size="18" font-weight="750" fill="#f8fafc">有边界的调查与验证</text>
 <rect x="40" y="525" width="1520" height="190" rx="24" fill="#ffffff" fill-opacity=".025" stroke="#34d399" stroke-opacity=".32" stroke-dasharray="7 8"/>
 <circle cx="70" cy="553" r="16" fill="#34d399" fill-opacity=".18" stroke="#34d399"/>
 <text x="70" y="559" text-anchor="middle" font-size="13" font-weight="800" fill="#34d399">03</text>
-<text x="98" y="560" font-size="18" font-weight="750" fill="#f8fafc">共享证据与契约</text>
+<text x="98" y="560" font-size="18" font-weight="750" fill="#f8fafc">可移植证据交接</text>
 <rect x="40" y="745" width="1520" height="190" rx="24" fill="#ffffff" fill-opacity=".025" stroke="#f59e0b" stroke-opacity=".32" stroke-dasharray="7 8"/>
 <circle cx="70" cy="773" r="16" fill="#f59e0b" fill-opacity=".18" stroke="#f59e0b"/>
 <text x="70" y="779" text-anchor="middle" font-size="13" font-weight="800" fill="#f59e0b">04</text>
-<text x="98" y="780" font-size="18" font-weight="750" fill="#f8fafc">显式启用的 AET Lab</text>
+<text x="98" y="780" font-size="18" font-weight="750" fill="#f8fafc">产品入口与治理</text>
 <g filter="url(#shadow)">
 <rect x="70" y="165" width="320" height="96" rx="18" fill="#111827" fill-opacity=".86" stroke="#ffffff" stroke-opacity=".12"/>
 <rect x="70" y="165" width="5" height="96" rx="2.5" fill="#60a5fa"/>
-<text x="94" y="199" font-size="19" font-weight="700" fill="#f8fafc">开发者请求</text>
-<text x="94" y="226" font-size="14" fill="#94a3b8">任务目标 · 限制 · 显式授权</text>
+<text x="94" y="199" font-size="19" font-weight="700" fill="#f8fafc">原生 Agent 运行记录</text>
+<text x="94" y="226" font-size="14" fill="#94a3b8">Codex · Claude Code · JSONL</text>
 </g>
 <g filter="url(#shadow)">
 <rect x="430" y="165" width="320" height="96" rx="18" fill="#111827" fill-opacity=".86" stroke="#ffffff" stroke-opacity=".12"/>
 <rect x="430" y="165" width="5" height="96" rx="2.5" fill="#c084fc"/>
-<text x="454" y="199" font-size="19" font-weight="700" fill="#f8fafc">四个 Quick Skill</text>
-<text x="454" y="226" font-size="14" fill="#94a3b8">Check · Scope · Proof · Fresh</text>
-<text class="mono" x="454" y="245" font-size="12" fill="#c084fc">skills/aet-*</text>
+<text x="454" y="199" font-size="19" font-weight="700" fill="#f8fafc">Source Adapter</text>
+<text x="454" y="226" font-size="14" fill="#94a3b8">解析消息、工具调用与工具结果</text>
+<text class="mono" x="454" y="245" font-size="12" fill="#c084fc">run_normalization/adapters/*</text>
 </g>
 <g filter="url(#shadow)">
 <rect x="790" y="165" width="320" height="96" rx="18" fill="#111827" fill-opacity=".86" stroke="#ffffff" stroke-opacity=".12"/>
 <rect x="790" y="165" width="5" height="96" rx="2.5" fill="#34d399"/>
-<text x="814" y="199" font-size="19" font-weight="700" fill="#f8fafc">Agent Host</text>
-<text x="814" y="226" font-size="14" fill="#94a3b8">LLM 规划授权工具调用</text>
-<text class="mono" x="814" y="245" font-size="12" fill="#34d399">skills/*/SKILL.md</text>
+<text x="814" y="199" font-size="19" font-weight="700" fill="#f8fafc">Run Normalizer</text>
+<text x="814" y="226" font-size="14" fill="#94a3b8">稳定身份 · 增量导入 · Diagnostics</text>
+<text class="mono" x="814" y="245" font-size="12" fill="#34d399">src/aet/run_normalization/*</text>
 </g>
 <g filter="url(#shadow)">
 <rect x="1150" y="165" width="340" height="96" rx="18" fill="#111827" fill-opacity=".86" stroke="#ffffff" stroke-opacity=".12"/>
 <rect x="1150" y="165" width="5" height="96" rx="2.5" fill="#f59e0b"/>
-<text x="1174" y="199" font-size="19" font-weight="700" fill="#f8fafc">人工决定</text>
-<text x="1174" y="226" font-size="14" fill="#94a3b8">修复 · 拆分 · 继续验证 · 显式进入 Lab</text>
+<text x="1174" y="199" font-size="19" font-weight="700" fill="#f8fafc">Canonical Run Record</text>
+<text x="1174" y="226" font-size="14" fill="#94a3b8">运行记录只证明记录中发生了什么</text>
+<text class="mono" x="1174" y="245" font-size="12" fill="#f59e0b">schemas/run-record/v1/*</text>
 </g>
 <g filter="url(#shadow)">
 <rect x="70" y="355" width="320" height="104" rx="18" fill="#111827" fill-opacity=".86" stroke="#ffffff" stroke-opacity=".12"/>
 <rect x="70" y="355" width="5" height="104" rx="2.5" fill="#60a5fa"/>
-<text x="94" y="389" font-size="19" font-weight="700" fill="#f8fafc">CLI 路由与权限</text>
-<text x="94" y="416" font-size="14" fill="#94a3b8">参数 · 语言 · 命令边界</text>
-<text class="mono" x="94" y="443" font-size="12" fill="#60a5fa">src/aet/cli.py</text>
+<text x="94" y="389" font-size="19" font-weight="700" fill="#f8fafc">Observation</text>
+<text x="94" y="416" font-size="14" fill="#94a3b8">强制声明 proves / doesNotProve</text>
+<text class="mono" x="94" y="443" font-size="12" fill="#60a5fa">src/aet/observations/*</text>
 </g>
 <g filter="url(#shadow)">
 <rect x="430" y="355" width="320" height="104" rx="18" fill="#111827" fill-opacity=".86" stroke="#ffffff" stroke-opacity=".12"/>
 <rect x="430" y="355" width="5" height="104" rx="2.5" fill="#c084fc"/>
-<text x="454" y="389" font-size="19" font-weight="700" fill="#f8fafc">Quick 处理器与预检</text>
-<text x="454" y="416" font-size="14" fill="#94a3b8">最小事实集 · 有界结果</text>
-<text class="mono" x="454" y="443" font-size="12" fill="#c084fc">src/aet/quick/*</text>
+<text x="454" y="389" font-size="19" font-weight="700" fill="#f8fafc">Evidence Candidate</text>
+<text x="454" y="416" font-size="14" fill="#94a3b8">待验证 · 可拒绝 · 可冲突</text>
+<text class="mono" x="454" y="443" font-size="12" fill="#c084fc">src/aet/evidence_core/*</text>
 </g>
 <g filter="url(#shadow)">
 <rect x="790" y="355" width="320" height="104" rx="18" fill="#111827" fill-opacity=".86" stroke="#ffffff" stroke-opacity=".12"/>
 <rect x="790" y="355" width="5" height="104" rx="2.5" fill="#34d399"/>
-<text x="814" y="389" font-size="19" font-weight="700" fill="#f8fafc">受控调查与记录</text>
-<text x="814" y="416" font-size="14" fill="#94a3b8">任务意图 · 反方解释 · 工具结果</text>
-<text class="mono" x="814" y="443" font-size="12" fill="#34d399">investigation/* · ledger.py</text>
+<text x="814" y="389" font-size="19" font-weight="700" fill="#f8fafc">只读 Investigator</text>
+<text x="814" y="416" font-size="14" fill="#94a3b8">主假设 · 竞争假设 · 停止条件</text>
+<text class="mono" x="814" y="443" font-size="12" fill="#34d399">investigation/portable.py</text>
 </g>
 <g filter="url(#shadow)">
 <rect x="1150" y="355" width="340" height="104" rx="18" fill="#111827" fill-opacity=".86" stroke="#ffffff" stroke-opacity=".12"/>
 <rect x="1150" y="355" width="5" height="104" rx="2.5" fill="#f59e0b"/>
-<text x="1174" y="389" font-size="19" font-weight="700" fill="#f8fafc">依据校验与叙事</text>
-<text x="1174" y="416" font-size="14" fill="#94a3b8">引用 · 权限 · 强度 · 中文表达</text>
-<text class="mono" x="1174" y="443" font-size="12" fill="#f59e0b">grounding.py · narrative/*</text>
+<text x="1174" y="389" font-size="19" font-weight="700" fill="#f8fafc">确定性证据权威</text>
+<text x="1174" y="416" font-size="14" fill="#94a3b8">Git · Proof · Freshness · 权限</text>
+<text class="mono" x="1174" y="443" font-size="12" fill="#f59e0b">quick/* · grounding.py</text>
 </g>
 <g filter="url(#shadow)">
 <rect x="70" y="585" width="320" height="98" rx="18" fill="#111827" fill-opacity=".86" stroke="#ffffff" stroke-opacity=".12"/>
 <rect x="70" y="585" width="5" height="98" rx="2.5" fill="#34d399"/>
-<text x="94" y="619" font-size="19" font-weight="700" fill="#f8fafc">命令与权限契约</text>
-<text x="94" y="646" font-size="14" fill="#94a3b8">预算 · 语言 · 停止规则</text>
-<text class="mono" x="94" y="667" font-size="12" fill="#34d399">schemas/command-budget* · cli.py</text>
+<text x="94" y="619" font-size="19" font-weight="700" fill="#f8fafc">Bundle Compiler</text>
+<text x="94" y="646" font-size="14" fill="#94a3b8">筛选 · 脱敏 · 内容寻址</text>
+<text class="mono" x="94" y="667" font-size="12" fill="#34d399">src/aet/bundle/compiler.py</text>
 </g>
 <g filter="url(#shadow)">
 <rect x="430" y="585" width="320" height="98" rx="18" fill="#111827" fill-opacity=".86" stroke="#ffffff" stroke-opacity=".12"/>
 <rect x="430" y="585" width="5" height="98" rx="2.5" fill="#60a5fa"/>
-<text x="454" y="619" font-size="19" font-weight="700" fill="#f8fafc">证据、Proof 与时效</text>
-<text x="454" y="646" font-size="14" fill="#94a3b8">PASS · FAIL · UNKNOWN · 文件绑定</text>
-<text class="mono" x="454" y="667" font-size="12" fill="#60a5fa">evidence.py · quick/proof.py · fresh.py</text>
+<text x="454" y="619" font-size="19" font-weight="700" fill="#f8fafc">Index / Core / Archive</text>
+<text x="454" y="646" font-size="14" fill="#94a3b8">Claim · Evidence · Observation · Blob</text>
+<text class="mono" x="454" y="667" font-size="12" fill="#60a5fa">schemas/evidence-bundle/v1/*</text>
 </g>
 <g filter="url(#shadow)">
 <rect x="790" y="585" width="320" height="98" rx="18" fill="#111827" fill-opacity=".86" stroke="#ffffff" stroke-opacity=".12"/>
 <rect x="790" y="585" width="5" height="98" rx="2.5" fill="#c084fc"/>
-<text x="814" y="619" font-size="19" font-weight="700" fill="#f8fafc">调查契约与记录 Schema</text>
-<text x="814" y="646" font-size="14" fill="#94a3b8">引用 · 冲突 · 假设 · 预算</text>
-<text class="mono" x="814" y="667" font-size="12" fill="#c084fc">schemas/investigation-*</text>
+<text x="814" y="619" font-size="19" font-weight="700" fill="#f8fafc">完整性与时效</text>
+<text x="814" y="646" font-size="14" fill="#94a3b8">SHA-256 · 引用闭包 · Freshness</text>
+<text class="mono" x="814" y="667" font-size="12" fill="#c084fc">bundle/integrity.py · validator.py</text>
 </g>
 <g filter="url(#shadow)">
 <rect x="1150" y="585" width="340" height="98" rx="18" fill="#111827" fill-opacity=".86" stroke="#ffffff" stroke-opacity=".12"/>
 <rect x="1150" y="585" width="5" height="98" rx="2.5" fill="#f59e0b"/>
-<text x="1174" y="619" font-size="19" font-weight="700" fill="#f8fafc">表达、停止策略与测试</text>
-<text x="1174" y="646" font-size="14" fill="#94a3b8">中英叙事 · 拒绝路径 · 对照评测</text>
-<text class="mono" x="1174" y="667" font-size="12" fill="#f59e0b">narrative/* · tests/* · eval/*</text>
+<text x="1174" y="619" font-size="19" font-weight="700" fill="#f8fafc">独立审查与校验</text>
+<text x="1174" y="646" font-size="14" fill="#94a3b8">无 SDK 消费 · 可选 Review Validator</text>
+<text class="mono" x="1174" y="667" font-size="12" fill="#f59e0b">bundle/review_validator.py</text>
 </g>
 <g filter="url(#shadow)">
 <rect x="70" y="825" width="320" height="88" rx="18" fill="#111827" fill-opacity=".86" stroke="#ffffff" stroke-opacity=".12"/>
 <rect x="70" y="825" width="5" height="88" rx="2.5" fill="#f59e0b"/>
-<text x="94" y="859" font-size="19" font-weight="700" fill="#f8fafc">真实仓库案例库</text>
-<text x="94" y="886" font-size="14" fill="#94a3b8">SWE-agent · Google ADK · OpenHands</text>
-<text class="mono" x="94" y="897" font-size="12" fill="#f59e0b">repository-audit-showcase/*</text>
+<text x="94" y="859" font-size="19" font-weight="700" fill="#f8fafc">四个 Quick Skill</text>
+<text x="94" y="886" font-size="14" fill="#94a3b8">Check · Scope · Proof · Fresh</text>
+<text class="mono" x="94" y="897" font-size="12" fill="#f59e0b">skills/aet-* · src/aet/quick/*</text>
 </g>
 <g filter="url(#shadow)">
 <rect x="430" y="825" width="320" height="88" rx="18" fill="#111827" fill-opacity=".86" stroke="#ffffff" stroke-opacity=".12"/>
 <rect x="430" y="825" width="5" height="88" rx="2.5" fill="#60a5fa"/>
-<text x="454" y="859" font-size="19" font-weight="700" fill="#f8fafc">项目上下文</text>
-<text x="454" y="886" font-size="14" fill="#94a3b8">Context · Decision · Evolve</text>
-<text class="mono" x="454" y="897" font-size="12" fill="#60a5fa">context.py · decision.py · evolve.py</text>
+<text x="454" y="859" font-size="19" font-weight="700" fill="#f8fafc">便利接入层</text>
+<text x="454" y="886" font-size="14" fill="#94a3b8">CLI · MCP · TypeScript / Python SDK</text>
+<text class="mono" x="454" y="897" font-size="12" fill="#60a5fa">src/aet/mcp_server.py · packages/*</text>
 </g>
 <g filter="url(#shadow)">
 <rect x="790" y="825" width="320" height="88" rx="18" fill="#111827" fill-opacity=".86" stroke="#ffffff" stroke-opacity=".12"/>
 <rect x="790" y="825" width="5" height="88" rx="2.5" fill="#c084fc"/>
-<text x="814" y="859" font-size="19" font-weight="700" fill="#f8fafc">质量与演化实验</text>
-<text x="814" y="886" font-size="14" fill="#94a3b8">Quality · Learn · Replay</text>
-<text class="mono" x="814" y="897" font-size="12" fill="#c084fc">quality.py · learn*.py</text>
+<text x="814" y="859" font-size="19" font-weight="700" fill="#f8fafc">跨 Agent 消费实测</text>
+<text x="814" y="886" font-size="14" fill="#94a3b8">Codex · Hermes · Ollama / Qwen</text>
+<text class="mono" x="814" y="897" font-size="12" fill="#c084fc">eval/bundle-consumption/*</text>
 </g>
 <g filter="url(#shadow)">
 <rect x="1150" y="825" width="340" height="88" rx="18" fill="#111827" fill-opacity=".86" stroke="#ffffff" stroke-opacity=".12"/>
 <rect x="1150" y="825" width="5" height="88" rx="2.5" fill="#34d399"/>
-<text x="1174" y="859" font-size="19" font-weight="700" fill="#f8fafc">受控采纳</text>
-<text x="1174" y="886" font-size="14" fill="#94a3b8">Gate · Shadow · Stage · Adopt</text>
-<text class="mono" x="1174" y="897" font-size="12" fill="#34d399">gate_plan.py · evolution/*</text>
+<text x="1174" y="859" font-size="19" font-weight="700" fill="#f8fafc">人工决定与 Lab 边界</text>
+<text x="1174" y="886" font-size="14" fill="#94a3b8">不自动 Fix · Merge · Push · Release</text>
+<text class="mono" x="1174" y="897" font-size="12" fill="#34d399">docs/quick-vs-lab-boundary.md</text>
 </g>
 <path d="M230 261V355" fill="none" stroke="#60a5fa" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrowBlue)"/>
 <path d="M590 261V355" fill="none" stroke="#c084fc" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrowPurple)"/>
@@ -151,14 +152,17 @@
 <path d="M390 407H430" fill="none" stroke="#60a5fa" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrowBlue)"/>
 <path d="M750 407H790" fill="none" stroke="#c084fc" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrowPurple)"/>
 <path d="M1110 407H1150" fill="none" stroke="#34d399" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrowGreen)"/>
-<path d="M1320 355V261" fill="none" stroke="#f59e0b" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrowAmber)"/>
-<path d="M230 585V495" fill="none" stroke="#34d399" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="8 8" marker-end="url(#arrowGreen)"/>
-<path d="M590 585V495" fill="none" stroke="#60a5fa" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="8 8" marker-end="url(#arrowBlue)"/>
-<path d="M950 585V495" fill="none" stroke="#c084fc" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="8 8" marker-end="url(#arrowPurple)"/>
-<path d="M1320 585V495" fill="none" stroke="#f59e0b" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="8 8" marker-end="url(#arrowAmber)"/>
+<path d="M1320 261V355" fill="none" stroke="#f59e0b" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrowAmber)"/>
+<path d="M230 459V585" fill="none" stroke="#34d399" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrowGreen)"/>
+<path d="M590 459V585" fill="none" stroke="#60a5fa" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrowBlue)"/>
+<path d="M950 459V585" fill="none" stroke="#c084fc" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrowPurple)"/>
+<path d="M1320 459V585" fill="none" stroke="#f59e0b" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrowAmber)"/>
 <rect x="1190" y="776" width="260" height="34" rx="17" fill="#f59e0b" fill-opacity=".13" stroke="#f59e0b" stroke-dasharray="6 6"/>
-<text x="1320" y="798" text-anchor="middle" class="mono" font-size="12" font-weight="800" fill="#f59e0b">显式命令 + 人工授权</text>
-<path d="M1490 213H1530V793H1450" fill="none" stroke="#f59e0b" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="8 8" marker-end="url(#arrowAmber)"/>
-<text x="60" y="962" font-size="14" fill="#94a3b8">实线：Quick 主流程 · 虚线：协议支撑 / 显式进入 Lab</text>
-<text x="1540" y="962" text-anchor="end" font-size="14" font-weight="700" fill="#f8fafc">默认本地、只读；只有 /aet-proof 执行显式 argv</text>
+<text x="1320" y="798" text-anchor="middle" class="mono" font-size="12" font-weight="800" fill="#f59e0b">人工拥有最终行动权限</text>
+<path d="M230 683V825" fill="none" stroke="#f59e0b" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="8 8" marker-end="url(#arrowAmber)"/>
+<path d="M590 683V825" fill="none" stroke="#60a5fa" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="8 8" marker-end="url(#arrowBlue)"/>
+<path d="M950 683V825" fill="none" stroke="#c084fc" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="8 8" marker-end="url(#arrowPurple)"/>
+<path d="M1320 683V825" fill="none" stroke="#34d399" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="8 8" marker-end="url(#arrowGreen)"/>
+<text x="60" y="962" font-size="14" fill="#94a3b8">实线：证据生产主链 · 虚线：产品入口与消费层</text>
+<text x="1540" y="962" text-anchor="end" font-size="14" font-weight="700" fill="#f8fafc">审查者无需安装 AET；最终行动权限始终由人掌握</text>
 </svg>

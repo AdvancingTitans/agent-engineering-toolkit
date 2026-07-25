@@ -1,0 +1,8 @@
+{"type":"system","session_id":"session-claude-diagnostics-001","timestamp":"2026-01-02T03:04:00Z","cwd":"/workspace/sanitized","model":"fixture-model"}
+这不是 JSON
+{"type":"unsupported","session_id":"session-claude-diagnostics-001","timestamp":"2026-01-02T03:04:01Z","content":"此内容不应进入诊断消息。"}
+{"type":"user","session_id":"session-claude-diagnostics-001","timestamp":"不是时间戳","message":{"role":"user","content":"无原生 ID 的完整文件记录。"}}
+{"type":"assistant","uuid":"claude-repaired-001","session_id":"session-claude-diagnostics-001","timestamp":"2026-01-02T03:04:03Z","repaired":true,"message":{"role":"assistant","content":[{"type":"text","text":"显式标记为已修复记录。"}]}}
+{"type":"user","uuid":"claude-truncated-event-001","session_id":"session-claude-diagnostics-001","timestamp":"2026-01-02T03:04:04Z","message":{"role":"user","content":[{"type":"tool_result","tool_use_id":"claude-orphan-001","content":"截断结果","is_error":false,"output_truncated":true}]}}
+{"type":"user","uuid":"claude-duplicate-event-001","session_id":"session-claude-diagnostics-001","timestamp":"2026-01-02T03:04:05Z","message":{"role":"user","content":[{"type":"tool_result","tool_use_id":"claude-orphan-001","content":"重复结果","is_error":false}]}}
+{"type":"assistant","uuid":"claude-missing-call-event-001","session_id":"session-claude-diagnostics-001","timestamp":"2026-01-02T03:04:06Z","message":{"role":"assistant","content":[{"type":"tool_use","id":"claude-missing-call-001","name":"lookup","input":{"id":"fixture"}}]}}

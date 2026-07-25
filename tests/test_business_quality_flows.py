@@ -15,6 +15,7 @@ from collections import Counter
 from pathlib import Path
 from unittest import mock
 
+from aet import __version__
 from aet.learn import _editable_edit_budget, harvest, replay_observed, verify_suite
 from aet.learn_statistics import summarize_reliability
 
@@ -240,7 +241,10 @@ class BusinessQualityFlowsTests(unittest.TestCase):
                 check=True,
             )
             metadata = json.loads((output / "candidate.json").read_text(encoding="utf-8"))
-            self.assertEqual(metadata["candidate_id"], "CAND-REAL-HOST-V1-13-0")
+            self.assertEqual(
+                metadata["candidate_id"],
+                f"CAND-REAL-HOST-V{__version__.replace('.', '-')}",
+            )
             candidate_bytes = (output / "candidate.SKILL.md").read_bytes()
             self.assertEqual(metadata["candidate_sha256"], hashlib.sha256(candidate_bytes).hexdigest())
             candidate_text = candidate_bytes.decode()

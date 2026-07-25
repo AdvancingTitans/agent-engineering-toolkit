@@ -1,5 +1,44 @@
 # Changelog
 
+## 1.14.0 — 2026-07-26
+
+- Added host-neutral Codex and Claude Code Run Normalizers with stable record
+  identity, content hashes, tool-call/result linking, incremental ingestion,
+  generation boundaries, and explicit diagnostics.
+- Added the strict Observation → Evidence Candidate → Verified Evidence
+  boundary. Agent statements, reasoning, and recorded tool output cannot become
+  reproduced proof without deterministic workspace-bound verification.
+- Added the read-only Portable Investigator with primary and competing
+  hypotheses, disconfirming search, privacy policy, budgets, stop conditions,
+  immutable ledger output, and fail-closed `UNKNOWN` handling. Explicitly
+  authorized AET Proof receipts can now verify matching command Candidates
+  against the declared read-only workspace; Freshness drift preserves the
+  historical result while preventing promotion to current proof.
+- Added Portable Evidence Bundle v1: self-describing Index/Core/Archive JSON
+  and JSONL, deterministic Markdown, content-addressed Blobs, Freshness,
+  counter-evidence, conflicts, diagnostics, canonical hashing, strict schema
+  validation, and optional structured Review Result validation. Reviewers do
+  not need AET or an SDK installed.
+- Added bounded CLI and MCP operations plus optional Python and TypeScript
+  Bundle SDKs. The TypeScript package ships a Node 20-compatible JavaScript
+  distribution, deep-frozen trusted handles, strict duplicate-key parsing, and
+  adversarial tests for forged claims, evidence, enums, links, and Blobs.
+- Added ten deterministic consumption scenarios and independently rescorable
+  prompt-only measurements for Codex CLI 0.144.1 / `gpt-5.6-sol`, Hermes Agent
+  0.17.0 / `kimi-k2.6`, and Ollama 0.32.3 / `qwen3:8b`. Every consumer produced
+  strict JSON covering all ten scenarios with 62 `PASS`, 38
+  `NOT_APPLICABLE`, zero `FAIL`, and zero `UNKNOWN`; these are bounded
+  synthetic-fixture interoperability results, not general accuracy or trust
+  scores.
+- Rebuilt the English and Simplified Chinese README showcase around the current
+  portable evidence architecture, including synchronized static SVG/PNG
+  panoramas, validated 5.75-second bilingual GIF workflows, exact 30-second
+  bilingual H.264/AAC product videos, and a SHA-256 media manifest.
+- Added the bounded `OptimizationCandidate` entry contract. It requires
+  multiple independent tasks or an explicit current high-severity
+  deterministic failure, always requires isolated evaluation, and cannot
+  modify a Skill, adopt a candidate, or publish a release.
+
 ## 1.13.0 — 2026-07-25
 - Added the four bounded AET Quick surfaces: Check, Scope, Proof, and Fresh,
   while preserving the legacy 1.x `audit`, `review`, `trace`, receipt, and Lab

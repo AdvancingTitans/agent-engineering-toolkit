@@ -7,45 +7,45 @@
   "quality_profile": "showcase",
   "width": 960,
   "height": 700,
-  "title": "AET Quick · 有边界的证据调查",
-  "subtitle": "工具记录事实 · LLM 主动调查 · 校验器检查依据 · 人决定下一步",
+  "title": "AET · 可移植证据交接",
+  "subtitle": "标准化 Agent 运行记录 · 在策略内调查 · 输出任意审查者可读的证据",
   "containers": [
-    { "id": "question", "x": 40, "y": 110, "width": 880, "height": 110, "label": "1 · 先限定问题" },
-    { "id": "investigate", "x": 40, "y": 270, "width": 880, "height": 140, "label": "2 · 用可追溯事实调查" },
-    { "id": "decide", "x": 40, "y": 450, "width": 880, "height": 140, "label": "3 · 校验后解释" }
+    { "id": "question", "x": 40, "y": 110, "width": 880, "height": 110, "label": "1 · 标准化运行记录" },
+    { "id": "investigate", "x": 40, "y": 270, "width": 880, "height": 140, "label": "2 · 证据调查" },
+    { "id": "decide", "x": 40, "y": 450, "width": 880, "height": 140, "label": "3 · 交接" }
   ],
   "nodes": [
-    { "id": "request", "kind": "speech", "x": 60, "y": 146, "width": 160, "height": 54, "label": "开发者的问题", "sublabel": "任务目标 + 限制", "fill": "rgba(255,255,255,0.12)", "stroke": "rgba(255,255,255,0.35)", "flat": true },
-    { "id": "coordinator", "kind": "double_rect", "x": 390, "y": 146, "width": 200, "height": 54, "type_label": "一次一个问题", "label": "AET Quick Skill", "fill": "rgba(255,255,255,0.12)", "stroke": "#c084fc" },
-    { "id": "research", "kind": "rect", "x": 80, "y": 330, "width": 180, "height": 60, "type_label": "确定性采集", "label": "工具事实", "sublabel": "Git · 文件 · 测试 · 哈希", "fill": "rgba(255,255,255,0.12)", "stroke": "#60a5fa" },
-    { "id": "coding", "kind": "terminal", "x": 390, "y": 330, "width": 200, "height": 60, "label": "有边界的 LLM 调查", "sublabel": "主假设 + 反方解释", "fill": "#0f172a", "stroke": "rgba(255,255,255,0.24)", "header_fill": "rgba(255,255,255,0.12)" },
-    { "id": "review", "kind": "rect", "x": 700, "y": 330, "width": 180, "height": 60, "type_label": "可追溯", "label": "调查记录", "sublabel": "问题 · 结果 · 影响", "fill": "rgba(255,255,255,0.12)", "stroke": "#34d399" },
-    { "id": "memory", "kind": "cylinder", "x": 80, "y": 510, "width": 180, "height": 60, "label": "证据记录", "sublabel": "不可变引用", "fill": "rgba(255,255,255,0.08)", "stroke": "#34d399" },
-    { "id": "synthesis", "kind": "double_rect", "x": 390, "y": 510, "width": 200, "height": 60, "type_label": "确定性检查", "label": "依据校验器", "sublabel": "事实 · 权限 · 预算", "fill": "rgba(255,255,255,0.12)", "stroke": "#c084fc" },
-    { "id": "response", "kind": "speech", "x": 700, "y": 510, "width": 180, "height": 60, "label": "人工决定", "sublabel": "最小下一步", "fill": "rgba(255,255,255,0.12)", "stroke": "#f59e0b", "flat": true }
+    { "id": "request", "kind": "speech", "x": 60, "y": 146, "width": 160, "height": 54, "label": "执行 Agent 记录", "sublabel": "Codex · Claude · 其他", "fill": "rgba(255,255,255,0.12)", "stroke": "rgba(255,255,255,0.35)", "flat": true },
+    { "id": "coordinator", "kind": "double_rect", "x": 390, "y": 146, "width": 200, "height": 54, "type_label": "规范记录", "label": "Run Normalizer", "sublabel": "稳定 ID + Diagnostics", "fill": "rgba(255,255,255,0.12)", "stroke": "#c084fc" },
+    { "id": "research", "kind": "rect", "x": 80, "y": 330, "width": 180, "height": 60, "type_label": "已记录", "label": "运行观察", "sublabel": "记录显示了什么", "fill": "rgba(255,255,255,0.12)", "stroke": "#60a5fa" },
+    { "id": "coding", "kind": "terminal", "x": 360, "y": 330, "width": 200, "height": 60, "label": "只读调查者", "sublabel": "主假设 + 竞争假设", "fill": "#0f172a", "stroke": "rgba(255,255,255,0.24)", "header_fill": "rgba(255,255,255,0.12)" },
+    { "id": "review", "kind": "rect", "x": 700, "y": 330, "width": 180, "height": 60, "type_label": "确定性", "label": "证据权威层", "sublabel": "Proof · Freshness · Git", "fill": "rgba(255,255,255,0.12)", "stroke": "#34d399" },
+    { "id": "memory", "kind": "cylinder", "x": 80, "y": 510, "width": 180, "height": 60, "label": "可移植记录", "sublabel": "Claim · Evidence · Observation", "fill": "rgba(255,255,255,0.08)", "stroke": "#34d399" },
+    { "id": "synthesis", "kind": "double_rect", "x": 360, "y": 510, "width": 200, "height": 60, "type_label": "完整性", "label": "Bundle Compiler", "sublabel": "筛选 · 脱敏 · 哈希", "fill": "rgba(255,255,255,0.12)", "stroke": "#c084fc" },
+    { "id": "response", "kind": "speech", "x": 700, "y": 510, "width": 180, "height": 60, "label": "独立审查者", "sublabel": "无需安装 AET", "fill": "rgba(255,255,255,0.12)", "stroke": "#f59e0b", "flat": true }
   ],
   "arrows": [
-    { "id": "brief", "source": "request", "target": "coordinator", "source_port": "right", "target_port": "left", "flow": "read", "motion_role": "ingress", "motion_stage": 1, "motion_order": 0, "label": "问题" },
-    { "id": "a-delegate-research", "source": "coordinator", "target": "research", "source_port": "bottom", "target_port": "top", "flow": "control", "motion_role": "delegate", "motion_stage": 2, "motion_order": 0, "label": "采集" },
+    { "id": "brief", "source": "request", "target": "coordinator", "source_port": "right", "target_port": "left", "flow": "read", "motion_role": "ingress", "motion_stage": 1, "motion_order": 0, "label": "原生记录" },
+    { "id": "a-delegate-research", "source": "coordinator", "target": "research", "source_port": "bottom", "target_port": "top", "flow": "control", "motion_role": "delegate", "motion_stage": 2, "motion_order": 0, "label": "观察" },
     { "id": "b-delegate-coding", "source": "coordinator", "target": "coding", "source_port": "bottom", "target_port": "top", "flow": "control", "motion_role": "delegate", "motion_stage": 2, "motion_order": 1, "label": "调查" },
-    { "id": "c-delegate-review", "source": "coordinator", "target": "review", "source_port": "bottom", "target_port": "top", "flow": "control", "motion_role": "delegate", "motion_stage": 2, "motion_order": 2, "label": "记录" },
-    { "id": "research-write", "source": "research", "target": "memory", "source_port": "bottom", "target_port": "top", "flow": "write", "motion_role": "evidence", "motion_stage": 3, "motion_order": 0, "label": "证据" },
-    { "id": "memory-merge", "source": "memory", "target": "synthesis", "source_port": "right", "target_port": "left", "flow": "read", "motion_role": "context", "motion_stage": 4, "motion_order": 0, "label": "引用" },
-    { "id": "coding-merge", "source": "coding", "target": "synthesis", "source_port": "bottom", "target_port": "top", "flow": "write", "motion_role": "artifact", "motion_stage": 3, "motion_order": 1, "label": "工程判断" },
-    { "id": "review-output", "source": "review", "target": "response", "source_port": "bottom", "target_port": "top", "flow": "feedback", "motion_role": "approval", "motion_stage": 5, "motion_order": 1, "label": "调查轨迹" },
-    { "id": "deliver", "source": "synthesis", "target": "response", "source_port": "right", "target_port": "left", "flow": "feedback", "motion_role": "deliver", "motion_stage": 5, "motion_order": 0, "label": "已校验结果" }
+    { "id": "c-delegate-review", "source": "coordinator", "target": "review", "source_port": "bottom", "target_port": "top", "flow": "control", "motion_role": "delegate", "motion_stage": 2, "motion_order": 2, "label": "验证" },
+    { "id": "research-write", "source": "research", "target": "memory", "source_port": "bottom", "target_port": "top", "flow": "write", "motion_role": "evidence", "motion_stage": 3, "motion_order": 0, "label": "有界上下文" },
+    { "id": "memory-merge", "source": "memory", "target": "synthesis", "source_port": "right", "target_port": "left", "flow": "read", "motion_role": "context", "motion_stage": 4, "motion_order": 0, "label": "记录" },
+    { "id": "coding-merge", "source": "coding", "target": "synthesis", "source_port": "bottom", "target_port": "top", "flow": "write", "motion_role": "artifact", "motion_stage": 3, "motion_order": 1, "label": "结论 + 限制" },
+    { "id": "review-output", "source": "review", "target": "response", "source_port": "bottom", "target_port": "top", "flow": "feedback", "motion_role": "approval", "motion_stage": 5, "motion_order": 1, "label": "已验证事实" },
+    { "id": "deliver", "source": "synthesis", "target": "response", "source_port": "right", "target_port": "left", "flow": "feedback", "motion_role": "deliver", "motion_stage": 5, "motion_order": 0, "label": "Evidence Bundle" }
   ],
   "legend_orientation": "horizontal",
   "legend_x": 48,
   "legend_y": 625,
   "legend_locked": true,
   "legend": [
-    { "flow": "read", "label": "输入 / 引用" },
-    { "flow": "control", "label": "有界控制" },
-    { "flow": "write", "label": "记录结果" },
-    { "flow": "feedback", "label": "校验后输出" }
+    { "flow": "read", "label": "记录 / 引用" },
+    { "flow": "control", "label": "有界调查" },
+    { "flow": "write", "label": "可移植记录" },
+    { "flow": "feedback", "label": "审查交接" }
   ],
-  "footer": "AET Quick · 本地优先 · 默认只读 · 不自动 Merge、Push、Release，也不自动进入 Lab",
+  "footer": "AET v1.14 · 本地优先 · 审查者无需 SDK · 不自动 Fix、Merge、Push 或 Release",
   "footer_x": 48,
   "footer_y": 680
 }

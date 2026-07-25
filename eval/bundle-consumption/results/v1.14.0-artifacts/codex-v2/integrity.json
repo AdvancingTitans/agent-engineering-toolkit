@@ -1,0 +1,12 @@
+{
+  "aggregate_score": null,
+  "algorithm": "sha256",
+  "consumer_id": "codex-prompt-only-v2",
+  "file_hashes": {
+    "metadata.json": "e89f272a87177616b60bd5e09e2608199949728a6add2905ab9bdcc1bd9251e9",
+    "report.json": "b082f9311961d03603189fb1b026da3f0a6c4ec04d6d7e055f142a12876591dd",
+    "response.json": "aab6709b9bd843f2b4faf5015bc9ca694182f578a8b6d6fd6f50fbbd2c8a603a"
+  },
+  "independently_rescorable": true,
+  "schema_version": "bundle-consumption-publication-integrity/v1"
+}

@@ -1,0 +1,65 @@
+{
+  "protocol": {
+    "name": "portable-evidence-bundle",
+    "version": "1.0",
+    "schema_uri": "https://advancingtitans.github.io/agent-engineering-toolkit/schemas/evidence-bundle/v1/manifest.schema.json"
+  },
+  "bundle": {
+    "id": "bundle-fixture-001",
+    "created_at": "2026-01-02T03:04:05Z",
+    "content_hash": "ff13afda689f4b31751f885ff41bb78bf71a8267b2487dfe7984215ba831a244"
+  },
+  "task": {
+    "task_id": "task-fixture-001",
+    "request": "验证声明的测试结果并保留证据边界。",
+    "repository": "https://example.invalid/sanitized/repository",
+    "workspace_id": "workspace-fixture-001",
+    "base_ref": "0000000000000000000000000000000000000000",
+    "head_ref": "0123456789abcdef0123456789abcdef01234567"
+  },
+  "producer": {
+    "name": "agent-engineering-toolkit",
+    "version": "1.14.0"
+  },
+  "investigation": {
+    "investigation_id": "investigation-fixture-001",
+    "investigation_type": "verification",
+    "question": "当前验证结果是否具备可引用证据？",
+    "scope": [
+      "tests/test_example.py"
+    ],
+    "limitations": [
+      "此脱敏示例不对应真实仓库。"
+    ],
+    "completed": true
+  },
+  "contents": {
+    "index": "index.json",
+    "claims": "core/claims.jsonl",
+    "evidence": "core/evidence.jsonl",
+    "observations": "core/observations.jsonl",
+    "sources": "archive/sources.jsonl",
+    "diagnostics": "archive/diagnostics.jsonl",
+    "conflicts": "archive/conflicts.jsonl",
+    "ledger": "archive/ledger.jsonl",
+    "policy": "policy.json",
+    "consumer_guide": "consumer-guide.md",
+    "report": "report.md"
+  },
+  "integrity": {
+    "algorithm": "sha256",
+    "file_hashes": {
+      "archive/conflicts.jsonl": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "archive/diagnostics.jsonl": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "archive/ledger.jsonl": "8b027676ea585799c494cfc94530a592e0d15582797108cf2499fd52d4dc4478",
+      "archive/sources.jsonl": "301be2350b1321720f515098845e876328ff8aac0873847e67b5426a020310b9",
+      "consumer-guide.md": "1a268cb406a5c65f762d544b369f343d7e477dc6453f8ca9fa9002c8d4cb577b",
+      "core/claims.jsonl": "c680b5b23d9a2e83f8909cc57f0766d7812a09c29cc87c7f24112b7108d799c6",
+      "core/evidence.jsonl": "6f6d0c7c35e59b415a248d1ae4d032b760415dcdd4c21591024a4e1b074b78f3",
+      "core/observations.jsonl": "776c7243691f84601aa9799f019ef1fac5455b9eefc52a492da90de017e7aee9",
+      "index.json": "adad258338fe9d68abc8688afe27cdf858f1826111b48de7200a6b09508ff7c1",
+      "policy.json": "764d28d7aa72b546288596c34f22673a59764747dadd9bb6c0391d2e7fbed077",
+      "report.md": "099028c2a1b10730ab0e15d0d7d7d18bea915056e1f40b433288c818605bf152"
+    }
+  }
+}

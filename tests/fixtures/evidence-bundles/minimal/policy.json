@@ -1,0 +1,38 @@
+{
+  "schema_version": "portable-investigation-policy/1.0",
+  "allowed_tools": [
+    "proof.inspect",
+    "freshness.check"
+  ],
+  "denied_tools": [
+    "file.write",
+    "git.push"
+  ],
+  "budgets": {
+    "max_tool_calls": 4,
+    "max_evidence_candidates": 8,
+    "max_verified_evidence": 4,
+    "max_run_records_read": 20,
+    "max_blob_bytes_read": 4096
+  },
+  "command_policy": {
+    "allow_execution": false,
+    "allowed_command_prefixes": []
+  },
+  "workspace_policy": {
+    "read_only": true,
+    "allowed_paths": [
+      "tests/"
+    ],
+    "denied_paths": [
+      ".git/"
+    ]
+  },
+  "privacy_policy": {
+    "redact_secrets": true,
+    "export_reasoning": false,
+    "export_raw_tool_output": false
+  },
+  "require_competing_hypothesis": false,
+  "require_disconfirming_search": false
+}

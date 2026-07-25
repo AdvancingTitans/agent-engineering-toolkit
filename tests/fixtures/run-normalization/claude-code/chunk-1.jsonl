@@ -1,0 +1,2 @@
+{"type":"system","session_id":"session-claude-chunk-001","timestamp":"2026-01-02T03:04:00Z","cwd":"/workspace/sanitized","model":"fixture-model"}
+{"type":"assistant","uuid":"claude-assistant-chunk-001","session_id":"session-claude-chunk-001","timestamp":"2026-01-02T03:04:02Z","message":{"role":"assistant","content":[{"type":"tool_use","id":"claude-call-chunk-001","name":"Bash","input":{"command":"python -m unittest tests.test_example"}}]}}

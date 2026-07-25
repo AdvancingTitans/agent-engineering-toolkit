@@ -10,17 +10,20 @@
 
 > **AET 让 AI 编码审查既有调查能力，也不允许模型编造证据。**
 
-AI 编码 Agent 说任务已经修好、测试已经通过。AET 帮你回答三个具体问题：
+AI 编码 Agent 说任务已经修好、测试已经通过。AET 帮你回答四个具体问题：
 
 1. 本次改动是否与用户任务相关？
 2. 声称的验证是否真的在当前工作区执行？
 3. 这份验证记录现在是否仍能代表当前代码？
+4. 另一个没有安装 AET 的 Agent 能否审查同一份证据？
 
 工具产生可复现事实；宿主 LLM 可以理解任务意图、提出竞争假设、调用授权工具、检查反方解释，
-并形成有条件的工程判断。AET 再用确定性代码检查引用、权限、结论强度和预算。最终下一步由人决定。
+并形成有条件的工程判断。AET 再用确定性代码检查引用、权限、结论强度和预算，并把结果导出为
+可移植、自描述的证据交接。最终下一步由人决定。
 
 ```text
-确定性事实 → 有边界的 LLM 调查 → 依据校验 → 人工决定
+确定性事实 → 有边界的调查 → 依据校验
+          → 可移植证据交接 → 独立审查 → 人工决定
 ```
 
 ## 四个 Quick Skill
@@ -50,6 +53,105 @@ aet quick fresh --proof .aet/proofs/auth.json
 
 旧版 `aet audit`、`review`、`trace` 和 `evidence receipt` 在整个 1.x 周期保持兼容；
 它们属于高级原生命令，不再是 Quick 默认产品入口。
+
+## 跨 Agent 可移植证据交接
+
+四个 Quick Skill 继续作为日常入口。v1.14.0 另外增加一条证据交接路径：审查者可以是
+Codex、Claude Code、Hermes、本地模型或其他能读取 JSON 的 Agent，并且不能假定它已经安装 AET。
+
+```text
+原生 Agent Run
+  → Run Normalizer
+  → Run Record
+  → Observation / Evidence Candidate
+  → 只读 Investigator
+  → 有边界的 Observation + 明确 UNKNOWN
+  → Portable Evidence Bundle
+  → 独立 Reviewer
+```
+
+各层权限有意分开：
+
+| 层级 | 能证明什么 | 不能证明什么 |
+| --- | --- | --- |
+| Run Record | 规范化执行记录里包含什么 | 记录中的命令确实在当前工作区执行 |
+| Observation | 带来源、`proves` 和 `does_not_prove` 的可追溯观察 | 已复现的工程证明 |
+| Evidence Candidate | 某个命题值得继续验证 | 可以自行提升证据强度 |
+| Verified Evidence | 绑定工作区的 Git、文件、Proof、Freshness、产物或授权事实 | 最终审查判断 |
+| Portable Claim | 有边界的调查状态、证据、反证和限制 | 合并、发布或 Release 权限 |
+
+首批自有 Normalizer 支持 Codex 和 Claude Code Run Record，包括稳定身份、内容哈希、
+Tool Call/Result 关联、Diagnostics、局部输入和增量续传：
+
+```bash
+aet run normalize --source codex \
+  --input session.jsonl --output .aet/runs/session
+
+aet investigate --request investigation-request.json \
+  --run .aet/runs/session --output .aet/investigations/review.json
+
+# 可选：检查显式传入的确定性 Proof 与当前 Freshness。
+aet investigate --request investigation-request.json \
+  --run .aet/runs/session --workspace . --proof .aet/proof.json \
+  --output .aet/investigations/verified-review.json
+
+aet bundle create --investigation .aet/investigations/review.json \
+  --output evidence-bundle
+aet bundle validate evidence-bundle
+```
+
+Investigator 保持只读：不能执行任意命令、修改源码、自动修复、commit、push、merge 或
+发布。Run Observation 始终只是历史记录；只有显式传入、与命令 Candidate 匹配的 AET
+Proof，以及策略授权的 Freshness 检查，才能生成 Verified Evidence。调查必须保留主假设、
+竞争假设、反证搜索、明确的工具与证据预算及有界停止条件。
+
+Bundle 同时提供规范 JSON 元数据、JSONL Core Record、完整 Archive 引用、可选的内容寻址
+Blob、确定性 Markdown 报告和消费指南：
+
+```text
+evidence-bundle/
+├── manifest.json
+├── index.json
+├── core/{claims,evidence,observations}.jsonl
+├── archive/{sources,diagnostics,conflicts,ledger}.jsonl
+├── policy.json
+├── consumer-guide.md
+└── report.md
+```
+
+JSON 与 JSONL 是权威数据，Markdown 是确定性投影视图。Reviewer 可以直接读取这些文件，
+不需要 Python Package、Node Package、SDK、MCP Server 或 AET 安装。Observation 与
+Evidence 始终分离，反证不会被隐藏，过期证据保留历史结果但失去当前适用性，缺失信息继续
+保持 `UNKNOWN`。
+
+结构化 Reviewer 可以输出 `portable-review-result/1.0`，再选择调用引用校验器：
+
+```bash
+aet bundle validate-review \
+  --bundle evidence-bundle --review review-result.json
+```
+
+Validator 检查 Bundle 身份、引用、反证保留、Freshness 和结论强度，但不代替 Reviewer
+作判断。宿主集成可以选择便利层：
+
+```bash
+aet mcp serve
+```
+
+```ts
+import {
+  loadBundle,
+  queryClaims,
+  validateBundle,
+} from "@aet/evidence-bundle";
+```
+
+```python
+from aet_bundle import load_bundle, query_claims, validate_bundle
+```
+
+TypeScript 与 Python SDK 提供加载、查询、Blob 解析、Prompt Context 渲染和引用校验；
+MCP 暴露相同的有界规范化、调查、Bundle 查询和校验操作。消费 Bundle 不依赖任何便利层。
 
 ## 30 秒看懂
 
@@ -105,7 +207,7 @@ tests/auth/test_session.py
 ```
 
 没有 AET 时，审查往往退化成两种简单判断：要么认为 `auth/` 外的文件都越界，要么直接相信
-Agent 所说的“共享缓存和支付改动都是必要的”。`/aet-scope` 会把每组改动作为待调查假设：
+Agent 所说的“共享缓存和支付改动都是必要的”。Scope 调查会把每组改动作为待调查假设：
 
 ```text
 src/auth/session.py          IN_SCOPE
@@ -116,7 +218,7 @@ tests/auth/test_session.py   IN_SCOPE
 
 缓存结论引用登录调用路径和聚焦回归测试；支付结论会记录合理反方解释——例如共享接口是否要求
 同步修改——以及已检查的引用为什么没有支持它。结果还会明确保留“其他会话可能追加过授权”
-这一不确定性，并建议拆出支付整理或补充授权。随后 `/aet-scope` 停止，不会自行跑测试或改代码。
+这一不确定性，并建议拆出支付整理或补充授权。随后调查停止，不会自行跑测试或改代码。
 
 如果你决定验证修复，`/aet-proof` 会记录真实命令与工作区绑定。Agent 后续再修改
 `session.py` 时，`/aet-fresh` 会把适用性改为 `RELEVANT_FILES_CHANGED`，但不会改写历史退出码。
@@ -140,6 +242,29 @@ tests/auth/test_session.py   IN_SCOPE
 | 建议最小下一步 | 自动修复、合并、推送、发布或进入 AET Lab |
 
 ## 可量化的取舍，不是综合可信度评分
+
+### v1.14.0 可移植消费检查
+
+已追踪的
+[v1.14.0 结果](../eval/bundle-consumption/results/v1.14.0.json)让三个 Prompt-only
+消费者在不使用 AET SDK 的情况下读取相同的十个确定性合成 Bundle：
+
+| 消费者 | Runtime 与模型 | 场景数 | 适用指标状态 | 不适用 |
+| --- | --- | ---: | --- | ---: |
+| Codex | Codex CLI 0.144.1 · `gpt-5.6-sol` | 10 | 62 `PASS` · 0 `FAIL` · 0 `UNKNOWN` | 38 |
+| Hermes | Hermes Agent 0.17.0 · `kimi-k2.6` | 10 | 62 `PASS` · 0 `FAIL` · 0 `UNKNOWN` | 38 |
+| 本地结构化消费者 | Ollama 0.32.3 · `qwen3:8b` | 10 | 62 `PASS` · 0 `FAIL` · 0 `UNKNOWN` | 38 |
+
+十个场景分别覆盖：只有 Agent 自述而没有 Proof、工具输出过期、证据冲突、未找到授权、
+输出截断、内容身份降级、存在无关证据、把旧 Bundle 用于新 Commit、Claim 为 `unknown`，
+以及把缺失证据错误强化为结论。每份响应都是 Strict JSON，恰好覆盖全部场景一次，并按十项
+独立指标评测。38 个 `NOT_APPLICABLE` 表示该场景没有对应分母，不是被隐藏的成功。
+
+这是合成 Fixture 上的有界互操作检查，不是通用模型准确率声明。它不计算 Aggregate Score
+或 Trust Score，也不授予合并、Release 或发布权限。完整
+[评测脚本与限制](../eval/bundle-consumption/README.md)可独立检查。
+
+### v1.13.0 Quick 调查取舍
 
 可选的 [Quick 调查对照评测](../eval/quick-investigation/README.md)按设计要求，在八个合成 Scope
 场景中比较四种审查模式。已追踪的
@@ -174,21 +299,21 @@ tests/auth/test_session.py   IN_SCOPE
 
 ## 架构：一条工作流，两种权力
 
-![AET Quick 动态证据调查工作流](assets/aet-quick-workflow-zh-CN.gif)
+![AET 可移植证据交接动态架构](assets/aet-quick-workflow-zh-CN.gif)
 
 [查看 English GIF](assets/aet-quick-workflow-en.gif) ·
 [查看可缩放 SVG](assets/aet-quick-workflow-zh-CN.svg) ·
 [查看动画校验报告](assets/aet-quick-workflow-zh-CN.motion.json)
 
-这张动态图回答“一个 Quick 请求怎样流动”：
+这张动态图展示当前可移植交接主链：
 
-1. 四个 Quick Skill 先把问题限制在 Check、Scope、Proof 或 Fresh 之一，完成后停止；
-2. 确定性工具记录 Git、文件、规则、真实命令、退出码、哈希和结果时效等事实；
-3. 宿主 LLM 理解任务意图，提出主假设与反方解释，并选择预算内的授权工具；
-4. 调查记录（内部字段为 `Investigation Ledger`）绑定每个问题、工具结果、观察和它对结论的影响；
-5. 依据校验器（内部组件为 `Grounding Validator`）检查引用、事实、结论强度、权限和预算；
-6. 报告把已确认事实、工程判断、反方解释、不确定性、问题位置和最小下一步拆开呈现；
-7. 人决定是否修复、拆分或继续验证，AET 不自动进入下一条命令。
+1. 执行 Agent 的原生运行记录进入 Source Adapter，形成带稳定 ID 和 Diagnostics 的规范 Run Record；
+2. 记录中的行为先成为 Observation，默认不能被当作 Reproduced Evidence；
+3. 只读 Investigator 在明确策略和预算内比较主假设与竞争假设；
+4. Git、Proof、Freshness 和授权事实继续由确定性证据组件掌握；
+5. Bundle Compiler 筛选、脱敏、哈希并连接 Claim、Evidence、Observation、Diagnostic 与 Blob；
+6. 独立 Reviewer 无需安装 AET，直接消费 JSON、JSONL 或 Markdown；
+7. Review 只提供判断依据，Fix、Merge、Push 和 Release 的最终权限仍由人掌握。
 
 ### 从当前代码库看，组件怎样组合
 
@@ -199,29 +324,31 @@ tests/auth/test_session.py   IN_SCOPE
 
 静态全景图回答“这些能力在当前仓库中怎样落地”。架构结论如下：
 
-- **箭头表示权限和数据流，不是装饰性相邻关系。** 实线表示 Quick 请求与结果的主流程；
-  虚线只表示协议支撑，或人在明确授权后进入 Lab 的独立入口。每条箭头都终止于具名组件或
-  权限边界。
-- **入口轻，协议共享。** `skills/aet-*` 与 `src/aet/quick/*` 只暴露四个日常问题，但共同复用
-  Evidence First 状态、Proof 绑定、时效检查、Schema、预算和权限契约。
-- **LLM 与确定性代码分权。** `src/aet/investigation/*` 允许 LLM 主动提出和比较解释；
-  `grounding.py`、`quick/proof.py` 与 `quick/fresh.py` 保留引用、执行和时效事实的最终校验权。
-- **语言层不改变事实。** `src/aet/narrative/*` 只改变人类可读表达；中英文报告必须引用同一
-  `result_ref`，不能因翻译重新调查或升级结论。
-- **Quick 与 Lab 同仓但不串联。** Showcase、Context、Decision、Evolve、Quality、Learn、
-  Replay、Gate、Shadow、Stage 与 Adopt 保留在显式启用边界后，Quick 不预加载也不自动进入。
-- **测试与评测是独立证据。** `tests/*` 验证确定性拒绝路径，`eval/*` 测量模型配置的取舍；
-  二者都不能被包装成综合可信度评分或自动发布权限。
+- **实线表示证据生产主链。** 原生记录依次经过标准化、Observation/Candidate 提取、有界调查、
+  确定性验证、Bundle 编译和独立审查。
+- **虚线表示产品入口与消费层。** 四个 Quick Skill、CLI/MCP/SDK 便利层、实测消费者和
+  Human/Lab 边界复用相同契约，但不会因此获得证据权威。
+- **Run Record、Observation 与 Verified Evidence 是不同类型。**
+  `src/aet/run_normalization/*`、`src/aet/observations/*` 和
+  `src/aet/evidence_core/*` 在编译前强制维持边界。
+- **交换格式不依赖实现。** `schemas/evidence-bundle/v1/*` 定义 Index/Core/Archive、
+  完整性、Freshness、冲突、Diagnostic 和 Review 引用；SDK 始终可选。
+- **Quick 继续保持轻量日常入口。** `skills/aet-*` 与 `src/aet/quick/*` 仍只暴露 Check、
+  Scope、Proof、Fresh；可移植路径增加的是交接能力，不是自动进入 Lab 的通道。
+- **测试与真实消费者实测证明不同事项。** `tests/*` 覆盖确定性拒绝路径，
+  `eval/bundle-consumption/*` 检查采样互操作性；二者都不生成 Trust Score 或行动权限。
 
 ### 30 秒产品介绍
 
 [观看中文 MP4](assets/aet-product-intro-zh-CN.mp4) ·
 [Watch the English MP4](assets/aet-product-intro-en.mp4)
 
-视频从日常 AI Coding 场景依次解释：为什么“Agent 说修好了”还不够、四个命令分别解决什么、
-范围调查为什么不能只看路径、真实验证怎样绑定代码、LLM 与校验器怎样分工，以及评测数据说明
-了什么。[媒体清单](assets/aet-quick-media-manifest.json)用 SHA-256 绑定双语 GIF、静态全景图和
-MP4，并记录生成时测得的尺寸、帧数、帧率与时长。
+六幕视频依次解释：为什么 Run Record 不是 Proof、四个 Quick Skill 继续承担什么职责、
+Run Normalizer 怎样统一记录、Observation 与 Evidence 为什么必须分层、Reviewer 怎样无 SDK
+消费 Bundle，以及 Codex、Hermes、Ollama/Qwen 的真实互操作实测。详细契约见
+[可移植工作流](architecture/portable-evidence-workflow.md)。
+[媒体清单](assets/aet-quick-media-manifest.json)用 SHA-256 绑定双语 GIF、静态全景图和 MP4，
+并记录生成时测得的尺寸、帧数、帧率与时长。
 
 只有 `/aet-proof` 会由 AET 自身执行命令并生成验证记录。其他本地或 MCP 工具结果由 Agent
 Host 写入调查记录：规范化 Payload 的哈希可以发现后续篡改，但不能独立证明外部 Host 确实
@@ -387,6 +514,11 @@ AET 使用 Python 3.11+，确定性运行时保持轻依赖。贡献新规则时
 
 ## 高级文档
 
+- [Portable Evidence Bundle v1](protocols/portable-evidence-bundle-v1.md)
+- [可移植证据工作流](architecture/portable-evidence-workflow.md)
+- [通用 Agent 消费指南](guides/generic-agent-consumption.md)
+- [Portable Review Result v1](protocols/review-result-v1.md)
+- [Evidence Bundle 威胁模型](security/evidence-bundle-threat-model.md)
 - [Rule Catalog](rule-catalog.md)
 - [Evidence 与交付 Workflow](../skills/agent-engineering-toolkit/references/delivery-workflow.md)
 - [Repository Audit Showcase](../skills/agent-engineering-toolkit/references/repository-audit-showcase.md)

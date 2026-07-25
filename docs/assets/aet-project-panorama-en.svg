@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000" role="img" aria-label="AET Project Architecture Panorama">
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000" role="img" aria-label="AET v1.14 Project Architecture Panorama">
 <defs>
 <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#070a12"/><stop offset=".55" stop-color="#0d1324"/><stop offset="1" stop-color="#07111c"/></linearGradient>
 <radialGradient id="blueGlow"><stop stop-color="#2563eb" stop-opacity=".20"/><stop offset="1" stop-color="#2563eb" stop-opacity="0"/></radialGradient>
@@ -16,134 +16,135 @@
 <circle data-graph-role="decoration" data-owner="canvas" cx="288" cy="250" r="512" fill="url(#blueGlow)"/>
 <circle data-graph-role="decoration" data-owner="canvas" cx="1312" cy="550" r="448" fill="url(#purpleGlow)"/>
 <rect width="1600" height="1000" fill="url(#grid)"/>
-<text x="60" y="60" font-size="34" font-weight="800" fill="#f8fafc">AET Project Architecture Panorama</text>
-<text x="60" y="88" font-size="16" fill="#94a3b8">Four daily entry points, one evidence protocol; LLM investigation and deterministic validation have separate authority</text>
-<text x="1540" y="62" text-anchor="end" class="mono" font-size="13" fill="#34d399">AET QUICK / LAB · v1.13+</text>
+<text x="60" y="60" font-size="34" font-weight="800" fill="#f8fafc">AET v1.14 Project Architecture Panorama</text>
+<text x="60" y="88" font-size="16" fill="#94a3b8">From multi-Agent run records to portable evidence handoff; observations, evidence, and judgment stay separate</text>
+<text x="1540" y="62" text-anchor="end" class="mono" font-size="13" fill="#34d399">PORTABLE EVIDENCE · v1.14</text>
 <rect x="40" y="115" width="1520" height="150" rx="24" fill="#ffffff" fill-opacity=".025" stroke="#60a5fa" stroke-opacity=".32" stroke-dasharray="7 8"/>
 <circle cx="70" cy="143" r="16" fill="#60a5fa" fill-opacity=".18" stroke="#60a5fa"/>
 <text x="70" y="149" text-anchor="middle" font-size="13" font-weight="800" fill="#60a5fa">01</text>
-<text x="98" y="150" font-size="18" font-weight="750" fill="#f8fafc">User-facing entry points</text>
+<text x="98" y="150" font-size="18" font-weight="750" fill="#f8fafc">Capture and normalization</text>
 <rect x="40" y="295" width="1520" height="200" rx="24" fill="#ffffff" fill-opacity=".025" stroke="#c084fc" stroke-opacity=".32" stroke-dasharray="7 8"/>
 <circle cx="70" cy="323" r="16" fill="#c084fc" fill-opacity=".18" stroke="#c084fc"/>
 <text x="70" y="329" text-anchor="middle" font-size="13" font-weight="800" fill="#c084fc">02</text>
-<text x="98" y="330" font-size="18" font-weight="750" fill="#f8fafc">Quick runtime</text>
+<text x="98" y="330" font-size="18" font-weight="750" fill="#f8fafc">Bounded investigation and verification</text>
 <rect x="40" y="525" width="1520" height="190" rx="24" fill="#ffffff" fill-opacity=".025" stroke="#34d399" stroke-opacity=".32" stroke-dasharray="7 8"/>
 <circle cx="70" cy="553" r="16" fill="#34d399" fill-opacity=".18" stroke="#34d399"/>
 <text x="70" y="559" text-anchor="middle" font-size="13" font-weight="800" fill="#34d399">03</text>
-<text x="98" y="560" font-size="18" font-weight="750" fill="#f8fafc">Shared evidence and contracts</text>
+<text x="98" y="560" font-size="18" font-weight="750" fill="#f8fafc">Portable evidence handoff</text>
 <rect x="40" y="745" width="1520" height="190" rx="24" fill="#ffffff" fill-opacity=".025" stroke="#f59e0b" stroke-opacity=".32" stroke-dasharray="7 8"/>
 <circle cx="70" cy="773" r="16" fill="#f59e0b" fill-opacity=".18" stroke="#f59e0b"/>
 <text x="70" y="779" text-anchor="middle" font-size="13" font-weight="800" fill="#f59e0b">04</text>
-<text x="98" y="780" font-size="18" font-weight="750" fill="#f8fafc">Explicit opt-in AET Lab</text>
+<text x="98" y="780" font-size="18" font-weight="750" fill="#f8fafc">Product surfaces and governance</text>
 <g filter="url(#shadow)">
 <rect x="70" y="165" width="320" height="96" rx="18" fill="#111827" fill-opacity=".86" stroke="#ffffff" stroke-opacity=".12"/>
 <rect x="70" y="165" width="5" height="96" rx="2.5" fill="#60a5fa"/>
-<text x="94" y="199" font-size="19" font-weight="700" fill="#f8fafc">Developer request</text>
-<text x="94" y="226" font-size="14" fill="#94a3b8">goal · constraints · explicit authority</text>
+<text x="94" y="199" font-size="19" font-weight="700" fill="#f8fafc">Native Agent runs</text>
+<text x="94" y="226" font-size="14" fill="#94a3b8">Codex · Claude Code · JSONL</text>
 </g>
 <g filter="url(#shadow)">
 <rect x="430" y="165" width="320" height="96" rx="18" fill="#111827" fill-opacity=".86" stroke="#ffffff" stroke-opacity=".12"/>
 <rect x="430" y="165" width="5" height="96" rx="2.5" fill="#c084fc"/>
-<text x="454" y="199" font-size="19" font-weight="700" fill="#f8fafc">Four Quick Skills</text>
-<text x="454" y="226" font-size="14" fill="#94a3b8">Check · Scope · Proof · Fresh</text>
-<text class="mono" x="454" y="245" font-size="12" fill="#c084fc">skills/aet-*</text>
+<text x="454" y="199" font-size="19" font-weight="700" fill="#f8fafc">Source adapters</text>
+<text x="454" y="226" font-size="14" fill="#94a3b8">messages · tool calls · tool results</text>
+<text class="mono" x="454" y="245" font-size="12" fill="#c084fc">run_normalization/adapters/*</text>
 </g>
 <g filter="url(#shadow)">
 <rect x="790" y="165" width="320" height="96" rx="18" fill="#111827" fill-opacity=".86" stroke="#ffffff" stroke-opacity=".12"/>
 <rect x="790" y="165" width="5" height="96" rx="2.5" fill="#34d399"/>
-<text x="814" y="199" font-size="19" font-weight="700" fill="#f8fafc">Agent Host</text>
-<text x="814" y="226" font-size="14" fill="#94a3b8">LLM plans authorized tool calls</text>
-<text class="mono" x="814" y="245" font-size="12" fill="#34d399">skills/*/SKILL.md</text>
+<text x="814" y="199" font-size="19" font-weight="700" fill="#f8fafc">Run Normalizer</text>
+<text x="814" y="226" font-size="14" fill="#94a3b8">stable IDs · incremental ingest · diagnostics</text>
+<text class="mono" x="814" y="245" font-size="12" fill="#34d399">src/aet/run_normalization/*</text>
 </g>
 <g filter="url(#shadow)">
 <rect x="1150" y="165" width="340" height="96" rx="18" fill="#111827" fill-opacity=".86" stroke="#ffffff" stroke-opacity=".12"/>
 <rect x="1150" y="165" width="5" height="96" rx="2.5" fill="#f59e0b"/>
-<text x="1174" y="199" font-size="19" font-weight="700" fill="#f8fafc">Human decision</text>
-<text x="1174" y="226" font-size="14" fill="#94a3b8">fix · split · verify · explicitly enter Lab</text>
+<text x="1174" y="199" font-size="19" font-weight="700" fill="#f8fafc">Canonical Run Records</text>
+<text x="1174" y="226" font-size="14" fill="#94a3b8">records prove only what the run contains</text>
+<text class="mono" x="1174" y="245" font-size="12" fill="#f59e0b">schemas/run-record/v1/*</text>
 </g>
 <g filter="url(#shadow)">
 <rect x="70" y="355" width="320" height="104" rx="18" fill="#111827" fill-opacity=".86" stroke="#ffffff" stroke-opacity=".12"/>
 <rect x="70" y="355" width="5" height="104" rx="2.5" fill="#60a5fa"/>
-<text x="94" y="389" font-size="19" font-weight="700" fill="#f8fafc">CLI routing &amp; authority</text>
-<text x="94" y="416" font-size="14" fill="#94a3b8">arguments · language · command boundary</text>
-<text class="mono" x="94" y="443" font-size="12" fill="#60a5fa">src/aet/cli.py</text>
+<text x="94" y="389" font-size="19" font-weight="700" fill="#f8fafc">Observations</text>
+<text x="94" y="416" font-size="14" fill="#94a3b8">explicit proves / doesNotProve</text>
+<text class="mono" x="94" y="443" font-size="12" fill="#60a5fa">src/aet/observations/*</text>
 </g>
 <g filter="url(#shadow)">
 <rect x="430" y="355" width="320" height="104" rx="18" fill="#111827" fill-opacity=".86" stroke="#ffffff" stroke-opacity=".12"/>
 <rect x="430" y="355" width="5" height="104" rx="2.5" fill="#c084fc"/>
-<text x="454" y="389" font-size="19" font-weight="700" fill="#f8fafc">Quick handlers &amp; preflight</text>
-<text x="454" y="416" font-size="14" fill="#94a3b8">minimal facts · bounded result</text>
-<text class="mono" x="454" y="443" font-size="12" fill="#c084fc">src/aet/quick/*</text>
+<text x="454" y="389" font-size="19" font-weight="700" fill="#f8fafc">Evidence Candidates</text>
+<text x="454" y="416" font-size="14" fill="#94a3b8">unverified · rejected · conflicted</text>
+<text class="mono" x="454" y="443" font-size="12" fill="#c084fc">src/aet/evidence_core/*</text>
 </g>
 <g filter="url(#shadow)">
 <rect x="790" y="355" width="320" height="104" rx="18" fill="#111827" fill-opacity=".86" stroke="#ffffff" stroke-opacity=".12"/>
 <rect x="790" y="355" width="5" height="104" rx="2.5" fill="#34d399"/>
-<text x="814" y="389" font-size="19" font-weight="700" fill="#f8fafc">Investigation &amp; record</text>
-<text x="814" y="416" font-size="14" fill="#94a3b8">intent · counter-case · tool results</text>
-<text class="mono" x="814" y="443" font-size="12" fill="#34d399">investigation/* · ledger.py</text>
+<text x="814" y="389" font-size="19" font-weight="700" fill="#f8fafc">Read-only Investigator</text>
+<text x="814" y="416" font-size="14" fill="#94a3b8">primary · competing · stop conditions</text>
+<text class="mono" x="814" y="443" font-size="12" fill="#34d399">investigation/portable.py</text>
 </g>
 <g filter="url(#shadow)">
 <rect x="1150" y="355" width="340" height="104" rx="18" fill="#111827" fill-opacity=".86" stroke="#ffffff" stroke-opacity=".12"/>
 <rect x="1150" y="355" width="5" height="104" rx="2.5" fill="#f59e0b"/>
-<text x="1174" y="389" font-size="19" font-weight="700" fill="#f8fafc">Grounding &amp; narrative</text>
-<text x="1174" y="416" font-size="14" fill="#94a3b8">references · authority · strength · language</text>
-<text class="mono" x="1174" y="443" font-size="12" fill="#f59e0b">grounding.py · narrative/*</text>
+<text x="1174" y="389" font-size="19" font-weight="700" fill="#f8fafc">Deterministic authority</text>
+<text x="1174" y="416" font-size="14" fill="#94a3b8">Git · Proof · Freshness · authority</text>
+<text class="mono" x="1174" y="443" font-size="12" fill="#f59e0b">quick/* · grounding.py</text>
 </g>
 <g filter="url(#shadow)">
 <rect x="70" y="585" width="320" height="98" rx="18" fill="#111827" fill-opacity=".86" stroke="#ffffff" stroke-opacity=".12"/>
 <rect x="70" y="585" width="5" height="98" rx="2.5" fill="#34d399"/>
-<text x="94" y="619" font-size="19" font-weight="700" fill="#f8fafc">Command &amp; authority contracts</text>
-<text x="94" y="646" font-size="14" fill="#94a3b8">budgets · language · stop rules</text>
-<text class="mono" x="94" y="667" font-size="12" fill="#34d399">schemas/command-budget* · cli.py</text>
+<text x="94" y="619" font-size="19" font-weight="700" fill="#f8fafc">Bundle Compiler</text>
+<text x="94" y="646" font-size="14" fill="#94a3b8">select · redact · content-address</text>
+<text class="mono" x="94" y="667" font-size="12" fill="#34d399">src/aet/bundle/compiler.py</text>
 </g>
 <g filter="url(#shadow)">
 <rect x="430" y="585" width="320" height="98" rx="18" fill="#111827" fill-opacity=".86" stroke="#ffffff" stroke-opacity=".12"/>
 <rect x="430" y="585" width="5" height="98" rx="2.5" fill="#60a5fa"/>
-<text x="454" y="619" font-size="19" font-weight="700" fill="#f8fafc">Evidence, proof &amp; freshness</text>
-<text x="454" y="646" font-size="14" fill="#94a3b8">PASS · FAIL · UNKNOWN · file binding</text>
-<text class="mono" x="454" y="667" font-size="12" fill="#60a5fa">evidence.py · quick/proof.py · fresh.py</text>
+<text x="454" y="619" font-size="19" font-weight="700" fill="#f8fafc">Index / Core / Archive</text>
+<text x="454" y="646" font-size="14" fill="#94a3b8">Claim · Evidence · Observation · Blob</text>
+<text class="mono" x="454" y="667" font-size="12" fill="#60a5fa">schemas/evidence-bundle/v1/*</text>
 </g>
 <g filter="url(#shadow)">
 <rect x="790" y="585" width="320" height="98" rx="18" fill="#111827" fill-opacity=".86" stroke="#ffffff" stroke-opacity=".12"/>
 <rect x="790" y="585" width="5" height="98" rx="2.5" fill="#c084fc"/>
-<text x="814" y="619" font-size="19" font-weight="700" fill="#f8fafc">Investigation contracts &amp; schemas</text>
-<text x="814" y="646" font-size="14" fill="#94a3b8">references · conflicts · hypotheses · budget</text>
-<text class="mono" x="814" y="667" font-size="12" fill="#c084fc">schemas/investigation-*</text>
+<text x="814" y="619" font-size="19" font-weight="700" fill="#f8fafc">Integrity and freshness</text>
+<text x="814" y="646" font-size="14" fill="#94a3b8">SHA-256 · reference closure · Freshness</text>
+<text class="mono" x="814" y="667" font-size="12" fill="#c084fc">bundle/integrity.py · validator.py</text>
 </g>
 <g filter="url(#shadow)">
 <rect x="1150" y="585" width="340" height="98" rx="18" fill="#111827" fill-opacity=".86" stroke="#ffffff" stroke-opacity=".12"/>
 <rect x="1150" y="585" width="5" height="98" rx="2.5" fill="#f59e0b"/>
-<text x="1174" y="619" font-size="19" font-weight="700" fill="#f8fafc">Narrative, stop policy &amp; tests</text>
-<text x="1174" y="646" font-size="14" fill="#94a3b8">bilingual output · rejection paths · evaluation</text>
-<text class="mono" x="1174" y="667" font-size="12" fill="#f59e0b">narrative/* · tests/* · eval/*</text>
+<text x="1174" y="619" font-size="19" font-weight="700" fill="#f8fafc">Independent review</text>
+<text x="1174" y="646" font-size="14" fill="#94a3b8">SDK-free consumption · optional validator</text>
+<text class="mono" x="1174" y="667" font-size="12" fill="#f59e0b">bundle/review_validator.py</text>
 </g>
 <g filter="url(#shadow)">
 <rect x="70" y="825" width="320" height="88" rx="18" fill="#111827" fill-opacity=".86" stroke="#ffffff" stroke-opacity=".12"/>
 <rect x="70" y="825" width="5" height="88" rx="2.5" fill="#f59e0b"/>
-<text x="94" y="859" font-size="19" font-weight="700" fill="#f8fafc">Real-repository showcase</text>
-<text x="94" y="886" font-size="14" fill="#94a3b8">SWE-agent · Google ADK · OpenHands</text>
-<text class="mono" x="94" y="897" font-size="12" fill="#f59e0b">repository-audit-showcase/*</text>
+<text x="94" y="859" font-size="19" font-weight="700" fill="#f8fafc">Four Quick Skills</text>
+<text x="94" y="886" font-size="14" fill="#94a3b8">Check · Scope · Proof · Fresh</text>
+<text class="mono" x="94" y="897" font-size="12" fill="#f59e0b">skills/aet-* · src/aet/quick/*</text>
 </g>
 <g filter="url(#shadow)">
 <rect x="430" y="825" width="320" height="88" rx="18" fill="#111827" fill-opacity=".86" stroke="#ffffff" stroke-opacity=".12"/>
 <rect x="430" y="825" width="5" height="88" rx="2.5" fill="#60a5fa"/>
-<text x="454" y="859" font-size="19" font-weight="700" fill="#f8fafc">Project provenance</text>
-<text x="454" y="886" font-size="14" fill="#94a3b8">Context · Decision · Evolve</text>
-<text class="mono" x="454" y="897" font-size="12" fill="#60a5fa">context.py · decision.py · evolve.py</text>
+<text x="454" y="859" font-size="19" font-weight="700" fill="#f8fafc">Convenience integrations</text>
+<text x="454" y="886" font-size="14" fill="#94a3b8">CLI · MCP · TypeScript / Python SDK</text>
+<text class="mono" x="454" y="897" font-size="12" fill="#60a5fa">src/aet/mcp_server.py · packages/*</text>
 </g>
 <g filter="url(#shadow)">
 <rect x="790" y="825" width="320" height="88" rx="18" fill="#111827" fill-opacity=".86" stroke="#ffffff" stroke-opacity=".12"/>
 <rect x="790" y="825" width="5" height="88" rx="2.5" fill="#c084fc"/>
-<text x="814" y="859" font-size="19" font-weight="700" fill="#f8fafc">Quality &amp; evolution experiments</text>
-<text x="814" y="886" font-size="14" fill="#94a3b8">Quality · Learn · Replay</text>
-<text class="mono" x="814" y="897" font-size="12" fill="#c084fc">quality.py · learn*.py</text>
+<text x="814" y="859" font-size="19" font-weight="700" fill="#f8fafc">Cross-Agent measured runs</text>
+<text x="814" y="886" font-size="14" fill="#94a3b8">Codex · Hermes · Ollama / Qwen</text>
+<text class="mono" x="814" y="897" font-size="12" fill="#c084fc">eval/bundle-consumption/*</text>
 </g>
 <g filter="url(#shadow)">
 <rect x="1150" y="825" width="340" height="88" rx="18" fill="#111827" fill-opacity=".86" stroke="#ffffff" stroke-opacity=".12"/>
 <rect x="1150" y="825" width="5" height="88" rx="2.5" fill="#34d399"/>
-<text x="1174" y="859" font-size="19" font-weight="700" fill="#f8fafc">Governed adoption</text>
-<text x="1174" y="886" font-size="14" fill="#94a3b8">Gate · Shadow · Stage · Adopt</text>
-<text class="mono" x="1174" y="897" font-size="12" fill="#34d399">gate_plan.py · evolution/*</text>
+<text x="1174" y="859" font-size="19" font-weight="700" fill="#f8fafc">Human decision and Lab</text>
+<text x="1174" y="886" font-size="14" fill="#94a3b8">no automatic fix · merge · push · release</text>
+<text class="mono" x="1174" y="897" font-size="12" fill="#34d399">docs/quick-vs-lab-boundary.md</text>
 </g>
 <path d="M230 261V355" fill="none" stroke="#60a5fa" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrowBlue)"/>
 <path d="M590 261V355" fill="none" stroke="#c084fc" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrowPurple)"/>
@@ -151,14 +152,17 @@
 <path d="M390 407H430" fill="none" stroke="#60a5fa" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrowBlue)"/>
 <path d="M750 407H790" fill="none" stroke="#c084fc" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrowPurple)"/>
 <path d="M1110 407H1150" fill="none" stroke="#34d399" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrowGreen)"/>
-<path d="M1320 355V261" fill="none" stroke="#f59e0b" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrowAmber)"/>
-<path d="M230 585V495" fill="none" stroke="#34d399" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="8 8" marker-end="url(#arrowGreen)"/>
-<path d="M590 585V495" fill="none" stroke="#60a5fa" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="8 8" marker-end="url(#arrowBlue)"/>
-<path d="M950 585V495" fill="none" stroke="#c084fc" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="8 8" marker-end="url(#arrowPurple)"/>
-<path d="M1320 585V495" fill="none" stroke="#f59e0b" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="8 8" marker-end="url(#arrowAmber)"/>
+<path d="M1320 261V355" fill="none" stroke="#f59e0b" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrowAmber)"/>
+<path d="M230 459V585" fill="none" stroke="#34d399" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrowGreen)"/>
+<path d="M590 459V585" fill="none" stroke="#60a5fa" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrowBlue)"/>
+<path d="M950 459V585" fill="none" stroke="#c084fc" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrowPurple)"/>
+<path d="M1320 459V585" fill="none" stroke="#f59e0b" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrowAmber)"/>
 <rect x="1190" y="776" width="260" height="34" rx="17" fill="#f59e0b" fill-opacity=".13" stroke="#f59e0b" stroke-dasharray="6 6"/>
-<text x="1320" y="798" text-anchor="middle" class="mono" font-size="12" font-weight="800" fill="#f59e0b">EXPLICIT COMMAND + HUMAN AUTHORITY</text>
-<path d="M1490 213H1530V793H1450" fill="none" stroke="#f59e0b" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="8 8" marker-end="url(#arrowAmber)"/>
-<text x="60" y="962" font-size="14" fill="#94a3b8">Solid: Quick path · dashed: protocol support / explicit Lab entry</text>
-<text x="1540" y="962" text-anchor="end" font-size="14" font-weight="700" fill="#f8fafc">Local and read-only by default; only /aet-proof executes explicit argv</text>
+<text x="1320" y="798" text-anchor="middle" class="mono" font-size="12" font-weight="800" fill="#f59e0b">HUMAN OWNS FINAL ACTION</text>
+<path d="M230 683V825" fill="none" stroke="#f59e0b" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="8 8" marker-end="url(#arrowAmber)"/>
+<path d="M590 683V825" fill="none" stroke="#60a5fa" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="8 8" marker-end="url(#arrowBlue)"/>
+<path d="M950 683V825" fill="none" stroke="#c084fc" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="8 8" marker-end="url(#arrowPurple)"/>
+<path d="M1320 683V825" fill="none" stroke="#34d399" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="8 8" marker-end="url(#arrowGreen)"/>
+<text x="60" y="962" font-size="14" fill="#94a3b8">Solid: evidence production · dashed: product and consumption surfaces</text>
+<text x="1540" y="962" text-anchor="end" font-size="14" font-weight="700" fill="#f8fafc">Reviewers need no AET install; final action remains human-owned</text>
 </svg>

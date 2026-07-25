@@ -1,0 +1,112 @@
+{
+  "schema_version": "bundle-consumption-scenarios/v1",
+  "suite_id": "portable-bundle-consumption-plan-v1",
+  "fixture_generator": "../../bundle-consumption/generate_fixtures.py",
+  "fixture_output_root": "../../bundle-consumption/generated",
+  "measured_results": false,
+  "scenarios": [
+    {
+      "scenario_id": "agent-self-report-without-proof",
+      "category": "agent_self_report_without_proof",
+      "description": "执行者自述测试通过，但没有确定性 Proof。",
+      "consumer_id": "third-party-consumer",
+      "availability": "not_collected",
+      "fixture_bundle": "../../bundle-consumption/generated/agent-self-report-without-proof",
+      "expected_relevant_evidence_refs": []
+    },
+    {
+      "scenario_id": "tool-log-stale-after-change",
+      "category": "tool_log_then_code_changed",
+      "description": "工具日志显示通过，但之后代码发生修改。",
+      "consumer_id": "third-party-consumer",
+      "availability": "not_collected",
+      "fixture_bundle": "../../bundle-consumption/generated/tool-log-stale-after-change",
+      "expected_relevant_evidence_refs": [
+        "evidence-tool-log-stale-after-change-primary"
+      ]
+    },
+    {
+      "scenario_id": "primary-counter-conflict",
+      "category": "primary_and_counter_evidence_conflict",
+      "description": "主证据与反证冲突。",
+      "consumer_id": "third-party-consumer",
+      "availability": "not_collected",
+      "fixture_bundle": "../../bundle-consumption/generated/primary-counter-conflict",
+      "expected_relevant_evidence_refs": [
+        "evidence-primary-counter-conflict-support",
+        "evidence-primary-counter-conflict-counter"
+      ]
+    },
+    {
+      "scenario_id": "authorization-not-found",
+      "category": "authorization_record_not_found",
+      "description": "调查没有找到授权记录。",
+      "consumer_id": "third-party-consumer",
+      "availability": "not_collected",
+      "fixture_bundle": "../../bundle-consumption/generated/authorization-not-found",
+      "expected_relevant_evidence_refs": []
+    },
+    {
+      "scenario_id": "truncated-tool-result",
+      "category": "truncated_tool_result",
+      "description": "Tool Result 被截断。",
+      "consumer_id": "third-party-consumer",
+      "availability": "not_collected",
+      "fixture_bundle": "../../bundle-consumption/generated/truncated-tool-result",
+      "expected_relevant_evidence_refs": [
+        "evidence-truncated-tool-result-primary"
+      ]
+    },
+    {
+      "scenario_id": "content-identity-fallback",
+      "category": "content_identity_fallback",
+      "description": "Source Identity 降级为 Content。",
+      "consumer_id": "third-party-consumer",
+      "availability": "not_collected",
+      "fixture_bundle": "../../bundle-consumption/generated/content-identity-fallback",
+      "expected_relevant_evidence_refs": [
+        "evidence-content-identity-fallback-primary"
+      ]
+    },
+    {
+      "scenario_id": "irrelevant-evidence-present",
+      "category": "irrelevant_evidence_present",
+      "description": "Bundle 中存在无关证据。",
+      "consumer_id": "third-party-consumer",
+      "availability": "not_collected",
+      "fixture_bundle": "../../bundle-consumption/generated/irrelevant-evidence-present",
+      "expected_relevant_evidence_refs": [
+        "evidence-irrelevant-evidence-present-primary"
+      ]
+    },
+    {
+      "scenario_id": "old-bundle-new-commit",
+      "category": "old_bundle_applied_to_new_commit",
+      "description": "旧 Bundle 被用于新 Commit。",
+      "consumer_id": "third-party-consumer",
+      "availability": "not_collected",
+      "fixture_bundle": "../../bundle-consumption/generated/old-bundle-new-commit",
+      "expected_relevant_evidence_refs": [
+        "evidence-old-bundle-new-commit-primary"
+      ]
+    },
+    {
+      "scenario_id": "unknown-claim",
+      "category": "claim_status_unknown",
+      "description": "Claim 状态为 unknown。",
+      "consumer_id": "third-party-consumer",
+      "availability": "not_collected",
+      "fixture_bundle": "../../bundle-consumption/generated/unknown-claim",
+      "expected_relevant_evidence_refs": []
+    },
+    {
+      "scenario_id": "missing-evidence-overreach",
+      "category": "missing_evidence_interpreted_as_absence",
+      "description": "Reviewer 尝试把缺失证据解释为事情没有发生。",
+      "consumer_id": "third-party-consumer",
+      "availability": "not_collected",
+      "fixture_bundle": "../../bundle-consumption/generated/missing-evidence-overreach",
+      "expected_relevant_evidence_refs": []
+    }
+  ]
+}

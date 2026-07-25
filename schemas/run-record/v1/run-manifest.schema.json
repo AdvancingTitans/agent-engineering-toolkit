@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://advancingtitans.github.io/agent-engineering-toolkit/schemas/run-record/v1/run-manifest.schema.json",
+  "title": "Agent Run Normalization Manifest v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "source_type",
+    "run_group_id",
+    "generation_id",
+    "partial",
+    "base_byte_offset",
+    "provenance",
+    "record_count",
+    "diagnostic_count"
+  ],
+  "properties": {
+    "source_type": {"enum": ["codex", "claude-code"]},
+    "run_group_id": {"type": "string", "minLength": 1},
+    "generation_id": {"type": "string", "minLength": 1},
+    "partial": {"type": "boolean"},
+    "base_byte_offset": {"type": "integer", "minimum": 0},
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "normalizer_version",
+        "schema_version",
+        "adapter_name",
+        "adapter_version",
+        "configuration_hash"
+      ],
+      "properties": {
+        "normalizer_version": {"type": "string", "minLength": 1},
+        "schema_version": {"const": "canonical-run-record/1.0"},
+        "adapter_name": {"enum": ["codex", "claude_code"]},
+        "adapter_version": {"type": "string", "minLength": 1},
+        "configuration_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    },
+    "record_count": {"type": "integer", "minimum": 0},
+    "diagnostic_count": {"type": "integer", "minimum": 0}
+  }
+}

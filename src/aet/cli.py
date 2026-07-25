@@ -6,6 +6,7 @@ import argparse
 import sys
 import json
 import hashlib
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Sequence
 
@@ -32,6 +33,24 @@ from .gate_plan import GatePlanError
 from .repository_audit import RepositoryAuditError, is_repository_case, run_repository_audit
 from .narrative import render_quick_result, select_language
 from .quick import quick_check, quick_fresh, quick_proof, quick_scope
+from .bundle import (
+    BundleError,
+    compile_bundle,
+    render_bundle_markdown,
+    validate_bundle,
+    validate_review_result,
+)
+from .investigation import (
+    PortableInvestigationError,
+    investigate_run,
+    write_investigation_result,
+)
+from .run_normalization import (
+    NormalizationError,
+    load_normalized_run,
+    normalize_run,
+    write_normalized_run,
+)
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -311,6 +330,71 @@ def build_parser() -> argparse.ArgumentParser:
         command.add_argument("--run", required=True, type=Path)
         command.add_argument("--format", choices=("markdown", "json"), default="markdown")
         command.add_argument("--output", type=Path)
+    run_normalize = run_commands.add_parser(
+        "normalize",
+        help="Normalize a supported native Agent run into canonical records.",
+    )
+    run_normalize.add_argument("--source", choices=("codex", "claude-code"), required=True)
+    run_normalize.add_argument("--input", required=True, type=Path)
+    run_normalize.add_argument("--output", required=True, type=Path)
+    run_normalize.add_argument("--run-group-id")
+    run_normalize.add_argument("--base-byte-offset", type=int, default=0)
+    run_normalize.add_argument("--partial", action="store_true")
+    run_normalize.add_argument("--generation-id")
+    run_normalize.add_argument("--prior", type=Path)
+    run_inspect = run_commands.add_parser(
+        "inspect",
+        help="Inspect canonical Run Records without mutating them.",
+    )
+    run_inspect.add_argument("--run", required=True, type=Path)
+    run_inspect.add_argument("--tool-calls", action="store_true")
+    run_inspect.add_argument("--format", choices=("json", "jsonl"), default="json")
+    run_inspect.add_argument("--output", type=Path)
+    investigate_parser = commands.add_parser(
+        "investigate",
+        help="Create one bounded, read-only investigation from canonical Run Records.",
+    )
+    investigate_parser.add_argument("--request", required=True, type=Path)
+    investigate_parser.add_argument("--run", required=True, type=Path)
+    investigate_parser.add_argument(
+        "--workspace",
+        type=Path,
+        help="Read-only workspace used for explicitly supplied deterministic Proof receipts.",
+    )
+    investigate_parser.add_argument(
+        "--proof",
+        action="append",
+        type=Path,
+        default=[],
+        help="Explicit local AET Proof receipt to inspect; repeatable.",
+    )
+    investigate_parser.add_argument("--output", required=True, type=Path)
+    bundle_parser = commands.add_parser(
+        "bundle",
+        help="Create and validate Portable Evidence Bundles.",
+    )
+    bundle_commands = bundle_parser.add_subparsers(dest="bundle_command", required=True)
+    bundle_create = bundle_commands.add_parser("create")
+    bundle_create.add_argument("--investigation", required=True, type=Path)
+    bundle_create.add_argument("--output", required=True, type=Path)
+    bundle_create.add_argument("--bundle-id")
+    bundle_create.add_argument("--created-at")
+    bundle_create.add_argument("--claim-ref", action="append")
+    bundle_validate = bundle_commands.add_parser("validate")
+    bundle_validate.add_argument("bundle", type=Path)
+    bundle_render = bundle_commands.add_parser("render")
+    bundle_render.add_argument("--bundle", required=True, type=Path)
+    bundle_render.add_argument("--format", choices=("markdown",), default="markdown")
+    bundle_render.add_argument("--output", required=True, type=Path)
+    bundle_review = bundle_commands.add_parser("validate-review")
+    bundle_review.add_argument("--bundle", required=True, type=Path)
+    bundle_review.add_argument("--review", required=True, type=Path)
+    mcp_parser = commands.add_parser(
+        "mcp",
+        help="Serve the optional Portable Evidence Bundle MCP convenience layer.",
+    )
+    mcp_commands = mcp_parser.add_subparsers(dest="mcp_command", required=True)
+    mcp_commands.add_parser("serve", help="Serve newline-delimited MCP JSON-RPC over stdio.")
     quick_parser = commands.add_parser("quick", help="Run one bounded AET Quick surface.")
     quick_commands = quick_parser.add_subparsers(dest="quick_command", required=True)
     quick_check_parser = quick_commands.add_parser("check", help="Collect a bounded Agent engineering preflight.")
@@ -354,6 +438,69 @@ def main(argv: Sequence[str] | None = None) -> int:
         return _audit_feedback_record(raw_argv[3:])
     parser = build_parser()
     args = parser.parse_args(raw_argv)
+    if args.command == "investigate":
+        try:
+            request = _load_portable_json(args.request, "investigation request")
+            normalized = load_normalized_run(args.run)
+            result = investigate_run(
+                request,
+                normalized["records"],
+                workspace=args.workspace,
+                proof_paths=tuple(args.proof),
+            )
+            write_investigation_result(result, args.output)
+            print(render_json(result), end="")
+            return 0
+        except (PortableInvestigationError, NormalizationError, OSError, ValueError) as error:
+            raise SystemExit(f"aet: investigate failed: {error}") from error
+    if args.command == "bundle":
+        try:
+            if args.bundle_command == "create":
+                investigation = _load_portable_json(
+                    args.investigation,
+                    "investigation result",
+                )
+                payload = _bundle_payload_from_investigation(
+                    investigation,
+                    bundle_id=args.bundle_id,
+                    created_at=args.created_at,
+                )
+                bundle = compile_bundle(
+                    payload,
+                    args.output,
+                    claim_refs=args.claim_ref,
+                )
+                print(render_json(bundle["manifest"]), end="")
+            elif args.bundle_command == "validate":
+                bundle = validate_bundle(args.bundle)
+                print(
+                    render_json(
+                        {
+                            "report_kind": "portable_evidence_bundle_validation",
+                            "status": "PASS",
+                            "bundle_id": bundle["manifest"]["bundle"]["id"],
+                        }
+                    ),
+                    end="",
+                )
+            elif args.bundle_command == "render":
+                bundle = validate_bundle(args.bundle)
+                rendered = render_bundle_markdown(bundle)
+                if args.output.exists() or args.output.is_symlink():
+                    raise BundleError("output_exists", f"render output already exists: {args.output}")
+                args.output.parent.mkdir(parents=True, exist_ok=True)
+                args.output.write_text(rendered, encoding="utf-8")
+            else:
+                report = validate_review_result(args.bundle, args.review)
+                print(render_json(report), end="")
+            return 0
+        except (BundleError, OSError, ValueError) as error:
+            raise SystemExit(f"aet: bundle {args.bundle_command} failed: {error}") from error
+    if args.command == "mcp":
+        from .mcp_server import serve_stdio
+
+        serve_stdio()
+        return 0
     if args.command == "quick":
         try:
             language = select_language(
@@ -500,6 +647,55 @@ def main(argv: Sequence[str] | None = None) -> int:
         return 0
     if args.command == "run":
         try:
+            if args.run_command == "normalize":
+                if args.output.exists() or args.output.is_symlink():
+                    raise NormalizationError(
+                        f"normalized run output already exists: {args.output}"
+                    )
+                prior = load_normalized_run(args.prior) if args.prior else None
+                result = normalize_run(
+                    args.source,
+                    args.input,
+                    run_group_id=args.run_group_id,
+                    base_byte_offset=args.base_byte_offset,
+                    partial=args.partial,
+                    generation_id=args.generation_id,
+                    prior=prior,
+                )
+                write_normalized_run(result, args.output)
+                print(render_json(result["manifest"]), end="")
+                return 0
+            if args.run_command == "inspect":
+                normalized = load_normalized_run(args.run)
+                records = normalized["records"]
+                if args.tool_calls:
+                    records = [
+                        record
+                        for record in records
+                        if record.get("record_type") in {"tool_call", "tool_result"}
+                    ]
+                rendered = (
+                    "".join(
+                        json.dumps(record, ensure_ascii=False, sort_keys=True) + "\n"
+                        for record in records
+                    )
+                    if args.format == "jsonl"
+                    else render_json(
+                        {
+                            "manifest": normalized["manifest"],
+                            "records": records,
+                            "diagnostics": normalized["diagnostics"],
+                        }
+                    )
+                )
+                if args.output:
+                    if args.output.exists():
+                        raise NormalizationError(f"inspect output already exists: {args.output}")
+                    args.output.parent.mkdir(parents=True, exist_ok=True)
+                    args.output.write_text(rendered, encoding="utf-8")
+                else:
+                    print(rendered, end="")
+                return 0
             if args.run_command == "init":
                 init_run(args.output, args.intent)
                 status = run_status(args.output)
@@ -509,7 +705,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                 status = verify_run(args.run)
             else:
                 status = close_run(args.run)
-        except RunError as error:
+        except (RunError, NormalizationError, OSError, ValueError) as error:
             raise SystemExit(f"aet: run failed: {error}") from error
         rendered = render_run_status(status, "json" if args.run_command == "init" else args.format)
         if args.run_command == "init" or args.output is None:
@@ -813,6 +1009,262 @@ def _load_local_json(path: Path) -> dict[str, object]:
     if not isinstance(value, dict):
         raise PolicyTargetError("local policy must be a JSON object")
     return value
+
+
+def _load_portable_json(path: Path, label: str) -> dict[str, object]:
+    try:
+        value = json.loads(
+            Path(path).read_text(encoding="utf-8"),
+            parse_constant=lambda item: (_raise_portable_nonfinite(item)),
+            object_pairs_hook=_portable_unique_object,
+        )
+    except (OSError, UnicodeDecodeError, json.JSONDecodeError, ValueError) as error:
+        raise ValueError(f"cannot read {label}: {error}") from error
+    if not isinstance(value, dict):
+        raise ValueError(f"{label} must be a JSON object")
+    return value
+
+
+def _portable_unique_object(pairs: list[tuple[str, object]]) -> dict[str, object]:
+    result: dict[str, object] = {}
+    for key, value in pairs:
+        if key in result:
+            raise ValueError(f"portable JSON contains duplicate key: {key}")
+        result[key] = value
+    return result
+
+
+def _raise_portable_nonfinite(value: str) -> object:
+    raise ValueError(f"portable JSON contains non-finite number: {value}")
+
+
+def _bundle_payload_from_investigation(
+    investigation: dict[str, object],
+    *,
+    bundle_id: str | None,
+    created_at: str | None,
+) -> dict[str, object]:
+    if all(
+        field in investigation
+        for field in (
+            "task",
+            "investigation",
+            "claims",
+            "evidence",
+            "observations",
+            "sources",
+            "diagnostics",
+            "conflicts",
+            "ledger",
+            "policy",
+        )
+    ):
+        payload = dict(investigation)
+        payload.setdefault("bundle_id", bundle_id)
+        payload.setdefault("created_at", created_at)
+        payload.setdefault("producer_version", __version__)
+        return payload
+    if investigation.get("schema_version") != "portable-investigation-result/1.0":
+        raise BundleError(
+            "invalid_bundle",
+            "investigation must be a portable result or a complete Bundle compilation payload",
+        )
+    selected_bundle_id = bundle_id or (
+        "bundle-"
+        + hashlib.sha256(
+            str(investigation["investigation_id"]).encode("utf-8")
+        ).hexdigest()[:16]
+    )
+    selected_created_at = created_at or datetime.now(UTC).isoformat().replace("+00:00", "Z")
+    observations = investigation.get("observations")
+    if not isinstance(observations, list) or any(not isinstance(item, dict) for item in observations):
+        raise BundleError("invalid_bundle", "investigation observations must be objects")
+    portable_observations = [
+        {
+            field: item[field]
+            for field in (
+                "id",
+                "type",
+                "statement",
+                "source_refs",
+                "proves",
+                "does_not_prove",
+                "limitations",
+            )
+        }
+        for item in observations
+    ]
+    source_refs = list(
+        dict.fromkeys(
+            [
+                *(
+                    reference
+                    for item in portable_observations
+                    for reference in item["source_refs"]
+                ),
+                *investigation["disconfirming_search"]["searched_record_refs"],
+            ]
+        )
+    )
+    record_sources = investigation.get("record_sources")
+    if not isinstance(record_sources, list) or any(
+        not isinstance(item, dict) for item in record_sources
+    ):
+        raise BundleError(
+            "invalid_bundle",
+            "investigation record_sources must contain objects",
+        )
+    source_binding_by_id = {item.get("id"): item for item in record_sources}
+    if set(source_binding_by_id) != set(source_refs) or None in source_binding_by_id:
+        raise BundleError(
+            "reference_error",
+            "investigation record_sources do not bind every exported Run Record",
+        )
+    sources = [
+        {
+            "id": reference,
+            "type": "run_record",
+            "locator": {
+                "record_id": reference,
+                "run_group_id": source_binding_by_id[reference]["run_group_id"],
+                "identity_kind": source_binding_by_id[reference]["identity_kind"],
+            },
+            "provenance": {
+                "source_type": source_binding_by_id[reference]["source_type"],
+                "schema_version": source_binding_by_id[reference]["schema_version"],
+            },
+            "integrity": {
+                "content_hash": source_binding_by_id[reference]["content_hash"],
+            },
+        }
+        for reference in source_refs
+    ]
+    verification_sources = investigation.get("verification_sources")
+    verified_evidence = investigation.get("verified_evidence")
+    if not isinstance(verification_sources, list) or any(
+        not isinstance(item, dict) for item in verification_sources
+    ):
+        raise BundleError(
+            "invalid_bundle",
+            "investigation verification_sources must contain objects",
+        )
+    if not isinstance(verified_evidence, list) or any(
+        not isinstance(item, dict) for item in verified_evidence
+    ):
+        raise BundleError(
+            "invalid_bundle",
+            "investigation verified_evidence must contain objects",
+        )
+    sources.extend(json.loads(json.dumps(verification_sources)))
+    policy = json.loads(json.dumps(investigation["policy"]))
+    raw_ledger = investigation.get("ledger")
+    if not isinstance(raw_ledger, list) or any(
+        not isinstance(item, dict) for item in raw_ledger
+    ):
+        raise BundleError("invalid_bundle", "investigation ledger must contain objects")
+    portable_ledger: list[dict[str, object]] = []
+    for entry in raw_ledger:
+        portable_entry: dict[str, object] = {
+            "id": entry["id"],
+            "timestamp": selected_created_at,
+            "question": entry["question"],
+            "hypothesis_ref": entry["hypothesis_ref"],
+            "action": entry["action"],
+            "observation_refs": list(entry["observation_refs"]),
+            "evidence_candidate_refs": list(entry["evidence_candidate_refs"]),
+            "effect": entry["effect"],
+            "explanation": entry["explanation"],
+        }
+        if entry.get("tool_name"):
+            portable_entry["tool_name"] = entry["tool_name"]
+        if entry["action"] in {
+            "read_run_record",
+            "inspect_proof",
+            "check_freshness",
+        }:
+            input_refs = entry.get("input_refs")
+            if not isinstance(input_refs, list) or len(input_refs) != 1:
+                raise BundleError(
+                    "invalid_bundle",
+                    f"{entry['action']} ledger entry requires exactly one input reference",
+                )
+            portable_entry["input_ref"] = input_refs[0]
+        if entry["action"] in {
+            "record_observation",
+            "inspect_proof",
+            "check_freshness",
+        } and entry.get("output_ref"):
+            portable_entry["output_ref"] = entry["output_ref"]
+        portable_ledger.append(portable_entry)
+    finding = investigation["findings"][0]
+    claim_id = finding["id"]
+    unresolved = list(investigation["unresolved"])
+    task = dict(investigation["task"])
+    return {
+        "bundle_id": selected_bundle_id,
+        "created_at": selected_created_at,
+        "producer_version": __version__,
+        "task": task,
+        "investigation": {
+            "investigation_id": investigation["investigation_id"],
+            "investigation_type": "general",
+            "question": investigation["question"],
+            "scope": list(investigation["requested_evidence"]),
+            "limitations": unresolved,
+            "completed": True,
+        },
+        "claims": [
+            {
+                "id": claim_id,
+                "statement": finding["statement"],
+                "status": finding["status"],
+                "status_definition": (
+                    "The status is derived from explicit deterministic Evidence and its Freshness."
+                    if verified_evidence
+                    else "The investigation produced no matching verified evidence."
+                ),
+                "evidence_refs": [
+                    item["id"]
+                    for item in verified_evidence
+                    if item.get("supports")
+                ],
+                "counter_evidence_refs": [
+                    item["id"]
+                    for item in verified_evidence
+                    if item.get("contradicts")
+                ],
+                "observation_refs": [item["id"] for item in portable_observations],
+                "basis": {
+                    "type": (
+                        "reproduced"
+                        if verified_evidence
+                        and all(item.get("strength") == "reproduced" for item in verified_evidence)
+                        else "observational"
+                    ),
+                    "explanation": (
+                        "The conclusion uses policy-authorized deterministic Proof and Freshness records."
+                        if verified_evidence
+                        else "Only normalized Run Record observations are available."
+                    ),
+                },
+                "limitations": unresolved,
+                **(
+                    {"smallest_next_action": "Run an authorized deterministic verification."}
+                    if not verified_evidence
+                    else {}
+                ),
+            }
+        ],
+        "evidence": json.loads(json.dumps(verified_evidence)),
+        "observations": portable_observations,
+        "sources": sources,
+        "diagnostics": [],
+        "conflicts": [],
+        "ledger": portable_ledger,
+        "policy": policy,
+        "blobs": {},
+        "excluded_reason": "Only records relevant to the declared investigation question were included.",
+    }
 
 
 def _repository_fingerprint(root: Path) -> str:

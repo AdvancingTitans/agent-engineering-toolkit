@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://advancingtitans.github.io/agent-engineering-toolkit/schemas/evidence-bundle/v1/source.schema.json",
+  "title": "Portable Source v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "type", "locator", "provenance", "integrity"],
+  "properties": {
+    "extensions": {"type": "object", "additionalProperties": true},
+    "id": {"type": "string", "minLength": 1},
+    "type": {"enum": ["run_record", "git", "file", "command", "artifact", "user_instruction", "proof_receipt"]},
+    "locator": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "run_group_id": {"type": "string"},
+        "record_id": {"type": "string"},
+        "identity_kind": {"enum": ["native", "location", "content", "synthetic"]},
+        "repository": {"type": "string"},
+        "commit": {"type": "string"},
+        "path": {"type": "string"},
+        "line_start": {"type": "integer", "minimum": 1},
+        "line_end": {"type": "integer", "minimum": 1},
+        "blob_ref": {"type": "string", "pattern": "^blobs/sha256-[0-9a-f]{64}$"}
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "source_type": {"type": "string"},
+        "normalizer_version": {"type": "string"},
+        "schema_version": {"type": ["integer", "string"]},
+        "configuration_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    },
+    "integrity": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "locator": {"required": ["blob_ref"]}
+        }
+      },
+      "then": {
+        "properties": {
+          "integrity": {"required": ["content_hash"]}
+        }
+      }
+    }
+  ]
+}

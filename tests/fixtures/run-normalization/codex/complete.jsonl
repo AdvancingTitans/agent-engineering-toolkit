@@ -1,0 +1,6 @@
+{"type":"session_meta","timestamp":"2026-01-02T03:04:00Z","payload":{"id":"session-codex-fixture-001","cwd":"/workspace/sanitized","git_branch":"fixture-main","model":"fixture-model"}}
+{"type":"response_item","timestamp":"2026-01-02T03:04:01Z","payload":{"id":"codex-user-001","type":"message","role":"user","content":"请验证合成示例。"}}
+{"type":"response_item","timestamp":"2026-01-02T03:04:02Z","payload":{"id":"codex-reasoning-001","type":"reasoning","content":"先检查声明的验证路径。"}}
+{"type":"response_item","timestamp":"2026-01-02T03:04:03Z","payload":{"id":"codex-call-record-001","type":"function_call","call_id":"codex-call-001","name":"shell","arguments":"{\"command\":[\"python\",\"-m\",\"unittest\",\"tests.test_example\"]}"}}
+{"type":"response_item","timestamp":"2026-01-02T03:04:04Z","payload":{"id":"codex-result-record-001","type":"function_call_output","call_id":"codex-call-001","output":"1 项通过"}}
+{"type":"response_item","timestamp":"2026-01-02T03:04:05Z","payload":{"id":"codex-assistant-001","type":"message","role":"assistant","content":"验证记录已生成。"}}

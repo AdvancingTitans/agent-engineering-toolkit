@@ -1,0 +1,12 @@
+{
+  "aggregate_score": null,
+  "algorithm": "sha256",
+  "consumer_id": "qwen3-local-structured-prompt-only-v3",
+  "file_hashes": {
+    "metadata.json": "dc7415109a5f0ae9fe8b54c39a40ec2dacfc930fa37959b6c44cafdd04541654",
+    "report.json": "df31976c8ffaeaacfaa13450a5afb0e60395e9ac2b02a4e9e38e049cd0c5342b",
+    "response.json": "31a46ad5b5ef4e539292485dac275670d5fc338486f036120f12075bb978a7e6"
+  },
+  "independently_rescorable": true,
+  "schema_version": "bundle-consumption-publication-integrity/v1"
+}

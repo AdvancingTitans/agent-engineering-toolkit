@@ -1,0 +1,16 @@
+{
+  "aggregate_score": null,
+  "command_argv_sha256": "424316b914acc7e9b377dc1376423021083248bf44a531324a6d7fbb8bb5ce71",
+  "command_name": "hermes",
+  "consumer_id": "hermes-prompt-only-v2",
+  "elapsed_seconds_to_complete_response": 234.4940629163757,
+  "external_agent_calls": 1,
+  "model_id": "kimi-k2.6",
+  "published_raw_transcript": false,
+  "published_structured_response": true,
+  "raw_transcript_persisted": false,
+  "runtime_version": "Hermes Agent 0.17.0",
+  "schema_version": "bundle-consumption-collection-metadata/v1",
+  "stderr_bytes": 0,
+  "stdout_bytes": 13386
+}

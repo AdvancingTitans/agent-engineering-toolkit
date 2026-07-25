@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://advancingtitans.github.io/agent-engineering-toolkit/skills/aet-investigate/output-schema.json",
+  "title": "AET Investigate Skill Output",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "status",
+    "investigation_result",
+    "evidence_bundle",
+    "bundle_validation",
+    "unresolved_questions"
+  ],
+  "properties": {
+    "status": {
+      "enum": [
+        "supported",
+        "partially_supported",
+        "unsupported",
+        "conflicted",
+        "unknown"
+      ]
+    },
+    "investigation_result": {
+      "type": "string",
+      "minLength": 1
+    },
+    "evidence_bundle": {
+      "type": "string",
+      "minLength": 1
+    },
+    "bundle_validation": {
+      "const": "PASS"
+    },
+    "unresolved_questions": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "smallest_next_action": {
+      "type": "string",
+      "minLength": 1
+    }
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "protocol": {
+    "name": "portable-review-result",
+    "version": "1.0"
+  },
+  "bundle_id": "bundle-fixture-001",
+  "conclusions": [
+    {
+      "id": "review-conclusion-001",
+      "statement": "目标验证结论具有声明的证据边界。",
+      "disposition": "accept",
+      "claim_refs": [
+        "claim-001"
+      ],
+      "evidence_refs": [
+        "ev-001"
+      ],
+      "counter_evidence_refs": [],
+      "reasoning_summary": "结论只引用 Portable Evidence Bundle 中的记录。",
+      "limitations": [
+        "不扩展到未声明的验证范围。"
+      ]
+    }
+  ],
+  "unresolved_questions": [],
+  "extensions": {
+    "evaluation": {
+      "conclusion_elapsed_seconds": {
+        "review-conclusion-001": 0.25
+      }
+    }
+  }
+}

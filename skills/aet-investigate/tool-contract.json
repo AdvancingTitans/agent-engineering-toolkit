@@ -1,0 +1,52 @@
+{
+  "schema_version": "aet-investigate-tool-contract/1.0",
+  "allowed_operations": [
+    {
+      "operation": "normalize_run",
+      "command": "aet run normalize",
+      "writes": [
+        "declared normalized-run output"
+      ]
+    },
+    {
+      "operation": "inspect_run",
+      "command": "aet run inspect",
+      "writes": []
+    },
+    {
+      "operation": "investigate_run",
+      "command": "aet investigate [--workspace <workspace> --proof <proof.json>]",
+      "writes": [
+        "declared investigation JSON output"
+      ],
+      "authority": [
+        "run.read",
+        "proof.inspect",
+        "freshness.check"
+      ]
+    },
+    {
+      "operation": "compile_bundle",
+      "command": "aet bundle create",
+      "writes": [
+        "declared Portable Evidence Bundle output"
+      ]
+    },
+    {
+      "operation": "validate_bundle",
+      "command": "aet bundle validate",
+      "writes": []
+    }
+  ],
+  "denied_operations": [
+    "arbitrary_command_execution",
+    "source_file_write",
+    "automatic_repair",
+    "git_commit",
+    "git_push",
+    "git_merge",
+    "llm_evidence_strength_promotion",
+    "evidence_record_replacement"
+  ],
+  "stop_after": "validated_portable_evidence_bundle"
+}

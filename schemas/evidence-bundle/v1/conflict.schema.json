@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://advancingtitans.github.io/agent-engineering-toolkit/schemas/evidence-bundle/v1/conflict.schema.json",
+  "title": "Evidence Conflict v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "proposition", "evidence_refs", "conflict_type", "resolution_status", "explanation"],
+  "properties": {
+    "extensions": {"type": "object", "additionalProperties": true},
+    "id": {"type": "string", "minLength": 1},
+    "proposition": {"type": "string", "minLength": 1},
+    "evidence_refs": {"type": "array", "items": {"type": "string"}, "minItems": 2, "uniqueItems": true},
+    "conflict_type": {"enum": ["content_conflict", "workspace_conflict", "timestamp_conflict", "authority_conflict", "interpretation_conflict"]},
+    "resolution_status": {"enum": ["resolved", "unresolved"]},
+    "explanation": {"type": "string", "minLength": 1}
+  }
+}

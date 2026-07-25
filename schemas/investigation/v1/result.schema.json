@@ -1,0 +1,213 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://advancingtitans.github.io/agent-engineering-toolkit/schemas/investigation/v1/result.schema.json",
+  "title": "Portable Investigation Result v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "investigation_id", "question", "task", "hypotheses", "requested_evidence", "run_sources", "record_sources", "verification_sources", "policy", "status", "observations", "evidence_candidates", "verified_evidence", "findings", "ledger", "disconfirming_search", "unresolved", "usage", "stop"],
+  "properties": {
+    "schema_version": {"const": "portable-investigation-result/1.0"},
+    "investigation_id": {"type": "string", "minLength": 1},
+    "question": {"type": "string", "minLength": 1},
+    "task": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["task_id", "request"],
+      "properties": {
+        "task_id": {"type": "string", "minLength": 1},
+        "request": {"type": "string", "minLength": 1},
+        "repository": {"type": "string"},
+        "workspace_id": {"type": "string"},
+        "base_ref": {"type": "string"},
+        "head_ref": {"type": "string"}
+      }
+    },
+    "hypotheses": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["primary", "competing"],
+      "properties": {
+        "primary": {"type": "string", "minLength": 1},
+        "competing": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1},
+          "minItems": 1,
+          "uniqueItems": true
+        }
+      }
+    },
+    "requested_evidence": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1},
+      "uniqueItems": true
+    },
+    "run_sources": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/runSource"},
+      "minItems": 1
+    },
+    "record_sources": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/recordSource"}
+    },
+    "verification_sources": {
+      "type": "array",
+      "items": {"$ref": "../../evidence-bundle/v1/source.schema.json"}
+    },
+    "policy": {"$ref": "../../evidence-bundle/v1/policy.schema.json"},
+    "status": {"enum": ["supported", "partially_supported", "unsupported", "conflicted", "unknown"]},
+    "observations": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/observation"}
+    },
+    "evidence_candidates": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/evidenceCandidate"}
+    },
+    "verified_evidence": {
+      "type": "array",
+      "items": {"$ref": "../../evidence-bundle/v1/evidence.schema.json"}
+    },
+    "findings": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/finding"}
+    },
+    "ledger": {"$ref": "ledger.schema.json"},
+    "disconfirming_search": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["performed", "searched_record_refs", "counter_evidence_candidate_refs"],
+      "properties": {
+        "performed": {"type": "boolean"},
+        "searched_record_refs": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1},
+          "uniqueItems": true
+        },
+        "counter_evidence_candidate_refs": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1},
+          "uniqueItems": true
+        }
+      }
+    },
+    "unresolved": {"type": "array", "items": {"type": "string", "minLength": 1}},
+    "usage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["run_records_read", "evidence_candidates", "verified_evidence", "tool_calls"],
+      "properties": {
+        "run_records_read": {"type": "integer", "minimum": 0},
+        "evidence_candidates": {"type": "integer", "minimum": 0},
+        "verified_evidence": {"type": "integer", "minimum": 0},
+        "tool_calls": {"type": "integer", "minimum": 0}
+      }
+    },
+    "stop": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["reason", "bounded_result", "explanation"],
+      "properties": {
+        "reason": {"enum": ["budget_exhausted", "tool_unavailable", "authorization_required", "question_answered", "unknown"]},
+        "bounded_result": {"const": true},
+        "explanation": {"type": "string", "minLength": 1}
+      }
+    }
+  },
+  "$defs": {
+    "runSource": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "source_type", "run_group_id"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "source_type": {"type": "string", "minLength": 1},
+        "run_group_id": {"type": "string", "minLength": 1},
+        "extensions": {"type": "object", "additionalProperties": true}
+      }
+    },
+    "recordSource": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "run_group_id", "identity_kind", "content_hash", "source_type", "schema_version"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "run_group_id": {"type": "string", "minLength": 1},
+        "identity_kind": {"enum": ["native", "location", "content", "synthetic"]},
+        "content_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "source_type": {"type": "string", "minLength": 1},
+        "schema_version": {"type": "string", "minLength": 1}
+      }
+    },
+    "stringArray": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1}
+    },
+    "observation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "investigation_id", "type", "statement", "source_refs", "proves", "does_not_prove", "reliability", "limitations"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "investigation_id": {"type": "string", "minLength": 1},
+        "type": {"enum": ["agent_statement", "agent_tool_call", "agent_tool_result", "agent_reasoning", "run_sequence", "run_metadata"]},
+        "statement": {"type": "string", "minLength": 1},
+        "source_refs": {"$ref": "#/$defs/stringArray"},
+        "proves": {"$ref": "#/$defs/stringArray"},
+        "does_not_prove": {
+          "allOf": [
+            {"$ref": "#/$defs/stringArray"},
+            {"minItems": 1}
+          ]
+        },
+        "reliability": {"enum": ["self_report", "recorded_behavior", "recorded_tool_output"]},
+        "limitations": {"$ref": "#/$defs/stringArray"}
+      }
+    },
+    "verificationStep": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["action", "purpose"],
+      "properties": {
+        "action": {"type": "string", "minLength": 1},
+        "purpose": {"type": "string", "minLength": 1}
+      }
+    },
+    "evidenceCandidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "investigation_id", "proposition", "candidate_type", "observation_refs", "source_refs", "verification_required", "proposed_evidence_kind", "proposed_strength", "status", "verification_plan"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "investigation_id": {"type": "string", "minLength": 1},
+        "proposition": {"type": "string", "minLength": 1},
+        "candidate_type": {"enum": ["agent_claim", "tool_observation", "code_observation", "command_observation", "authorization_observation", "counter_evidence"]},
+        "observation_refs": {"$ref": "#/$defs/stringArray"},
+        "source_refs": {"$ref": "#/$defs/stringArray"},
+        "verification_required": {"type": "boolean"},
+        "proposed_evidence_kind": {"enum": ["git_fact", "file_fact", "command_receipt", "test_result", "artifact_fact", "freshness_fact", "authority_fact", "run_observation"]},
+        "proposed_strength": {"enum": ["context_only", "observed"]},
+        "status": {"enum": ["unverified", "verified", "rejected", "conflicted"]},
+        "verification_plan": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/verificationStep"},
+          "minItems": 1
+        }
+      }
+    },
+    "finding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "statement", "status", "evidence_refs", "counter_evidence_candidate_refs", "observation_refs", "limitations"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "statement": {"type": "string", "minLength": 1},
+        "status": {"enum": ["supported", "partially_supported", "unsupported", "conflicted", "unknown"]},
+        "evidence_refs": {"$ref": "#/$defs/stringArray"},
+        "counter_evidence_candidate_refs": {"$ref": "#/$defs/stringArray"},
+        "observation_refs": {"$ref": "#/$defs/stringArray"},
+        "limitations": {"$ref": "#/$defs/stringArray"}
+      }
+    }
+  }
+}

@@ -1,0 +1,1 @@
+{"id":"obs-001","type":"agent_tool_result","statement":"执行记录包含一条报告验证成功的工具结果。","source_refs":["src-001"],"proves":["标准化执行记录包含该工具结果。"],"does_not_prove":["该结果仍适用于其他提交。","该命令覆盖完整测试套件。"],"limitations":["观察本身不能替代当前工作区的确定性验证。"]}

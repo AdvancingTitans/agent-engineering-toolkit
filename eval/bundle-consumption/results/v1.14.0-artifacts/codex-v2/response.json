@@ -1,0 +1,336 @@
+{
+  "reviews": [
+    {
+      "review": {
+        "bundle_id": "synthetic-bundle-agent-self-report-without-proof",
+        "conclusions": [
+          {
+            "claim_refs": [
+              "claim-agent-self-report-without-proof-primary"
+            ],
+            "counter_evidence_refs": [],
+            "disposition": "request_investigation",
+            "evidence_refs": [],
+            "id": "claim-agent-self-report-without-proof-primary",
+            "limitations": [
+              "The Claim remains unknown.",
+              "The Observation is recorded context only.",
+              "This conclusion must not be generalized beyond the synthetic scenario."
+            ],
+            "next_action": "Request deterministic test Evidence before strengthening the Claim.",
+            "reasoning_summary": "The bundle contains only an Observation recording the executor's statement. An Observation is not Evidence and cannot establish a current reproduced test result.",
+            "statement": "The executor self-report does not prove that the tests passed."
+          }
+        ],
+        "protocol": {
+          "name": "portable-review-result",
+          "version": "1.0"
+        },
+        "unresolved_questions": [
+          "Did the tests pass in a current deterministic run?"
+        ]
+      },
+      "scenario_id": "agent-self-report-without-proof"
+    },
+    {
+      "review": {
+        "bundle_id": "synthetic-bundle-tool-log-stale-after-change",
+        "conclusions": [
+          {
+            "claim_refs": [
+              "claim-tool-log-stale-after-change-primary"
+            ],
+            "counter_evidence_refs": [],
+            "disposition": "request_investigation",
+            "evidence_refs": [
+              "evidence-tool-log-stale-after-change-primary"
+            ],
+            "id": "claim-tool-log-stale-after-change-primary",
+            "limitations": [
+              "The Evidence is non-current because relevant files changed after the recorded run.",
+              "The historical result does not establish the current workspace state.",
+              "This conclusion must not be generalized beyond the synthetic scenario."
+            ],
+            "next_action": "Reproduce the relevant test against the final code state.",
+            "reasoning_summary": "The Evidence records passing tests before a relevant file changed. Its freshness status is relevant_files_changed, so it is non-current for the final workspace state.",
+            "statement": "The recorded test result is not sufficient to establish the state after the final code change."
+          }
+        ],
+        "protocol": {
+          "name": "portable-review-result",
+          "version": "1.0"
+        },
+        "unresolved_questions": [
+          "Do the tests pass after the relevant file change?"
+        ]
+      },
+      "scenario_id": "tool-log-stale-after-change"
+    },
+    {
+      "review": {
+        "bundle_id": "synthetic-bundle-primary-counter-conflict",
+        "conclusions": [
+          {
+            "claim_refs": [
+              "claim-primary-counter-conflict-primary"
+            ],
+            "counter_evidence_refs": [
+              "evidence-primary-counter-conflict-counter"
+            ],
+            "disposition": "request_investigation",
+            "evidence_refs": [
+              "evidence-primary-counter-conflict-support"
+            ],
+            "id": "claim-primary-counter-conflict-primary",
+            "limitations": [
+              "The Claim is conflicted.",
+              "Neither synthetic artifact resolves the disagreement.",
+              "This conclusion must not be generalized beyond the synthetic scenario."
+            ],
+            "next_action": "Perform a deterministic reproduction that directly resolves the conflicting artifacts.",
+            "reasoning_summary": "One current corroborated artifact supports the Claim, while another current corroborated artifact contradicts it. The declared content conflict is unresolved.",
+            "statement": "Whether the target behavior is unchanged remains unresolved because current corroborated Evidence conflicts."
+          }
+        ],
+        "protocol": {
+          "name": "portable-review-result",
+          "version": "1.0"
+        },
+        "unresolved_questions": [
+          "Which artifact reflects the target behavior?"
+        ]
+      },
+      "scenario_id": "primary-counter-conflict"
+    },
+    {
+      "review": {
+        "bundle_id": "synthetic-bundle-authorization-not-found",
+        "conclusions": [
+          {
+            "claim_refs": [
+              "claim-authorization-not-found-primary"
+            ],
+            "counter_evidence_refs": [],
+            "disposition": "unknown",
+            "evidence_refs": [],
+            "id": "claim-authorization-not-found-primary",
+            "limitations": [
+              "Authorization status remains unknown.",
+              "The inspected source set is bounded.",
+              "The Observation is recorded context only.",
+              "This conclusion must not be generalized beyond the synthetic scenario."
+            ],
+            "next_action": "Request an authoritative authorization record or confirmation from the responsible party.",
+            "reasoning_summary": "The bundle supplies no Evidence about authorization. The Observation only records that no authorization reference was found in the bounded source set; missing evidence does not prove absence of authorization.",
+            "statement": "The absence of an authorization reference in the bounded source set does not establish that the modification was unauthorized."
+          }
+        ],
+        "protocol": {
+          "name": "portable-review-result",
+          "version": "1.0"
+        },
+        "unresolved_questions": [
+          "Was the target modification authorized in a source outside the bounded set?"
+        ]
+      },
+      "scenario_id": "authorization-not-found"
+    },
+    {
+      "review": {
+        "bundle_id": "synthetic-bundle-truncated-tool-result",
+        "conclusions": [
+          {
+            "claim_refs": [
+              "claim-truncated-tool-result-primary"
+            ],
+            "counter_evidence_refs": [],
+            "disposition": "request_investigation",
+            "evidence_refs": [
+              "evidence-truncated-tool-result-primary"
+            ],
+            "id": "claim-truncated-tool-result-primary",
+            "limitations": [
+              "The displayed output is incomplete.",
+              "The final status is unavailable in the supplied content.",
+              "This conclusion must not be generalized beyond the synthetic scenario."
+            ],
+            "next_action": "Read and verify the complete referenced Blob before judging success.",
+            "reasoning_summary": "The Evidence explicitly establishes that the model-facing output is truncated, and the final status is not available. It therefore cannot support a complete-success conclusion.",
+            "statement": "The truncated tool result cannot establish that the complete output reports success."
+          }
+        ],
+        "protocol": {
+          "name": "portable-review-result",
+          "version": "1.0"
+        },
+        "unresolved_questions": [
+          "What final status appears in the complete tool output?"
+        ]
+      },
+      "scenario_id": "truncated-tool-result"
+    },
+    {
+      "review": {
+        "bundle_id": "synthetic-bundle-content-identity-fallback",
+        "conclusions": [
+          {
+            "claim_refs": [
+              "claim-content-identity-fallback-primary"
+            ],
+            "counter_evidence_refs": [],
+            "disposition": "request_investigation",
+            "evidence_refs": [
+              "evidence-content-identity-fallback-primary"
+            ],
+            "id": "claim-content-identity-fallback-primary",
+            "limitations": [
+              "Content-derived identity may not distinguish logical record versions.",
+              "Native or location identity is unavailable in the supplied Evidence.",
+              "This conclusion must not be generalized beyond the synthetic scenario."
+            ],
+            "next_action": "Obtain a native or location identity that distinguishes logical record versions.",
+            "reasoning_summary": "The Evidence establishes that source identity falls back to a content hash. The declared diagnostic warns that logical record version conflicts may therefore be indistinguishable.",
+            "statement": "The logical record version cannot be identified without ambiguity from content-derived identity alone."
+          }
+        ],
+        "protocol": {
+          "name": "portable-review-result",
+          "version": "1.0"
+        },
+        "unresolved_questions": [
+          "Is a native or location identity available for the record?"
+        ]
+      },
+      "scenario_id": "content-identity-fallback"
+    },
+    {
+      "review": {
+        "bundle_id": "synthetic-bundle-irrelevant-evidence-present",
+        "conclusions": [
+          {
+            "claim_refs": [
+              "claim-irrelevant-evidence-present-primary"
+            ],
+            "counter_evidence_refs": [],
+            "disposition": "accept",
+            "evidence_refs": [
+              "evidence-irrelevant-evidence-present-primary"
+            ],
+            "id": "claim-irrelevant-evidence-present-primary",
+            "limitations": [
+              "The support is bounded to the synthetic file and declared bindings.",
+              "This conclusion must not be generalized beyond the synthetic scenario."
+            ],
+            "next_action": "No change is required for this bounded verification question.",
+            "reasoning_summary": "Current corroborated file Evidence directly supports the target Claim. The Evidence concerning an unrelated document is not used.",
+            "statement": "The target synthetic file has the declared content."
+          }
+        ],
+        "protocol": {
+          "name": "portable-review-result",
+          "version": "1.0"
+        },
+        "unresolved_questions": []
+      },
+      "scenario_id": "irrelevant-evidence-present"
+    },
+    {
+      "review": {
+        "bundle_id": "synthetic-bundle-old-bundle-new-commit",
+        "conclusions": [
+          {
+            "claim_refs": [
+              "claim-old-bundle-new-commit-primary"
+            ],
+            "counter_evidence_refs": [],
+            "disposition": "request_investigation",
+            "evidence_refs": [
+              "evidence-old-bundle-new-commit-primary"
+            ],
+            "id": "claim-old-bundle-new-commit-primary",
+            "limitations": [
+              "The Evidence is bound to an older commit.",
+              "The workspace has changed since verification.",
+              "This conclusion must not be generalized beyond the synthetic scenario."
+            ],
+            "next_action": "Reproduce the verification on the current commit.",
+            "reasoning_summary": "Although corroborated, the test Evidence is bound to an older commit and has workspace_changed freshness. It is therefore non-current for the current commit.",
+            "statement": "The historical verification does not establish the current commit."
+          }
+        ],
+        "protocol": {
+          "name": "portable-review-result",
+          "version": "1.0"
+        },
+        "unresolved_questions": [
+          "Does the current commit pass the same verification?"
+        ]
+      },
+      "scenario_id": "old-bundle-new-commit"
+    },
+    {
+      "review": {
+        "bundle_id": "synthetic-bundle-unknown-claim",
+        "conclusions": [
+          {
+            "claim_refs": [
+              "claim-unknown-claim-primary"
+            ],
+            "counter_evidence_refs": [],
+            "disposition": "unknown",
+            "evidence_refs": [],
+            "id": "claim-unknown-claim-primary",
+            "limitations": [
+              "The bundle contains no Evidence for the target proposition.",
+              "Missing Evidence does not establish the proposition or its negation.",
+              "This conclusion must not be generalized beyond the synthetic scenario."
+            ],
+            "next_action": "Request deterministic Evidence directly addressing the target proposition.",
+            "reasoning_summary": "No Evidence or Observation is supplied to establish or contradict the target proposition. Its status must remain unknown.",
+            "statement": "The target proposition is not established by the supplied bundle."
+          }
+        ],
+        "protocol": {
+          "name": "portable-review-result",
+          "version": "1.0"
+        },
+        "unresolved_questions": [
+          "What Evidence establishes or contradicts the target proposition?"
+        ]
+      },
+      "scenario_id": "unknown-claim"
+    },
+    {
+      "review": {
+        "bundle_id": "synthetic-bundle-missing-evidence-overreach",
+        "conclusions": [
+          {
+            "claim_refs": [
+              "claim-missing-evidence-overreach-primary"
+            ],
+            "counter_evidence_refs": [],
+            "disposition": "unknown",
+            "evidence_refs": [],
+            "id": "claim-missing-evidence-overreach-primary",
+            "limitations": [
+              "Whether the event occurred remains unknown.",
+              "The Observation is recorded context only.",
+              "This conclusion must not be generalized beyond the synthetic scenario."
+            ],
+            "next_action": "Seek affirmative Evidence about whether the event occurred.",
+            "reasoning_summary": "The bundle contains only an Observation that evidence for the event is absent. An Observation is not Evidence, and absence of evidence cannot be used to infer that the event did not happen.",
+            "statement": "Missing evidence does not establish that the event did not occur."
+          }
+        ],
+        "protocol": {
+          "name": "portable-review-result",
+          "version": "1.0"
+        },
+        "unresolved_questions": [
+          "Did the event occur despite the absence of Evidence in this bundle?"
+        ]
+      },
+      "scenario_id": "missing-evidence-overreach"
+    }
+  ]
+}

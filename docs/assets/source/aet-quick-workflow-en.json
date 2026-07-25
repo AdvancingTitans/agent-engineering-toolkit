@@ -7,45 +7,45 @@
   "quality_profile": "showcase",
   "width": 960,
   "height": 700,
-  "title": "AET Quick · Bounded Evidence Investigation",
-  "subtitle": "facts stay deterministic · the LLM investigates · the validator checks · the human decides",
+  "title": "AET · Portable Evidence Handoff",
+  "subtitle": "normalize Agent runs · investigate within policy · export evidence any reviewer can read",
   "containers": [
-    { "id": "question", "x": 40, "y": 110, "width": 880, "height": 110, "label": "1 · Bound the question", "stroke": "rgba(255,255,255,0.20)", "fill": "rgba(255,255,255,0.05)" },
-    { "id": "investigate", "x": 40, "y": 270, "width": 880, "height": 140, "label": "2 · Investigate with traceable facts", "stroke": "rgba(255,255,255,0.20)", "fill": "rgba(255,255,255,0.05)" },
-    { "id": "decide", "x": 40, "y": 450, "width": 880, "height": 140, "label": "3 · Validate", "stroke": "rgba(255,255,255,0.20)", "fill": "rgba(255,255,255,0.05)" }
+    { "id": "question", "x": 40, "y": 110, "width": 880, "height": 110, "label": "1 · Normalize the run", "stroke": "rgba(255,255,255,0.20)", "fill": "rgba(255,255,255,0.05)" },
+    { "id": "investigate", "x": 40, "y": 270, "width": 880, "height": 140, "label": "2 · Evidence investigation", "stroke": "rgba(255,255,255,0.20)", "fill": "rgba(255,255,255,0.05)" },
+    { "id": "decide", "x": 40, "y": 450, "width": 880, "height": 140, "label": "3 · Hand off", "stroke": "rgba(255,255,255,0.20)", "fill": "rgba(255,255,255,0.05)" }
   ],
   "nodes": [
-    { "id": "request", "kind": "speech", "x": 60, "y": 146, "width": 160, "height": 54, "label": "Developer Question", "sublabel": "task + constraints", "fill": "rgba(255,255,255,0.12)", "stroke": "rgba(255,255,255,0.35)", "flat": true },
-    { "id": "coordinator", "kind": "double_rect", "x": 390, "y": 146, "width": 200, "height": 54, "type_label": "ONE QUESTION", "label": "AET Quick Skill", "fill": "rgba(255,255,255,0.12)", "stroke": "#c084fc" },
-    { "id": "research", "kind": "rect", "x": 80, "y": 330, "width": 180, "height": 60, "type_label": "DETERMINISTIC", "label": "Tool Facts", "sublabel": "Git · files · tests · hashes", "fill": "rgba(255,255,255,0.12)", "stroke": "#60a5fa" },
-    { "id": "coding", "kind": "terminal", "x": 390, "y": 330, "width": 200, "height": 60, "label": "Bounded LLM", "sublabel": "hypothesis + counter-case", "fill": "#0f172a", "stroke": "rgba(255,255,255,0.24)", "header_fill": "rgba(255,255,255,0.12)" },
-    { "id": "review", "kind": "rect", "x": 700, "y": 330, "width": 180, "height": 60, "type_label": "TRACEABLE", "label": "Investigation Record", "sublabel": "question · result · effect", "fill": "rgba(255,255,255,0.12)", "stroke": "#34d399" },
-    { "id": "memory", "kind": "cylinder", "x": 80, "y": 510, "width": 180, "height": 60, "label": "Evidence Records", "sublabel": "immutable references", "fill": "rgba(255,255,255,0.08)", "stroke": "#34d399" },
-    { "id": "synthesis", "kind": "double_rect", "x": 390, "y": 510, "width": 200, "height": 60, "type_label": "CHECKED", "label": "Grounding Validator", "sublabel": "facts · authority · budget", "fill": "rgba(255,255,255,0.12)", "stroke": "#c084fc" },
-    { "id": "response", "kind": "speech", "x": 700, "y": 510, "width": 180, "height": 60, "label": "Human Decision", "sublabel": "smallest next action", "fill": "rgba(255,255,255,0.12)", "stroke": "#f59e0b", "flat": true }
+    { "id": "request", "kind": "speech", "x": 60, "y": 146, "width": 160, "height": 54, "label": "Executor Run", "sublabel": "Codex · Claude · other", "fill": "rgba(255,255,255,0.12)", "stroke": "rgba(255,255,255,0.35)", "flat": true },
+    { "id": "coordinator", "kind": "double_rect", "x": 390, "y": 146, "width": 200, "height": 54, "type_label": "CANONICAL", "label": "Run Normalizer", "sublabel": "stable IDs + diagnostics", "fill": "rgba(255,255,255,0.12)", "stroke": "#c084fc" },
+    { "id": "research", "kind": "rect", "x": 80, "y": 330, "width": 180, "height": 60, "type_label": "RECORDED", "label": "Observations", "sublabel": "what the run shows", "fill": "rgba(255,255,255,0.12)", "stroke": "#60a5fa" },
+    { "id": "coding", "kind": "terminal", "x": 360, "y": 330, "width": 200, "height": 60, "label": "Read-only Investigator", "sublabel": "hypothesis + counter-case", "fill": "#0f172a", "stroke": "rgba(255,255,255,0.24)", "header_fill": "rgba(255,255,255,0.12)" },
+    { "id": "review", "kind": "rect", "x": 700, "y": 330, "width": 180, "height": 60, "type_label": "DETERMINISTIC", "label": "Evidence Authority", "sublabel": "Proof · Freshness · Git", "fill": "rgba(255,255,255,0.12)", "stroke": "#34d399" },
+    { "id": "memory", "kind": "cylinder", "x": 80, "y": 510, "width": 180, "height": 60, "label": "Portable Records", "sublabel": "Claim · Evidence · Observation", "fill": "rgba(255,255,255,0.08)", "stroke": "#34d399" },
+    { "id": "synthesis", "kind": "double_rect", "x": 360, "y": 510, "width": 200, "height": 60, "type_label": "INTEGRITY", "label": "Bundle Compiler", "sublabel": "select · redact · hash", "fill": "rgba(255,255,255,0.12)", "stroke": "#c084fc" },
+    { "id": "response", "kind": "speech", "x": 700, "y": 510, "width": 180, "height": 60, "label": "Independent Reviewer", "sublabel": "no AET install required", "fill": "rgba(255,255,255,0.12)", "stroke": "#f59e0b", "flat": true }
   ],
   "arrows": [
-    { "id": "brief", "source": "request", "target": "coordinator", "source_port": "right", "target_port": "left", "flow": "read", "motion_role": "ingress", "motion_stage": 1, "motion_order": 0, "label": "question" },
-    { "id": "a-delegate-research", "source": "coordinator", "target": "research", "source_port": "bottom", "target_port": "top", "flow": "control", "motion_role": "delegate", "motion_stage": 2, "motion_order": 0, "label": "collect" },
+    { "id": "brief", "source": "request", "target": "coordinator", "source_port": "right", "target_port": "left", "flow": "read", "motion_role": "ingress", "motion_stage": 1, "motion_order": 0, "label": "native records" },
+    { "id": "a-delegate-research", "source": "coordinator", "target": "research", "source_port": "bottom", "target_port": "top", "flow": "control", "motion_role": "delegate", "motion_stage": 2, "motion_order": 0, "label": "observe" },
     { "id": "b-delegate-coding", "source": "coordinator", "target": "coding", "source_port": "bottom", "target_port": "top", "flow": "control", "motion_role": "delegate", "motion_stage": 2, "motion_order": 1, "label": "investigate" },
-    { "id": "c-delegate-review", "source": "coordinator", "target": "review", "source_port": "bottom", "target_port": "top", "flow": "control", "motion_role": "delegate", "motion_stage": 2, "motion_order": 2, "label": "record" },
-    { "id": "research-write", "source": "research", "target": "memory", "source_port": "bottom", "target_port": "top", "flow": "write", "motion_role": "evidence", "motion_stage": 3, "motion_order": 0, "label": "evidence" },
-    { "id": "memory-merge", "source": "memory", "target": "synthesis", "source_port": "right", "target_port": "left", "flow": "read", "motion_role": "context", "motion_stage": 4, "motion_order": 0, "label": "references" },
-    { "id": "coding-merge", "source": "coding", "target": "synthesis", "source_port": "bottom", "target_port": "top", "flow": "write", "motion_role": "artifact", "motion_stage": 3, "motion_order": 1, "label": "judgment" },
-    { "id": "review-output", "source": "review", "target": "response", "source_port": "bottom", "target_port": "top", "flow": "feedback", "motion_role": "approval", "motion_stage": 5, "motion_order": 1, "label": "audit trail" },
-    { "id": "deliver", "source": "synthesis", "target": "response", "source_port": "right", "target_port": "left", "flow": "feedback", "motion_role": "deliver", "motion_stage": 5, "motion_order": 0, "label": "validated result" }
+    { "id": "c-delegate-review", "source": "coordinator", "target": "review", "source_port": "bottom", "target_port": "top", "flow": "control", "motion_role": "delegate", "motion_stage": 2, "motion_order": 2, "label": "verify" },
+    { "id": "research-write", "source": "research", "target": "memory", "source_port": "bottom", "target_port": "top", "flow": "write", "motion_role": "evidence", "motion_stage": 3, "motion_order": 0, "label": "bounded context" },
+    { "id": "memory-merge", "source": "memory", "target": "synthesis", "source_port": "right", "target_port": "left", "flow": "read", "motion_role": "context", "motion_stage": 4, "motion_order": 0, "label": "records" },
+    { "id": "coding-merge", "source": "coding", "target": "synthesis", "source_port": "bottom", "target_port": "top", "flow": "write", "motion_role": "artifact", "motion_stage": 3, "motion_order": 1, "label": "claims + limits" },
+    { "id": "review-output", "source": "review", "target": "response", "source_port": "bottom", "target_port": "top", "flow": "feedback", "motion_role": "approval", "motion_stage": 5, "motion_order": 1, "label": "verified facts" },
+    { "id": "deliver", "source": "synthesis", "target": "response", "source_port": "right", "target_port": "left", "flow": "feedback", "motion_role": "deliver", "motion_stage": 5, "motion_order": 0, "label": "Evidence Bundle" }
   ],
   "legend_orientation": "horizontal",
   "legend_x": 48,
   "legend_y": 625,
   "legend_locked": true,
   "legend": [
-    { "flow": "read", "label": "input / references" },
-    { "flow": "control", "label": "bounded control" },
-    { "flow": "write", "label": "recorded work" },
-    { "flow": "feedback", "label": "checked output" }
+    { "flow": "read", "label": "records / references" },
+    { "flow": "control", "label": "bounded investigation" },
+    { "flow": "write", "label": "portable records" },
+    { "flow": "feedback", "label": "review handoff" }
   ],
-  "footer": "AET Quick · local-first · read-only by default · no automatic merge, push, release, or Lab entry",
+  "footer": "AET v1.14 · local-first · reviewer needs no AET SDK · no automatic fix, merge, push, or release",
   "footer_x": 48,
   "footer_y": 680
 }

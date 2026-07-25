@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://advancingtitans.github.io/agent-engineering-toolkit/schemas/run-record/v1/run-record.schema.json",
+  "title": "Canonical Agent Run Record v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "record_type", "record_id", "source_identity"],
+  "properties": {
+    "schema_version": {"const": "canonical-run-record/1.0"},
+    "record_type": {"enum": ["meta", "user", "assistant", "reasoning", "tool_call", "tool_result"]},
+    "record_id": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "timestamp": {"type": "string", "format": "date-time"},
+    "source_identity": {"$ref": "#/$defs/sourceIdentity"},
+    "source_type": {"type": "string", "minLength": 1},
+    "working_directory": {"type": "string"},
+    "git_branch": {"type": "string"},
+    "model": {"type": "string"},
+    "content": {"type": "string"},
+    "public_export_allowed": {"type": "boolean"},
+    "tool_call_id": {"type": "string"},
+    "tool_name": {"type": "string", "minLength": 1},
+    "arguments_json": {"type": "string"},
+    "result_json": {"type": "string"},
+    "result_text": {"type": "string"},
+    "linked_tool_call_record_id": {
+      "type": ["string", "null"],
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"record_type": {"const": "meta"}}, "required": ["record_type"]},
+      "then": {"required": ["source_type"]}
+    },
+    {
+      "if": {"properties": {"record_type": {"enum": ["user", "assistant"]}}, "required": ["record_type"]},
+      "then": {"required": ["content"]}
+    },
+    {
+      "if": {"properties": {"record_type": {"const": "reasoning"}}, "required": ["record_type"]},
+      "then": {
+        "required": ["content", "public_export_allowed"],
+        "properties": {"public_export_allowed": {"const": false}}
+      }
+    },
+    {
+      "if": {"properties": {"record_type": {"const": "tool_call"}}, "required": ["record_type"]},
+      "then": {"required": ["tool_call_id", "tool_name", "arguments_json"]}
+    },
+    {
+      "if": {"properties": {"record_type": {"const": "tool_result"}}, "required": ["record_type"]},
+      "then": {"required": ["tool_call_id", "linked_tool_call_record_id"]}
+    }
+  ],
+  "$defs": {
+    "sourceIdentity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "run_group_id",
+        "stable_source_record_id",
+        "identity_kind",
+        "source_order_id",
+        "record_id",
+        "content_hash"
+      ],
+      "properties": {
+        "run_group_id": {"type": "string", "minLength": 1},
+        "stable_source_record_id": {"type": "string", "minLength": 1},
+        "identity_kind": {"enum": ["native", "location", "content", "synthetic"]},
+        "source_order_id": {"type": "string", "minLength": 1},
+        "record_id": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "content_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    }
+  }
+}

@@ -308,7 +308,7 @@
     "topology_draw_on": true
   },
   "artifact": {
-    "bytes": 388071,
+    "bytes": 387580,
     "encoder": "ffmpeg/gif-palette",
     "format": "gif",
     "mime_type": "image/gif",
@@ -327,7 +327,7 @@
       "r_frame_rate": "20/1",
       "width": 960
     },
-    "sha256": "5223e1bb741fbacea394f450fdce68a368d6c2db78ca49caf0ee9658e9d45749",
+    "sha256": "46113c7db3a35ce6eeb67652142bc588f2ec2b0debe159ee4d097fd1562c119e",
     "source_frame_count": 115
   },
   "dry_run": false,
@@ -357,14 +357,14 @@
     "adjacent_duplicate_count": 0,
     "all_frames_unique": true,
     "delta_quality": {
-      "adjacent_max": 0.0018401921568627453,
-      "adjacent_median": 0.0006663176470588236,
+      "adjacent_max": 0.0019660549019607843,
+      "adjacent_median": 0.0006689529411764706,
       "adjacent_min": 6.547607843137255e-06,
-      "adjacent_p95": 0.0007822705882352941,
+      "adjacent_p95": 0.0007808941176470588,
       "changed_area_method": "accumulated adjacent luma delta greater than 2 percent",
-      "changed_area_ratio": 0.03682141176470588,
+      "changed_area_ratio": 0.0403078431372549,
       "metric": "normalized-luma-mean-absolute-difference",
-      "seam": 0.00018440117647058825,
+      "seam": 0.00019833686274509804,
       "seam_within_adjacent_p95": true
     },
     "embedded_loop_count": 0,
@@ -373,13 +373,13 @@
       "adjacent_duplicate_pairs": [],
       "algorithm": "framemd5",
       "all_frames_unique": true,
-      "first_frame_hash": "bc00a5061a21d43ddeef13a121e1c5f3",
+      "first_frame_hash": "8693edfb4dd8dcdce1d28fefe5ad406e",
       "frame_count": 115,
       "intentional_reset_boundary_opacity": 1.0,
       "intentional_reset_boundary_repeat_count": 0,
       "intentional_reset_boundary_repeat_evidence": [],
       "intentional_reset_boundary_repeat_frame": 110,
-      "last_frame_hash": "0dd785c026424bf48a2f39817cefc5ee",
+      "last_frame_hash": "8f8df4258cf9fae62fd3d986af698b50",
       "minimum_unique_frame_count": 75,
       "opening_construction_and_reset_tail_globally_distinct": true,
       "repeat_scope": [
@@ -393,10 +393,10 @@
       "repeats_confined_to_permitted_scope": true,
       "unique_frame_count": 115
     },
-    "first_frame_sha256": "9e0c606380a98381d809b38eb2e3494026300d35eb5e551dc2795e989ec9375b",
+    "first_frame_sha256": "0baaecfdc20e39e5462ca332255f59fc12abbe555122da498a3f4734919ffa80",
     "intentional_reset_boundary_repeat_count": 0,
     "intentional_reset_boundary_repeat_evidence": [],
-    "last_frame_sha256": "e72f2c2bb0a67cb69f13f1bf0349f5517392f0d3b4d1ae370998b0d59c134510",
+    "last_frame_sha256": "38d53f46807b941115fc609d08185a563c7fc4678f01d3e934080d8d11c8f3b7",
     "minimum_unique_frame_count": 75,
     "opening_construction_and_reset_tail_globally_distinct": true,
     "playback": "embedded-infinite",
@@ -405,13 +405,13 @@
       "adjacent_duplicate_pairs": [],
       "algorithm": "sha256",
       "all_frames_unique": true,
-      "first_frame_hash": "9e0c606380a98381d809b38eb2e3494026300d35eb5e551dc2795e989ec9375b",
+      "first_frame_hash": "0baaecfdc20e39e5462ca332255f59fc12abbe555122da498a3f4734919ffa80",
       "frame_count": 115,
       "intentional_reset_boundary_opacity": 1.0,
       "intentional_reset_boundary_repeat_count": 0,
       "intentional_reset_boundary_repeat_evidence": [],
       "intentional_reset_boundary_repeat_frame": 110,
-      "last_frame_hash": "e72f2c2bb0a67cb69f13f1bf0349f5517392f0d3b4d1ae370998b0d59c134510",
+      "last_frame_hash": "38d53f46807b941115fc609d08185a563c7fc4678f01d3e934080d8d11c8f3b7",
       "minimum_unique_frame_count": 75,
       "opening_construction_and_reset_tail_globally_distinct": true,
       "repeat_scope": [
@@ -1793,10 +1793,10 @@
           "geometry_rear_extent": 7,
           "initial_path_distance": 29,
           "initial_point": {
-            "x": 472,
-            "y": 229
+            "x": 467,
+            "y": 224.00003051757812
           },
-          "initial_tangent_rotation": 90,
+          "initial_tangent_rotation": 180,
           "marker_free": true,
           "path_advance_per_rendered_frame": 6,
           "path_length": 432,
@@ -1820,7 +1820,7 @@
           "appended_below_labels_and_nodes": true,
           "center_travel_range": [
             15,
-            115
+            145
           ],
           "direction": "source-to-target",
           "edge_id": "b-delegate-coding",
@@ -1854,7 +1854,7 @@
           "initial_tangent_rotation": 90,
           "marker_free": true,
           "path_advance_per_rendered_frame": 6,
-          "path_length": 130,
+          "path_length": 160,
           "primitive": "glass-task-capsule",
           "rendered_frames": [
             36,
@@ -2013,7 +2013,7 @@
           "geometry_rear_extent": 7,
           "initial_path_distance": 39,
           "initial_point": {
-            "x": 490,
+            "x": 460,
             "y": 429
           },
           "initial_tangent_rotation": 90,
@@ -2040,7 +2040,7 @@
           "appended_below_labels_and_nodes": true,
           "center_travel_range": [
             15,
-            115
+            85
           ],
           "direction": "source-to-target",
           "edge_id": "memory-merge",
@@ -2074,7 +2074,7 @@
           "initial_tangent_rotation": 0,
           "marker_free": true,
           "path_advance_per_rendered_frame": 6,
-          "path_length": 130,
+          "path_length": 100,
           "primitive": "glass-task-capsule",
           "rendered_frames": [
             36,
@@ -2095,7 +2095,7 @@
           "appended_below_labels_and_nodes": true,
           "center_travel_range": [
             15,
-            95
+            125
           ],
           "direction": "source-to-target",
           "edge_id": "deliver",
@@ -2123,13 +2123,13 @@
           "geometry_rear_extent": 7,
           "initial_path_distance": 50,
           "initial_point": {
-            "x": 640,
+            "x": 610,
             "y": 540
           },
           "initial_tangent_rotation": 0,
           "marker_free": true,
           "path_advance_per_rendered_frame": 6,
-          "path_length": 110,
+          "path_length": 140,
           "primitive": "glass-task-capsule",
           "rendered_frames": [
             36,
@@ -2217,8 +2217,8 @@
     "encoders": [
       "gif"
     ],
-    "ffmpeg": "/Users/yjw/.cache/uv/archive-v0/srxjinI55WNKvnwK/lib/python3.13/site-packages/static_ffmpeg/bin/darwin_arm64/ffmpeg",
-    "ffprobe": "/Users/yjw/.cache/uv/archive-v0/srxjinI55WNKvnwK/lib/python3.13/site-packages/static_ffmpeg/bin/darwin_arm64/ffprobe",
+    "ffmpeg": "/tmp/aet-media-bin/ffmpeg",
+    "ffprobe": "/tmp/aet-media-bin/ffprobe",
     "format": {
       "gif": true
     },
@@ -2360,12 +2360,12 @@
     }
   },
   "source_integrity": {
-    "sha256": "7f5b1c3377dc63979d150bd959bfcc2740bd7a68e328a9b452f3a498d74403b6",
-    "sha256_after": "7f5b1c3377dc63979d150bd959bfcc2740bd7a68e328a9b452f3a498d74403b6",
-    "sha256_before": "7f5b1c3377dc63979d150bd959bfcc2740bd7a68e328a9b452f3a498d74403b6",
+    "sha256": "f951f83953f8aade91b84ea3a36a8931e69f1b626649082b421a0ad6680b05d9",
+    "sha256_after": "f951f83953f8aade91b84ea3a36a8931e69f1b626649082b421a0ad6680b05d9",
+    "sha256_before": "f951f83953f8aade91b84ea3a36a8931e69f1b626649082b421a0ad6680b05d9",
     "unchanged": true
   },
-  "source_sha256": "7f5b1c3377dc63979d150bd959bfcc2740bd7a68e328a9b452f3a498d74403b6",
+  "source_sha256": "f951f83953f8aade91b84ea3a36a8931e69f1b626649082b421a0ad6680b05d9",
   "style_contract": {
     "approval_recorded_on": "2026-07-16",
     "scope": "signature-speed-path-geometry-and-construction-schedule",

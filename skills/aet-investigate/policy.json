@@ -1,0 +1,40 @@
+{
+  "schema_version": "portable-investigation-policy/1.0",
+  "allowed_tools": [
+    "run.read",
+    "proof.inspect",
+    "freshness.check"
+  ],
+  "denied_tools": [
+    "command.arbitrary",
+    "file.write",
+    "git.checkout",
+    "git.commit",
+    "git.merge",
+    "git.push",
+    "git.rebase",
+    "git.reset",
+    "publish"
+  ],
+  "budgets": {
+    "max_tool_calls": 4,
+    "max_evidence_candidates": 20,
+    "max_verified_evidence": 2,
+    "max_run_records_read": 200,
+    "max_blob_bytes_read": 0
+  },
+  "command_policy": {
+    "allow_execution": false,
+    "allowed_command_prefixes": []
+  },
+  "workspace_policy": {
+    "read_only": true
+  },
+  "privacy_policy": {
+    "redact_secrets": true,
+    "export_reasoning": false,
+    "export_raw_tool_output": false
+  },
+  "require_competing_hypothesis": true,
+  "require_disconfirming_search": true
+}

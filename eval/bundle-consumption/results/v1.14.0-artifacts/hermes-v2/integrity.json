@@ -1,0 +1,12 @@
+{
+  "aggregate_score": null,
+  "algorithm": "sha256",
+  "consumer_id": "hermes-prompt-only-v2",
+  "file_hashes": {
+    "metadata.json": "08ee3ccc1b0b6c47af161f025a09c7b1d23ff27ff957e69c6079e4cc556408a8",
+    "report.json": "6f87d8faece6d887a5dcf17dd5eaea9571afa6f146c1b98bbf406311812b6006",
+    "response.json": "1b9970ced244cb24faac258fe02e3deab4737d379156400316b3b3613720a87e"
+  },
+  "independently_rescorable": true,
+  "schema_version": "bundle-consumption-publication-integrity/v1"
+}

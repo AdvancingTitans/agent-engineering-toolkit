@@ -1,0 +1,16 @@
+{
+  "aggregate_score": null,
+  "command_argv_sha256": "e3510bc2f7b9f889ee09b22edea89711e888d25817a7951716e1420101506c7b",
+  "command_name": "python3",
+  "consumer_id": "qwen3-local-structured-prompt-only-v3",
+  "elapsed_seconds_to_complete_response": 241.0646777926013,
+  "external_agent_calls": 1,
+  "model_id": "qwen3:8b",
+  "published_raw_transcript": false,
+  "published_structured_response": true,
+  "raw_transcript_persisted": false,
+  "runtime_version": "Ollama 0.32.3",
+  "schema_version": "bundle-consumption-collection-metadata/v1",
+  "stderr_bytes": 0,
+  "stdout_bytes": 8830
+}

@@ -12,20 +12,23 @@
 > the evidence.**
 
 An AI coding Agent says it fixed the task and ran the tests. AET helps answer
-three concrete questions:
+four concrete questions:
 
 1. Did the change stay relevant to the user's task?
 2. Did the claimed verification actually run on this workspace?
 3. Does that proof still apply to the current code?
+4. Can another Agent review the same evidence without installing AET?
 
 Tools produce reproducible facts. The host LLM may recover intent, form
 competing hypotheses, call authorized tools, test counter-explanations, and
 make a conditional engineering judgment. AET's deterministic Grounding API
 validates the recorded references, permissions, evidence strength, and declared
-budget usage before rendering. A human decides what happens next.
+budget usage before rendering. AET can then export the result as a portable,
+self-describing evidence handoff. A human decides what happens next.
 
 ```text
-deterministic facts → bounded LLM investigation → grounding validation → human decision
+deterministic facts → bounded investigation → grounding validation
+                    → portable evidence handoff → independent review → human decision
 ```
 
 ## Four Quick Skills
@@ -56,6 +59,117 @@ aet quick fresh --proof .aet/proofs/auth.json
 The legacy `aet audit`, `review`, `trace`, and `evidence receipt` commands
 remain compatible throughout 1.x. They are advanced native vocabulary, not the
 default Quick product surface.
+
+## Cross-Agent portable evidence handoff
+
+The four Quick Skills remain the daily entrypoints. v1.14.0 adds a separate
+handoff path for a reviewer that may be Codex, Claude Code, Hermes, a local
+model, or another JSON-capable Agent—and must not be assumed to have AET
+installed.
+
+```text
+native Agent run
+  → Run Normalizer
+  → Run Record
+  → Observation / Evidence Candidate
+  → read-only Investigator
+  → bounded observations + explicit UNKNOWN
+  → Portable Evidence Bundle
+  → independent reviewer
+```
+
+The authority boundary is deliberate:
+
+| Layer | What it establishes | What it does not establish |
+| --- | --- | --- |
+| Run Record | What the normalized execution record contains | That a recorded command ran in the current workspace |
+| Observation | A traceable statement with `proves` and `does_not_prove` | Reproduced engineering proof |
+| Evidence Candidate | A proposition that may deserve verification | Permission to promote its strength |
+| Verified Evidence | Git, file, Proof, Freshness, artifact, or authority facts with bindings | The final review judgment |
+| Portable Claim | The bounded investigation status, evidence, counter-evidence, and limitations | Merge, publish, or release authority |
+
+The first-party normalizers support Codex and Claude Code run records, including
+stable identity, content hashes, tool-call/result linking, diagnostics, partial
+input, and incremental continuation:
+
+```bash
+aet run normalize --source codex \
+  --input session.jsonl --output .aet/runs/session
+
+aet investigate --request investigation-request.json \
+  --run .aet/runs/session --output .aet/investigations/review.json
+
+# Optional: inspect an explicit deterministic Proof and current Freshness.
+aet investigate --request investigation-request.json \
+  --run .aet/runs/session --workspace . --proof .aet/proof.json \
+  --output .aet/investigations/verified-review.json
+
+aet bundle create --investigation .aet/investigations/review.json \
+  --output evidence-bundle
+aet bundle validate evidence-bundle
+```
+
+The Investigator is read-only: it cannot execute arbitrary commands, write
+source files, repair code, commit, push, merge, or publish. Run Observations
+remain historical records. Only an explicitly supplied AET Proof that matches a
+recorded command Candidate—and an authorized Freshness check—may create
+Verified Evidence. It requires a primary hypothesis, a competing hypothesis,
+disconfirming search, explicit tool/evidence budgets, and a bounded stop
+condition.
+
+A Bundle provides canonical JSON metadata, JSONL Core records, complete
+Archive references, optional content-addressed Blobs, a deterministic Markdown
+report, and a consumer guide:
+
+```text
+evidence-bundle/
+├── manifest.json
+├── index.json
+├── core/{claims,evidence,observations}.jsonl
+├── archive/{sources,diagnostics,conflicts,ledger}.jsonl
+├── policy.json
+├── consumer-guide.md
+└── report.md
+```
+
+JSON and JSONL are authoritative; Markdown is a deterministic projection. A
+reviewer can read these files directly with no Python package, Node package,
+SDK, MCP server, or AET installation. Observations stay separate from Evidence,
+counter-evidence remains visible, stale evidence keeps its historical result
+but loses current applicability, and missing evidence remains `UNKNOWN`.
+
+Structured reviewers may emit `portable-review-result/1.0`, then use the
+optional reference validator:
+
+```bash
+aet bundle validate-review \
+  --bundle evidence-bundle --review review-result.json
+```
+
+The validator checks Bundle identity, references, counter-evidence retention,
+Freshness, and conclusion strength; it does not replace reviewer judgment.
+Convenience integrations are optional:
+
+```bash
+aet mcp serve
+```
+
+```ts
+import {
+  loadBundle,
+  queryClaims,
+  validateBundle,
+} from "@aet/evidence-bundle";
+```
+
+```python
+from aet_bundle import load_bundle, query_claims, validate_bundle
+```
+
+The TypeScript and Python SDKs provide loading, querying, Blob resolution,
+prompt-context rendering, and reference validation. MCP exposes the same
+bounded normalization, investigation, Bundle lookup, and validation operations;
+none of these convenience layers is required to consume a Bundle.
 
 ## See it in 30 seconds
 
@@ -159,6 +273,35 @@ historical test exit code.
 
 ## Measured trade-offs, not a trust score
 
+### v1.14.0 portable consumption check
+
+The tracked
+[v1.14.0 result](eval/bundle-consumption/results/v1.14.0.json) gives three
+prompt-only consumers the same ten deterministic synthetic Bundles without an
+AET SDK:
+
+| Consumer | Runtime and model | Scenarios | Applicable metric statuses | Not applicable |
+| --- | --- | ---: | --- | ---: |
+| Codex | Codex CLI 0.144.1 · `gpt-5.6-sol` | 10 | 62 `PASS` · 0 `FAIL` · 0 `UNKNOWN` | 38 |
+| Hermes | Hermes Agent 0.17.0 · `kimi-k2.6` | 10 | 62 `PASS` · 0 `FAIL` · 0 `UNKNOWN` | 38 |
+| Local structured consumer | Ollama 0.32.3 · `qwen3:8b` | 10 | 62 `PASS` · 0 `FAIL` · 0 `UNKNOWN` | 38 |
+
+The ten scenarios cover self-report without Proof, stale tool output,
+conflicting Evidence, missing authorization, truncation, content-identity
+fallback, irrelevant Evidence, an old Bundle applied to a new commit, an
+unknown Claim, and missing-evidence overreach. Each response is strict JSON,
+covers every scenario exactly once, and is scored across ten independent
+metrics. The 38 `NOT_APPLICABLE` outcomes are metrics without a relevant
+denominator in that scenario—not hidden successes.
+
+This is a bounded interoperability check on synthetic fixtures, not a general
+model-accuracy claim. It calculates no aggregate or trust score and grants no
+merge, release, or publication authority. The complete
+[harness and limitations](eval/bundle-consumption/README.md) remain
+independently inspectable.
+
+### v1.13.0 Quick investigation trade-offs
+
 The opt-in [Quick investigation benchmark](eval/quick-investigation/README.md)
 compares the four review modes required by the design across eight synthetic Scope
 scenarios. The tracked
@@ -203,21 +346,21 @@ normalized Runs are published; private Codex JSONL is not.
 
 ## Architecture: one workflow, separate authority
 
-![AET Quick animated evidence investigation workflow](docs/assets/aet-quick-workflow-en.gif)
+![AET animated portable evidence handoff](docs/assets/aet-quick-workflow-en.gif)
 
 [Simplified Chinese GIF](docs/assets/aet-quick-workflow-zh-CN.gif) ·
 [scalable SVG](docs/assets/aet-quick-workflow-en.svg) ·
 [motion validation report](docs/assets/aet-quick-workflow-en.motion.json)
 
-The animated workflow answers how one Quick request moves:
+The animated workflow shows the new portable handoff:
 
-1. A Quick Skill bounds the question to Check, Scope, Proof, or Fresh, then stops.
-2. Deterministic tools record Git, file, rule, command, exit-code, hash, and freshness facts.
-3. The host LLM recovers intent, proposes a primary and competing explanation, and chooses authorized tools within budget.
-4. The Investigation Ledger binds questions, tool results, observations, and their effect on the judgment.
-5. The Grounding Validator checks references, facts, conclusion strength, authority, and budget.
-6. The renderer separates confirmed facts, engineering judgment, counter-explanation, uncertainty, location, and the smallest next action.
-7. A human decides whether to fix, split, or verify; AET never starts the next command automatically.
+1. A native executor run enters a source adapter and becomes canonical Run Records with stable IDs and diagnostics.
+2. Recorded behavior becomes an Observation, never reproduced proof by default.
+3. A read-only Investigator tests a primary and competing hypothesis within explicit policy and budget.
+4. Git, Proof, Freshness, and authority facts remain owned by deterministic evidence components.
+5. The Bundle Compiler selects, redacts, hashes, and links Claims, Evidence, Observations, diagnostics, and Blobs.
+6. An independent reviewer consumes the resulting JSON, JSONL, or Markdown without installing AET.
+7. Review remains advisory; a human still owns fix, merge, push, and release decisions.
 
 ### The current repository as a system
 
@@ -228,35 +371,36 @@ The animated workflow answers how one Quick request moves:
 
 The static panorama answers how that workflow maps to this repository:
 
-- **Arrows encode authority, not decorative adjacency.** Solid arrows show the
-  Quick request and result path. Dashed arrows show protocol support or the
-  separate human-authorized entrance to Lab; every arrow terminates at a named
-  component or authority boundary.
-- **Small surface, shared protocol.** `skills/aet-*` and `src/aet/quick/*`
-  expose four daily questions while sharing Evidence First states, proof
-  binding, freshness, schemas, budgets, and authority contracts.
-- **LLM and deterministic code have separate authority.**
-  `src/aet/investigation/*` lets the host explore competing explanations;
-  `grounding.py`, `quick/proof.py`, and `quick/fresh.py` retain final authority
-  over recorded references, execution, and applicability facts.
-- **Language cannot change evidence.** `src/aet/narrative/*` changes only
-  human-facing expression. Both languages must cite the same `result_ref` and
-  cannot rerun an investigation or strengthen a conclusion.
-- **Quick and Lab share a repository, not an automatic path.** Showcase,
-  Context, Decision, Evolve, Quality, Learn, Replay, Gate, Shadow, Stage, and
-  Adopt stay behind an explicit opt-in boundary.
-- **Tests and evaluation prove different things.** `tests/*` checks
-  deterministic rejection paths; `eval/*` measures sampled model trade-offs.
-  Neither becomes a holistic trust score or automatic release authority.
+- **Solid arrows are the evidence-production path.** Native runs flow through
+  normalization, Observation/Candidate extraction, bounded investigation,
+  deterministic verification, Bundle compilation, and independent review.
+- **Dashed arrows are product and consumption surfaces.** Four Quick Skills,
+  CLI/MCP/SDK conveniences, measured consumers, and the human/Lab boundary use
+  the same contracts without becoming evidence authorities.
+- **Run records, observations, and verified evidence are different types.**
+  `src/aet/run_normalization/*`, `src/aet/observations/*`, and
+  `src/aet/evidence_core/*` enforce that distinction before compilation.
+- **The exchange format is implementation-independent.**
+  `schemas/evidence-bundle/v1/*` defines Index/Core/Archive records, integrity,
+  Freshness, conflicts, diagnostics, and review references; an SDK is optional.
+- **Quick remains the small daily surface.** `skills/aet-*` and
+  `src/aet/quick/*` continue to expose Check, Scope, Proof, and Fresh. The
+  portable path adds handoff, not an automatic transition into Lab.
+- **Tests and measured consumers prove different things.** `tests/*` covers
+  deterministic rejection paths; `eval/bundle-consumption/*` checks sampled
+  interoperability. Neither becomes a trust score or action authority.
 
 ### 30-second product introduction
 
 [Watch the English MP4](docs/assets/aet-product-intro-en.mp4) ·
 [观看中文 MP4](docs/assets/aet-product-intro-zh-CN.mp4)
 
-The video follows a daily AI-coding scenario from “the Agent says fixed”
-through the four commands, scope investigation, proof and freshness binding,
-the authority split, and the measured trade-off. The
+The six-scene video explains why a Run Record is not proof, keeps the four Quick
+Skills visible, introduces Run Normalization, separates Observation from
+Evidence, shows SDK-free Bundle consumption, and closes with the measured
+Codex, Hermes, and Ollama/Qwen interoperability check. The
+[portable workflow](docs/architecture/portable-evidence-workflow.md) provides
+the detailed contract. The
 [media manifest](docs/assets/aet-quick-media-manifest.json) binds the bilingual
 GIFs, panoramas, and H.264 MP4 videos by SHA-256 and records their generated
 dimensions, frame counts, frame rates, and durations.
@@ -444,6 +588,11 @@ provenance, and avoid broadening a Quick command beyond its question. See
 
 ## Advanced documentation
 
+- [Portable Evidence Bundle v1](docs/protocols/portable-evidence-bundle-v1.md)
+- [Portable evidence workflow](docs/architecture/portable-evidence-workflow.md)
+- [Generic Agent consumption](docs/guides/generic-agent-consumption.md)
+- [Portable Review Result v1](docs/protocols/review-result-v1.md)
+- [Evidence Bundle threat model](docs/security/evidence-bundle-threat-model.md)
 - [Rule catalog](docs/rule-catalog.md)
 - [Evidence and delivery workflow](skills/agent-engineering-toolkit/references/delivery-workflow.md)
 - [Repository Audit Showcase](skills/agent-engineering-toolkit/references/repository-audit-showcase.md)

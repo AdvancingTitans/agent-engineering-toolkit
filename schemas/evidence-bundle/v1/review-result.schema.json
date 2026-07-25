@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://advancingtitans.github.io/agent-engineering-toolkit/schemas/evidence-bundle/v1/review-result.schema.json",
+  "title": "Portable Review Result v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["protocol", "bundle_id", "conclusions", "unresolved_questions"],
+  "properties": {
+    "extensions": {"type": "object", "additionalProperties": true},
+    "protocol": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "version"],
+      "properties": {
+        "name": {"const": "portable-review-result"},
+        "version": {"const": "1.0"}
+      }
+    },
+    "bundle_id": {"type": "string", "minLength": 1},
+    "conclusions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "statement", "disposition", "claim_refs", "evidence_refs", "counter_evidence_refs", "reasoning_summary", "limitations"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "statement": {"type": "string", "minLength": 1},
+          "disposition": {"enum": ["accept", "request_change", "request_investigation", "unknown"]},
+          "claim_refs": {"type": "array", "items": {"type": "string"}, "minItems": 1, "uniqueItems": true},
+          "evidence_refs": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+          "counter_evidence_refs": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+          "reasoning_summary": {"type": "string", "minLength": 1},
+          "limitations": {"type": "array", "items": {"type": "string"}},
+          "next_action": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "unresolved_questions": {"type": "array", "items": {"type": "string"}}
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://advancingtitans.github.io/agent-engineering-toolkit/schemas/investigation/v1/ledger.schema.json",
+  "title": "Portable Investigation Ledger v1",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["id", "question", "hypothesis_ref", "action", "input_refs", "observation_refs", "evidence_candidate_refs", "effect", "explanation"],
+    "properties": {
+      "id": {"type": "string", "minLength": 1},
+      "question": {"type": "string", "minLength": 1},
+      "hypothesis_ref": {"type": "string", "pattern": "^(primary|competing:[A-Za-z0-9._-]+)$"},
+      "action": {"enum": ["read_run_record", "record_observation", "propose_candidate", "inspect_proof", "check_freshness"]},
+      "tool_name": {"type": "string", "minLength": 1},
+      "input_refs": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+      "output_ref": {"type": "string", "minLength": 1},
+      "observation_refs": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+      "evidence_candidate_refs": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+      "effect": {"enum": ["supports_primary", "weakens_primary", "supports_competing", "weakens_competing", "no_change"]},
+      "explanation": {"type": "string", "minLength": 1}
+    }
+  }
+}

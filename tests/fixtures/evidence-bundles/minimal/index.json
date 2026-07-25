@@ -1,0 +1,34 @@
+{
+  "schema_version": "portable-evidence-bundle-index/1.0",
+  "bundle_id": "bundle-fixture-001",
+  "question": "当前验证结果是否具备可引用证据？",
+  "claim_refs": [
+    "claim-001"
+  ],
+  "evidence_refs": [
+    "ev-001"
+  ],
+  "observation_refs": [
+    "obs-001"
+  ],
+  "reading_order": [
+    "core/claims.jsonl",
+    "core/evidence.jsonl",
+    "core/observations.jsonl"
+  ],
+  "excluded": {
+    "count": 0,
+    "reason": "此脱敏示例只包含当前问题所需记录。"
+  },
+  "archive_available": true,
+  "consumer_guidance": {
+    "must": [
+      "事实结论必须引用有效证据 ID。",
+      "使用历史证据前必须检查时效状态。"
+    ],
+    "must_not": [
+      "不得把执行者自述当作已复现证据。",
+      "不得把缺失证据解释为事情没有发生。"
+    ]
+  }
+}

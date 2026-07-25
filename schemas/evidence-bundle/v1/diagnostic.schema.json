@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://advancingtitans.github.io/agent-engineering-toolkit/schemas/evidence-bundle/v1/diagnostic.schema.json",
+  "title": "Portable Diagnostic v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["code", "severity", "effect", "affected_observation_refs", "affected_evidence_refs"],
+  "properties": {
+    "extensions": {"type": "object", "additionalProperties": true},
+    "code": {"type": "string", "minLength": 1},
+    "severity": {"enum": ["info", "warning", "error"]},
+    "effect": {"type": "string", "minLength": 1},
+    "affected_observation_refs": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "affected_evidence_refs": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "recommended_action": {"type": "string", "minLength": 1}
+  }
+}

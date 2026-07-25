@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://advancingtitans.github.io/agent-engineering-toolkit/schemas/evidence-bundle/v1/evidence.schema.json",
+  "title": "Portable Evidence v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "proposition", "kind", "strength", "strength_definition", "source_refs", "bindings", "freshness", "supports", "contradicts", "limitations", "integrity"],
+  "properties": {
+    "extensions": {"type": "object", "additionalProperties": true},
+    "id": {"type": "string", "minLength": 1},
+    "proposition": {"type": "string", "minLength": 1},
+    "kind": {"enum": ["git_fact", "file_fact", "command_receipt", "test_result", "artifact_fact", "freshness_fact", "authority_fact", "run_observation"]},
+    "strength": {"enum": ["context_only", "observed", "corroborated", "reproduced"]},
+    "strength_definition": {"type": "string", "minLength": 1},
+    "source_refs": {"type": "array", "items": {"type": "string"}, "minItems": 1, "uniqueItems": true},
+    "bindings": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "task_id": {"type": "string"},
+        "workspace_id": {"type": "string"},
+        "repository": {"type": "string"},
+        "commit": {"type": "string"},
+        "paths": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+        "command": {"type": "array", "items": {"type": "string"}},
+        "environment_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    },
+    "freshness": {"$ref": "#/$defs/freshness"},
+    "supports": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "contradicts": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "limitations": {"type": "array", "items": {"type": "string"}},
+    "integrity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["content_hash", "truncated"],
+      "properties": {
+        "content_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "blob_ref": {"type": "string", "pattern": "^blobs/sha256-[0-9a-f]{64}$"},
+        "truncated": {"type": "boolean"},
+        "original_bytes": {"type": "integer", "minimum": 0}
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "integrity": {
+            "properties": {"truncated": {"const": true}},
+            "required": ["truncated"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "integrity": {
+            "required": ["content_hash", "blob_ref", "truncated", "original_bytes"]
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "freshness": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "explanation", "effect"],
+      "properties": {
+        "status": {"enum": ["current", "relevant_files_changed", "workspace_changed", "environment_changed", "unknown"]},
+        "checked_at": {
+          "type": "string",
+          "format": "date-time",
+          "pattern": "(Z|\\+00:00)$"
+        },
+        "explanation": {"type": "string", "minLength": 1},
+        "effect": {"type": "string", "minLength": 1},
+        "recommended_action": {"type": "string", "minLength": 1}
+      }
+    }
+  }
+}

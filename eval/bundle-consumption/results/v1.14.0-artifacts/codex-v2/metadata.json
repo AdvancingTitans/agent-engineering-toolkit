@@ -1,0 +1,16 @@
+{
+  "aggregate_score": null,
+  "command_argv_sha256": "899dc8840abcd01e46dc69e45a2c58bba80db42f09842374aac8d2ca90dd2ea6",
+  "command_name": "codex",
+  "consumer_id": "codex-prompt-only-v2",
+  "elapsed_seconds_to_complete_response": 71.30140320770442,
+  "external_agent_calls": 1,
+  "model_id": "gpt-5.6-sol",
+  "published_raw_transcript": false,
+  "published_structured_response": true,
+  "raw_transcript_persisted": false,
+  "runtime_version": "Codex CLI 0.144.1",
+  "schema_version": "bundle-consumption-collection-metadata/v1",
+  "stderr_bytes": 40493,
+  "stdout_bytes": 10449
+}

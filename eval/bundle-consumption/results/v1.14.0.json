@@ -1,0 +1,256 @@
+{
+  "schema_version": "bundle-consumption-published-result/v1",
+  "release": "1.14.0",
+  "measured_at": "2026-07-25",
+  "fixture_suite": {
+    "id": "portable-bundle-consumption-plan-v1",
+    "scenario_count": 10,
+    "synthetic": true,
+    "general_accuracy_claim": false
+  },
+  "method": {
+    "sdk_used_by_consumers": false,
+    "structured_review_result_required": true,
+    "strict_json_reparse": true,
+    "aggregate_score": null,
+    "timing_definition": "Complete-response elapsed time; an upper bound rather than token-level first-conclusion latency."
+  },
+  "consumers": [
+    {
+      "id": "codex-prompt-only-v2",
+      "runtime": "Codex CLI 0.144.1",
+      "model": "gpt-5.6-sol",
+      "prompt_profile": "portable-core-v1",
+      "status": "AVAILABLE",
+      "external_calls": 1,
+      "strict_json": true,
+      "scenario_count": 10,
+      "elapsed_seconds": 71.301,
+      "published_artifacts": {
+        "path": "results/v1.14.0-artifacts/codex-v2",
+        "integrity_sha256": "29b3bf4fdf12d03fd30e49c1632d903b28dc5821164f2cd73ffb144624041d70"
+      },
+      "applicable_metric_statuses": {
+        "PASS": 62,
+        "FAIL": 0,
+        "UNKNOWN": 0
+      },
+      "not_applicable_metric_statuses": 38,
+      "metrics": {
+        "citation_correctness": {
+          "passed": 17,
+          "total": 17,
+          "rate": 1.0
+        },
+        "observation_evidence_distinction": {
+          "passed": 7,
+          "total": 7,
+          "rate": 1.0
+        },
+        "counter_evidence_retention": {
+          "passed": 1,
+          "total": 1,
+          "rate": 1.0
+        },
+        "unknown_preservation": {
+          "passed": 6,
+          "total": 6,
+          "rate": 1.0
+        },
+        "freshness_handling": {
+          "passed": 6,
+          "total": 6,
+          "rate": 1.0
+        },
+        "unsupported_conclusion_rate": {
+          "failed": 0,
+          "total": 1,
+          "rate": 0.0
+        },
+        "missing_evidence_overreach_rate": {
+          "failed": 0,
+          "total": 6,
+          "rate": 0.0
+        },
+        "relevant_evidence_recall": {
+          "passed": 7,
+          "total": 7,
+          "rate": 1.0
+        },
+        "estimated_context_tokens": {
+          "total": 16035,
+          "minimum_per_scenario": 1203,
+          "maximum_per_scenario": 2003
+        },
+        "grounded_conclusion_timing_available": {
+          "passed": 10,
+          "total": 10
+        }
+      }
+    },
+    {
+      "id": "hermes-prompt-only-v2",
+      "runtime": "Hermes Agent 0.17.0",
+      "model": "kimi-k2.6",
+      "prompt_profile": "portable-core-v1",
+      "status": "AVAILABLE",
+      "external_calls": 1,
+      "strict_json": true,
+      "scenario_count": 10,
+      "elapsed_seconds": 234.494,
+      "published_artifacts": {
+        "path": "results/v1.14.0-artifacts/hermes-v2",
+        "integrity_sha256": "6304da272493060d1081edc9c6aee0a85313e5cb636fd68d391d66009b44fc80"
+      },
+      "applicable_metric_statuses": {
+        "PASS": 62,
+        "FAIL": 0,
+        "UNKNOWN": 0
+      },
+      "not_applicable_metric_statuses": 38,
+      "metrics": {
+        "citation_correctness": {
+          "passed": 17,
+          "total": 17,
+          "rate": 1.0
+        },
+        "observation_evidence_distinction": {
+          "passed": 7,
+          "total": 7,
+          "rate": 1.0
+        },
+        "counter_evidence_retention": {
+          "passed": 1,
+          "total": 1,
+          "rate": 1.0
+        },
+        "unknown_preservation": {
+          "passed": 6,
+          "total": 6,
+          "rate": 1.0
+        },
+        "freshness_handling": {
+          "passed": 6,
+          "total": 6,
+          "rate": 1.0
+        },
+        "unsupported_conclusion_rate": {
+          "failed": 0,
+          "total": 1,
+          "rate": 0.0
+        },
+        "missing_evidence_overreach_rate": {
+          "failed": 0,
+          "total": 6,
+          "rate": 0.0
+        },
+        "relevant_evidence_recall": {
+          "passed": 7,
+          "total": 7,
+          "rate": 1.0
+        },
+        "estimated_context_tokens": {
+          "total": 16019,
+          "minimum_per_scenario": 1175,
+          "maximum_per_scenario": 2012
+        },
+        "grounded_conclusion_timing_available": {
+          "passed": 10,
+          "total": 10
+        }
+      }
+    },
+    {
+      "id": "qwen3-local-structured-prompt-only-v3",
+      "runtime": "Ollama 0.32.3",
+      "model": "qwen3:8b",
+      "prompt_profile": "portable-core-v1-explicit-reference-sets",
+      "status": "AVAILABLE",
+      "external_calls": 1,
+      "strict_json": true,
+      "scenario_count": 10,
+      "elapsed_seconds": 241.065,
+      "published_artifacts": {
+        "path": "results/v1.14.0-artifacts/qwen3-v3",
+        "integrity_sha256": "d968e0fc2acd70014aaf9f5d8ee18ecb3e0924ff97edce41b64584d6dd0aad77"
+      },
+      "applicable_metric_statuses": {
+        "PASS": 62,
+        "FAIL": 0,
+        "UNKNOWN": 0
+      },
+      "not_applicable_metric_statuses": 38,
+      "metrics": {
+        "citation_correctness": {
+          "passed": 17,
+          "total": 17,
+          "rate": 1.0
+        },
+        "observation_evidence_distinction": {
+          "passed": 7,
+          "total": 7,
+          "rate": 1.0
+        },
+        "counter_evidence_retention": {
+          "passed": 1,
+          "total": 1,
+          "rate": 1.0
+        },
+        "unknown_preservation": {
+          "passed": 6,
+          "total": 6,
+          "rate": 1.0
+        },
+        "freshness_handling": {
+          "passed": 6,
+          "total": 6,
+          "rate": 1.0
+        },
+        "unsupported_conclusion_rate": {
+          "failed": 0,
+          "total": 1,
+          "rate": 0.0
+        },
+        "missing_evidence_overreach_rate": {
+          "failed": 0,
+          "total": 6,
+          "rate": 0.0
+        },
+        "relevant_evidence_recall": {
+          "passed": 7,
+          "total": 7,
+          "rate": 1.0
+        },
+        "estimated_context_tokens": {
+          "total": 15631,
+          "minimum_per_scenario": 1153,
+          "maximum_per_scenario": 2009
+        },
+        "grounded_conclusion_timing_available": {
+          "passed": 10,
+          "total": 10
+        }
+      }
+    },
+    {
+      "id": "claude-code-unavailable",
+      "runtime": "Claude Code 2.1.186",
+      "model": null,
+      "status": "NOT_APPLICABLE",
+      "reason": "The local CLI was not logged in; no success or failure was inferred.",
+      "external_calls": 0,
+      "strict_json": null,
+      "scenario_count": 10,
+      "metrics": {
+        "status": "NOT_APPLICABLE"
+      }
+    }
+  ],
+  "limitations": [
+    "These measurements cover ten synthetic Fixtures and do not establish general model accuracy.",
+    "The consumers received the same portable Core semantics without an AET SDK.",
+    "The Qwen v3 retry used explicit allowed Evidence and forbidden Observation reference sets after the first structured response exposed three citation-kind errors; Codex and Hermes used the earlier generic constraint wording.",
+    "No result authorizes merge, release, or trust.",
+    "Claude Code was unavailable locally and remains NOT_APPLICABLE."
+  ]
+}

@@ -1,0 +1,81 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://advancingtitans.github.io/agent-engineering-toolkit/schemas/optimization/v1/candidate.schema.json",
+  "title": "Optimization Candidate v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "target",
+    "observedProblem",
+    "supportingRunRefs",
+    "supportingBundleRefs",
+    "supportingReviewRefs",
+    "proposedChange",
+    "expectedEffect",
+    "possibleRegression",
+    "evaluationRequired"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "target": {
+      "enum": [
+        "source_adapter",
+        "observation_extractor",
+        "investigation_policy",
+        "tool_selection",
+        "bundle_selector",
+        "consumer_guide",
+        "grounding_validator"
+      ]
+    },
+    "observedProblem": {
+      "type": "string",
+      "minLength": 1
+    },
+    "supportingRunRefs": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true
+    },
+    "supportingBundleRefs": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "supportingReviewRefs": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "proposedChange": {
+      "type": "string",
+      "minLength": 1
+    },
+    "expectedEffect": {
+      "type": "string",
+      "minLength": 1
+    },
+    "possibleRegression": {
+      "type": "string",
+      "minLength": 1
+    },
+    "evaluationRequired": {
+      "const": true
+    }
+  }
+}

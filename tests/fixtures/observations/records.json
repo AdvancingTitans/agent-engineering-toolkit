@@ -1,0 +1,151 @@
+{
+  "records": [
+    {
+      "schema_version": "canonical-run-record/1.0",
+      "record_type": "meta",
+      "record_id": "8ddb8828336c0a0fb9746ed8e49e1046bb290ecfdfa961f8d13a99f0096df2f6",
+      "timestamp": "2026-01-02T03:04:00Z",
+      "source_identity": {
+        "run_group_id": "run-observation-fixture",
+        "stable_source_record_id": "meta-001",
+        "identity_kind": "synthetic",
+        "source_order_id": "order-000",
+        "record_id": "8ddb8828336c0a0fb9746ed8e49e1046bb290ecfdfa961f8d13a99f0096df2f6",
+        "content_hash": "e1af7e423cc4e398e894baa8c35f0f5d623e96dfe010e4511fb054d7edf1e26c"
+      },
+      "source_type": "codex",
+      "working_directory": "/workspace/sanitized",
+      "git_branch": "fixture-main",
+      "model": "fixture-model"
+    },
+    {
+      "schema_version": "canonical-run-record/1.0",
+      "record_type": "user",
+      "record_id": "caba3fa7f7f2df51ab28d0366068945e0cc60fdb60b650c4d2bfd51ba6b8e33b",
+      "timestamp": "2026-01-02T03:04:01Z",
+      "source_identity": {
+        "run_group_id": "run-observation-fixture",
+        "stable_source_record_id": "user-001",
+        "identity_kind": "native",
+        "source_order_id": "order-001",
+        "record_id": "caba3fa7f7f2df51ab28d0366068945e0cc60fdb60b650c4d2bfd51ba6b8e33b",
+        "content_hash": "bbde816ae1f5b1dcf18f6a0820ebc02504d849d5c4e1cebc313a564d2209ec08"
+      },
+      "content": "Did the authentication tests pass?"
+    },
+    {
+      "schema_version": "canonical-run-record/1.0",
+      "record_type": "reasoning",
+      "record_id": "6e96a021e40a34359b77f1c7eb2811d1bd9f6469836fedd996ed9166bef49c77",
+      "timestamp": "2026-01-02T03:04:02Z",
+      "source_identity": {
+        "run_group_id": "run-observation-fixture",
+        "stable_source_record_id": "reasoning-001",
+        "identity_kind": "native",
+        "source_order_id": "order-002",
+        "record_id": "6e96a021e40a34359b77f1c7eb2811d1bd9f6469836fedd996ed9166bef49c77",
+        "content_hash": "edb7812654904cd0ea93236d34760424660917d76b45ac734213d1ffd31aab90"
+      },
+      "content": "Authentication tests should pass because the change is small.",
+      "public_export_allowed": false
+    },
+    {
+      "schema_version": "canonical-run-record/1.0",
+      "record_type": "tool_call",
+      "record_id": "3168b860713666fa8bf8a0cafe06b8f3f11c74181b0ca3e744c0f2ac2ec3f9b2",
+      "timestamp": "2026-01-02T03:04:03Z",
+      "source_identity": {
+        "run_group_id": "run-observation-fixture",
+        "stable_source_record_id": "call-pass-001",
+        "identity_kind": "native",
+        "source_order_id": "order-003",
+        "record_id": "3168b860713666fa8bf8a0cafe06b8f3f11c74181b0ca3e744c0f2ac2ec3f9b2",
+        "content_hash": "cb030862d021ff44a18d88ed435a00865d4cbbb17cd8983328cbd0df71f6bb58"
+      },
+      "tool_call_id": "call-auth-pass",
+      "tool_name": "shell",
+      "arguments_json": "{\"command\":[\"pytest\",\"tests/auth\"]}"
+    },
+    {
+      "schema_version": "canonical-run-record/1.0",
+      "record_type": "tool_result",
+      "record_id": "0d5b4844c6309fe441c53d7359ba84f17da663c2fd820d85abaec8e0bfda9248",
+      "timestamp": "2026-01-02T03:04:04Z",
+      "source_identity": {
+        "run_group_id": "run-observation-fixture",
+        "stable_source_record_id": "result-pass-001",
+        "identity_kind": "native",
+        "source_order_id": "order-004",
+        "record_id": "0d5b4844c6309fe441c53d7359ba84f17da663c2fd820d85abaec8e0bfda9248",
+        "content_hash": "ba3cc753a13d099aa12b968e9157c51e5165b19984e6bced670d030e5531078f"
+      },
+      "tool_call_id": "call-auth-pass",
+      "result_text": "authentication tests: 12 passed",
+      "linked_tool_call_record_id": "3168b860713666fa8bf8a0cafe06b8f3f11c74181b0ca3e744c0f2ac2ec3f9b2"
+    },
+    {
+      "schema_version": "canonical-run-record/1.0",
+      "record_type": "tool_call",
+      "record_id": "ba6bdb8876676d68473f763769a51790faf722dba459033da0a7da767d14f9ee",
+      "timestamp": "2026-01-02T03:04:05Z",
+      "source_identity": {
+        "run_group_id": "run-observation-fixture",
+        "stable_source_record_id": "call-fail-001",
+        "identity_kind": "native",
+        "source_order_id": "order-005",
+        "record_id": "ba6bdb8876676d68473f763769a51790faf722dba459033da0a7da767d14f9ee",
+        "content_hash": "c73b848ac93f38a6362f7d279f7b2117ef5b9fde8c05a728486036b3c9a1c032"
+      },
+      "tool_call_id": "call-auth-fail",
+      "tool_name": "shell",
+      "arguments_json": "{\"command\":[\"pytest\",\"tests/auth\"]}"
+    },
+    {
+      "schema_version": "canonical-run-record/1.0",
+      "record_type": "tool_result",
+      "record_id": "c7891d04140fc3aad06194e0b0332948301301f71f32adf6245403e98bfcf895",
+      "timestamp": "2026-01-02T03:04:06Z",
+      "source_identity": {
+        "run_group_id": "run-observation-fixture",
+        "stable_source_record_id": "result-fail-001",
+        "identity_kind": "native",
+        "source_order_id": "order-006",
+        "record_id": "c7891d04140fc3aad06194e0b0332948301301f71f32adf6245403e98bfcf895",
+        "content_hash": "ab49b65734862a44446ad93d4d232e132abb53b2f495e58c950445816c7feef8"
+      },
+      "tool_call_id": "call-auth-fail",
+      "result_text": "authentication tests: 1 failed",
+      "linked_tool_call_record_id": "ba6bdb8876676d68473f763769a51790faf722dba459033da0a7da767d14f9ee"
+    },
+    {
+      "schema_version": "canonical-run-record/1.0",
+      "record_type": "assistant",
+      "record_id": "864a1ce381eb3cf32cbbc37e01249c4009cf163160a7bcffd2d7bf4458a6b73c",
+      "timestamp": "2026-01-02T03:04:07Z",
+      "source_identity": {
+        "run_group_id": "run-observation-fixture",
+        "stable_source_record_id": "assistant-auth-001",
+        "identity_kind": "native",
+        "source_order_id": "order-007",
+        "record_id": "864a1ce381eb3cf32cbbc37e01249c4009cf163160a7bcffd2d7bf4458a6b73c",
+        "content_hash": "733f644114f46a7bd2a593b8ee3222fc50c8b5a8429925b133ff689772117db8"
+      },
+      "content": "Authentication tests passed."
+    },
+    {
+      "schema_version": "canonical-run-record/1.0",
+      "record_type": "assistant",
+      "record_id": "1f3532b4bf67bfe3bb3316cebc72983664a647aaf06b9cc9cfd8abc0c6b44398",
+      "timestamp": "2026-01-02T03:04:08Z",
+      "source_identity": {
+        "run_group_id": "run-observation-fixture",
+        "stable_source_record_id": "assistant-docs-001",
+        "identity_kind": "native",
+        "source_order_id": "order-008",
+        "record_id": "1f3532b4bf67bfe3bb3316cebc72983664a647aaf06b9cc9cfd8abc0c6b44398",
+        "content_hash": "99f0518ece378848bde16677f71eb6b8ff08d6d827a7b852f7cf3c395c931c3d"
+      },
+      "content": "Documentation spelling was updated."
+    }
+  ]
+}

@@ -1,0 +1,956 @@
+{
+  "aggregate_score": null,
+  "consumer_id": "qwen3-local-structured-prompt-only-v3",
+  "consumer_status": "AVAILABLE",
+  "elapsed_seconds_to_complete_response": 241.0646777926013,
+  "limitations": [
+    "Synthetic fixtures do not establish general Agent accuracy.",
+    "Metrics remain independent; no trust score is calculated.",
+    "Per-conclusion timing uses complete-response elapsed time as a measured upper bound, not token-level first-conclusion latency."
+  ],
+  "report_kind": "bundle_consumption_measured_collection",
+  "scenario_count": 10,
+  "scenarios": [
+    {
+      "bundle_id": "synthetic-bundle-agent-self-report-without-proof",
+      "consumer_id": "qwen3-local-structured-prompt-only-v3",
+      "consumer_status": "AVAILABLE",
+      "limitations": [
+        "Metrics describe only the supplied Bundle, Review Result, and annotations.",
+        "No metric authorizes merge, release, or trust."
+      ],
+      "method": {
+        "aggregate_score": false,
+        "external_agent_calls": 1,
+        "token_estimation": "ceil(canonical UTF-8 bytes / 4)"
+      },
+      "metrics": {
+        "citation_correctness": {
+          "explanation": "References must resolve to the declared record kind.",
+          "passed": 1,
+          "rate": 1.0,
+          "status": "PASS",
+          "total": 1
+        },
+        "context_tokens": {
+          "estimated_tokens": 1370,
+          "explanation": "Approximation: ceil(UTF-8 bytes of canonical Bundle Index/Core plus Review JSON / 4).",
+          "status": "PASS",
+          "utf8_bytes": 5478
+        },
+        "counter_evidence_retention": {
+          "explanation": "Every counter-evidence reference declared by cited Claims must remain visible.",
+          "missing_refs": [],
+          "passed": 0,
+          "rate": null,
+          "status": "NOT_APPLICABLE",
+          "total": 0
+        },
+        "freshness_handling": {
+          "explanation": "A decisive conclusion cannot rely on non-current Evidence.",
+          "passed": 0,
+          "rate": null,
+          "status": "NOT_APPLICABLE",
+          "total": 0
+        },
+        "missing_evidence_overreach_rate": {
+          "explanation": "Missing evidence must not be converted into a decisive conclusion.",
+          "failed": 0,
+          "overreach_conclusion_ids": [],
+          "overreach_count": 0,
+          "rate": 0.0,
+          "status": "PASS",
+          "total": 1
+        },
+        "observation_evidence_distinction": {
+          "explanation": "Observation IDs cannot be presented in Evidence or counter-evidence roles.",
+          "observation_ids_misused": [],
+          "passed": 0,
+          "rate": null,
+          "status": "NOT_APPLICABLE",
+          "total": 0
+        },
+        "relevant_evidence_recall": {
+          "explanation": "Expected relevant Evidence IDs cited by the Review Result.",
+          "missing_refs": [],
+          "passed": 0,
+          "rate": null,
+          "status": "NOT_APPLICABLE",
+          "total": 0
+        },
+        "time_to_first_grounded_conclusion": {
+          "conclusion_id": "claim-agent-self-report-without-proof-primary",
+          "explanation": "Minimum measured elapsed time among grounded conclusions.",
+          "seconds": 241.0646777926013,
+          "status": "PASS"
+        },
+        "unknown_preservation": {
+          "explanation": "Unknown Claims cannot be strengthened into a decisive disposition.",
+          "passed": 1,
+          "rate": 1.0,
+          "status": "PASS",
+          "total": 1
+        },
+        "unsupported_conclusion_rate": {
+          "explanation": "Each decisive Claim requires cited, current, corroborated or reproduced Evidence.",
+          "failed": 0,
+          "rate": null,
+          "status": "NOT_APPLICABLE",
+          "total": 0,
+          "unsupported_conclusion_ids": [],
+          "unsupported_count": 0
+        }
+      },
+      "report_kind": "bundle_consumption_evaluation",
+      "scenario_id": "agent-self-report-without-proof",
+      "schema_version": "bundle-consumption-evaluation/v1"
+    },
+    {
+      "bundle_id": "synthetic-bundle-tool-log-stale-after-change",
+      "consumer_id": "qwen3-local-structured-prompt-only-v3",
+      "consumer_status": "AVAILABLE",
+      "limitations": [
+        "Metrics describe only the supplied Bundle, Review Result, and annotations.",
+        "No metric authorizes merge, release, or trust."
+      ],
+      "method": {
+        "aggregate_score": false,
+        "external_agent_calls": 1,
+        "token_estimation": "ceil(canonical UTF-8 bytes / 4)"
+      },
+      "metrics": {
+        "citation_correctness": {
+          "explanation": "References must resolve to the declared record kind.",
+          "passed": 2,
+          "rate": 1.0,
+          "status": "PASS",
+          "total": 2
+        },
+        "context_tokens": {
+          "estimated_tokens": 1720,
+          "explanation": "Approximation: ceil(UTF-8 bytes of canonical Bundle Index/Core plus Review JSON / 4).",
+          "status": "PASS",
+          "utf8_bytes": 6880
+        },
+        "counter_evidence_retention": {
+          "explanation": "Every counter-evidence reference declared by cited Claims must remain visible.",
+          "missing_refs": [],
+          "passed": 0,
+          "rate": null,
+          "status": "NOT_APPLICABLE",
+          "total": 0
+        },
+        "freshness_handling": {
+          "explanation": "A decisive conclusion cannot rely on non-current Evidence.",
+          "passed": 1,
+          "rate": 1.0,
+          "status": "PASS",
+          "total": 1
+        },
+        "missing_evidence_overreach_rate": {
+          "explanation": "Missing evidence must not be converted into a decisive conclusion.",
+          "failed": 0,
+          "overreach_conclusion_ids": [],
+          "overreach_count": 0,
+          "rate": null,
+          "status": "NOT_APPLICABLE",
+          "total": 0
+        },
+        "observation_evidence_distinction": {
+          "explanation": "Observation IDs cannot be presented in Evidence or counter-evidence roles.",
+          "observation_ids_misused": [],
+          "passed": 1,
+          "rate": 1.0,
+          "status": "PASS",
+          "total": 1
+        },
+        "relevant_evidence_recall": {
+          "explanation": "Expected relevant Evidence IDs cited by the Review Result.",
+          "missing_refs": [],
+          "passed": 1,
+          "rate": 1.0,
+          "status": "PASS",
+          "total": 1
+        },
+        "time_to_first_grounded_conclusion": {
+          "conclusion_id": "claim-tool-log-stale-after-change-primary",
+          "explanation": "Minimum measured elapsed time among grounded conclusions.",
+          "seconds": 241.0646777926013,
+          "status": "PASS"
+        },
+        "unknown_preservation": {
+          "explanation": "Unknown Claims cannot be strengthened into a decisive disposition.",
+          "passed": 0,
+          "rate": null,
+          "status": "NOT_APPLICABLE",
+          "total": 0
+        },
+        "unsupported_conclusion_rate": {
+          "explanation": "Each decisive Claim requires cited, current, corroborated or reproduced Evidence.",
+          "failed": 0,
+          "rate": null,
+          "status": "NOT_APPLICABLE",
+          "total": 0,
+          "unsupported_conclusion_ids": [],
+          "unsupported_count": 0
+        }
+      },
+      "report_kind": "bundle_consumption_evaluation",
+      "scenario_id": "tool-log-stale-after-change",
+      "schema_version": "bundle-consumption-evaluation/v1"
+    },
+    {
+      "bundle_id": "synthetic-bundle-primary-counter-conflict",
+      "consumer_id": "qwen3-local-structured-prompt-only-v3",
+      "consumer_status": "AVAILABLE",
+      "limitations": [
+        "Metrics describe only the supplied Bundle, Review Result, and annotations.",
+        "No metric authorizes merge, release, or trust."
+      ],
+      "method": {
+        "aggregate_score": false,
+        "external_agent_calls": 1,
+        "token_estimation": "ceil(canonical UTF-8 bytes / 4)"
+      },
+      "metrics": {
+        "citation_correctness": {
+          "explanation": "References must resolve to the declared record kind.",
+          "passed": 3,
+          "rate": 1.0,
+          "status": "PASS",
+          "total": 3
+        },
+        "context_tokens": {
+          "estimated_tokens": 1825,
+          "explanation": "Approximation: ceil(UTF-8 bytes of canonical Bundle Index/Core plus Review JSON / 4).",
+          "status": "PASS",
+          "utf8_bytes": 7298
+        },
+        "counter_evidence_retention": {
+          "explanation": "Every counter-evidence reference declared by cited Claims must remain visible.",
+          "missing_refs": [],
+          "passed": 1,
+          "rate": 1.0,
+          "status": "PASS",
+          "total": 1
+        },
+        "freshness_handling": {
+          "explanation": "A decisive conclusion cannot rely on non-current Evidence.",
+          "passed": 1,
+          "rate": 1.0,
+          "status": "PASS",
+          "total": 1
+        },
+        "missing_evidence_overreach_rate": {
+          "explanation": "Missing evidence must not be converted into a decisive conclusion.",
+          "failed": 0,
+          "overreach_conclusion_ids": [],
+          "overreach_count": 0,
+          "rate": null,
+          "status": "NOT_APPLICABLE",
+          "total": 0
+        },
+        "observation_evidence_distinction": {
+          "explanation": "Observation IDs cannot be presented in Evidence or counter-evidence roles.",
+          "observation_ids_misused": [],
+          "passed": 2,
+          "rate": 1.0,
+          "status": "PASS",
+          "total": 2
+        },
+        "relevant_evidence_recall": {
+          "explanation": "Expected relevant Evidence IDs cited by the Review Result.",
+          "missing_refs": [],
+          "passed": 2,
+          "rate": 1.0,
+          "status": "PASS",
+          "total": 2
+        },
+        "time_to_first_grounded_conclusion": {
+          "conclusion_id": "claim-primary-counter-conflict-primary",
+          "explanation": "Minimum measured elapsed time among grounded conclusions.",
+          "seconds": 241.0646777926013,
+          "status": "PASS"
+        },
+        "unknown_preservation": {
+          "explanation": "Unknown Claims cannot be strengthened into a decisive disposition.",
+          "passed": 0,
+          "rate": null,
+          "status": "NOT_APPLICABLE",
+          "total": 0
+        },
+        "unsupported_conclusion_rate": {
+          "explanation": "Each decisive Claim requires cited, current, corroborated or reproduced Evidence.",
+          "failed": 0,
+          "rate": null,
+          "status": "NOT_APPLICABLE",
+          "total": 0,
+          "unsupported_conclusion_ids": [],
+          "unsupported_count": 0
+        }
+      },
+      "report_kind": "bundle_consumption_evaluation",
+      "scenario_id": "primary-counter-conflict",
+      "schema_version": "bundle-consumption-evaluation/v1"
+    },
+    {
+      "bundle_id": "synthetic-bundle-authorization-not-found",
+      "consumer_id": "qwen3-local-structured-prompt-only-v3",
+      "consumer_status": "AVAILABLE",
+      "limitations": [
+        "Metrics describe only the supplied Bundle, Review Result, and annotations.",
+        "No metric authorizes merge, release, or trust."
+      ],
+      "method": {
+        "aggregate_score": false,
+        "external_agent_calls": 1,
+        "token_estimation": "ceil(canonical UTF-8 bytes / 4)"
+      },
+      "metrics": {
+        "citation_correctness": {
+          "explanation": "References must resolve to the declared record kind.",
+          "passed": 1,
+          "rate": 1.0,
+          "status": "PASS",
+          "total": 1
+        },
+        "context_tokens": {
+          "estimated_tokens": 1327,
+          "explanation": "Approximation: ceil(UTF-8 bytes of canonical Bundle Index/Core plus Review JSON / 4).",
+          "status": "PASS",
+          "utf8_bytes": 5305
+        },
+        "counter_evidence_retention": {
+          "explanation": "Every counter-evidence reference declared by cited Claims must remain visible.",
+          "missing_refs": [],
+          "passed": 0,
+          "rate": null,
+          "status": "NOT_APPLICABLE",
+          "total": 0
+        },
+        "freshness_handling": {
+          "explanation": "A decisive conclusion cannot rely on non-current Evidence.",
+          "passed": 0,
+          "rate": null,
+          "status": "NOT_APPLICABLE",
+          "total": 0
+        },
+        "missing_evidence_overreach_rate": {
+          "explanation": "Missing evidence must not be converted into a decisive conclusion.",
+          "failed": 0,
+          "overreach_conclusion_ids": [],
+          "overreach_count": 0,
+          "rate": 0.0,
+          "status": "PASS",
+          "total": 1
+        },
+        "observation_evidence_distinction": {
+          "explanation": "Observation IDs cannot be presented in Evidence or counter-evidence roles.",
+          "observation_ids_misused": [],
+          "passed": 0,
+          "rate": null,
+          "status": "NOT_APPLICABLE",
+          "total": 0
+        },
+        "relevant_evidence_recall": {
+          "explanation": "Expected relevant Evidence IDs cited by the Review Result.",
+          "missing_refs": [],
+          "passed": 0,
+          "rate": null,
+          "status": "NOT_APPLICABLE",
+          "total": 0
+        },
+        "time_to_first_grounded_conclusion": {
+          "conclusion_id": "claim-authorization-not-found-primary",
+          "explanation": "Minimum measured elapsed time among grounded conclusions.",
+          "seconds": 241.0646777926013,
+          "status": "PASS"
+        },
+        "unknown_preservation": {
+          "explanation": "Unknown Claims cannot be strengthened into a decisive disposition.",
+          "passed": 1,
+          "rate": 1.0,
+          "status": "PASS",
+          "total": 1
+        },
+        "unsupported_conclusion_rate": {
+          "explanation": "Each decisive Claim requires cited, current, corroborated or reproduced Evidence.",
+          "failed": 0,
+          "rate": null,
+          "status": "NOT_APPLICABLE",
+          "total": 0,
+          "unsupported_conclusion_ids": [],
+          "unsupported_count": 0
+        }
+      },
+      "report_kind": "bundle_consumption_evaluation",
+      "scenario_id": "authorization-not-found",
+      "schema_version": "bundle-consumption-evaluation/v1"
+    },
+    {
+      "bundle_id": "synthetic-bundle-truncated-tool-result",
+      "consumer_id": "qwen3-local-structured-prompt-only-v3",
+      "consumer_status": "AVAILABLE",
+      "limitations": [
+        "Metrics describe only the supplied Bundle, Review Result, and annotations.",
+        "No metric authorizes merge, release, or trust."
+      ],
+      "method": {
+        "aggregate_score": false,
+        "external_agent_calls": 1,
+        "token_estimation": "ceil(canonical UTF-8 bytes / 4)"
+      },
+      "metrics": {
+        "citation_correctness": {
+          "explanation": "References must resolve to the declared record kind.",
+          "passed": 2,
+          "rate": 1.0,
+          "status": "PASS",
+          "total": 2
+        },
+        "context_tokens": {
+          "estimated_tokens": 1716,
+          "explanation": "Approximation: ceil(UTF-8 bytes of canonical Bundle Index/Core plus Review JSON / 4).",
+          "status": "PASS",
+          "utf8_bytes": 6864
+        },
+        "counter_evidence_retention": {
+          "explanation": "Every counter-evidence reference declared by cited Claims must remain visible.",
+          "missing_refs": [],
+          "passed": 0,
+          "rate": null,
+          "status": "NOT_APPLICABLE",
+          "total": 0
+        },
+        "freshness_handling": {
+          "explanation": "A decisive conclusion cannot rely on non-current Evidence.",
+          "passed": 1,
+          "rate": 1.0,
+          "status": "PASS",
+          "total": 1
+        },
+        "missing_evidence_overreach_rate": {
+          "explanation": "Missing evidence must not be converted into a decisive conclusion.",
+          "failed": 0,
+          "overreach_conclusion_ids": [],
+          "overreach_count": 0,
+          "rate": 0.0,
+          "status": "PASS",
+          "total": 1
+        },
+        "observation_evidence_distinction": {
+          "explanation": "Observation IDs cannot be presented in Evidence or counter-evidence roles.",
+          "observation_ids_misused": [],
+          "passed": 1,
+          "rate": 1.0,
+          "status": "PASS",
+          "total": 1
+        },
+        "relevant_evidence_recall": {
+          "explanation": "Expected relevant Evidence IDs cited by the Review Result.",
+          "missing_refs": [],
+          "passed": 1,
+          "rate": 1.0,
+          "status": "PASS",
+          "total": 1
+        },
+        "time_to_first_grounded_conclusion": {
+          "conclusion_id": "claim-truncated-tool-result-primary",
+          "explanation": "Minimum measured elapsed time among grounded conclusions.",
+          "seconds": 241.0646777926013,
+          "status": "PASS"
+        },
+        "unknown_preservation": {
+          "explanation": "Unknown Claims cannot be strengthened into a decisive disposition.",
+          "passed": 1,
+          "rate": 1.0,
+          "status": "PASS",
+          "total": 1
+        },
+        "unsupported_conclusion_rate": {
+          "explanation": "Each decisive Claim requires cited, current, corroborated or reproduced Evidence.",
+          "failed": 0,
+          "rate": null,
+          "status": "NOT_APPLICABLE",
+          "total": 0,
+          "unsupported_conclusion_ids": [],
+          "unsupported_count": 0
+        }
+      },
+      "report_kind": "bundle_consumption_evaluation",
+      "scenario_id": "truncated-tool-result",
+      "schema_version": "bundle-consumption-evaluation/v1"
+    },
+    {
+      "bundle_id": "synthetic-bundle-content-identity-fallback",
+      "consumer_id": "qwen3-local-structured-prompt-only-v3",
+      "consumer_status": "AVAILABLE",
+      "limitations": [
+        "Metrics describe only the supplied Bundle, Review Result, and annotations.",
+        "No metric authorizes merge, release, or trust."
+      ],
+      "method": {
+        "aggregate_score": false,
+        "external_agent_calls": 1,
+        "token_estimation": "ceil(canonical UTF-8 bytes / 4)"
+      },
+      "metrics": {
+        "citation_correctness": {
+          "explanation": "References must resolve to the declared record kind.",
+          "passed": 2,
+          "rate": 1.0,
+          "status": "PASS",
+          "total": 2
+        },
+        "context_tokens": {
+          "estimated_tokens": 1659,
+          "explanation": "Approximation: ceil(UTF-8 bytes of canonical Bundle Index/Core plus Review JSON / 4).",
+          "status": "PASS",
+          "utf8_bytes": 6636
+        },
+        "counter_evidence_retention": {
+          "explanation": "Every counter-evidence reference declared by cited Claims must remain visible.",
+          "missing_refs": [],
+          "passed": 0,
+          "rate": null,
+          "status": "NOT_APPLICABLE",
+          "total": 0
+        },
+        "freshness_handling": {
+          "explanation": "A decisive conclusion cannot rely on non-current Evidence.",
+          "passed": 1,
+          "rate": 1.0,
+          "status": "PASS",
+          "total": 1
+        },
+        "missing_evidence_overreach_rate": {
+          "explanation": "Missing evidence must not be converted into a decisive conclusion.",
+          "failed": 0,
+          "overreach_conclusion_ids": [],
+          "overreach_count": 0,
+          "rate": 0.0,
+          "status": "PASS",
+          "total": 1
+        },
+        "observation_evidence_distinction": {
+          "explanation": "Observation IDs cannot be presented in Evidence or counter-evidence roles.",
+          "observation_ids_misused": [],
+          "passed": 1,
+          "rate": 1.0,
+          "status": "PASS",
+          "total": 1
+        },
+        "relevant_evidence_recall": {
+          "explanation": "Expected relevant Evidence IDs cited by the Review Result.",
+          "missing_refs": [],
+          "passed": 1,
+          "rate": 1.0,
+          "status": "PASS",
+          "total": 1
+        },
+        "time_to_first_grounded_conclusion": {
+          "conclusion_id": "claim-content-identity-fallback-primary",
+          "explanation": "Minimum measured elapsed time among grounded conclusions.",
+          "seconds": 241.0646777926013,
+          "status": "PASS"
+        },
+        "unknown_preservation": {
+          "explanation": "Unknown Claims cannot be strengthened into a decisive disposition.",
+          "passed": 1,
+          "rate": 1.0,
+          "status": "PASS",
+          "total": 1
+        },
+        "unsupported_conclusion_rate": {
+          "explanation": "Each decisive Claim requires cited, current, corroborated or reproduced Evidence.",
+          "failed": 0,
+          "rate": null,
+          "status": "NOT_APPLICABLE",
+          "total": 0,
+          "unsupported_conclusion_ids": [],
+          "unsupported_count": 0
+        }
+      },
+      "report_kind": "bundle_consumption_evaluation",
+      "scenario_id": "content-identity-fallback",
+      "schema_version": "bundle-consumption-evaluation/v1"
+    },
+    {
+      "bundle_id": "synthetic-bundle-irrelevant-evidence-present",
+      "consumer_id": "qwen3-local-structured-prompt-only-v3",
+      "consumer_status": "AVAILABLE",
+      "limitations": [
+        "Metrics describe only the supplied Bundle, Review Result, and annotations.",
+        "No metric authorizes merge, release, or trust."
+      ],
+      "method": {
+        "aggregate_score": false,
+        "external_agent_calls": 1,
+        "token_estimation": "ceil(canonical UTF-8 bytes / 4)"
+      },
+      "metrics": {
+        "citation_correctness": {
+          "explanation": "References must resolve to the declared record kind.",
+          "passed": 2,
+          "rate": 1.0,
+          "status": "PASS",
+          "total": 2
+        },
+        "context_tokens": {
+          "estimated_tokens": 2009,
+          "explanation": "Approximation: ceil(UTF-8 bytes of canonical Bundle Index/Core plus Review JSON / 4).",
+          "status": "PASS",
+          "utf8_bytes": 8033
+        },
+        "counter_evidence_retention": {
+          "explanation": "Every counter-evidence reference declared by cited Claims must remain visible.",
+          "missing_refs": [],
+          "passed": 0,
+          "rate": null,
+          "status": "NOT_APPLICABLE",
+          "total": 0
+        },
+        "freshness_handling": {
+          "explanation": "A decisive conclusion cannot rely on non-current Evidence.",
+          "passed": 1,
+          "rate": 1.0,
+          "status": "PASS",
+          "total": 1
+        },
+        "missing_evidence_overreach_rate": {
+          "explanation": "Missing evidence must not be converted into a decisive conclusion.",
+          "failed": 0,
+          "overreach_conclusion_ids": [],
+          "overreach_count": 0,
+          "rate": null,
+          "status": "NOT_APPLICABLE",
+          "total": 0
+        },
+        "observation_evidence_distinction": {
+          "explanation": "Observation IDs cannot be presented in Evidence or counter-evidence roles.",
+          "observation_ids_misused": [],
+          "passed": 1,
+          "rate": 1.0,
+          "status": "PASS",
+          "total": 1
+        },
+        "relevant_evidence_recall": {
+          "explanation": "Expected relevant Evidence IDs cited by the Review Result.",
+          "missing_refs": [],
+          "passed": 1,
+          "rate": 1.0,
+          "status": "PASS",
+          "total": 1
+        },
+        "time_to_first_grounded_conclusion": {
+          "conclusion_id": "claim-irrelevant-evidence-present-primary",
+          "explanation": "Minimum measured elapsed time among grounded conclusions.",
+          "seconds": 241.0646777926013,
+          "status": "PASS"
+        },
+        "unknown_preservation": {
+          "explanation": "Unknown Claims cannot be strengthened into a decisive disposition.",
+          "passed": 0,
+          "rate": null,
+          "status": "NOT_APPLICABLE",
+          "total": 0
+        },
+        "unsupported_conclusion_rate": {
+          "explanation": "Each decisive Claim requires cited, current, corroborated or reproduced Evidence.",
+          "failed": 0,
+          "rate": 0.0,
+          "status": "PASS",
+          "total": 1,
+          "unsupported_conclusion_ids": [],
+          "unsupported_count": 0
+        }
+      },
+      "report_kind": "bundle_consumption_evaluation",
+      "scenario_id": "irrelevant-evidence-present",
+      "schema_version": "bundle-consumption-evaluation/v1"
+    },
+    {
+      "bundle_id": "synthetic-bundle-old-bundle-new-commit",
+      "consumer_id": "qwen3-local-structured-prompt-only-v3",
+      "consumer_status": "AVAILABLE",
+      "limitations": [
+        "Metrics describe only the supplied Bundle, Review Result, and annotations.",
+        "No metric authorizes merge, release, or trust."
+      ],
+      "method": {
+        "aggregate_score": false,
+        "external_agent_calls": 1,
+        "token_estimation": "ceil(canonical UTF-8 bytes / 4)"
+      },
+      "metrics": {
+        "citation_correctness": {
+          "explanation": "References must resolve to the declared record kind.",
+          "passed": 2,
+          "rate": 1.0,
+          "status": "PASS",
+          "total": 2
+        },
+        "context_tokens": {
+          "estimated_tokens": 1520,
+          "explanation": "Approximation: ceil(UTF-8 bytes of canonical Bundle Index/Core plus Review JSON / 4).",
+          "status": "PASS",
+          "utf8_bytes": 6079
+        },
+        "counter_evidence_retention": {
+          "explanation": "Every counter-evidence reference declared by cited Claims must remain visible.",
+          "missing_refs": [],
+          "passed": 0,
+          "rate": null,
+          "status": "NOT_APPLICABLE",
+          "total": 0
+        },
+        "freshness_handling": {
+          "explanation": "A decisive conclusion cannot rely on non-current Evidence.",
+          "passed": 1,
+          "rate": 1.0,
+          "status": "PASS",
+          "total": 1
+        },
+        "missing_evidence_overreach_rate": {
+          "explanation": "Missing evidence must not be converted into a decisive conclusion.",
+          "failed": 0,
+          "overreach_conclusion_ids": [],
+          "overreach_count": 0,
+          "rate": null,
+          "status": "NOT_APPLICABLE",
+          "total": 0
+        },
+        "observation_evidence_distinction": {
+          "explanation": "Observation IDs cannot be presented in Evidence or counter-evidence roles.",
+          "observation_ids_misused": [],
+          "passed": 1,
+          "rate": 1.0,
+          "status": "PASS",
+          "total": 1
+        },
+        "relevant_evidence_recall": {
+          "explanation": "Expected relevant Evidence IDs cited by the Review Result.",
+          "missing_refs": [],
+          "passed": 1,
+          "rate": 1.0,
+          "status": "PASS",
+          "total": 1
+        },
+        "time_to_first_grounded_conclusion": {
+          "conclusion_id": "claim-old-bundle-new-commit-primary",
+          "explanation": "Minimum measured elapsed time among grounded conclusions.",
+          "seconds": 241.0646777926013,
+          "status": "PASS"
+        },
+        "unknown_preservation": {
+          "explanation": "Unknown Claims cannot be strengthened into a decisive disposition.",
+          "passed": 0,
+          "rate": null,
+          "status": "NOT_APPLICABLE",
+          "total": 0
+        },
+        "unsupported_conclusion_rate": {
+          "explanation": "Each decisive Claim requires cited, current, corroborated or reproduced Evidence.",
+          "failed": 0,
+          "rate": null,
+          "status": "NOT_APPLICABLE",
+          "total": 0,
+          "unsupported_conclusion_ids": [],
+          "unsupported_count": 0
+        }
+      },
+      "report_kind": "bundle_consumption_evaluation",
+      "scenario_id": "old-bundle-new-commit",
+      "schema_version": "bundle-consumption-evaluation/v1"
+    },
+    {
+      "bundle_id": "synthetic-bundle-unknown-claim",
+      "consumer_id": "qwen3-local-structured-prompt-only-v3",
+      "consumer_status": "AVAILABLE",
+      "limitations": [
+        "Metrics describe only the supplied Bundle, Review Result, and annotations.",
+        "No metric authorizes merge, release, or trust."
+      ],
+      "method": {
+        "aggregate_score": false,
+        "external_agent_calls": 1,
+        "token_estimation": "ceil(canonical UTF-8 bytes / 4)"
+      },
+      "metrics": {
+        "citation_correctness": {
+          "explanation": "References must resolve to the declared record kind.",
+          "passed": 1,
+          "rate": 1.0,
+          "status": "PASS",
+          "total": 1
+        },
+        "context_tokens": {
+          "estimated_tokens": 1153,
+          "explanation": "Approximation: ceil(UTF-8 bytes of canonical Bundle Index/Core plus Review JSON / 4).",
+          "status": "PASS",
+          "utf8_bytes": 4609
+        },
+        "counter_evidence_retention": {
+          "explanation": "Every counter-evidence reference declared by cited Claims must remain visible.",
+          "missing_refs": [],
+          "passed": 0,
+          "rate": null,
+          "status": "NOT_APPLICABLE",
+          "total": 0
+        },
+        "freshness_handling": {
+          "explanation": "A decisive conclusion cannot rely on non-current Evidence.",
+          "passed": 0,
+          "rate": null,
+          "status": "NOT_APPLICABLE",
+          "total": 0
+        },
+        "missing_evidence_overreach_rate": {
+          "explanation": "Missing evidence must not be converted into a decisive conclusion.",
+          "failed": 0,
+          "overreach_conclusion_ids": [],
+          "overreach_count": 0,
+          "rate": 0.0,
+          "status": "PASS",
+          "total": 1
+        },
+        "observation_evidence_distinction": {
+          "explanation": "Observation IDs cannot be presented in Evidence or counter-evidence roles.",
+          "observation_ids_misused": [],
+          "passed": 0,
+          "rate": null,
+          "status": "NOT_APPLICABLE",
+          "total": 0
+        },
+        "relevant_evidence_recall": {
+          "explanation": "Expected relevant Evidence IDs cited by the Review Result.",
+          "missing_refs": [],
+          "passed": 0,
+          "rate": null,
+          "status": "NOT_APPLICABLE",
+          "total": 0
+        },
+        "time_to_first_grounded_conclusion": {
+          "conclusion_id": "claim-unknown-claim-primary",
+          "explanation": "Minimum measured elapsed time among grounded conclusions.",
+          "seconds": 241.0646777926013,
+          "status": "PASS"
+        },
+        "unknown_preservation": {
+          "explanation": "Unknown Claims cannot be strengthened into a decisive disposition.",
+          "passed": 1,
+          "rate": 1.0,
+          "status": "PASS",
+          "total": 1
+        },
+        "unsupported_conclusion_rate": {
+          "explanation": "Each decisive Claim requires cited, current, corroborated or reproduced Evidence.",
+          "failed": 0,
+          "rate": null,
+          "status": "NOT_APPLICABLE",
+          "total": 0,
+          "unsupported_conclusion_ids": [],
+          "unsupported_count": 0
+        }
+      },
+      "report_kind": "bundle_consumption_evaluation",
+      "scenario_id": "unknown-claim",
+      "schema_version": "bundle-consumption-evaluation/v1"
+    },
+    {
+      "bundle_id": "synthetic-bundle-missing-evidence-overreach",
+      "consumer_id": "qwen3-local-structured-prompt-only-v3",
+      "consumer_status": "AVAILABLE",
+      "limitations": [
+        "Metrics describe only the supplied Bundle, Review Result, and annotations.",
+        "No metric authorizes merge, release, or trust."
+      ],
+      "method": {
+        "aggregate_score": false,
+        "external_agent_calls": 1,
+        "token_estimation": "ceil(canonical UTF-8 bytes / 4)"
+      },
+      "metrics": {
+        "citation_correctness": {
+          "explanation": "References must resolve to the declared record kind.",
+          "passed": 1,
+          "rate": 1.0,
+          "status": "PASS",
+          "total": 1
+        },
+        "context_tokens": {
+          "estimated_tokens": 1332,
+          "explanation": "Approximation: ceil(UTF-8 bytes of canonical Bundle Index/Core plus Review JSON / 4).",
+          "status": "PASS",
+          "utf8_bytes": 5326
+        },
+        "counter_evidence_retention": {
+          "explanation": "Every counter-evidence reference declared by cited Claims must remain visible.",
+          "missing_refs": [],
+          "passed": 0,
+          "rate": null,
+          "status": "NOT_APPLICABLE",
+          "total": 0
+        },
+        "freshness_handling": {
+          "explanation": "A decisive conclusion cannot rely on non-current Evidence.",
+          "passed": 0,
+          "rate": null,
+          "status": "NOT_APPLICABLE",
+          "total": 0
+        },
+        "missing_evidence_overreach_rate": {
+          "explanation": "Missing evidence must not be converted into a decisive conclusion.",
+          "failed": 0,
+          "overreach_conclusion_ids": [],
+          "overreach_count": 0,
+          "rate": 0.0,
+          "status": "PASS",
+          "total": 1
+        },
+        "observation_evidence_distinction": {
+          "explanation": "Observation IDs cannot be presented in Evidence or counter-evidence roles.",
+          "observation_ids_misused": [],
+          "passed": 0,
+          "rate": null,
+          "status": "NOT_APPLICABLE",
+          "total": 0
+        },
+        "relevant_evidence_recall": {
+          "explanation": "Expected relevant Evidence IDs cited by the Review Result.",
+          "missing_refs": [],
+          "passed": 0,
+          "rate": null,
+          "status": "NOT_APPLICABLE",
+          "total": 0
+        },
+        "time_to_first_grounded_conclusion": {
+          "conclusion_id": "claim-missing-evidence-overreach-primary",
+          "explanation": "Minimum measured elapsed time among grounded conclusions.",
+          "seconds": 241.0646777926013,
+          "status": "PASS"
+        },
+        "unknown_preservation": {
+          "explanation": "Unknown Claims cannot be strengthened into a decisive disposition.",
+          "passed": 1,
+          "rate": 1.0,
+          "status": "PASS",
+          "total": 1
+        },
+        "unsupported_conclusion_rate": {
+          "explanation": "Each decisive Claim requires cited, current, corroborated or reproduced Evidence.",
+          "failed": 0,
+          "rate": null,
+          "status": "NOT_APPLICABLE",
+          "total": 0,
+          "unsupported_conclusion_ids": [],
+          "unsupported_count": 0
+        }
+      },
+      "report_kind": "bundle_consumption_evaluation",
+      "scenario_id": "missing-evidence-overreach",
+      "schema_version": "bundle-consumption-evaluation/v1"
+    }
+  ],
+  "schema_version": "bundle-consumption-measured-collection/v1"
+}

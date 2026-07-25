@@ -1,0 +1,30 @@
+{
+  "name": "@aet/evidence-bundle",
+  "version": "0.1.0",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./src/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "types": "./src/index.d.ts",
+  "files": [
+    "dist",
+    "src/index.d.ts"
+  ],
+  "sideEffects": false,
+  "dependencies": {
+    "@aet/protocol-types": "^0.1.0"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "check": "node scripts/compatibility-guard.mjs",
+    "test": "node --test test/*.test.mjs",
+    "test:dist": "node --test test/dist.test.mjs"
+  }
+}

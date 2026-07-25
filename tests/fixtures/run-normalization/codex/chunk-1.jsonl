@@ -1,0 +1,2 @@
+{"type":"session_meta","timestamp":"2026-01-02T03:04:00Z","payload":{"id":"session-codex-chunk-001","cwd":"/workspace/sanitized","git_branch":"fixture-main","model":"fixture-model"}}
+{"type":"response_item","timestamp":"2026-01-02T03:04:03Z","payload":{"id":"codex-call-record-chunk-001","type":"function_call","call_id":"codex-call-chunk-001","name":"shell","arguments":"{\"command\":[\"python\",\"-m\",\"unittest\",\"tests.test_example\"]}"}}

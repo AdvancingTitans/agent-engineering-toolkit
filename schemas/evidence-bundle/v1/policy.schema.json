@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://advancingtitans.github.io/agent-engineering-toolkit/schemas/evidence-bundle/v1/policy.schema.json",
+  "title": "Portable Investigation Policy v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "allowed_tools", "denied_tools", "budgets", "command_policy", "workspace_policy", "privacy_policy", "require_competing_hypothesis", "require_disconfirming_search"],
+  "properties": {
+    "extensions": {"type": "object", "additionalProperties": true},
+    "schema_version": {"const": "portable-investigation-policy/1.0"},
+    "allowed_tools": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "denied_tools": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "budgets": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["max_tool_calls", "max_evidence_candidates", "max_verified_evidence", "max_run_records_read", "max_blob_bytes_read"],
+      "properties": {
+        "max_tool_calls": {"type": "integer", "minimum": 0},
+        "max_evidence_candidates": {"type": "integer", "minimum": 0},
+        "max_verified_evidence": {"type": "integer", "minimum": 0},
+        "max_run_records_read": {"type": "integer", "minimum": 0},
+        "max_blob_bytes_read": {"type": "integer", "minimum": 0}
+      }
+    },
+    "command_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["allow_execution", "allowed_command_prefixes"],
+      "properties": {
+        "allow_execution": {"type": "boolean"},
+        "allowed_command_prefixes": {"type": "array", "items": {"type": "array", "items": {"type": "string"}, "minItems": 1}}
+      }
+    },
+    "workspace_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["read_only"],
+      "properties": {
+        "read_only": {"type": "boolean"},
+        "allowed_paths": {"type": "array", "items": {"type": "string"}},
+        "denied_paths": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "privacy_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["redact_secrets", "export_reasoning", "export_raw_tool_output"],
+      "properties": {
+        "redact_secrets": {"type": "boolean"},
+        "export_reasoning": {"type": "boolean"},
+        "export_raw_tool_output": {"type": "boolean"}
+      }
+    },
+    "require_competing_hypothesis": {"type": "boolean"},
+    "require_disconfirming_search": {"type": "boolean"}
+  }
+}

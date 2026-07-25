@@ -1,0 +1,8 @@
+{"type":"session_meta","timestamp":"2026-01-02T03:04:00Z","payload":{"id":"session-codex-diagnostics-001","cwd":"/workspace/sanitized","model":"fixture-model"}}
+这不是 JSON
+{"type":"unknown_event","timestamp":"2026-01-02T03:04:01Z","payload":{"id":"unsupported-001","content":"此内容不应进入诊断消息。"}}
+{"type":"response_item","timestamp":"不是时间戳","payload":{"type":"message","role":"user","content":"无原生 ID 的完整文件记录。"}}
+{"type":"response_item","timestamp":"2026-01-02T03:04:03Z","repaired":true,"payload":{"id":"codex-repaired-001","type":"message","role":"assistant","content":"显式标记为已修复记录。"}}
+{"type":"response_item","timestamp":"2026-01-02T03:04:04Z","payload":{"id":"codex-truncated-001","type":"function_call_output","call_id":"codex-orphan-001","output":"截断结果","truncated":true}}
+{"type":"response_item","timestamp":"2026-01-02T03:04:05Z","payload":{"id":"codex-duplicate-001","type":"function_call_output","call_id":"codex-orphan-001","output":"重复结果"}}
+{"type":"response_item","timestamp":"2026-01-02T03:04:06Z","payload":{"id":"codex-missing-call-record-001","type":"function_call","call_id":"codex-missing-call-001","name":"lookup","arguments":"{\"id\":\"fixture\"}"}}

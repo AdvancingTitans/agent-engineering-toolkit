@@ -1,0 +1,2 @@
+{"type":"response_item","timestamp":"2026-01-02T03:04:04Z","payload":{"id":"codex-result-record-chunk-001","type":"function_call_output","call_id":"codex-call-chunk-001","output":"1 项通过"}}
+{"type":"response_item","timestamp":"2026-01-02T03:04:05Z","payload":{"id":"codex-assistant-chunk-001","type":"message","role":"assistant","content":"跨分块结果已关联。"}}

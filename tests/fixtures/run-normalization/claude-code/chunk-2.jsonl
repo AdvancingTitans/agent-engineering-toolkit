@@ -1,0 +1,2 @@
+{"type":"user","uuid":"claude-result-chunk-001","session_id":"session-claude-chunk-001","timestamp":"2026-01-02T03:04:03Z","message":{"role":"user","content":[{"type":"tool_result","tool_use_id":"claude-call-chunk-001","content":"1 项通过","is_error":false}]}}
+{"type":"assistant","uuid":"claude-assistant-chunk-002","session_id":"session-claude-chunk-001","timestamp":"2026-01-02T03:04:04Z","message":{"role":"assistant","content":[{"type":"text","id":"claude-assistant-text-chunk-001","text":"跨分块结果已关联。"}]}}

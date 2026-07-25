@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://advancingtitans.github.io/agent-engineering-toolkit/schemas/evidence-bundle/v1/observation.schema.json",
+  "title": "Portable Observation v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "type", "statement", "source_refs", "proves", "does_not_prove", "limitations"],
+  "properties": {
+    "extensions": {"type": "object", "additionalProperties": true},
+    "id": {"type": "string", "minLength": 1},
+    "type": {"enum": ["agent_statement", "agent_tool_call", "agent_tool_result", "agent_reasoning", "run_sequence", "run_metadata"]},
+    "statement": {"type": "string", "minLength": 1},
+    "source_refs": {"type": "array", "items": {"type": "string"}, "minItems": 1, "uniqueItems": true},
+    "proves": {"type": "array", "items": {"type": "string"}, "minItems": 1},
+    "does_not_prove": {"type": "array", "items": {"type": "string"}, "minItems": 1},
+    "limitations": {"type": "array", "items": {"type": "string"}}
+  }
+}

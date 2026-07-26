@@ -528,6 +528,12 @@ deterministic core.
   vendored Mermaid runtime and all ten Atlas Schemas, rejected
   `flowchart BOGUS`, built and validated the real self-review Atlas, and kept
   explicit `does_not_prove` documentation.
+- The first exact-tag CI attempt, Run `30202354466`, passed the full Python,
+  stale-proof, and real-agent gates, then failed before parsing because
+  `npm --prefix` resolved the relative Atlas argument from the package
+  directory. No Release was created. CI now passes the explicit
+  `$GITHUB_WORKSPACE/.aet/evidence/atlas-self-review.atlas` path, and the
+  delivery-gate test freezes that binding.
 - The final independent compliance audit approved publication with no remaining
   P0/P1 or acceptance gap. Release publication is now pending the Diff-bound
   deterministic release commit and `v1.15.0` tag, exact-tag CI, and GitHub

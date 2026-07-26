@@ -35,7 +35,7 @@ jobs:
           npm ci --prefix packages/atlas-viewer-runtime
           uv run python examples/evidence-atlas/build_example.py --output .aet/evidence/atlas-self-review
           uv run aet atlas build .aet/evidence/atlas-self-review --max-nodes 14 --max-depth 4 --no-llm
-          npm --prefix packages/atlas-viewer-runtime run validate:atlas -- .aet/evidence/atlas-self-review.atlas
+          npm --prefix packages/atlas-viewer-runtime run validate:atlas -- "$GITHUB_WORKSPACE/.aet/evidence/atlas-self-review.atlas"
       - run: uv run --no-editable --reinstall-package agent-engineering-toolkit aet audit . --strict --format json --output .aet/evidence/audit.json
       - name: Build and smoke-test the exact wheel version
         run: |

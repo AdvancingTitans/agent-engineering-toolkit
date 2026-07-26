@@ -505,6 +505,7 @@ class BusinessQualityFlowsTests(unittest.TestCase):
             'test "$wheel_version" = "$source_version"',
             "release-candidate-${{ github.sha }}",
             "./examples/stale-proof-demo.sh",
+            '"$GITHUB_WORKSPACE/.aet/evidence/atlas-self-review.atlas"',
         ):
             self.assertIn(command, ci)
         self.assertEqual(1, ci.count("python -m pytest"))

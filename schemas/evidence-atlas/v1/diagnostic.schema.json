@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://advancingtitans.github.io/agent-engineering-toolkit/schemas/evidence-atlas/v1/diagnostic.schema.json",
+  "title": "AET Evidence Atlas Diagnostic v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["code", "severity", "message", "source_refs"],
+  "properties": {
+    "extensions": {"type": "object", "additionalProperties": true},
+    "code": {"type": "string", "pattern": "^[A-Z][A-Z0-9_]+$"},
+    "severity": {"enum": ["info", "warning", "error"]},
+    "message": {"type": "string", "minLength": 1},
+    "source_refs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["collection", "record_id", "field"],
+        "properties": {
+          "collection": {"type": "string", "minLength": 1},
+          "record_id": {"type": "string", "minLength": 1},
+          "field": {"type": "string", "minLength": 1}
+        }
+      }
+    }
+  }
+}

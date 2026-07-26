@@ -1,0 +1,139 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://advancingtitans.github.io/agent-engineering-toolkit/schemas/evidence-atlas/v1/node.schema.json",
+  "title": "AET Evidence Atlas Node v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "type",
+    "source_refs",
+    "title",
+    "summary",
+    "status",
+    "authority",
+    "freshness",
+    "importance",
+    "complexity",
+    "tags",
+    "attributes"
+  ],
+  "properties": {
+    "extensions": {"type": "object", "additionalProperties": true},
+    "id": {"type": "string", "pattern": "^node:[A-Za-z0-9:_-]+$"},
+    "type": {
+      "enum": [
+        "intent",
+        "constraint",
+        "authorization",
+        "run",
+        "agent",
+        "tool_call",
+        "tool_result",
+        "observation",
+        "evidence_candidate",
+        "verified_evidence",
+        "source",
+        "artifact",
+        "file",
+        "symbol",
+        "change_group",
+        "command",
+        "proof",
+        "freshness_result",
+        "claim",
+        "subclaim",
+        "counter_claim",
+        "finding",
+        "conflict",
+        "unknown",
+        "limitation",
+        "recommendation",
+        "policy_rule",
+        "budget"
+      ]
+    },
+    "source_refs": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/sourceRef"}
+    },
+    "title": {"type": "string", "minLength": 1},
+    "summary": {"type": "string", "minLength": 1},
+    "status": {
+      "enum": [
+        "verified",
+        "supported",
+        "partially_supported",
+        "conflicted",
+        "unsupported",
+        "unknown",
+        "stale",
+        "current",
+        "resolved",
+        "not_applicable",
+        "recorded"
+      ]
+    },
+    "authority": {"type": "string", "minLength": 1},
+    "freshness": {
+      "enum": [
+        "current",
+        "relevant_files_changed",
+        "workspace_changed",
+        "environment_changed",
+        "unknown",
+        "not_applicable"
+      ]
+    },
+    "importance": {"enum": ["low", "normal", "high"]},
+    "complexity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["score", "classification", "reasons"],
+      "properties": {
+        "score": {"type": "integer", "minimum": 0},
+        "classification": {
+          "enum": ["leaf", "expandable", "mandatory_decomposition"]
+        },
+        "reasons": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1},
+          "uniqueItems": true
+        }
+      }
+    },
+    "tags": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1},
+      "uniqueItems": true
+    },
+    "attributes": {"type": "object", "additionalProperties": true}
+  },
+  "$defs": {
+    "sourceRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["collection", "record_id", "field"],
+      "properties": {
+        "collection": {
+          "enum": [
+            "core/claims.jsonl",
+            "core/evidence.jsonl",
+            "core/observations.jsonl",
+            "archive/sources.jsonl",
+            "archive/diagnostics.jsonl",
+            "archive/conflicts.jsonl",
+            "archive/ledger.jsonl",
+            "manifest.json",
+            "index.json",
+            "policy.json"
+          ]
+        },
+        "record_id": {"type": "string", "minLength": 1},
+        "field": {"type": "string", "minLength": 1}
+      }
+    }
+  }
+}

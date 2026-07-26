@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://advancingtitans.github.io/agent-engineering-toolkit/schemas/evidence-atlas/v1/provenance.schema.json",
+  "title": "AET Evidence Atlas Provenance v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["generator", "edge_refs"],
+  "properties": {
+    "bundle_id": {"type": "string", "minLength": 1},
+    "perspective_id": {"type": "string", "minLength": 1},
+    "node_id": {"type": "string", "pattern": "^node:"},
+    "node_refs": {
+      "type": "array",
+      "items": {"type": "string", "pattern": "^node:"},
+      "uniqueItems": true
+    },
+    "edge_refs": {
+      "type": "array",
+      "items": {"type": "string", "pattern": "^edge:"},
+      "uniqueItems": true
+    },
+    "source_refs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["collection", "record_id", "field"],
+        "properties": {
+          "collection": {"type": "string", "minLength": 1},
+          "record_id": {"type": "string", "minLength": 1},
+          "field": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "generator": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "mode", "authoritative_narrative"],
+      "properties": {
+        "name": {"const": "aet-atlas"},
+        "mode": {"const": "deterministic"},
+        "authoritative_narrative": {"const": false}
+      }
+    }
+  },
+  "oneOf": [
+    {
+      "required": ["bundle_id", "perspective_id", "node_refs"],
+      "not": {"required": ["node_id"]}
+    },
+    {
+      "required": ["node_id", "source_refs"],
+      "not": {"required": ["perspective_id"]}
+    }
+  ]
+}

@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://advancingtitans.github.io/agent-engineering-toolkit/schemas/evidence-atlas/v1/hierarchy.schema.json",
+  "title": "AET Evidence Atlas Hierarchy v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "diagrams"],
+  "properties": {
+    "extensions": {"type": "object", "additionalProperties": true},
+    "schema_version": {"const": "aet-evidence-hierarchy/1.0"},
+    "diagrams": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "perspective_id",
+          "root_node_id",
+          "parent_diagram_id",
+          "depth",
+          "node_ids",
+          "edge_ids",
+          "child_diagram_ids",
+          "reference_node_ids"
+        ],
+        "properties": {
+          "extensions": {"type": "object", "additionalProperties": true},
+          "id": {"type": "string", "minLength": 1},
+          "perspective_id": {
+            "enum": [
+              "claim-chain",
+              "investigation-flow",
+              "change-scope",
+              "verification-coverage",
+              "evidence-data-flow",
+              "integrations",
+              "conflicts",
+              "freshness"
+            ]
+          },
+          "root_node_id": {"type": "string", "pattern": "^node:"},
+          "parent_diagram_id": {
+            "oneOf": [
+              {"type": "null"},
+              {"type": "string", "minLength": 1}
+            ]
+          },
+          "depth": {"type": "integer", "minimum": 0},
+          "node_ids": {
+            "type": "array",
+            "items": {"type": "string", "pattern": "^node:"},
+            "uniqueItems": true
+          },
+          "edge_ids": {
+            "type": "array",
+            "items": {"type": "string", "pattern": "^edge:"},
+            "uniqueItems": true
+          },
+          "child_diagram_ids": {
+            "type": "array",
+            "items": {"type": "string", "minLength": 1},
+            "uniqueItems": true
+          },
+          "reference_node_ids": {
+            "type": "array",
+            "items": {"type": "string", "pattern": "^node:"},
+            "uniqueItems": true
+          }
+        }
+      }
+    }
+  }
+}

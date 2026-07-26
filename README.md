@@ -8,16 +8,18 @@
 
 **[English](README.md) · [简体中文](docs/README.zh-CN.md)**
 
-> **AET makes AI coding review investigative without letting the model invent
-> the evidence.**
+> **AET turns AI coding work into portable, inspectable evidence—then lets
+> humans and Agents investigate it without letting a model invent the facts.**
 
 An AI coding Agent says it fixed the task and ran the tests. AET helps answer
-four concrete questions:
+five concrete questions:
 
 1. Did the change stay relevant to the user's task?
 2. Did the claimed verification actually run on this workspace?
 3. Does that proof still apply to the current code?
 4. Can another Agent review the same evidence without installing AET?
+5. Can a human trace a conclusion, counter-evidence, and `UNKNOWN` through a
+   readable investigation map?
 
 Tools produce reproducible facts. The host LLM may recover intent, form
 competing hypotheses, call authorized tools, test counter-explanations, and
@@ -28,7 +30,8 @@ self-describing evidence handoff. A human decides what happens next.
 
 ```text
 deterministic facts → bounded investigation → grounding validation
-                    → portable evidence handoff → independent review → human decision
+                    → portable evidence handoff → Evidence Atlas
+                    → independent review → human decision
 ```
 
 ## Four Quick Skills
@@ -62,7 +65,7 @@ default Quick product surface.
 
 ## Cross-Agent portable evidence handoff
 
-The four Quick Skills remain the daily entrypoints. v1.14.0 adds a separate
+The four Quick Skills remain the daily entrypoints. v1.14.0 introduced a separate
 handoff path for a reviewer that may be Codex, Claude Code, Hermes, a local
 model, or another JSON-capable Agent—and must not be assumed to have AET
 installed.
@@ -170,6 +173,168 @@ The TypeScript and Python SDKs provide loading, querying, Blob resolution,
 prompt-context rendering, and reference validation. MCP exposes the same
 bounded normalization, investigation, Bundle lookup, and validation operations;
 none of these convenience layers is required to consume a Bundle.
+
+## Evidence Atlas: a recursive map of the evidence
+
+v1.15.0 adds Evidence Atlas as a built-in, deterministic projection of a
+Portable Evidence Bundle. It does not ask an LLM to draw a plausible diagram.
+It builds a canonical Evidence Graph first, retains field-level source
+references for authoritative nodes and edges, then derives eight fixed
+Perspectives:
+
+| Perspective | Question answered |
+| --- | --- |
+| Claim Chain | What supports, contradicts, or limits this conclusion? |
+| Investigation Flow | How did the investigation reach its bounded finding? |
+| Change Scope | Which changes are in scope, justified expansions, or still unknown? |
+| Verification Coverage | What did a Proof establish—and what did it not establish? |
+| Evidence Data Flow | How did records become observations, evidence, claims, and review material? |
+| Integration and Sources | Which systems, permissions, and trust boundaries supplied the evidence? |
+| Conflict and Unknown | What remains contradicted, unavailable, stale, or unresolved? |
+| Freshness | When did evidence become applicable or stale, and why? |
+
+![AET Evidence Atlas static architecture](docs/assets/aet-evidence-atlas-architecture-en.png)
+
+The authority direction is one-way:
+
+```mermaid
+flowchart LR
+    B["Portable Evidence Bundle<br/>authoritative JSON / JSONL"] --> G["Canonical Evidence Graph<br/>grounded nodes and edges"]
+    G --> P["Eight deterministic Perspectives"]
+    P --> H["Recursive hierarchy<br/>complex nodes expand; leaves stay compact"]
+    H --> R["Mermaid · Markdown · JSON"]
+    R --> V["Offline Viewer"]
+    G --> X["Fail-closed validation"]
+    X --> P
+```
+
+Mermaid, Markdown, and the Viewer are rebuildable projections. They create no
+evidence, hide no counter-evidence, change no Freshness state, and grant no
+fix, merge, push, or release authority. The default output is a sibling
+sidecar, `<bundle>.atlas/`, because Bundle v1 manifests hash the exact files in
+the Bundle root:
+
+```text
+evidence-bundle/          # authoritative Portable Evidence Bundle
+evidence-bundle.atlas/
+├── graph/
+│   ├── graph.json
+│   ├── nodes.jsonl
+│   ├── edges.jsonl
+│   ├── hierarchy.json
+│   ├── diagnostics.jsonl
+│   └── perspectives/{claim-chain,...}/
+└── atlas/
+    ├── index.html
+    └── assets/           # local Mermaid runtime; no network required
+```
+
+Build, validate, query, compare, and open it with:
+
+```bash
+aet atlas build evidence-bundle --no-llm
+# Optional: materialize only selected fixed Perspectives.
+aet atlas build evidence-bundle --perspectives claim-chain,verification-coverage,conflicts
+aet atlas validate evidence-bundle
+aet atlas query evidence-bundle --perspective claim-chain \
+  --root node:claim:CLM-0042 --format json
+aet atlas explain evidence-bundle --node node:claim:CLM-0042
+aet atlas diff previous-bundle current-bundle
+aet atlas view evidence-bundle
+```
+
+Every node receives a deterministic complexity evaluation. Expandable nodes
+get typed child diagrams; simple nodes remain leaves. Depth, nodes per diagram,
+children per node, and total diagrams are bounded. Canonical node IDs prevent
+tree duplication, cycles stop at reference nodes, and unchanged Perspectives
+and unaffected recursive subgraphs are reused during incremental rebuilds.
+
+### Dynamic Viewer example from AET itself
+
+This is not a mockup. The repository hashes and reviews its own Graph Builder,
+Perspective definitions, Viewer, and Bundle schema, builds
+`bundle-aet-atlas-self-review-v1`, then records real offline Viewer states:
+
+![AET Evidence Atlas recursive Viewer](docs/assets/aet-evidence-atlas-viewer.gif)
+
+[Watch the 30-second Evidence Atlas walkthrough (MP4)](docs/assets/aet-evidence-atlas-intro-en.mp4)
+· [Media hashes and capture identity](docs/assets/aet-evidence-atlas-media-manifest.json)
+
+Reproduce the source Bundle and Atlas:
+
+```bash
+uv run python examples/evidence-atlas/build_example.py --output /tmp/aet-atlas-bundle
+uv run aet atlas build /tmp/aet-atlas-bundle --max-nodes 14 --max-depth 4 --no-llm
+uv run aet atlas validate /tmp/aet-atlas-bundle
+uv run aet atlas view /tmp/aet-atlas-bundle
+```
+
+The real Claim Chain generated from that self-review deliberately keeps a
+conflicted scope claim, its counter-evidence, and an unresolved node:
+
+<!-- atlas-self-review-mermaid:start -->
+```mermaid
+flowchart LR
+    %% Evidence Atlas
+    N_0b51dce8fe915eda{"[CONFLICT] The Bundle v1 change-scope view alone proves complete real diff grouping."}
+    N_6f91af1641ed1424{{"[SUPPORTED] AET projects eight fixed evidence perspectives and exposes complex nodes as recursive Viewer su..."}}
+    N_8575658723b5d49d{{"[SUPPORTED] AET builds a canonical Evidence Graph from source-backed Bundle records without letting Mermaid..."}}
+    N_5522d8dace1cb6e7{"[CONFLICT] Path binding is useful for scope context but insufficient to prove complete real diff grouping."}
+    N_ac65699e766edc85["[UNKNOWN] Unresolved conflict conflict-change-scope-v1"]
+    N_ef4722a060cacfda["[VERIFIED] Bundle Evidence records can bind facts to repository paths."]
+    N_1ded0fae46344828["[VERIFIED] The Portable Evidence v1 Evidence record schema does not define an explicit Change Group field."]
+    N_c075a66077dd6940["[VERIFIED] The Graph Builder creates canonical nodes and source-backed edges."]
+    N_e824b2ad012b224e["[VERIFIED] The Perspective module defines eight fixed deterministic projections."]
+    N_a42d56cfe9dff13d["[VERIFIED] The offline Viewer contains recursive subgraph navigation."]
+    N_f797fb20a8448aa0["[RECORDED] Review AET's own Evidence Atlas implementation and retain support, counter-evidence, limitation..."]
+    N_a17fb3165e6b0db5["[RECORDED] The view must display UNKNOWN rather than infer real diff groups."]
+    N_6630b028247f1a08["[RECORDED] Rendering success still requires the packaged Mermaid runtime."]
+    N_2eb930959384d64c["[OMITTED] 17 lower-priority nodes"]
+    N_0b51dce8fe915eda -.->|"contradicted by"| N_1ded0fae46344828
+    N_0b51dce8fe915eda -->|"limited by"| N_a17fb3165e6b0db5
+    N_0b51dce8fe915eda ==>|"supported by"| N_ef4722a060cacfda
+    N_5522d8dace1cb6e7 -.->|"contradicted by"| N_1ded0fae46344828
+    N_5522d8dace1cb6e7 -->|"leaves unknown"| N_ac65699e766edc85
+    N_5522d8dace1cb6e7 -.->|"contradicted by"| N_ef4722a060cacfda
+    N_6f91af1641ed1424 -->|"limited by"| N_6630b028247f1a08
+    N_6f91af1641ed1424 ==>|"supported by"| N_a42d56cfe9dff13d
+    N_6f91af1641ed1424 ==>|"supported by"| N_e824b2ad012b224e
+    N_8575658723b5d49d ==>|"supported by"| N_c075a66077dd6940
+    N_0b51dce8fe915eda -->|"answers"| N_f797fb20a8448aa0
+    N_6f91af1641ed1424 -->|"answers"| N_f797fb20a8448aa0
+    N_8575658723b5d49d -->|"answers"| N_f797fb20a8448aa0
+    classDef verified fill:#dcfce7,stroke:#166534,color:#052e16,stroke-width:2px
+    classDef observation fill:#e0f2fe,stroke:#0369a1,color:#082f49
+    classDef candidate fill:#fef3c7,stroke:#92400e,color:#451a03,stroke-dasharray:5 3
+    classDef supported fill:#ede9fe,stroke:#6d28d9,color:#2e1065,stroke-width:2px
+    classDef conflict fill:#fee2e2,stroke:#b91c1c,color:#450a0a,stroke-width:2px
+    classDef unknown fill:#f3f4f6,stroke:#4b5563,color:#111827,stroke-dasharray:5 3
+    classDef stale fill:#ffedd5,stroke:#c2410c,color:#431407,stroke-dasharray:3 3
+    classDef authorization fill:#ecfccb,stroke:#3f6212,color:#1a2e05
+    classDef omitted fill:#f3f4f6,stroke:#6b7280,color:#111827,stroke-dasharray:2 3
+    classDef evidenceDefault fill:#ffffff,stroke:#475569,color:#0f172a
+    class N_0b51dce8fe915eda conflict
+    class N_6f91af1641ed1424 supported
+    class N_8575658723b5d49d supported
+    class N_5522d8dace1cb6e7 conflict
+    class N_ac65699e766edc85 unknown
+    class N_ef4722a060cacfda verified
+    class N_1ded0fae46344828 verified
+    class N_c075a66077dd6940 verified
+    class N_e824b2ad012b224e verified
+    class N_a42d56cfe9dff13d verified
+    class N_f797fb20a8448aa0 evidenceDefault
+    class N_a17fb3165e6b0db5 evidenceDefault
+    class N_6630b028247f1a08 evidenceDefault
+    class N_2eb930959384d64c omitted
+```
+<!-- atlas-self-review-mermaid:end -->
+
+The complete generated diagram is tracked as
+[`examples/evidence-atlas/aet-self-review-claim-chain.mmd`](examples/evidence-atlas/aet-self-review-claim-chain.mmd).
+The Python and TypeScript SDKs expose graph build/load/query/trace/validate and
+Mermaid rendering APIs; MCP adds eight read-only `aet_graph_*` tools with
+bounded node/depth queries. The Viewer stays a static, offline consumer.
 
 ## See it in 30 seconds
 
@@ -588,6 +753,7 @@ provenance, and avoid broadening a Quick command beyond its question. See
 
 ## Advanced documentation
 
+- [Evidence Atlas architecture](docs/architecture/evidence-atlas.md)
 - [Portable Evidence Bundle v1](docs/protocols/portable-evidence-bundle-v1.md)
 - [Portable evidence workflow](docs/architecture/portable-evidence-workflow.md)
 - [Generic Agent consumption](docs/guides/generic-agent-consumption.md)

@@ -1,0 +1,58 @@
+{
+  "example": {
+    "builder": "examples/evidence-atlas/build_example.py",
+    "bundle_id": "bundle-aet-atlas-self-review-v1",
+    "viewer_capture": "six real offline Viewer states"
+  },
+  "media": [
+    {
+      "bytes": 1104051,
+      "path": "docs/assets/aet-evidence-atlas-architecture-en.png",
+      "sha256": "e1a8812e6eb81523c1fb5c103c0350ac68d202b132a390f0a2721fc2966c969c"
+    },
+    {
+      "bytes": 6434,
+      "path": "docs/assets/aet-evidence-atlas-architecture-en.svg",
+      "sha256": "9f49db8ecde92ba941191712fed2c76a706d2fc6f2eda8b4ad896257592fadb9"
+    },
+    {
+      "bytes": 1109605,
+      "path": "docs/assets/aet-evidence-atlas-architecture-zh-CN.png",
+      "sha256": "3d09f325d268252f73b4e4b2b939c64dd24cb34f419c024727c96b5287753956"
+    },
+    {
+      "bytes": 6338,
+      "path": "docs/assets/aet-evidence-atlas-architecture-zh-CN.svg",
+      "sha256": "babfddecc86fd7e7b1e2f15c62b30d22d5c3b2600cbf0513866de3a5fd2be68f"
+    },
+    {
+      "bytes": 5725949,
+      "path": "docs/assets/aet-evidence-atlas-intro-en.mp4",
+      "sha256": "6948e0d1eac495a3fd8fe0bed4ddad771a48e11c37967151b6a5cf3c477a6a27"
+    },
+    {
+      "bytes": 5461336,
+      "path": "docs/assets/aet-evidence-atlas-intro-zh-CN.mp4",
+      "sha256": "298fd103199fa81058c82f353dd6d0cee3fb187346bb2b6908a7fcd259a9735a"
+    },
+    {
+      "bytes": 826089,
+      "path": "docs/assets/aet-evidence-atlas-viewer.gif",
+      "sha256": "6645e5d48a62eb37333a8cf801f172d05d58d0f8aad71eb52f14865529c5d566"
+    }
+  ],
+  "motion": {
+    "gif": {
+      "frame_seconds": 1.35,
+      "frames": 6,
+      "size": "1920x858"
+    },
+    "videos": {
+      "codec": "H.264",
+      "duration_seconds": 30,
+      "size": "1600x900"
+    }
+  },
+  "release": "v1.15.0",
+  "schema": "aet-readme-media/1.0"
+}

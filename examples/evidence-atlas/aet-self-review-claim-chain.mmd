@@ -1,0 +1,53 @@
+flowchart LR
+    %% Evidence Atlas
+    N_0b51dce8fe915eda{"[CONFLICT] The Bundle v1 change-scope view alone proves complete real diff grouping."}
+    N_6f91af1641ed1424{{"[SUPPORTED] AET projects eight fixed evidence perspectives and exposes complex nodes as recursive Viewer su..."}}
+    N_8575658723b5d49d{{"[SUPPORTED] AET builds a canonical Evidence Graph from source-backed Bundle records without letting Mermaid..."}}
+    N_5522d8dace1cb6e7{"[CONFLICT] Path binding is useful for scope context but insufficient to prove complete real diff grouping."}
+    N_ac65699e766edc85["[UNKNOWN] Unresolved conflict conflict-change-scope-v1"]
+    N_ef4722a060cacfda["[VERIFIED] Bundle Evidence records can bind facts to repository paths."]
+    N_1ded0fae46344828["[VERIFIED] The Portable Evidence v1 Evidence record schema does not define an explicit Change Group field."]
+    N_c075a66077dd6940["[VERIFIED] The Graph Builder creates canonical nodes and source-backed edges."]
+    N_e824b2ad012b224e["[VERIFIED] The Perspective module defines eight fixed deterministic projections."]
+    N_a42d56cfe9dff13d["[VERIFIED] The offline Viewer contains recursive subgraph navigation."]
+    N_f797fb20a8448aa0["[RECORDED] Review AET's own Evidence Atlas implementation and retain support, counter-evidence, limitation..."]
+    N_a17fb3165e6b0db5["[RECORDED] The view must display UNKNOWN rather than infer real diff groups."]
+    N_6630b028247f1a08["[RECORDED] Rendering success still requires the packaged Mermaid runtime."]
+    N_2eb930959384d64c["[OMITTED] 17 lower-priority nodes"]
+    N_0b51dce8fe915eda -.->|"contradicted by"| N_1ded0fae46344828
+    N_0b51dce8fe915eda -->|"limited by"| N_a17fb3165e6b0db5
+    N_0b51dce8fe915eda ==>|"supported by"| N_ef4722a060cacfda
+    N_5522d8dace1cb6e7 -.->|"contradicted by"| N_1ded0fae46344828
+    N_5522d8dace1cb6e7 -->|"leaves unknown"| N_ac65699e766edc85
+    N_5522d8dace1cb6e7 -.->|"contradicted by"| N_ef4722a060cacfda
+    N_6f91af1641ed1424 -->|"limited by"| N_6630b028247f1a08
+    N_6f91af1641ed1424 ==>|"supported by"| N_a42d56cfe9dff13d
+    N_6f91af1641ed1424 ==>|"supported by"| N_e824b2ad012b224e
+    N_8575658723b5d49d ==>|"supported by"| N_c075a66077dd6940
+    N_0b51dce8fe915eda -->|"answers"| N_f797fb20a8448aa0
+    N_6f91af1641ed1424 -->|"answers"| N_f797fb20a8448aa0
+    N_8575658723b5d49d -->|"answers"| N_f797fb20a8448aa0
+    classDef verified fill:#dcfce7,stroke:#166534,color:#052e16,stroke-width:2px
+    classDef observation fill:#e0f2fe,stroke:#0369a1,color:#082f49
+    classDef candidate fill:#fef3c7,stroke:#92400e,color:#451a03,stroke-dasharray:5 3
+    classDef supported fill:#ede9fe,stroke:#6d28d9,color:#2e1065,stroke-width:2px
+    classDef conflict fill:#fee2e2,stroke:#b91c1c,color:#450a0a,stroke-width:2px
+    classDef unknown fill:#f3f4f6,stroke:#4b5563,color:#111827,stroke-dasharray:5 3
+    classDef stale fill:#ffedd5,stroke:#c2410c,color:#431407,stroke-dasharray:3 3
+    classDef authorization fill:#ecfccb,stroke:#3f6212,color:#1a2e05
+    classDef omitted fill:#f3f4f6,stroke:#6b7280,color:#111827,stroke-dasharray:2 3
+    classDef evidenceDefault fill:#ffffff,stroke:#475569,color:#0f172a
+    class N_0b51dce8fe915eda conflict
+    class N_6f91af1641ed1424 supported
+    class N_8575658723b5d49d supported
+    class N_5522d8dace1cb6e7 conflict
+    class N_ac65699e766edc85 unknown
+    class N_ef4722a060cacfda verified
+    class N_1ded0fae46344828 verified
+    class N_c075a66077dd6940 verified
+    class N_e824b2ad012b224e verified
+    class N_a42d56cfe9dff13d verified
+    class N_f797fb20a8448aa0 evidenceDefault
+    class N_a17fb3165e6b0db5 evidenceDefault
+    class N_6630b028247f1a08 evidenceDefault
+    class N_2eb930959384d64c omitted

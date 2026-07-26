@@ -1,0 +1,105 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://advancingtitans.github.io/agent-engineering-toolkit/schemas/evidence-atlas/v1/atlas-manifest.schema.json",
+  "title": "AET Evidence Atlas Manifest v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "bundle",
+    "generated_from",
+    "generation_policy",
+    "contents",
+    "integrity"
+  ],
+  "properties": {
+    "extensions": {"type": "object", "additionalProperties": true},
+    "schema_version": {"const": "aet-evidence-atlas-manifest/1.0"},
+    "bundle": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "content_hash"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "content_hash": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "generated_from": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["bundle_content_hash", "manifest_sha256", "index_sha256"],
+      "properties": {
+        "bundle_content_hash": {"$ref": "#/$defs/sha256"},
+        "manifest_sha256": {"$ref": "#/$defs/sha256"},
+        "index_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "generation_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "max_depth",
+        "max_nodes_per_diagram",
+        "max_children_per_node",
+        "max_total_diagrams",
+        "deduplicate_by_canonical_node_id",
+        "llm_enabled",
+        "mermaid_security_level",
+        "allow_html_labels",
+        "allow_external_urls",
+        "allow_external_images"
+      ],
+      "properties": {
+        "max_depth": {"type": "integer", "minimum": 1},
+        "max_nodes_per_diagram": {"type": "integer", "minimum": 1},
+        "max_children_per_node": {"type": "integer", "minimum": 1},
+        "max_total_diagrams": {"type": "integer", "minimum": 1},
+        "deduplicate_by_canonical_node_id": {"const": true},
+        "llm_enabled": {"const": false},
+        "mermaid_security_level": {"const": "strict"},
+        "allow_html_labels": {"const": false},
+        "allow_external_urls": {"const": false},
+        "allow_external_images": {"const": false}
+      }
+    },
+    "contents": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["graph", "nodes", "edges", "hierarchy", "diagnostics", "perspectives"],
+      "properties": {
+        "graph": {"$ref": "#/$defs/relativePath"},
+        "nodes": {"$ref": "#/$defs/relativePath"},
+        "edges": {"$ref": "#/$defs/relativePath"},
+        "hierarchy": {"$ref": "#/$defs/relativePath"},
+        "diagnostics": {"$ref": "#/$defs/relativePath"},
+        "perspectives": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 8,
+          "items": {"$ref": "#/$defs/relativePath"},
+          "uniqueItems": true
+        }
+      }
+    },
+    "integrity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["algorithm", "file_hashes"],
+      "properties": {
+        "algorithm": {"const": "sha256"},
+        "file_hashes": {
+          "type": "object",
+          "additionalProperties": {"$ref": "#/$defs/sha256"}
+        }
+      }
+    }
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "relativePath": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*\\\\).+$"
+    }
+  }
+}

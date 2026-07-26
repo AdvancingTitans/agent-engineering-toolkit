@@ -1,0 +1,81 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://advancingtitans.github.io/agent-engineering-toolkit/schemas/evidence-atlas/v1/edge.schema.json",
+  "title": "AET Evidence Atlas Edge v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "from",
+    "to",
+    "type",
+    "source_refs",
+    "authority",
+    "freshness_effect",
+    "render"
+  ],
+  "properties": {
+    "extensions": {"type": "object", "additionalProperties": true},
+    "id": {"type": "string", "pattern": "^edge:[a-z0-9:_-]+$"},
+    "from": {"type": "string", "pattern": "^node:"},
+    "to": {"type": "string", "pattern": "^node:"},
+    "type": {
+      "enum": [
+        "ANSWERS",
+        "DECOMPOSES_INTO",
+        "SUPPORTED_BY",
+        "PARTIALLY_SUPPORTED_BY",
+        "CONTRADICTED_BY",
+        "LIMITED_BY",
+        "DERIVED_FROM",
+        "OBSERVED_IN",
+        "PRODUCED_BY",
+        "EXECUTED_BY",
+        "CALLED",
+        "RETURNED",
+        "APPLIES_TO",
+        "CHANGED",
+        "DEPENDS_ON",
+        "VALIDATES",
+        "INVALIDATED_BY",
+        "FRESH_FOR",
+        "STALE_FOR",
+        "AUTHORIZED_BY",
+        "VIOLATES",
+        "CONSTRAINED_BY",
+        "GROUPED_IN",
+        "RESOLVES",
+        "LEAVES_UNKNOWN",
+        "RECOMMENDS",
+        "PRECEDES",
+        "DUPLICATES"
+      ]
+    },
+    "source_refs": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["collection", "record_id", "field"],
+        "properties": {
+          "collection": {"type": "string", "minLength": 1},
+          "record_id": {"type": "string", "minLength": 1},
+          "field": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "authority": {"const": "deterministic_reference"},
+    "freshness_effect": {"enum": ["required", "not_applicable"]},
+    "render": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["label", "priority"],
+      "properties": {
+        "label": {"type": "string", "minLength": 1},
+        "priority": {"type": "integer", "minimum": 0, "maximum": 100}
+      }
+    }
+  }
+}

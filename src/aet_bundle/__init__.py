@@ -14,6 +14,18 @@ from aet.bundle import (
     validate_bundle,
     validate_review_result,
 )
+from aet.atlas.builder import build_evidence_graph
+from aet.atlas.queries import (
+    get_node_subgraph,
+    trace_claim_support,
+    trace_freshness_impact,
+)
+from aet.atlas.render import render_mermaid
+from aet.atlas.storage import load_evidence_atlas
+from aet.atlas.validator import (
+    validate_evidence_atlas,
+    validate_evidence_graph,
+)
 
 
 def query_claims(
@@ -148,6 +160,38 @@ def validate_review_references(
     return validate_review_result(bundle_path, review)
 
 
+def load_evidence_graph(atlas_path: Path) -> dict[str, Any]:
+    """Load one integrity-checked Evidence Atlas sidecar and return its graph."""
+    return load_evidence_atlas(atlas_path)["graph"]
+
+
+def query_perspective(
+    graph: Mapping[str, Any],
+    perspective: str,
+    *,
+    root_id: str | None = None,
+    depth: int = 2,
+    max_nodes: int = 50,
+    max_bytes: int = 262_144,
+) -> dict[str, Any]:
+    """Return one bounded Perspective projection or a rooted subgraph."""
+    for item in graph.get("perspectives", []):
+        if isinstance(item, Mapping) and item.get("id") == perspective:
+            roots = item.get("root_node_ids")
+            if not isinstance(roots, list) or not roots:
+                raise ValueError(f"Perspective has no root nodes: {perspective}")
+            selected_root = root_id or roots[0]
+            return get_node_subgraph(
+                graph,
+                selected_root,
+                perspective=perspective,
+                depth=depth,
+                max_nodes=max_nodes,
+                max_bytes=max_bytes,
+            )
+    raise ValueError(f"unknown Perspective: {perspective}")
+
+
 def _records(bundle: Mapping[str, Any], field: str) -> list[dict[str, Any]]:
     value = bundle.get(field)
     if not isinstance(value, list) or any(not isinstance(item, dict) for item in value):
@@ -157,12 +201,21 @@ def _records(bundle: Mapping[str, Any], field: str) -> list[dict[str, Any]]:
 
 __all__ = [
     "BundleError",
+    "build_evidence_graph",
+    "get_node_subgraph",
     "load_bundle",
+    "load_evidence_graph",
+    "query_perspective",
     "query_claims",
     "query_evidence",
     "read_blob",
     "render_prompt_context",
+    "render_mermaid",
     "resolve_source",
+    "trace_claim_support",
+    "trace_freshness_impact",
     "validate_bundle",
+    "validate_evidence_atlas",
+    "validate_evidence_graph",
     "validate_review_references",
 ]

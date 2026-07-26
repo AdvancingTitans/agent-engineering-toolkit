@@ -1,5 +1,34 @@
 # Changelog
 
+## 1.15.0 — 2026-07-26
+
+- Added Evidence Atlas, a deterministic canonical Evidence Graph derived from
+  Portable Evidence Bundle v1 records. Authoritative nodes and edges retain
+  field-level source references; stale Proofs cannot validate current Claims,
+  counter-evidence remains visible, and missing facts remain `UNKNOWN`.
+- Added eight fixed Perspectives for Claim Chain, Investigation Flow, Change
+  Scope, Verification Coverage, Evidence Data Flow, Integrations, Conflicts,
+  and Freshness. Every node receives deterministic complexity evaluation;
+  typed recursive decomposition, canonical-node deduplication, cycle stops, and
+  hard depth/node/child/diagram budgets keep diagrams bounded.
+- Added safe Diagram IR and Mermaid projection, structured Markdown and JSON,
+  strict validation, and a completely offline three-column Viewer with local
+  Mermaid, search, filters, supporting/counter/stale path highlighting,
+  evidence details, and recursive parent/child navigation.
+- Added `aet atlas build|validate|view|export|query|explain|diff`, optional
+  Python and TypeScript graph APIs, and eight bounded read-only MCP graph tools.
+  Incremental rebuilds reuse validated unchanged Perspectives and unaffected
+  recursive subgraphs; Atlas
+  comparison reports Claim, Freshness, conflict, and unknown changes without a
+  holistic trust score.
+- Added JSON Schemas, security and failure fixtures, protocol tests, and a
+  reproducible AET self-review Bundle whose real Claim Chain and offline Viewer
+  drive the README example.
+- Updated the English and Simplified Chinese product showcase with synchronized
+  static Evidence Atlas architecture, a six-state real Viewer GIF, 30-second
+  bilingual H.264 walkthroughs, a SHA-256 media manifest, and a GitHub-rendered
+  Mermaid self-review example.
+
 ## 1.14.0 — 2026-07-26
 
 - Added host-neutral Codex and Claude Code Run Normalizers with stable record

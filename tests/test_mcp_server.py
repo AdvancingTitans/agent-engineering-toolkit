@@ -9,6 +9,7 @@ from pathlib import Path
 from typing import Any
 
 from aet.bundle import validate_bundle
+from aet.atlas.storage import build_evidence_atlas
 from aet.mcp_server import (
     MCP_PROTOCOL_VERSION,
     call_tool,
@@ -45,6 +46,14 @@ EXPECTED_TOOLS = {
     "aet_bundle_get_evidence",
     "aet_bundle_get_blob",
     "aet_bundle_validate_review",
+    "aet_graph_list_perspectives",
+    "aet_graph_get_root",
+    "aet_graph_get_node",
+    "aet_graph_get_children",
+    "aet_graph_trace_claim",
+    "aet_graph_trace_conflict",
+    "aet_graph_trace_freshness",
+    "aet_graph_render_mermaid",
 }
 
 
@@ -202,6 +211,50 @@ class McpServerTests(unittest.TestCase):
             )
             self.assertEqual("PASS", report["status"])
             self.assertEqual("bundle-fixture-001", report["bundle_id"])
+
+    def test_graph_tools_validate_sidecar_and_enforce_query_budgets(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            atlas = Path(temporary) / "minimal.atlas"
+            build_evidence_atlas(MINIMAL_BUNDLE, output=atlas)
+            common = {
+                "atlas": str(atlas),
+                "bundle": str(MINIMAL_BUNDLE),
+            }
+            perspectives = call_tool(
+                "aet_graph_list_perspectives",
+                common,
+            )
+            self.assertEqual(8, len(perspectives["perspectives"]))
+
+            roots = call_tool(
+                "aet_graph_get_root",
+                {**common, "perspective": "claim-chain"},
+            )
+            claim = next(
+                node for node in roots["roots"] if node["type"] == "claim"
+            )
+            resolved = call_tool(
+                "aet_graph_get_node",
+                {**common, "node_id": claim["id"]},
+            )
+            self.assertEqual(claim["id"], resolved["id"])
+
+            traced = call_tool(
+                "aet_graph_trace_claim",
+                {**common, "claim_id": "claim-001", "max_nodes": 25},
+            )
+            self.assertTrue(traced["nodes"])
+            rendered = call_tool(
+                "aet_graph_render_mermaid",
+                {**common, "perspective": "claim-chain"},
+            )
+            self.assertTrue(rendered["mermaid"].startswith("flowchart "))
+
+            rejected = _tool_request(
+                "aet_graph_trace_claim",
+                {**common, "claim_id": "claim-001", "max_nodes": 201},
+            )
+            self.assertTrue(rejected["result"]["isError"])
 
     def test_run_normalize_refuses_overwrite_and_reports_tool_error(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:

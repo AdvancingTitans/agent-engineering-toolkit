@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://advancingtitans.github.io/agent-engineering-toolkit/schemas/evidence-atlas/v1/comparison.schema.json",
+  "title": "AET Evidence Atlas Comparison v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "before",
+    "after",
+    "nodes",
+    "edges",
+    "semantic_changes"
+  ],
+  "properties": {
+    "schema_version": {"const": "aet-evidence-atlas-diff/1.0"},
+    "before": {"$ref": "#/$defs/identity"},
+    "after": {"$ref": "#/$defs/identity"},
+    "nodes": {"$ref": "#/$defs/recordChanges"},
+    "edges": {"$ref": "#/$defs/recordChanges"},
+    "semantic_changes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["claim_status", "freshness", "conflicts", "unknowns"],
+      "properties": {
+        "claim_status": {"type": "array", "items": {"type": "object"}},
+        "freshness": {"type": "array", "items": {"type": "object"}},
+        "conflicts": {"$ref": "#/$defs/membership"},
+        "unknowns": {"$ref": "#/$defs/membership"}
+      }
+    }
+  },
+  "$defs": {
+    "identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["bundle_id", "bundle_content_hash"],
+      "properties": {
+        "bundle_id": {"type": ["string", "null"]},
+        "bundle_content_hash": {
+          "type": ["string", "null"],
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      }
+    },
+    "recordChanges": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["added", "removed", "changed"],
+      "properties": {
+        "added": {"type": "array", "items": {"type": "object"}},
+        "removed": {"type": "array", "items": {"type": "object"}},
+        "changed": {"type": "array", "items": {"type": "object"}}
+      }
+    },
+    "membership": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["added", "removed"],
+      "properties": {
+        "added": {
+          "type": "array",
+          "items": {"type": "string"},
+          "uniqueItems": true
+        },
+        "removed": {
+          "type": "array",
+          "items": {"type": "string"},
+          "uniqueItems": true
+        }
+      }
+    }
+  }
+}

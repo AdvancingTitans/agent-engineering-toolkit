@@ -1,0 +1,145 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://advancingtitans.github.io/agent-engineering-toolkit/schemas/evidence-atlas/v1/graph.schema.json",
+  "title": "AET Canonical Evidence Graph v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "bundle_id",
+    "generated_from",
+    "generation_policy",
+    "nodes",
+    "edges",
+    "perspectives",
+    "diagnostics",
+    "dependency_index"
+  ],
+  "properties": {
+    "extensions": {"type": "object", "additionalProperties": true},
+    "schema_version": {"const": "aet-evidence-graph/1.0"},
+    "bundle_id": {"type": "string", "minLength": 1},
+    "generated_from": {"$ref": "#/$defs/generatedFrom"},
+    "generation_policy": {"$ref": "#/$defs/generationPolicy"},
+    "nodes": {
+      "type": "array",
+      "items": {"$ref": "node.schema.json"}
+    },
+    "edges": {
+      "type": "array",
+      "items": {"$ref": "edge.schema.json"}
+    },
+    "perspectives": {
+      "type": "array",
+      "items": {
+        "oneOf": [
+          {"$ref": "#/$defs/perspectiveId"},
+          {
+            "type": "object",
+            "required": ["id"],
+            "properties": {
+              "id": {"$ref": "#/$defs/perspectiveId"},
+              "node_ids": {"type": "array", "items": {"type": "string"}},
+              "edge_ids": {"type": "array", "items": {"type": "string"}}
+            },
+            "additionalProperties": true
+          }
+        ]
+      },
+      "uniqueItems": true
+    },
+    "diagnostics": {
+      "type": "array",
+      "items": {"$ref": "diagnostic.schema.json"}
+    },
+    "dependency_index": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "record_hashes",
+        "record_to_nodes",
+        "record_to_edges",
+        "node_to_edges",
+        "node_to_perspectives",
+        "node_to_parent_diagrams",
+        "record_to_perspectives",
+        "record_to_parent_diagrams"
+      ],
+      "properties": {
+        "record_hashes": {"$ref": "#/$defs/hashMap"},
+        "record_to_nodes": {"$ref": "#/$defs/stringArrayMap"},
+        "record_to_edges": {"$ref": "#/$defs/stringArrayMap"},
+        "node_to_edges": {"$ref": "#/$defs/stringArrayMap"},
+        "node_to_perspectives": {"$ref": "#/$defs/stringArrayMap"},
+        "node_to_parent_diagrams": {"$ref": "#/$defs/stringArrayMap"},
+        "record_to_perspectives": {"$ref": "#/$defs/stringArrayMap"},
+        "record_to_parent_diagrams": {"$ref": "#/$defs/stringArrayMap"}
+      }
+    }
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "generatedFrom": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["bundle_content_hash", "manifest_sha256", "index_sha256"],
+      "properties": {
+        "bundle_content_hash": {"$ref": "#/$defs/sha256"},
+        "manifest_sha256": {"$ref": "#/$defs/sha256"},
+        "index_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "generationPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "max_depth",
+        "max_nodes_per_diagram",
+        "max_children_per_node",
+        "max_total_diagrams",
+        "deduplicate_by_canonical_node_id",
+        "llm_enabled",
+        "mermaid_security_level",
+        "allow_html_labels",
+        "allow_external_urls",
+        "allow_external_images"
+      ],
+      "properties": {
+        "max_depth": {"type": "integer", "minimum": 1},
+        "max_nodes_per_diagram": {"type": "integer", "minimum": 1},
+        "max_children_per_node": {"type": "integer", "minimum": 1},
+        "max_total_diagrams": {"type": "integer", "minimum": 1},
+        "deduplicate_by_canonical_node_id": {"const": true},
+        "llm_enabled": {"const": false},
+        "mermaid_security_level": {"const": "strict"},
+        "allow_html_labels": {"const": false},
+        "allow_external_urls": {"const": false},
+        "allow_external_images": {"const": false}
+      }
+    },
+    "perspectiveId": {
+      "enum": [
+        "claim-chain",
+        "investigation-flow",
+        "change-scope",
+        "verification-coverage",
+        "evidence-data-flow",
+        "integrations",
+        "conflicts",
+        "freshness"
+      ]
+    },
+    "hashMap": {
+      "type": "object",
+      "additionalProperties": {"$ref": "#/$defs/sha256"}
+    },
+    "stringArrayMap": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": {"type": "string", "minLength": 1},
+        "uniqueItems": true
+      }
+    }
+  }
+}

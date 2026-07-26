@@ -1,0 +1,16 @@
+{
+  "name": "@aet/atlas-viewer-runtime",
+  "version": "1.15.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs",
+    "check": "npm run build && node check.mjs",
+    "validate:atlas": "node validate-atlas.mjs"
+  },
+  "devDependencies": {
+    "esbuild": "0.25.12",
+    "jsdom": "26.1.0",
+    "mermaid": "11.16.0"
+  }
+}

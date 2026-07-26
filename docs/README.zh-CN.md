@@ -8,14 +8,16 @@
 
 **[English](../README.md) · [简体中文](README.zh-CN.md)**
 
-> **AET 让 AI 编码审查既有调查能力，也不允许模型编造证据。**
+> **AET 把 AI 编码工作转成可移植、可检查的证据，再让人类和 Agent 在不允许模型编造事实的
+> 前提下完成调查。**
 
-AI 编码 Agent 说任务已经修好、测试已经通过。AET 帮你回答四个具体问题：
+AI 编码 Agent 说任务已经修好、测试已经通过。AET 帮你回答五个具体问题：
 
 1. 本次改动是否与用户任务相关？
 2. 声称的验证是否真的在当前工作区执行？
 3. 这份验证记录现在是否仍能代表当前代码？
 4. 另一个没有安装 AET 的 Agent 能否审查同一份证据？
+5. 人类能否沿一张可读调查地图追踪结论、反证与 `UNKNOWN`？
 
 工具产生可复现事实；宿主 LLM 可以理解任务意图、提出竞争假设、调用授权工具、检查反方解释，
 并形成有条件的工程判断。AET 再用确定性代码检查引用、权限、结论强度和预算，并把结果导出为
@@ -23,7 +25,8 @@ AI 编码 Agent 说任务已经修好、测试已经通过。AET 帮你回答四
 
 ```text
 确定性事实 → 有边界的调查 → 依据校验
-          → 可移植证据交接 → 独立审查 → 人工决定
+          → 可移植证据交接 → Evidence Atlas
+          → 独立审查 → 人工决定
 ```
 
 ## 四个 Quick Skill
@@ -56,7 +59,7 @@ aet quick fresh --proof .aet/proofs/auth.json
 
 ## 跨 Agent 可移植证据交接
 
-四个 Quick Skill 继续作为日常入口。v1.14.0 另外增加一条证据交接路径：审查者可以是
+四个 Quick Skill 继续作为日常入口。v1.14.0 引入一条证据交接路径：审查者可以是
 Codex、Claude Code、Hermes、本地模型或其他能读取 JSON 的 Agent，并且不能假定它已经安装 AET。
 
 ```text
@@ -152,6 +155,159 @@ from aet_bundle import load_bundle, query_claims, validate_bundle
 
 TypeScript 与 Python SDK 提供加载、查询、Blob 解析、Prompt Context 渲染和引用校验；
 MCP 暴露相同的有界规范化、调查、Bundle 查询和校验操作。消费 Bundle 不依赖任何便利层。
+
+## Evidence Atlas：可递归下钻的证据地图
+
+v1.15.0 把 Evidence Atlas 作为 Portable Evidence Bundle 的内置确定性投影。它不会让
+LLM 根据材料画一张“看起来合理”的图，而是先建立规范化 Evidence Graph，为每个权威节点和
+边保留字段级来源引用，再投影出八个固定视角：
+
+| 视角 | 回答的问题 |
+| --- | --- |
+| Claim Chain | 这个结论由什么支持、反驳或限制？ |
+| Investigation Flow | 调查如何形成有边界的 Finding？ |
+| Change Scope | 哪些改动属于范围、合理扩展或仍是未知？ |
+| Verification Coverage | Proof 证明了什么，又明确没有证明什么？ |
+| Evidence Data Flow | Record 如何成为 Observation、Evidence、Claim 与审查材料？ |
+| Integration and Sources | 哪些系统、权限和信任边界提供了证据？ |
+| Conflict and Unknown | 哪些事实仍冲突、不可用、过期或未解决？ |
+| Freshness | 证据何时适用或失效，原因是什么？ |
+
+![AET Evidence Atlas 静态架构](assets/aet-evidence-atlas-architecture-zh-CN.png)
+
+权威方向始终是单向的：
+
+```mermaid
+flowchart LR
+    B["Portable Evidence Bundle<br/>权威 JSON / JSONL"] --> G["Canonical Evidence Graph<br/>有来源的节点与边"]
+    G --> P["八个确定性 Perspective"]
+    P --> H["递归层级<br/>复杂节点展开；简单节点保持叶子"]
+    H --> R["Mermaid · Markdown · JSON"]
+    R --> V["离线 Viewer"]
+    G --> X["Fail-closed 校验"]
+    X --> P
+```
+
+Mermaid、Markdown 和 Viewer 都是可重建投影。它们不创建证据、不隐藏反证、不改变
+Freshness，也不授予 Fix、Merge、Push 或 Release 权限。默认输出为同级 Sidecar
+`<bundle>.atlas/`，因为 Bundle v1 Manifest 会精确哈希 Bundle 根目录的全部文件：
+
+```text
+evidence-bundle/          # 权威 Portable Evidence Bundle
+evidence-bundle.atlas/
+├── graph/
+│   ├── graph.json
+│   ├── nodes.jsonl
+│   ├── edges.jsonl
+│   ├── hierarchy.json
+│   ├── diagnostics.jsonl
+│   └── perspectives/{claim-chain,...}/
+└── atlas/
+    ├── index.html
+    └── assets/           # 本地 Mermaid Runtime；无需网络
+```
+
+构建、校验、查询、比较和打开 Atlas：
+
+```bash
+aet atlas build evidence-bundle --no-llm
+# 可选：只生成选定的固定 Perspective。
+aet atlas build evidence-bundle --perspectives claim-chain,verification-coverage,conflicts
+aet atlas validate evidence-bundle
+aet atlas query evidence-bundle --perspective claim-chain \
+  --root node:claim:CLM-0042 --format json
+aet atlas explain evidence-bundle --node node:claim:CLM-0042
+aet atlas diff previous-bundle current-bundle
+aet atlas view evidence-bundle
+```
+
+每个节点都会接受确定性复杂度评估；复杂节点按类型生成子图，简单节点保持叶子。深度、单图节点、
+单节点子元素及总图数都有硬预算。Canonical Node ID 防止复制整棵子树，循环在引用节点停止，
+增量重建会直接复用未受影响的 Perspective 与递归子图。
+
+### 来自 AET 自身的动态 Viewer 示例
+
+这不是 Mockup。仓库会哈希并审查自己的 Graph Builder、Perspective 定义、Viewer 和
+Bundle Schema，构建 `bundle-aet-atlas-self-review-v1`，再录制真实离线 Viewer 状态：
+
+![AET Evidence Atlas 递归 Viewer](assets/aet-evidence-atlas-viewer.gif)
+
+[观看 30 秒 Evidence Atlas 中文介绍（MP4）](assets/aet-evidence-atlas-intro-zh-CN.mp4)
+· [媒体哈希与采集身份](assets/aet-evidence-atlas-media-manifest.json)
+
+复现源 Bundle 与 Atlas：
+
+```bash
+uv run python examples/evidence-atlas/build_example.py --output /tmp/aet-atlas-bundle
+uv run aet atlas build /tmp/aet-atlas-bundle --max-nodes 14 --max-depth 4 --no-llm
+uv run aet atlas validate /tmp/aet-atlas-bundle
+uv run aet atlas view /tmp/aet-atlas-bundle
+```
+
+这份真实自审产生的 Claim Chain 会刻意保留范围冲突、反证和未解决节点：
+
+<!-- atlas-self-review-mermaid:start -->
+```mermaid
+flowchart LR
+    %% Evidence Atlas
+    N_0b51dce8fe915eda{"[CONFLICT] The Bundle v1 change-scope view alone proves complete real diff grouping."}
+    N_6f91af1641ed1424{{"[SUPPORTED] AET projects eight fixed evidence perspectives and exposes complex nodes as recursive Viewer su..."}}
+    N_8575658723b5d49d{{"[SUPPORTED] AET builds a canonical Evidence Graph from source-backed Bundle records without letting Mermaid..."}}
+    N_5522d8dace1cb6e7{"[CONFLICT] Path binding is useful for scope context but insufficient to prove complete real diff grouping."}
+    N_ac65699e766edc85["[UNKNOWN] Unresolved conflict conflict-change-scope-v1"]
+    N_ef4722a060cacfda["[VERIFIED] Bundle Evidence records can bind facts to repository paths."]
+    N_1ded0fae46344828["[VERIFIED] The Portable Evidence v1 Evidence record schema does not define an explicit Change Group field."]
+    N_c075a66077dd6940["[VERIFIED] The Graph Builder creates canonical nodes and source-backed edges."]
+    N_e824b2ad012b224e["[VERIFIED] The Perspective module defines eight fixed deterministic projections."]
+    N_a42d56cfe9dff13d["[VERIFIED] The offline Viewer contains recursive subgraph navigation."]
+    N_f797fb20a8448aa0["[RECORDED] Review AET's own Evidence Atlas implementation and retain support, counter-evidence, limitation..."]
+    N_a17fb3165e6b0db5["[RECORDED] The view must display UNKNOWN rather than infer real diff groups."]
+    N_6630b028247f1a08["[RECORDED] Rendering success still requires the packaged Mermaid runtime."]
+    N_2eb930959384d64c["[OMITTED] 17 lower-priority nodes"]
+    N_0b51dce8fe915eda -.->|"contradicted by"| N_1ded0fae46344828
+    N_0b51dce8fe915eda -->|"limited by"| N_a17fb3165e6b0db5
+    N_0b51dce8fe915eda ==>|"supported by"| N_ef4722a060cacfda
+    N_5522d8dace1cb6e7 -.->|"contradicted by"| N_1ded0fae46344828
+    N_5522d8dace1cb6e7 -->|"leaves unknown"| N_ac65699e766edc85
+    N_5522d8dace1cb6e7 -.->|"contradicted by"| N_ef4722a060cacfda
+    N_6f91af1641ed1424 -->|"limited by"| N_6630b028247f1a08
+    N_6f91af1641ed1424 ==>|"supported by"| N_a42d56cfe9dff13d
+    N_6f91af1641ed1424 ==>|"supported by"| N_e824b2ad012b224e
+    N_8575658723b5d49d ==>|"supported by"| N_c075a66077dd6940
+    N_0b51dce8fe915eda -->|"answers"| N_f797fb20a8448aa0
+    N_6f91af1641ed1424 -->|"answers"| N_f797fb20a8448aa0
+    N_8575658723b5d49d -->|"answers"| N_f797fb20a8448aa0
+    classDef verified fill:#dcfce7,stroke:#166534,color:#052e16,stroke-width:2px
+    classDef observation fill:#e0f2fe,stroke:#0369a1,color:#082f49
+    classDef candidate fill:#fef3c7,stroke:#92400e,color:#451a03,stroke-dasharray:5 3
+    classDef supported fill:#ede9fe,stroke:#6d28d9,color:#2e1065,stroke-width:2px
+    classDef conflict fill:#fee2e2,stroke:#b91c1c,color:#450a0a,stroke-width:2px
+    classDef unknown fill:#f3f4f6,stroke:#4b5563,color:#111827,stroke-dasharray:5 3
+    classDef stale fill:#ffedd5,stroke:#c2410c,color:#431407,stroke-dasharray:3 3
+    classDef authorization fill:#ecfccb,stroke:#3f6212,color:#1a2e05
+    classDef omitted fill:#f3f4f6,stroke:#6b7280,color:#111827,stroke-dasharray:2 3
+    classDef evidenceDefault fill:#ffffff,stroke:#475569,color:#0f172a
+    class N_0b51dce8fe915eda conflict
+    class N_6f91af1641ed1424 supported
+    class N_8575658723b5d49d supported
+    class N_5522d8dace1cb6e7 conflict
+    class N_ac65699e766edc85 unknown
+    class N_ef4722a060cacfda verified
+    class N_1ded0fae46344828 verified
+    class N_c075a66077dd6940 verified
+    class N_e824b2ad012b224e verified
+    class N_a42d56cfe9dff13d verified
+    class N_f797fb20a8448aa0 evidenceDefault
+    class N_a17fb3165e6b0db5 evidenceDefault
+    class N_6630b028247f1a08 evidenceDefault
+    class N_2eb930959384d64c omitted
+```
+<!-- atlas-self-review-mermaid:end -->
+
+完整生成图保存在
+[`examples/evidence-atlas/aet-self-review-claim-chain.mmd`](../examples/evidence-atlas/aet-self-review-claim-chain.mmd)。
+Python 与 TypeScript SDK 提供 Graph 构建、加载、查询、追踪、校验及 Mermaid 渲染 API；
+MCP 增加八个只读 `aet_graph_*` 工具，并对节点数和深度设限。Viewer 始终是静态离线消费者。
 
 ## 30 秒看懂
 
@@ -514,6 +670,7 @@ AET 使用 Python 3.11+，确定性运行时保持轻依赖。贡献新规则时
 
 ## 高级文档
 
+- [Evidence Atlas 架构](architecture/evidence-atlas.md)
 - [Portable Evidence Bundle v1](protocols/portable-evidence-bundle-v1.md)
 - [可移植证据工作流](architecture/portable-evidence-workflow.md)
 - [通用 Agent 消费指南](guides/generic-agent-consumption.md)

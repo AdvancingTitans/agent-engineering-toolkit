@@ -1,0 +1,113 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://advancingtitans.github.io/agent-engineering-toolkit/schemas/evidence-atlas/v1/diagram-ir.schema.json",
+  "title": "AET Evidence Atlas Diagram IR v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "diagram_type",
+    "direction",
+    "title",
+    "nodes",
+    "edges",
+    "diagnostics",
+    "projection"
+  ],
+  "properties": {
+    "schema_version": {"const": "aet-evidence-diagram-ir/1.0"},
+    "diagram_type": {
+      "enum": ["flowchart", "sequenceDiagram", "timeline", "stateDiagram"]
+    },
+    "direction": {"enum": ["LR", "RL", "TD", "TB", "BT"]},
+    "title": {"type": "string", "minLength": 1},
+    "nodes": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/node"}
+    },
+    "edges": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/edge"}
+    },
+    "diagnostics": {
+      "type": "array",
+      "items": {"type": "object"}
+    },
+    "projection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_node_count",
+        "source_edge_count",
+        "rendered_node_count",
+        "rendered_edge_count",
+        "max_nodes",
+        "omitted_node_count"
+      ],
+      "properties": {
+        "source_node_count": {"type": "integer", "minimum": 0},
+        "source_edge_count": {"type": "integer", "minimum": 0},
+        "rendered_node_count": {"type": "integer", "minimum": 0},
+        "rendered_edge_count": {"type": "integer", "minimum": 0},
+        "max_nodes": {"type": "integer", "minimum": 1},
+        "omitted_node_count": {"type": "integer", "minimum": 0}
+      }
+    }
+  },
+  "$defs": {
+    "node": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "canonical_id",
+        "type",
+        "status",
+        "label",
+        "shape",
+        "class",
+        "priority",
+        "synthetic",
+        "timestamp"
+      ],
+      "properties": {
+        "id": {"type": "string", "pattern": "^N_[0-9a-f]{16}$"},
+        "canonical_id": {"type": "string", "minLength": 1},
+        "type": {"type": "string", "minLength": 1},
+        "status": {"type": "string", "minLength": 1},
+        "label": {"type": "string", "minLength": 1},
+        "shape": {"type": "string", "minLength": 1},
+        "class": {"type": "string", "minLength": 1},
+        "priority": {"type": "integer"},
+        "synthetic": {"type": "boolean"},
+        "timestamp": {"type": "string", "minLength": 1}
+      }
+    },
+    "edge": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "canonical_id",
+        "from",
+        "to",
+        "type",
+        "label",
+        "line",
+        "priority"
+      ],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "canonical_id": {"type": "string", "minLength": 1},
+        "from": {"type": "string", "pattern": "^N_[0-9a-f]{16}$"},
+        "to": {"type": "string", "pattern": "^N_[0-9a-f]{16}$"},
+        "type": {"type": "string", "minLength": 1},
+        "label": {"type": "string", "minLength": 1},
+        "line": {"enum": ["solid", "strong", "dotted"]},
+        "priority": {"type": "integer", "minimum": 0, "maximum": 100}
+      }
+    }
+  }
+}

@@ -25,6 +25,17 @@ from .run_normalization import (
     normalize_run,
     write_normalized_run,
 )
+from .atlas.queries import (
+    get_children,
+    get_node,
+    list_perspectives,
+    trace_claim_support,
+    trace_conflict,
+    trace_freshness_impact,
+)
+from .atlas.render import render_projection
+from .atlas.storage import load_evidence_atlas
+from .atlas.validator import validate_evidence_atlas
 
 
 MCP_PROTOCOL_VERSION = "2025-06-18"
@@ -37,6 +48,26 @@ def _path_schema(*required: str) -> dict[str, Any]:
         "required": list(required),
         "properties": {
             name: {"type": "string", "minLength": 1} for name in required
+        },
+    }
+
+
+def _graph_trace_schema(identifier: str) -> dict[str, Any]:
+    return {
+        "type": "object",
+        "additionalProperties": False,
+        "required": ["atlas", "bundle", identifier],
+        "properties": {
+            "atlas": {"type": "string", "minLength": 1},
+            "bundle": {"type": "string", "minLength": 1},
+            identifier: {"type": "string", "minLength": 1},
+            "depth": {"type": "integer", "minimum": 1, "maximum": 8},
+            "max_nodes": {"type": "integer", "minimum": 1, "maximum": 200},
+            "max_bytes": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 1_000_000,
+            },
         },
     }
 
@@ -110,6 +141,85 @@ _TOOLS = [
         "name": "aet_bundle_validate_review",
         "description": "Validate one structured Review Result against a Bundle.",
         "inputSchema": _path_schema("bundle", "review"),
+    },
+    {
+        "name": "aet_graph_list_perspectives",
+        "description": "List the eight deterministic Perspectives in a validated local Evidence Atlas.",
+        "inputSchema": _path_schema("atlas", "bundle"),
+    },
+    {
+        "name": "aet_graph_get_root",
+        "description": "Return the root nodes for one validated Evidence Atlas Perspective.",
+        "inputSchema": {
+            "type": "object",
+            "additionalProperties": False,
+            "required": ["atlas", "bundle", "perspective"],
+            "properties": {
+                "atlas": {"type": "string", "minLength": 1},
+                "bundle": {"type": "string", "minLength": 1},
+                "perspective": {"type": "string", "minLength": 1},
+            },
+        },
+    },
+    {
+        "name": "aet_graph_get_node",
+        "description": "Resolve one canonical node in a validated local Evidence Atlas.",
+        "inputSchema": {
+            "type": "object",
+            "additionalProperties": False,
+            "required": ["atlas", "bundle", "node_id"],
+            "properties": {
+                "atlas": {"type": "string", "minLength": 1},
+                "bundle": {"type": "string", "minLength": 1},
+                "node_id": {"type": "string", "minLength": 1},
+            },
+        },
+    },
+    {
+        "name": "aet_graph_get_children",
+        "description": "Return bounded direct children for one Atlas node and Perspective.",
+        "inputSchema": {
+            "type": "object",
+            "additionalProperties": False,
+            "required": ["atlas", "bundle", "node_id", "perspective"],
+            "properties": {
+                "atlas": {"type": "string", "minLength": 1},
+                "bundle": {"type": "string", "minLength": 1},
+                "node_id": {"type": "string", "minLength": 1},
+                "perspective": {"type": "string", "minLength": 1},
+                "max_nodes": {"type": "integer", "minimum": 1, "maximum": 200},
+            },
+        },
+    },
+    {
+        "name": "aet_graph_trace_claim",
+        "description": "Trace bounded support and counter-evidence paths for one Claim.",
+        "inputSchema": _graph_trace_schema("claim_id"),
+    },
+    {
+        "name": "aet_graph_trace_conflict",
+        "description": "Trace one bounded Conflict and its unresolved paths.",
+        "inputSchema": _graph_trace_schema("conflict_id"),
+    },
+    {
+        "name": "aet_graph_trace_freshness",
+        "description": "Trace bounded Freshness impact from Evidence or Proof to Claims.",
+        "inputSchema": _graph_trace_schema("node_id"),
+    },
+    {
+        "name": "aet_graph_render_mermaid",
+        "description": "Render one validated Perspective as strict, offline-safe Mermaid.",
+        "inputSchema": {
+            "type": "object",
+            "additionalProperties": False,
+            "required": ["atlas", "bundle", "perspective"],
+            "properties": {
+                "atlas": {"type": "string", "minLength": 1},
+                "bundle": {"type": "string", "minLength": 1},
+                "perspective": {"type": "string", "minLength": 1},
+                "max_nodes": {"type": "integer", "minimum": 1, "maximum": 200},
+            },
+        },
     },
 ]
 
@@ -278,6 +388,103 @@ def call_tool(name: str, arguments: Mapping[str, Any]) -> dict[str, Any]:
             Path(_string(arguments, "bundle")),
             Path(_string(arguments, "review")),
         )
+    if name == "aet_graph_list_perspectives":
+        _exact_arguments(arguments, {"atlas", "bundle"})
+        graph = _validated_graph(arguments)
+        return {"perspectives": list_perspectives(graph)}
+    if name == "aet_graph_get_root":
+        _exact_arguments(arguments, {"atlas", "bundle", "perspective"})
+        graph = _validated_graph(arguments)
+        perspective_id = _string(arguments, "perspective")
+        perspective = _perspective(graph, perspective_id)
+        return {
+            "perspective": perspective_id,
+            "roots": [
+                get_node(graph, identifier)
+                for identifier in perspective["root_node_ids"]
+            ],
+        }
+    if name == "aet_graph_get_node":
+        _exact_arguments(arguments, {"atlas", "bundle", "node_id"})
+        return get_node(
+            _validated_graph(arguments),
+            _string(arguments, "node_id"),
+        )
+    if name == "aet_graph_get_children":
+        _exact_arguments(
+            arguments,
+            {"atlas", "bundle", "node_id", "perspective"},
+            {"max_nodes"},
+        )
+        return {
+            "children": get_children(
+                _validated_graph(arguments),
+                _string(arguments, "node_id"),
+                perspective=_string(arguments, "perspective"),
+                max_nodes=_bounded_int(arguments, "max_nodes", 25, 200),
+            )
+        }
+    if name == "aet_graph_trace_claim":
+        _exact_arguments(
+            arguments,
+            {"atlas", "bundle", "claim_id"},
+            {"depth", "max_nodes", "max_bytes"},
+        )
+        return trace_claim_support(
+            _validated_graph(arguments),
+            _string(arguments, "claim_id"),
+            depth=_bounded_int(arguments, "depth", 4, 8),
+            max_nodes=_bounded_int(arguments, "max_nodes", 100, 200),
+            max_bytes=_bounded_int(arguments, "max_bytes", 524_288, 1_000_000),
+        )
+    if name == "aet_graph_trace_conflict":
+        _exact_arguments(
+            arguments,
+            {"atlas", "bundle", "conflict_id"},
+            {"depth", "max_nodes", "max_bytes"},
+        )
+        return trace_conflict(
+            _validated_graph(arguments),
+            _string(arguments, "conflict_id"),
+            depth=_bounded_int(arguments, "depth", 3, 8),
+            max_nodes=_bounded_int(arguments, "max_nodes", 75, 200),
+            max_bytes=_bounded_int(arguments, "max_bytes", 393_216, 1_000_000),
+        )
+    if name == "aet_graph_trace_freshness":
+        _exact_arguments(
+            arguments,
+            {"atlas", "bundle", "node_id"},
+            {"depth", "max_nodes", "max_bytes"},
+        )
+        return trace_freshness_impact(
+            _validated_graph(arguments),
+            _string(arguments, "node_id"),
+            depth=_bounded_int(arguments, "depth", 4, 8),
+            max_nodes=_bounded_int(arguments, "max_nodes", 100, 200),
+            max_bytes=_bounded_int(arguments, "max_bytes", 524_288, 1_000_000),
+        )
+    if name == "aet_graph_render_mermaid":
+        _exact_arguments(
+            arguments,
+            {"atlas", "bundle", "perspective"},
+            {"max_nodes"},
+        )
+        graph = _validated_graph(arguments)
+        perspective = _perspective(graph, _string(arguments, "perspective"))
+        projection = render_projection(
+            graph,
+            node_ids=perspective["node_ids"],
+            edge_ids=perspective["edge_ids"],
+            diagram_type=perspective["diagram_type"],
+            direction=perspective["direction"],
+            max_nodes=_bounded_int(arguments, "max_nodes", 25, 200),
+            root_ids=perspective["root_node_ids"],
+        )
+        return {
+            "perspective": perspective["id"],
+            "mermaid": projection.get("diagram") or "",
+            "diagnostics": projection["diagnostics"],
+        }
     raise ValueError(f"unsupported MCP tool: {name}")
 
 
@@ -342,6 +549,40 @@ def _optional_string(arguments: Mapping[str, Any], name: str) -> str | None:
     if name not in arguments:
         return None
     return _string(arguments, name)
+
+
+def _bounded_int(
+    arguments: Mapping[str, Any],
+    name: str,
+    default: int,
+    maximum: int,
+) -> int:
+    value = arguments.get(name, default)
+    if (
+        not isinstance(value, int)
+        or isinstance(value, bool)
+        or value < 1
+        or value > maximum
+    ):
+        raise ValueError(f"{name} must be between 1 and {maximum}")
+    return value
+
+
+def _validated_graph(arguments: Mapping[str, Any]) -> dict[str, Any]:
+    atlas = Path(_string(arguments, "atlas"))
+    manifest = atlas if atlas.name == "atlas-manifest.json" else atlas / "atlas-manifest.json"
+    validate_evidence_atlas(manifest, Path(_string(arguments, "bundle")))
+    return load_evidence_atlas(manifest.parent)["graph"]
+
+
+def _perspective(
+    graph: Mapping[str, Any],
+    perspective_id: str,
+) -> dict[str, Any]:
+    for perspective in graph.get("perspectives", []):
+        if isinstance(perspective, dict) and perspective.get("id") == perspective_id:
+            return perspective
+    raise ValueError(f"unknown Perspective: {perspective_id}")
 
 
 def _require_new_output(path: Path) -> None:

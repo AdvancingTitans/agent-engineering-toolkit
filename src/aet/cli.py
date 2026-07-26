@@ -6,6 +6,7 @@ import argparse
 import sys
 import json
 import hashlib
+import shutil
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Sequence
@@ -51,6 +52,35 @@ from .run_normalization import (
     normalize_run,
     write_normalized_run,
 )
+from .atlas.diff import compare_evidence_atlases
+from .atlas.model import PERSPECTIVES
+from .atlas.queries import (
+    AtlasQueryError,
+    explain_node,
+    get_node_subgraph,
+)
+from .atlas.storage import (
+    AtlasStorageError,
+    build_evidence_atlas,
+    default_atlas_path,
+    load_evidence_atlas,
+)
+from .atlas.validator import AtlasValidationError, validate_evidence_atlas
+from .atlas.viewer import serve_atlas, single_html
+
+
+def _perspective_selection(value: str) -> tuple[str, ...]:
+    identifiers = tuple(item.strip() for item in value.split(",") if item.strip())
+    if not identifiers:
+        raise argparse.ArgumentTypeError("select at least one Perspective")
+    if len(set(identifiers)) != len(identifiers):
+        raise argparse.ArgumentTypeError("Perspective selection contains duplicates")
+    unsupported = sorted(set(identifiers) - set(PERSPECTIVES))
+    if unsupported:
+        raise argparse.ArgumentTypeError(
+            f"unsupported Perspective: {', '.join(unsupported)}"
+        )
+    return identifiers
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -389,6 +419,62 @@ def build_parser() -> argparse.ArgumentParser:
     bundle_review = bundle_commands.add_parser("validate-review")
     bundle_review.add_argument("--bundle", required=True, type=Path)
     bundle_review.add_argument("--review", required=True, type=Path)
+    atlas_parser = commands.add_parser(
+        "atlas",
+        help="Build, validate, query, compare, and view deterministic Evidence Atlases.",
+    )
+    atlas_commands = atlas_parser.add_subparsers(dest="atlas_command", required=True)
+    atlas_build = atlas_commands.add_parser("build")
+    atlas_build.add_argument("bundle", type=Path)
+    atlas_build.add_argument("--output", type=Path)
+    atlas_build.add_argument("--max-depth", type=int, default=4)
+    atlas_build.add_argument("--max-nodes", type=int, default=25)
+    atlas_build.add_argument("--max-children", type=int, default=12)
+    atlas_build.add_argument("--max-diagrams", type=int, default=100)
+    atlas_build.add_argument(
+        "--perspectives",
+        type=_perspective_selection,
+        help="Comma-separated fixed Perspective IDs; default builds all eight.",
+    )
+    atlas_build.add_argument("--no-llm", action="store_true")
+    atlas_build.add_argument("--no-replace", action="store_true")
+    atlas_validate = atlas_commands.add_parser("validate")
+    atlas_validate.add_argument("input", type=Path)
+    atlas_validate.add_argument("--bundle", type=Path)
+    atlas_view = atlas_commands.add_parser("view")
+    atlas_view.add_argument("input", type=Path)
+    atlas_view.add_argument("--bundle", type=Path)
+    atlas_view.add_argument("--host", default="127.0.0.1")
+    atlas_view.add_argument("--port", type=int, default=0)
+    atlas_view.add_argument("--no-browser", action="store_true")
+    atlas_export = atlas_commands.add_parser("export")
+    atlas_export.add_argument("input", type=Path)
+    atlas_export.add_argument("--bundle", type=Path)
+    atlas_export.add_argument(
+        "--format",
+        choices=("static-html", "single-html"),
+        required=True,
+    )
+    atlas_export.add_argument("--output", required=True, type=Path)
+    atlas_query = atlas_commands.add_parser("query")
+    atlas_query.add_argument("input", type=Path)
+    atlas_query.add_argument("--bundle", type=Path)
+    atlas_query.add_argument("--perspective", required=True)
+    atlas_query.add_argument("--root", required=True)
+    atlas_query.add_argument("--depth", type=int, default=2)
+    atlas_query.add_argument("--max-nodes", type=int, default=50)
+    atlas_query.add_argument("--max-bytes", type=int, default=262_144)
+    atlas_query.add_argument("--format", choices=("json",), default="json")
+    atlas_explain = atlas_commands.add_parser("explain")
+    atlas_explain.add_argument("input", type=Path)
+    atlas_explain.add_argument("--bundle", type=Path)
+    atlas_explain.add_argument("--node", required=True)
+    atlas_diff = atlas_commands.add_parser("diff")
+    atlas_diff.add_argument("before", type=Path)
+    atlas_diff.add_argument("after", type=Path)
+    atlas_diff.add_argument("--before-bundle", type=Path)
+    atlas_diff.add_argument("--after-bundle", type=Path)
+    atlas_diff.add_argument("--output", type=Path)
     mcp_parser = commands.add_parser(
         "mcp",
         help="Serve the optional Portable Evidence Bundle MCP convenience layer.",
@@ -496,6 +582,128 @@ def main(argv: Sequence[str] | None = None) -> int:
             return 0
         except (BundleError, OSError, ValueError) as error:
             raise SystemExit(f"aet: bundle {args.bundle_command} failed: {error}") from error
+    if args.command == "atlas":
+        try:
+            if args.atlas_command == "build":
+                result = build_evidence_atlas(
+                    args.bundle,
+                    output=args.output,
+                    generation_policy={
+                        "max_depth": args.max_depth,
+                        "max_nodes_per_diagram": args.max_nodes,
+                        "max_children_per_node": args.max_children,
+                        "max_total_diagrams": args.max_diagrams,
+                        "llm_enabled": False,
+                    },
+                    perspective_ids=args.perspectives,
+                    replace=not args.no_replace,
+                )
+                report = {
+                    "report_kind": "evidence_atlas_build",
+                    "status": "PASS",
+                    "bundle_id": result["graph"]["bundle_id"],
+                    "output": result["output"],
+                    "node_count": len(result["graph"]["nodes"]),
+                    "edge_count": len(result["graph"]["edges"]),
+                    "perspectives": [
+                        item["id"] for item in result["perspectives"]
+                    ],
+                    "incremental": result["incremental"],
+                    "llm_enabled": False,
+                }
+            elif args.atlas_command == "diff":
+                before_root, before_bundle = _resolve_atlas_input(
+                    args.before,
+                    args.before_bundle,
+                )
+                after_root, after_bundle = _resolve_atlas_input(
+                    args.after,
+                    args.after_bundle,
+                )
+                validate_evidence_atlas(before_root / "atlas-manifest.json", before_bundle)
+                validate_evidence_atlas(after_root / "atlas-manifest.json", after_bundle)
+                report = compare_evidence_atlases(
+                    load_evidence_atlas(before_root)["graph"],
+                    load_evidence_atlas(after_root)["graph"],
+                )
+                if args.output is not None:
+                    _write_new_bytes(
+                        args.output,
+                        json.dumps(
+                            report,
+                            ensure_ascii=False,
+                            sort_keys=True,
+                            indent=2,
+                            allow_nan=False,
+                        ).encode("utf-8")
+                        + b"\n",
+                    )
+            else:
+                atlas_root, bundle_path = _resolve_atlas_input(
+                    args.input,
+                    args.bundle,
+                )
+                validation = validate_evidence_atlas(
+                    atlas_root / "atlas-manifest.json",
+                    bundle_path,
+                )
+                loaded = load_evidence_atlas(atlas_root)
+                graph = loaded["graph"]
+                if args.atlas_command == "validate":
+                    report = {
+                        "report_kind": "evidence_atlas_validation",
+                        "status": "PASS",
+                        "schema_version": validation["schema_version"],
+                        "bundle_id": graph["bundle_id"],
+                        "node_count": len(graph["nodes"]),
+                        "edge_count": len(graph["edges"]),
+                        "perspective_count": len(graph["perspectives"]),
+                    }
+                elif args.atlas_command == "query":
+                    report = get_node_subgraph(
+                        graph,
+                        args.root,
+                        perspective=args.perspective,
+                        depth=args.depth,
+                        max_nodes=args.max_nodes,
+                        max_bytes=args.max_bytes,
+                    )
+                elif args.atlas_command == "explain":
+                    report = explain_node(graph, args.node)
+                elif args.atlas_command == "view":
+                    serve_atlas(
+                        atlas_root / "atlas",
+                        host=args.host,
+                        port=args.port,
+                        open_browser=not args.no_browser,
+                    )
+                    return 0
+                else:
+                    _export_atlas(
+                        atlas_root,
+                        graph,
+                        args.format,
+                        args.output,
+                    )
+                    report = {
+                        "report_kind": "evidence_atlas_export",
+                        "status": "PASS",
+                        "format": args.format,
+                        "output": str(args.output),
+                    }
+            print(render_json(report), end="")
+            return 0
+        except (
+            AtlasQueryError,
+            AtlasStorageError,
+            AtlasValidationError,
+            BundleError,
+            OSError,
+            ValueError,
+        ) as error:
+            raise SystemExit(
+                f"aet: atlas {args.atlas_command} failed: {error}"
+            ) from error
     if args.command == "mcp":
         from .mcp_server import serve_stdio
 
@@ -1272,6 +1480,73 @@ def _repository_fingerprint(root: Path) -> str:
     if not git_config.is_file():
         return "UNKNOWN"
     return hashlib.sha256(git_config.read_bytes()).hexdigest()
+
+
+def _resolve_atlas_input(
+    value: Path,
+    explicit_bundle: Path | None,
+) -> tuple[Path, Path]:
+    candidate = Path(value).expanduser().resolve(strict=True)
+    if candidate.is_file() and candidate.name == "atlas-manifest.json":
+        atlas_root = candidate.parent
+    elif candidate.is_dir() and (candidate / "atlas-manifest.json").is_file():
+        atlas_root = candidate
+    elif candidate.is_dir() and (candidate / "manifest.json").is_file():
+        atlas_root = default_atlas_path(candidate)
+        explicit_bundle = explicit_bundle or candidate
+    else:
+        raise ValueError(
+            "input must be a Bundle, an Atlas sidecar, or atlas-manifest.json"
+        )
+    if explicit_bundle is not None:
+        bundle = Path(explicit_bundle).expanduser().resolve(strict=True)
+    elif atlas_root.name.endswith(".atlas"):
+        inferred = atlas_root.with_name(atlas_root.name.removesuffix(".atlas"))
+        if not inferred.is_dir():
+            raise ValueError(
+                "cannot infer the source Bundle; supply --bundle explicitly"
+            )
+        bundle = inferred.resolve(strict=True)
+    else:
+        raise ValueError(
+            "cannot infer the source Bundle; supply --bundle explicitly"
+        )
+    return atlas_root.resolve(strict=True), bundle
+
+
+def _export_atlas(
+    atlas_root: Path,
+    graph: dict[str, object],
+    export_format: str,
+    output: Path,
+) -> None:
+    destination = Path(output).expanduser().resolve(strict=False)
+    if destination.exists() or destination.is_symlink():
+        raise ValueError(f"output already exists: {destination}")
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    if export_format == "static-html":
+        shutil.copytree(atlas_root / "atlas", destination)
+        return
+    data_path = atlas_root / "atlas" / "assets" / "atlas-data.js"
+    wrapper = data_path.read_text(encoding="utf-8")
+    prefix = "globalThis.__AET_ATLAS_DATA__="
+    if not wrapper.startswith(prefix) or not wrapper.rstrip().endswith(";"):
+        raise ValueError("Atlas Viewer data asset is malformed")
+    payload = json.loads(wrapper[len(prefix) :].rstrip()[:-1])
+    if not isinstance(payload, dict) or payload.get("graph") != graph:
+        raise ValueError("Atlas Viewer data does not match the validated graph")
+    projections = payload.get("projections")
+    if not isinstance(projections, dict):
+        raise ValueError("Atlas Viewer data is missing recursive projections")
+    _write_new_bytes(destination, single_html(graph, projections))
+
+
+def _write_new_bytes(path: Path, content: bytes) -> None:
+    destination = Path(path).expanduser().resolve(strict=False)
+    if destination.exists() or destination.is_symlink():
+        raise ValueError(f"output already exists: {destination}")
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    destination.write_bytes(content)
 
 
 def _sleep_asset(args: argparse.Namespace) -> dict[str, object]:

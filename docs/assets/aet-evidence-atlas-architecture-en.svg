@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-label="AET v1.15 Evidence Atlas Architecture">
+<defs>
+<linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#070a10"/><stop offset=".55" stop-color="#0b1220"/><stop offset="1" stop-color="#08141b"/></linearGradient>
+<pattern id="grid" width="30" height="30" patternUnits="userSpaceOnUse"><path d="M30 0H0V30" fill="none" stroke="#334155" stroke-opacity=".16"/></pattern>
+<filter id="shadow" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="#000" flood-opacity=".4"/></filter>
+<marker id="arrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0 0L10 4L0 8Z" fill="#45d7e8"/></marker>
+<style>text{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}.mono{font-family:"SFMono-Regular",Consolas,monospace}</style>
+</defs>
+<rect width="1600" height="900" fill="url(#bg)"/>
+<rect width="1600" height="900" fill="url(#grid)"/>
+<text x="60" y="65" font-size="36" font-weight="800" fill="#edf4ff">AET v1.15 Evidence Atlas Architecture</text>
+<text x="60" y="98" font-size="16" fill="#94a3b8">One portable evidence source, projected into a validated recursive investigation map</text>
+<text x="1540" y="66" text-anchor="end" class="mono" font-size="13" fill="#71db9b">DETERMINISTIC · OFFLINE · STRICT</text>
+<g filter="url(#shadow)"><rect x="70" y="165" width="310" height="118" rx="18" fill="#101722" fill-opacity=".94" stroke="#45d7e8" stroke-opacity=".42"/>
+<rect x="70" y="165" width="5" height="118" rx="2.5" fill="#45d7e8"/>
+<text x="94" y="203" font-size="20" font-weight="700" fill="#edf4ff">Portable Evidence Bundle</text>
+<text x="94" y="233" font-size="14" fill="#94a3b8">Claims · Evidence · Observations · Conflicts</text>
+</g>
+<g filter="url(#shadow)"><rect x="465" y="165" width="310" height="118" rx="18" fill="#101722" fill-opacity=".94" stroke="#71db9b" stroke-opacity=".42"/>
+<rect x="465" y="165" width="5" height="118" rx="2.5" fill="#71db9b"/>
+<text x="489" y="203" font-size="20" font-weight="700" fill="#edf4ff">Canonical Evidence Graph</text>
+<text x="489" y="233" font-size="14" fill="#94a3b8">source nodes · grounded edges · authority · Freshness</text>
+</g>
+<g filter="url(#shadow)"><rect x="860" y="165" width="310" height="118" rx="18" fill="#101722" fill-opacity=".94" stroke="#b99aff" stroke-opacity=".42"/>
+<rect x="860" y="165" width="5" height="118" rx="2.5" fill="#b99aff"/>
+<text x="884" y="203" font-size="20" font-weight="700" fill="#edf4ff">Eight fixed Perspectives</text>
+<text x="884" y="233" font-size="14" fill="#94a3b8">claim · flow · scope · proof · data · integration · conflict · freshness</text>
+</g>
+<g filter="url(#shadow)"><rect x="1255" y="165" width="280" height="118" rx="18" fill="#101722" fill-opacity=".94" stroke="#f3b95f" stroke-opacity=".42"/>
+<rect x="1255" y="165" width="5" height="118" rx="2.5" fill="#f3b95f"/>
+<text x="1279" y="203" font-size="20" font-weight="700" fill="#edf4ff">Recursive decomposition</text>
+<text x="1279" y="233" font-size="14" fill="#94a3b8">complex nodes get subgraphs; leaves stay compact</text>
+</g>
+<g filter="url(#shadow)"><rect x="1255" y="390" width="280" height="118" rx="18" fill="#101722" fill-opacity=".94" stroke="#45d7e8" stroke-opacity=".42"/>
+<rect x="1255" y="390" width="5" height="118" rx="2.5" fill="#45d7e8"/>
+<text x="1279" y="428" font-size="20" font-weight="700" fill="#edf4ff">Deterministic projections</text>
+<text x="1279" y="458" font-size="14" fill="#94a3b8">Diagram IR · Mermaid · Markdown · JSON</text>
+</g>
+<g filter="url(#shadow)"><rect x="860" y="390" width="310" height="118" rx="18" fill="#101722" fill-opacity=".94" stroke="#71db9b" stroke-opacity=".42"/>
+<rect x="860" y="390" width="5" height="118" rx="2.5" fill="#71db9b"/>
+<text x="884" y="428" font-size="20" font-weight="700" fill="#edf4ff">Offline Viewer</text>
+<text x="884" y="458" font-size="14" fill="#94a3b8">three columns · path highlighting · filters · raw refs</text>
+</g>
+<g filter="url(#shadow)"><rect x="465" y="390" width="310" height="118" rx="18" fill="#101722" fill-opacity=".94" stroke="#ef7078" stroke-opacity=".42"/>
+<rect x="465" y="390" width="5" height="118" rx="2.5" fill="#ef7078"/>
+<text x="489" y="428" font-size="20" font-weight="700" fill="#edf4ff">Fail-closed Validator</text>
+<text x="489" y="458" font-size="14" fill="#94a3b8">counter-evidence retained · stale not upgraded · UNKNOWN visible</text>
+</g>
+<g filter="url(#shadow)"><rect x="70" y="390" width="310" height="118" rx="18" fill="#101722" fill-opacity=".94" stroke="#f3b95f" stroke-opacity=".42"/>
+<rect x="70" y="390" width="5" height="118" rx="2.5" fill="#f3b95f"/>
+<text x="94" y="428" font-size="20" font-weight="700" fill="#edf4ff">Human and Agent review</text>
+<text x="94" y="458" font-size="14" fill="#94a3b8">CLI · Python/TypeScript SDK · MCP · static files</text>
+</g>
+<path d="M380 224H465" fill="none" stroke="#45d7e8" stroke-width="2.5" marker-end="url(#arrow)"/>
+<path d="M775 224H860" fill="none" stroke="#45d7e8" stroke-width="2.5" marker-end="url(#arrow)"/>
+<path d="M1170 224H1255" fill="none" stroke="#45d7e8" stroke-width="2.5" marker-end="url(#arrow)"/>
+<path d="M1395 283V390" fill="none" stroke="#45d7e8" stroke-width="2.5" marker-end="url(#arrow)"/>
+<path d="M1255 449H1170" fill="none" stroke="#45d7e8" stroke-width="2.5" marker-end="url(#arrow)"/>
+<path d="M860 449H775" fill="none" stroke="#45d7e8" stroke-width="2.5" marker-end="url(#arrow)"/>
+<path d="M465 449H380" fill="none" stroke="#45d7e8" stroke-width="2.5" marker-end="url(#arrow)"/>
+<path d="M620 390V315H1020V283" fill="none" stroke="#45d7e8" stroke-width="2.5" stroke-dasharray="8 8" marker-end="url(#arrow)"/>
+<rect x="70" y="610" width="1465" height="180" rx="22" fill="#ffffff" fill-opacity=".025" stroke="#f3b95f" stroke-opacity=".4" stroke-dasharray="8 8"/>
+<text x="105" y="655" font-size="18" font-weight="700" fill="#f3b95f">AUTHORITY BOUNDARY</text>
+<text x="105" y="700" font-size="24" font-weight="700" fill="#edf4ff">Bundle Records → Graph → Perspective → Mermaid / docs / Viewer</text>
+<text x="105" y="746" font-size="17" fill="#94a3b8">Diagrams create no evidence, hide no counter-evidence, change no Freshness, and grant no fix, merge, push, or release authority.</text>
+</svg>

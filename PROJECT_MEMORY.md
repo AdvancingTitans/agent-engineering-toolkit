@@ -494,3 +494,42 @@ deterministic core.
 - Resume point: begin the next change from `v1.14.0`; preserve the Portable
   Evidence Bundle v1 compatibility and do not reinterpret the bounded
   Hermes/Ollama/Codex fixture results as a general accuracy claim.
+
+## v1.15.0 Evidence Atlas release candidate — 2026-07-26
+
+- Added Evidence Atlas as a deterministic derived layer over Portable Evidence
+  Bundle v1: a canonical source-backed Graph, eight fixed Perspectives,
+  bounded typed recursive decomposition, Mermaid/Markdown/JSON projections,
+  strict provenance and Schema validation, incremental rebuilds, Atlas Diff,
+  and an offline recursive Viewer. Graph records remain authoritative;
+  Mermaid, documents, and Viewer state create no evidence or authority.
+- Added `aet atlas build|validate|view|export|query|explain|diff`, including
+  comma-separated `--perspectives` selection and no-LLM operation. The Python
+  and TypeScript SDKs expose graph build/load/query/trace/validate/render
+  surfaces, and MCP exposes eight bounded read-only `aet_graph_*` tools.
+- Freshness timelines use the recorded `checked_at` value, normalized only to
+  Mermaid-safe punctuation, and show `UNKNOWN` when no timestamp is recorded.
+  Current, stale, conflict, counter-evidence, limitation, `does_not_prove`,
+  missing Change Group, cycle, deduplication, and maximum-depth semantics have
+  direct regression coverage. Malformed Mermaid declarations fail closed.
+- The English and Simplified Chinese READMEs now position Evidence Atlas,
+  present bilingual static architecture, a real six-state recursive Viewer
+  GIF, exact 30-second H.264 walkthroughs, the end-to-end flow, and an exact
+  tracked Mermaid Claim Chain generated from AET's source-bound self-review.
+  The example narrowly states what the Portable Evidence v1 Evidence record
+  Schema establishes and retains its unresolved Change Group boundary.
+- Acceptance evidence in the release-candidate working tree: 444 Python unit
+  tests passed after a non-editable reinstall; the TypeScript SDK passed 16
+  tests plus its built-distribution smoke test; the Viewer runtime check
+  passed; Mermaid 11.16.0 parsed all 93 recursive diagrams from both the source
+  and isolated-wheel Atlas; seven media files matched their recorded byte
+  lengths and SHA-256 values; `git diff --check` passed. Fresh Wheel and sdist
+  were rebuilt, and the isolated Wheel reported `1.15.0`, contained the
+  vendored Mermaid runtime and all ten Atlas Schemas, rejected
+  `flowchart BOGUS`, built and validated the real self-review Atlas, and kept
+  explicit `does_not_prove` documentation.
+- The final independent compliance audit approved publication with no remaining
+  P0/P1 or acceptance gap. Release publication is now pending the Diff-bound
+  deterministic release commit and `v1.15.0` tag, exact-tag CI, and GitHub
+  Release workflow. Do not publish this release to PyPI. Preserve the seven
+  pre-existing untracked files outside the release commit.

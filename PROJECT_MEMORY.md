@@ -495,7 +495,7 @@ deterministic core.
   Evidence Bundle v1 compatibility and do not reinterpret the bounded
   Hermes/Ollama/Codex fixture results as a general accuracy claim.
 
-## v1.15.0 Evidence Atlas release candidate — 2026-07-26
+## v1.15.0 Evidence Atlas release — 2026-07-26
 
 - Added Evidence Atlas as a deterministic derived layer over Portable Evidence
   Bundle v1: a canonical source-backed Graph, eight fixed Perspectives,
@@ -535,7 +535,14 @@ deterministic core.
   `$GITHUB_WORKSPACE/.aet/evidence/atlas-self-review.atlas` path, and the
   delivery-gate test freezes that binding.
 - The final independent compliance audit approved publication with no remaining
-  P0/P1 or acceptance gap. Release publication is now pending the Diff-bound
-  deterministic release commit and `v1.15.0` tag, exact-tag CI, and GitHub
-  Release workflow. Do not publish this release to PyPI. Preserve the seven
-  pre-existing untracked files outside the release commit.
+  P0/P1 or acceptance gap. Released `v1.15.0` from commit
+  `039cc5a10f4ee2a9c9056060f48af671e060f5c9`; exact-tag CI Run
+  `30202586689` and GitHub Release Run `30202642550` passed. The public
+  Release publishes the exact CI Wheel, sdist, CI Manifest, Diff-bound
+  classification, classification verification, and release-evidence record at
+  `https://github.com/AdvancingTitans/agent-engineering-toolkit/releases/tag/v1.15.0`.
+  Real Host Gate is `NOT_APPLICABLE`, and no PyPI publication was performed.
+- Resume point: begin the next change from `v1.15.0`; preserve Portable
+  Evidence Bundle v1 compatibility, the deterministic Graph authority
+  boundary, explicit counter-evidence/`UNKNOWN`/Freshness semantics, and the
+  seven pre-existing untracked files outside version control.

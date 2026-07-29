@@ -667,7 +667,7 @@ deterministic core.
   explicit counter-evidence/`UNKNOWN` semantics, and the pre-existing
   user-owned untracked files.
 
-## v1.18.0 Activation and Distribution release candidate — 2026-07-29
+## v1.18.0 Activation and Distribution release — 2026-07-29
 
 - Implemented the repository-side Phase 0–4 deliverables from
   `aet-github-star-growth-delivery-package.md` in order. Phase 5 and Phase 6
@@ -688,28 +688,33 @@ deterministic core.
 - Live T0 recorded 2 Stars, 0 forks, 2 contributors, 1 open issue, 3 total pull
   requests, latest GitHub Release `v1.17.0`, and PyPI `v1.11.1`. Traffic
   endpoints returned HTTP 403 and remain `UNKNOWN`; skills.sh indexing remains
-  `UNAVAILABLE`. The repository still has no enabled Pages or Discussions and
-  no Homepage. No remote setting or external publication was changed.
-- Candidate version sources and `uv.lock` are `1.18.0`; CHANGELOG is
-  `Unreleased`. Built
+  `UNAVAILABLE`.
+- Version sources and `uv.lock` are `1.18.0`. Built
   `agent_engineering_toolkit-1.18.0-py3-none-any.whl` (1,437,358 bytes,
-  SHA-256 `74e70fc3658862e6666ddff59a9d362af40668dbf25e108ba2d1b7d01f00daf9`)
-  and sdist (1,433,600 bytes,
-  `a04720521293f358bd4b711afcf732feaef4107824fa16c7d5e0f6b8726d63ce`).
-  The wheel contains the manifest/source/test fixture and passed a clean-venv,
-  outside-checkout text/JSON/Markdown smoke test.
+  public PyPI SHA-256
+  `9b6000ebd8e6cf9d174f1fb6797cf7299cf9246a5adcacd6c16033a63bd24f76`)
+  plus the matching CI sdist. The wheel contains the manifest/source/test
+  fixture and passed clean-venv and public `uvx` smoke tests outside the
+  checkout.
 - Final acceptance: pytest passed 591 tests and 607 subtests; the canonical
   unittest gate passed 581 tests; focused compatibility regression passed 92
   tests and 219 subtests; README/link/social/Skills/launch/Action checks passed;
   Demo JSON validated against its Draft 2020-12 Schema; `git diff --check`
   passed; AET self-audit has no FAIL/UNKNOWN and self-review has 7 PASS with no
   FAIL/UNKNOWN.
-- The checkout remains on `main` at starting commit
-  `e5ad8136c14bf3667eb3d561676e9b8364a728d7`. No branch, commit, tag, push,
-  PR, Release, PyPI upload, Pages deployment, Marketplace publication, MCP
-  Registry entry, external post, or remote configuration change was made.
-- Resume point: obtain human review of `执行报告.md`, then run the configured
-  multi-OS CI and Pages jobs. Only after those pass should a release owner
-  create the commit/tag-bound v1.18 release classification and explicitly
-  authorize tag/Release/PyPI/remote-setting actions. Preserve all Evidence
-  authority boundaries and the pre-existing user-owned files.
+- Released tag `v1.18.0` from commit
+  `7ff1e0032827cce92b17777adc47af78977f0af3`. Exact-tag CI Run
+  `30465380241`, GitHub Release Run `30466008349`, and PyPI Run
+  `30466191944` passed. Release ID `361859093` publishes the exact CI wheel,
+  sdist, manifest, diff-bound classification, classification verification,
+  and release-evidence record.
+- Pages is live at
+  `https://advancingtitans.github.io/agent-engineering-toolkit/`; About,
+  Homepage, all 20 Topics, Social Preview, and Discussions are configured.
+  Community Profile reports 100%, the repository remains pinned, and Known
+  limitations are published in Discussion #5.
+- Resume point: preserve the released `v1.18.0` authority boundaries and the
+  pre-existing user-owned files. Phase 5/6 time-window measurements, skills.sh
+  indexing, the separate Marketplace Action, MCP Registry eligibility, and
+  human-owned outreach remain follow-up work; never convert their unavailable
+  or deferred state into a success claim.

@@ -4,17 +4,17 @@ No item in this file authorizes Codex or a workflow to perform the action.
 
 | Action | Current state | Human requirement |
 | --- | --- | --- |
-| Publish v1.18 GitHub Release | `BLOCKED` | Complete all local and cross-OS gates; publish exact CI artifact. |
-| Publish v1.18 to PyPI | `BLOCKED` | PyPI is v1.11.1; owner `Young_Tommy` must verify Trusted Publishing and promote the exact artifact. |
-| Update GitHub About description | `MANUAL_NOT_STARTED` | Use the frozen description in `ops/growth/positioning.md`. |
-| Set Homepage | `MANUAL_NOT_STARTED` | Enable Pages first, then use the final Pages URL. |
-| Update Topics | `MANUAL_NOT_STARTED` | Review and set no more than 20 approved topics. |
-| Upload Social Preview | `MANUAL_NOT_STARTED` | Upload `site/assets/social-preview.png`. |
-| Enable GitHub Pages | `BLOCKED` | Pages API returned 404 and repository reports `has_pages=false`; enable from `site/`. |
-| Enable Discussions | `BLOCKED` | Repository reports `has_discussions=false`; enable before relying on Discussion forms. |
-| Pin repository on profile | `MANUAL_NOT_STARTED` | Maintainer decision. |
-| Verify Community Profile | `MANUAL_NOT_STARTED` | Baseline health was 57%; recheck after community files land. |
-| Verify five skills.sh pages | `UNAVAILABLE` | Search did not return the AET Skills on 2026-07-29; run isolated install and wait for indexing. |
+| Publish v1.18 GitHub Release | `COMPLETE` | Release Run `30466008349`; six exact CI assets published. |
+| Publish v1.18 to PyPI | `COMPLETE` | Trusted Publishing Run `30466191944`; public wheel and clean `uvx` verified. |
+| Update GitHub About description | `COMPLETE` | Frozen description published. |
+| Set Homepage | `COMPLETE` | `https://advancingtitans.github.io/agent-engineering-toolkit/`. |
+| Update Topics | `COMPLETE` | All 20 approved topics published. |
+| Upload Social Preview | `COMPLETE` | Uploaded `site/assets/social-preview.png`. |
+| Enable GitHub Pages | `COMPLETE` | Pages workflow attempt 2 passed and the public site is live. |
+| Enable Discussions | `COMPLETE` | Enabled; Known limitations published as Discussion #5. |
+| Pin repository on profile | `COMPLETE` | Repository was already pinned; no change required. |
+| Verify Community Profile | `COMPLETE` | GitHub reports 100% health after community files landed. |
+| Verify five skills.sh pages | `UNAVAILABLE` | All five routes return HTTP 200 fallback pages stating the Skill is not available in this repository. |
 | Create Action repository | `MANUAL_NOT_STARTED` | Create `AdvancingTitans/aet-evidence-action`, copy only the template, test, accept Marketplace terms, and publish manually. |
 | Publish MCP Registry entry | `DEFERRED_WITH_REASON` | Exact PyPI release, current schema/publisher validation, documented permissions, and namespace proof are incomplete. |
 | Submit Awesome List PRs | `MANUAL_NOT_STARTED` | Read each list's current rules and submit only individually relevant entries. |

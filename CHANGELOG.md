@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.18.0 — Unreleased
+## 1.18.0 — 2026-07-29
 
 - Added an installed-wheel `aet demo stale-proof` path that runs a real
   standard-library test, records Proof with the existing Quick API, verifies

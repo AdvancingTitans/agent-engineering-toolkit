@@ -111,10 +111,15 @@ def validate(stage: str, strict: bool) -> list[str]:
                 failures.append(
                     f"product-hunt.md: description is {len(match.group(1))}/260 characters"
                 )
-    if strict and "PyPI currently serves v1.11.1" not in (
-        root / "README.md"
-    ).read_text(encoding="utf-8"):
-        failures.append("strict readiness requires the current PyPI mismatch disclosure")
+    readme = (root / "README.md").read_text(encoding="utf-8")
+    version = metadata["project"]["version"]
+    if strict and not (
+        "PyPI currently serves v1.11.1" in readme
+        or f"PyPI v{version}" in readme
+    ):
+        failures.append(
+            "strict readiness requires the current PyPI release-state disclosure"
+        )
     return failures
 
 

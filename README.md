@@ -12,9 +12,8 @@ that proof no longer applies.
 uvx --from agent-engineering-toolkit aet demo stale-proof
 ```
 
-> PyPI currently serves v1.11.1. The command above is the v1.18.0 target
-> interface and must not be used in launch posts until that exact release is
-> published. For the release candidate, install the exact wheel produced by CI.
+> Released in [AET v1.18.0](https://github.com/AdvancingTitans/agent-engineering-toolkit/releases/tag/v1.18.0)
+> and verified from the public PyPI package.
 
 ```text
 AET stale-proof demo
@@ -89,9 +88,9 @@ Markdown projection in a Portable Evidence Bundle. See
 
 | Path | Command | Status |
 | --- | --- | --- |
-| Public package | `uv tool install agent-engineering-toolkit` | PyPI is currently v1.11.1 |
-| One-shot demo | `uvx --from agent-engineering-toolkit aet demo stale-proof` | Target for v1.18.0 |
-| Exact Release wheel | `uv tool install <exact-v1.18.0-wheel-url>` | Use only after Release asset exists |
+| Public package | `uv tool install agent-engineering-toolkit` | PyPI v1.18.0 |
+| One-shot demo | `uvx --from agent-engineering-toolkit aet demo stale-proof` | Publicly verified |
+| Exact Release wheel | `uv tool install https://github.com/AdvancingTitans/agent-engineering-toolkit/releases/download/v1.18.0/agent_engineering_toolkit-1.18.0-py3-none-any.whl` | GitHub Release asset |
 | Agent Skills | `npx skills add AdvancingTitans/agent-engineering-toolkit` | External CLI; see telemetry note |
 
 To opt out of the skills.sh CLI's anonymous installation telemetry:

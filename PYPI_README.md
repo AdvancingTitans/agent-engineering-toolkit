@@ -8,8 +8,6 @@ you when that proof no longer applies.
 
 ## Try the stale-proof demo
 
-After v1.18.0 is published:
-
 ```bash
 uvx --from agent-engineering-toolkit aet demo stale-proof
 ```
@@ -37,8 +35,8 @@ uv tool install agent-engineering-toolkit
 aet --version
 ```
 
-The PyPI package currently remains at v1.11.1. Do not advertise the v1.18 demo
-command until PyPI or the exact GitHub Release wheel is verified.
+PyPI v1.18.0 and the exact GitHub Release wheel were publicly verified on
+2026-07-29.
 
 ## Choose the smallest surface
 

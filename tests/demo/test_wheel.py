@@ -13,3 +13,5 @@ class DemoWheelContractTests(unittest.TestCase):
         pyproject = (ROOT / "pyproject.toml").read_text(encoding="utf-8")
         self.assertIn("demo/fixtures/stale-proof/manifest.json", pyproject)
         self.assertIn('"share/aet/schemas/demo/v1"', pyproject)
+        attributes = (ROOT / ".gitattributes").read_text(encoding="utf-8")
+        self.assertIn("src/aet/demo/fixtures/** text eol=lf", attributes)

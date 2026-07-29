@@ -716,8 +716,9 @@ deterministic core.
 - Resume point: preserve the released `v1.18.0` authority boundaries and the
   pre-existing user-owned files. Phase 5/6 time-window measurements, skills.sh
   indexing, MCP Registry eligibility, and human-owned outreach remain
-  follow-up work. The separate public Action repository exists at commit
-  `55f3c8f0e505fab5567694da2d1b5d834a227922` with tag `v1`, but Marketplace
-  publication remains blocked on action-time confirmation before accepting
-  legal terms. Never convert unavailable, blocked, or deferred state into a
-  success claim.
+  follow-up work. The separate public Action repository is published from
+  commit `55f3c8f0e505fab5567694da2d1b5d834a227922` with tag `v1`, Release ID
+  `361873799`, and the public `AET Evidence` Marketplace listing. The user
+  confirmed and accepted GitHub Marketplace Developer Agreement v2.4 at
+  action time. Never convert unavailable or deferred state into a success
+  claim.

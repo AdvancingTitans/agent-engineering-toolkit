@@ -50,7 +50,7 @@ Stale proof records retain their historical result but cannot produce a current
 Candidate edges suggested by a future host LLM belong only in
 `graph/candidates/edges.jsonl`. They are non-authoritative until deterministic
 code can ground them in Bundle references. The complete build works with
-`--no-llm`; the v1.15 core rejects attempts to make an LLM authoritative.
+`--no-llm`; the v1.16 core rejects attempts to make an LLM authoritative.
 
 ## Perspectives and recursive decomposition
 

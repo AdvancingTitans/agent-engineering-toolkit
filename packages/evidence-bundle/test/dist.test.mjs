@@ -27,7 +27,7 @@ test("checked JavaScript distribution is directly consumable", async () => {
     ["claim-001"],
   );
   const graph = buildEvidenceGraph(bundle);
-  assert.equal((await validateEvidenceGraph(graph)).perspective_count, 8);
+  assert.equal((await validateEvidenceGraph(graph)).perspective_count, 10);
   assert.equal(traceClaimSupport(graph, "claim-001").claim_status, "supported");
   assert.match(renderMermaid(graph), /^flowchart LR\n/u);
 });

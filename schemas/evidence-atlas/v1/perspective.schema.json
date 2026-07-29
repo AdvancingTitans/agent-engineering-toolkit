@@ -26,7 +26,9 @@
         "evidence-data-flow",
         "integrations",
         "conflicts",
-        "freshness"
+        "freshness",
+        "improvement-chain",
+        "regression-lineage"
       ]
     },
     "title": {"type": "string", "minLength": 1},

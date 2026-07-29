@@ -1,0 +1,27 @@
+[
+  {
+    "allowed_paths": [
+      "examples/evidence-grounded-improvement/sample_project/tool_result.py"
+    ],
+    "forbidden_behavior": [
+      "Do not convert an empty result into a factual claim."
+    ],
+    "id": "IC-001",
+    "issue_id": "IMP-001",
+    "objective": "Prevent unsupported facts from being emitted as evidence-grounded claims.",
+    "protected_paths": [
+      "tests/evals/**",
+      "eval/**",
+      "grader/**",
+      "fixtures/**",
+      ".aet/**"
+    ],
+    "required_behavior": [
+      "Distinguish empty or missing results.",
+      "Propagate a structured non-evidence state."
+    ],
+    "verification_requirements": [
+      "python examples/evidence-grounded-improvement/sample_project/test_tool_result.py"
+    ]
+  }
+]

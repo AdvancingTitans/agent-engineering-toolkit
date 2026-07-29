@@ -17,7 +17,9 @@ const PERSPECTIVE_IDS = [
     "evidence-data-flow",
     "integrations",
     "conflicts",
-    "freshness"
+    "freshness",
+    "improvement-chain",
+    "regression-lineage"
 ];
 const NODE_TYPES = new Set([
     "intent",
@@ -306,6 +308,49 @@ const PERSPECTIVE_SPECS = {
             "unknown",
             "recommendation",
             "limitation"
+        ]
+    },
+    "improvement-chain": {
+        title: "Improvement Chain",
+        question: "How do Finding, Constraint, Candidate, Verification, and Outcome connect?",
+        diagram_type: "flowchart",
+        direction: "LR",
+        roots: [
+            "finding",
+            "claim"
+        ],
+        nodes: [
+            "finding",
+            "constraint",
+            "recommendation",
+            "proof",
+            "claim",
+            "verified_evidence",
+            "unknown",
+            "limitation",
+            "conflict"
+        ]
+    },
+    "regression-lineage": {
+        title: "Regression Lineage",
+        question: "How does a verified Outcome bind to a Regression Fixture and CI?",
+        diagram_type: "flowchart",
+        direction: "LR",
+        roots: [
+            "proof",
+            "verified_evidence"
+        ],
+        nodes: [
+            "finding",
+            "proof",
+            "freshness_result",
+            "verified_evidence",
+            "claim",
+            "recommendation",
+            "artifact",
+            "unknown",
+            "limitation",
+            "conflict"
         ]
     }
 };
@@ -657,7 +702,11 @@ export function buildEvidenceGraph(bundle) {
             addEdge(edges, callId, candidateId, "RETURNED", ref("archive/ledger.jsonl", entry.id, "evidence_candidate_refs"));
         }
     }
-    const unknownScopeId = unknownNode(nodes, "perspective:change-scope", "Bundle v1 has path bindings but no explicit Change Group; this graph cannot prove the actual diff.", manifestRef);
+    const unknownPerspectiveIds = {
+        "change-scope": unknownNode(nodes, "perspective:change-scope", "Bundle v1 has path bindings but no explicit Change Group; this graph cannot prove the actual diff.", manifestRef),
+        "improvement-chain": unknownNode(nodes, "perspective:improvement-chain", "Bundle v1 has no independent Improvement Finding, Constraint, Candidate, Verification, or Outcome records.", manifestRef),
+        "regression-lineage": unknownNode(nodes, "perspective:regression-lineage", "Bundle v1 has no bound Improvement Outcome or Regression Fixture records.", manifestRef)
+    };
     const nodeValues = [
         ...nodes.values()
     ].sort(byId);
@@ -665,7 +714,7 @@ export function buildEvidenceGraph(bundle) {
         ...edges.values()
     ].sort(byId);
     evaluateComplexity(nodeValues, edgeValues);
-    const perspectives = buildPerspectives(nodeValues, edgeValues, unknownScopeId);
+    const perspectives = buildPerspectives(nodeValues, edgeValues, unknownPerspectiveIds);
     const dependencyIndex = buildDependencyIndex(bundle, nodeValues, edgeValues, perspectives);
     const graph = {
         schema_version: GRAPH_SCHEMA,
@@ -884,7 +933,7 @@ function validateGraphObject(graph) {
         validateRefs(edge.source_refs, `edge ${edge.id}`);
     }
     if (graph.perspectives.length !== PERSPECTIVE_IDS.length || new Set(graph.perspectives.map((item)=>item.id)).size !== PERSPECTIVE_IDS.length) {
-        invalid("Evidence Graph must contain exactly the eight fixed Perspectives");
+        invalid("Evidence Graph must contain exactly the ten fixed Perspectives");
     }
     for (const expected of PERSPECTIVE_IDS){
         const perspective = graph.perspectives.find((item)=>item.id === expected);
@@ -955,7 +1004,7 @@ function validateGraphMetadata(graph) {
         invalid("Evidence Graph generated_from identity is invalid");
     }
     if (!isObject(graph.generation_policy) || canonicalJson(graph.generation_policy) !== canonicalJson(DEFAULT_GENERATION_POLICY)) {
-        invalid("Evidence Graph generation_policy must contain the complete safe v1.15 policy");
+        invalid("Evidence Graph generation_policy must contain the complete safe v1.16 policy");
     }
     for (const diagnostic of graph.diagnostics){
         if (!isObject(diagnostic) || typeof diagnostic.code !== "string" || !/^[A-Z][A-Z0-9_]+$/u.test(diagnostic.code) || ![
@@ -1042,7 +1091,7 @@ function validateDependencyMap(value, label) {
     }
 }
 
-function buildPerspectives(nodes, edges, unknownScopeId) {
+function buildPerspectives(nodes, edges, unknownPerspectiveIds) {
     const nodesByType = new Map();
     for (const node of nodes){
         if (!nodesByType.has(node.type)) {
@@ -1054,9 +1103,10 @@ function buildPerspectives(nodes, edges, unknownScopeId) {
         const spec = PERSPECTIVE_SPECS[id];
         const selected = new Set(nodes.filter((node)=>spec.nodes.includes(node.type)).map((node)=>node.id));
         const unknowns = [];
-        if (id === "change-scope" && !nodesByType.has("change_group")) {
-            selected.add(unknownScopeId);
-            unknowns.push("UNKNOWN: Bundle v1 path bindings do not establish an actual Change Group or diff.");
+        const unknownId = unknownPerspectiveIds[id];
+        if (unknownId) {
+            selected.add(unknownId);
+            unknowns.push(id === "change-scope" ? "UNKNOWN: Bundle v1 path bindings do not establish an actual Change Group or diff." : "UNKNOWN: Bundle v1 does not contain the independent Improvement records required by this Perspective.");
         }
         const selectedEdges = edges.filter((edge)=>selected.has(edge.from) && selected.has(edge.to));
         const connected = new Set(selectedEdges.flatMap((edge)=>[
@@ -1073,13 +1123,13 @@ function buildPerspectives(nodes, edges, unknownScopeId) {
                 break;
             }
         }
-        if (selected.has(unknownScopeId)) {
-            connected.add(unknownScopeId);
+        if (unknownId && selected.has(unknownId)) {
+            connected.add(unknownId);
         }
         const rootType = spec.roots.find((type)=>(nodesByType.get(type) ?? []).some((nodeId)=>connected.has(nodeId)));
         const roots = (nodesByType.get(rootType) ?? []).filter((nodeId)=>connected.has(nodeId)).sort();
-        if (selected.has(unknownScopeId) && !roots.includes(unknownScopeId)) {
-            roots.push(unknownScopeId);
+        if (unknownId && selected.has(unknownId) && !roots.includes(unknownId)) {
+            roots.push(unknownId);
         }
         const nodeIds = [
             ...connected

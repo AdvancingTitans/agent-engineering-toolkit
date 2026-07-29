@@ -546,3 +546,35 @@ deterministic core.
   Evidence Bundle v1 compatibility, the deterministic Graph authority
   boundary, explicit counter-evidence/`UNKNOWN`/Freshness semantics, and the
   seven pre-existing untracked files outside version control.
+
+## Evidence-Grounded Improvement implementation — 2026-07-29
+
+- Added the planned deterministic `src/aet/improvement/` subsystem with
+  Issue, Constraint, Candidate, Verification Contract, and Outcome models;
+  Finding normalization/aggregation; bounded rules; human/Agent/PR renderers;
+  Candidate grounding, Scope, reference, strength, and anti-gaming validators;
+  and the Proof-bound verification lifecycle.
+- Added `aet improvement doctor`, `aet improve <bundle>`, and the
+  `prompt`, `validate`, `verify`, and `compare` Improvement actions. Candidate
+  state remains `PROPOSED`; `verified_improvement` requires a recorded code
+  change, current contract-bound passing Proof, and no comparison regression.
+- Portable Evidence Bundle v1 has no independent Finding or Improvement
+  collection. The deterministic adapter consumes validated portable Claims as
+  Finding-compatible inputs without changing Bundle, Evidence, or Finding
+  schemas. Missing independent Improvement records remain explicit `UNKNOWN`.
+- Added the non-blocking, no-LLM PR Improvement Summary workflow and the
+  `improvement-chain` / `regression-lineage` Atlas Perspectives. Python Atlas
+  schemas, MCP description, and the TypeScript SDK now agree on ten fixed
+  Perspectives.
+- Added six planned Golden Fixture families, 31 Improvement tests, and
+  `docs/improvement.md`. Final acceptance: 475 Python unit tests passed;
+  TypeScript SDK 16/16, distribution smoke 1/1, compatibility guard, and
+  `git diff --check` passed.
+- Remaining unmeasured product targets are the SC-001 human comprehension
+  percentage and real Codex/Claude `pass@1` / `pass^3` execution metrics.
+  CI publication behavior has local contract coverage but has not been
+  observed on a live pull request.
+- Resume point: review the uncommitted Evidence-Grounded Improvement change,
+  then decide whether to run real Agent evaluation and release gates. Preserve
+  the seven pre-existing untracked files and do not reinterpret Candidate or
+  Atlas Recommendation nodes as verified facts.

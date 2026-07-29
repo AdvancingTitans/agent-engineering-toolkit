@@ -224,7 +224,7 @@ class McpServerTests(unittest.TestCase):
                 "aet_graph_list_perspectives",
                 common,
             )
-            self.assertEqual(8, len(perspectives["perspectives"]))
+            self.assertEqual(10, len(perspectives["perspectives"]))
 
             roots = call_tool(
                 "aet_graph_get_root",

@@ -1,0 +1,47 @@
+{
+  "example": {
+    "bundle_id": "bundle-empty-tool-result-review-v1",
+    "evidence_ref": "ev-empty-result-regression",
+    "finding_ref": "claim-empty-result-is-grounded",
+    "issue_id": "IMP-001"
+  },
+  "media": [
+    {
+      "bytes": 8981,
+      "path": "docs/assets/aet-improvement-case-en.svg",
+      "sha256": "afb352d106449727c03df1e2718ef1377f07fc3dd17e5adc28f2217428e77ac5"
+    },
+    {
+      "bytes": 165191,
+      "path": "docs/assets/aet-improvement-case-en.png",
+      "sha256": "17635d5a1a6d8317608711efeb7ee8740176c7b5b2784083cf2d323dd5854529"
+    },
+    {
+      "bytes": 67301,
+      "path": "docs/assets/aet-improvement-case-en.gif",
+      "sha256": "be76edd8d0547e98c334e8c40ecde59fdcc41b43a028fe302b8c436c914f3309"
+    },
+    {
+      "bytes": 8949,
+      "path": "docs/assets/aet-improvement-case-zh-CN.svg",
+      "sha256": "0376323570fa4bd90861bd40fb44992d3e659b14252f1d32c48c31b5f8111a1d"
+    },
+    {
+      "bytes": 182735,
+      "path": "docs/assets/aet-improvement-case-zh-CN.png",
+      "sha256": "2f9e81196b713457f5e13294398e8803e11fcaba971c10c455dbdc998d8305b9"
+    },
+    {
+      "bytes": 68362,
+      "path": "docs/assets/aet-improvement-case-zh-CN.gif",
+      "sha256": "50c030f1a40b1640a21134d2080555e30fcc08b1b4db304a095b189137d0d7ce"
+    }
+  ],
+  "motion": {
+    "frame_seconds": 1.35,
+    "frames": 6,
+    "size": "1600x900"
+  },
+  "release": "v1.16.0",
+  "schema": "aet-readme-media/1.0"
+}

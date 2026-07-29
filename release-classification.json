@@ -1,217 +1,371 @@
 {
   "schema_version": "release-classification/v1",
-  "release_tag": "v1.15.0",
-  "base_tag": "v1.14.0",
-  "changed_paths_sha256": "3484e2eaee46b8eeb47f41a33c060ff3bffc85ca8139f5311df2ef41531176a1",
-  "changed_content_sha256": "7d59cadc2ca07f1f88bb43c6a7ba37bccf3f35f21030f52821984923aa253a31",
+  "release_tag": "v1.16.0",
+  "base_tag": "v1.15.0",
+  "changed_paths_sha256": "fe891ab6b45297c12a5447cb6fc375b147258bb4732b4210726f34187a1e2d61",
+  "changed_content_sha256": "af580d5b66cdcf607f0e81fb1761ab77df97613724bd2d37d8b0d14dc56d7c69",
   "release_class": "deterministic",
   "real_host_gate": "NOT_APPLICABLE",
   "observed_behavior_claims": [],
   "governance_asset_adoptions": [],
   "not_applicable_exceptions": [
     {
-      "path": ".github/workflows/ci.yml",
-      "reason": "This deterministic v1.15.0 change at .github/workflows/ci.yml is covered by repository tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
-      "deterministic_proofs": [
-        "tests/test_business_quality_flows.py",
-        "tests/test_evidence_atlas_protocol.py"
-      ]
-    },
-    {
       "path": "release-classification.json",
-      "reason": "This deterministic v1.15.0 change at release-classification.json is covered by repository tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
+      "reason": "This deterministic v1.16.0 change at release-classification.json is covered by repository regression tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
       "deterministic_proofs": [
         "tests/test_business_quality_flows.py"
       ]
     },
     {
       "path": "schemas/evidence-atlas/v1/atlas-manifest.schema.json",
-      "reason": "This deterministic v1.15.0 change at schemas/evidence-atlas/v1/atlas-manifest.schema.json is covered by repository tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
+      "reason": "This deterministic v1.16.0 change at schemas/evidence-atlas/v1/atlas-manifest.schema.json is covered by repository regression tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
       "deterministic_proofs": [
-        "tests/test_evidence_atlas_protocol.py"
-      ]
-    },
-    {
-      "path": "schemas/evidence-atlas/v1/comparison.schema.json",
-      "reason": "This deterministic v1.15.0 change at schemas/evidence-atlas/v1/comparison.schema.json is covered by repository tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
-      "deterministic_proofs": [
-        "tests/test_evidence_atlas_protocol.py"
-      ]
-    },
-    {
-      "path": "schemas/evidence-atlas/v1/diagnostic.schema.json",
-      "reason": "This deterministic v1.15.0 change at schemas/evidence-atlas/v1/diagnostic.schema.json is covered by repository tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
-      "deterministic_proofs": [
-        "tests/test_evidence_atlas_protocol.py"
-      ]
-    },
-    {
-      "path": "schemas/evidence-atlas/v1/diagram-ir.schema.json",
-      "reason": "This deterministic v1.15.0 change at schemas/evidence-atlas/v1/diagram-ir.schema.json is covered by repository tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
-      "deterministic_proofs": [
-        "tests/test_evidence_atlas_protocol.py"
-      ]
-    },
-    {
-      "path": "schemas/evidence-atlas/v1/edge.schema.json",
-      "reason": "This deterministic v1.15.0 change at schemas/evidence-atlas/v1/edge.schema.json is covered by repository tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
-      "deterministic_proofs": [
-        "tests/test_evidence_atlas_protocol.py"
+        "tests/test_evidence_atlas_protocol.py",
+        "tests/improvement/integration/test_planned_cases.py"
       ]
     },
     {
       "path": "schemas/evidence-atlas/v1/graph.schema.json",
-      "reason": "This deterministic v1.15.0 change at schemas/evidence-atlas/v1/graph.schema.json is covered by repository tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
+      "reason": "This deterministic v1.16.0 change at schemas/evidence-atlas/v1/graph.schema.json is covered by repository regression tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
       "deterministic_proofs": [
-        "tests/test_evidence_atlas_protocol.py"
+        "tests/test_evidence_atlas_protocol.py",
+        "tests/improvement/integration/test_planned_cases.py"
       ]
     },
     {
       "path": "schemas/evidence-atlas/v1/hierarchy.schema.json",
-      "reason": "This deterministic v1.15.0 change at schemas/evidence-atlas/v1/hierarchy.schema.json is covered by repository tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
+      "reason": "This deterministic v1.16.0 change at schemas/evidence-atlas/v1/hierarchy.schema.json is covered by repository regression tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
       "deterministic_proofs": [
-        "tests/test_evidence_atlas_protocol.py"
-      ]
-    },
-    {
-      "path": "schemas/evidence-atlas/v1/node.schema.json",
-      "reason": "This deterministic v1.15.0 change at schemas/evidence-atlas/v1/node.schema.json is covered by repository tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
-      "deterministic_proofs": [
-        "tests/test_evidence_atlas_protocol.py"
+        "tests/test_evidence_atlas_protocol.py",
+        "tests/improvement/integration/test_planned_cases.py"
       ]
     },
     {
       "path": "schemas/evidence-atlas/v1/perspective.schema.json",
-      "reason": "This deterministic v1.15.0 change at schemas/evidence-atlas/v1/perspective.schema.json is covered by repository tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
+      "reason": "This deterministic v1.16.0 change at schemas/evidence-atlas/v1/perspective.schema.json is covered by repository regression tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
       "deterministic_proofs": [
-        "tests/test_evidence_atlas_protocol.py"
-      ]
-    },
-    {
-      "path": "schemas/evidence-atlas/v1/provenance.schema.json",
-      "reason": "This deterministic v1.15.0 change at schemas/evidence-atlas/v1/provenance.schema.json is covered by repository tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
-      "deterministic_proofs": [
-        "tests/test_evidence_atlas_protocol.py"
+        "tests/test_evidence_atlas_protocol.py",
+        "tests/improvement/integration/test_planned_cases.py"
       ]
     },
     {
       "path": "src/aet/__init__.py",
-      "reason": "This deterministic v1.15.0 change at src/aet/__init__.py is covered by repository tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
+      "reason": "This deterministic v1.16.0 change at src/aet/__init__.py is covered by repository regression tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
       "deterministic_proofs": [
-        "tests/test_evidence_atlas_protocol.py"
-      ]
-    },
-    {
-      "path": "src/aet/atlas/__init__.py",
-      "reason": "This deterministic v1.15.0 change at src/aet/atlas/__init__.py is covered by repository tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
-      "deterministic_proofs": [
-        "tests/test_evidence_atlas_protocol.py"
-      ]
-    },
-    {
-      "path": "src/aet/atlas/assets/MERMAID-LICENSE",
-      "reason": "This deterministic v1.15.0 change at src/aet/atlas/assets/MERMAID-LICENSE is covered by repository tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
-      "deterministic_proofs": [
-        "tests/test_evidence_atlas_protocol.py"
-      ]
-    },
-    {
-      "path": "src/aet/atlas/assets/mermaid.min.js",
-      "reason": "This deterministic v1.15.0 change at src/aet/atlas/assets/mermaid.min.js is covered by repository tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
-      "deterministic_proofs": [
-        "tests/test_evidence_atlas_protocol.py"
-      ]
-    },
-    {
-      "path": "src/aet/atlas/builder.py",
-      "reason": "This deterministic v1.15.0 change at src/aet/atlas/builder.py is covered by repository tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
-      "deterministic_proofs": [
-        "tests/test_evidence_atlas_builder.py",
-        "tests/test_evidence_atlas_protocol.py"
-      ]
-    },
-    {
-      "path": "src/aet/atlas/diff.py",
-      "reason": "This deterministic v1.15.0 change at src/aet/atlas/diff.py is covered by repository tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
-      "deterministic_proofs": [
-        "tests/test_evidence_atlas_protocol.py"
-      ]
-    },
-    {
-      "path": "src/aet/atlas/hierarchy.py",
-      "reason": "This deterministic v1.15.0 change at src/aet/atlas/hierarchy.py is covered by repository tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
-      "deterministic_proofs": [
-        "tests/test_evidence_atlas_protocol.py"
+        "tests/test_evidence_atlas_protocol.py",
+        "tests/improvement/integration/test_planned_cases.py"
       ]
     },
     {
       "path": "src/aet/atlas/model.py",
-      "reason": "This deterministic v1.15.0 change at src/aet/atlas/model.py is covered by repository tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
+      "reason": "This deterministic v1.16.0 change at src/aet/atlas/model.py is covered by repository regression tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
       "deterministic_proofs": [
-        "tests/test_evidence_atlas_protocol.py"
+        "tests/test_evidence_atlas_protocol.py",
+        "tests/improvement/integration/test_planned_cases.py"
       ]
     },
     {
       "path": "src/aet/atlas/perspectives.py",
-      "reason": "This deterministic v1.15.0 change at src/aet/atlas/perspectives.py is covered by repository tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
+      "reason": "This deterministic v1.16.0 change at src/aet/atlas/perspectives.py is covered by repository regression tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
       "deterministic_proofs": [
-        "tests/test_evidence_atlas_protocol.py"
-      ]
-    },
-    {
-      "path": "src/aet/atlas/queries.py",
-      "reason": "This deterministic v1.15.0 change at src/aet/atlas/queries.py is covered by repository tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
-      "deterministic_proofs": [
-        "tests/test_evidence_atlas_protocol.py"
+        "tests/test_evidence_atlas_protocol.py",
+        "tests/improvement/integration/test_planned_cases.py"
       ]
     },
     {
       "path": "src/aet/atlas/render.py",
-      "reason": "This deterministic v1.15.0 change at src/aet/atlas/render.py is covered by repository tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
+      "reason": "This deterministic v1.16.0 change at src/aet/atlas/render.py is covered by repository regression tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
       "deterministic_proofs": [
-        "tests/test_evidence_atlas_protocol.py"
-      ]
-    },
-    {
-      "path": "src/aet/atlas/schema_validation.py",
-      "reason": "This deterministic v1.15.0 change at src/aet/atlas/schema_validation.py is covered by repository tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
-      "deterministic_proofs": [
-        "tests/test_evidence_atlas_protocol.py"
-      ]
-    },
-    {
-      "path": "src/aet/atlas/storage.py",
-      "reason": "This deterministic v1.15.0 change at src/aet/atlas/storage.py is covered by repository tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
-      "deterministic_proofs": [
-        "tests/test_evidence_atlas_protocol.py"
-      ]
-    },
-    {
-      "path": "src/aet/atlas/validator.py",
-      "reason": "This deterministic v1.15.0 change at src/aet/atlas/validator.py is covered by repository tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
-      "deterministic_proofs": [
-        "tests/test_evidence_atlas_protocol.py"
-      ]
-    },
-    {
-      "path": "src/aet/atlas/viewer.py",
-      "reason": "This deterministic v1.15.0 change at src/aet/atlas/viewer.py is covered by repository tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
-      "deterministic_proofs": [
-        "tests/test_evidence_atlas_protocol.py"
+        "tests/test_evidence_atlas_protocol.py",
+        "tests/improvement/integration/test_planned_cases.py"
       ]
     },
     {
       "path": "src/aet/cli.py",
-      "reason": "This deterministic v1.15.0 change at src/aet/cli.py is covered by repository tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
+      "reason": "This deterministic v1.16.0 change at src/aet/cli.py is covered by repository regression tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
       "deterministic_proofs": [
-        "tests/test_evidence_atlas_protocol.py"
+        "tests/improvement/integration/test_planned_cases.py",
+        "tests/improvement/integration/test_lifecycle.py"
+      ]
+    },
+    {
+      "path": "src/aet/improvement/__init__.py",
+      "reason": "This deterministic v1.16.0 change at src/aet/improvement/__init__.py is covered by repository regression tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
+      "deterministic_proofs": [
+        "tests/improvement/integration/test_planned_cases.py",
+        "tests/improvement/integration/test_lifecycle.py"
+      ]
+    },
+    {
+      "path": "src/aet/improvement/analyzer/__init__.py",
+      "reason": "This deterministic v1.16.0 change at src/aet/improvement/analyzer/__init__.py is covered by repository regression tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
+      "deterministic_proofs": [
+        "tests/improvement/integration/test_planned_cases.py",
+        "tests/improvement/integration/test_lifecycle.py"
+      ]
+    },
+    {
+      "path": "src/aet/improvement/analyzer/aggregator.py",
+      "reason": "This deterministic v1.16.0 change at src/aet/improvement/analyzer/aggregator.py is covered by repository regression tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
+      "deterministic_proofs": [
+        "tests/improvement/integration/test_planned_cases.py",
+        "tests/improvement/integration/test_lifecycle.py"
+      ]
+    },
+    {
+      "path": "src/aet/improvement/analyzer/finding_normalizer.py",
+      "reason": "This deterministic v1.16.0 change at src/aet/improvement/analyzer/finding_normalizer.py is covered by repository regression tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
+      "deterministic_proofs": [
+        "tests/improvement/integration/test_planned_cases.py",
+        "tests/improvement/integration/test_lifecycle.py"
+      ]
+    },
+    {
+      "path": "src/aet/improvement/analyzer/pattern_detector.py",
+      "reason": "This deterministic v1.16.0 change at src/aet/improvement/analyzer/pattern_detector.py is covered by repository regression tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
+      "deterministic_proofs": [
+        "tests/improvement/integration/test_planned_cases.py",
+        "tests/improvement/integration/test_lifecycle.py"
+      ]
+    },
+    {
+      "path": "src/aet/improvement/candidate/__init__.py",
+      "reason": "This deterministic v1.16.0 change at src/aet/improvement/candidate/__init__.py is covered by repository regression tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
+      "deterministic_proofs": [
+        "tests/improvement/integration/test_planned_cases.py",
+        "tests/improvement/integration/test_lifecycle.py"
+      ]
+    },
+    {
+      "path": "src/aet/improvement/candidate/parser.py",
+      "reason": "This deterministic v1.16.0 change at src/aet/improvement/candidate/parser.py is covered by repository regression tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
+      "deterministic_proofs": [
+        "tests/improvement/integration/test_planned_cases.py",
+        "tests/improvement/integration/test_lifecycle.py"
+      ]
+    },
+    {
+      "path": "src/aet/improvement/candidate/sanitizer.py",
+      "reason": "This deterministic v1.16.0 change at src/aet/improvement/candidate/sanitizer.py is covered by repository regression tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
+      "deterministic_proofs": [
+        "tests/improvement/integration/test_planned_cases.py",
+        "tests/improvement/integration/test_lifecycle.py"
+      ]
+    },
+    {
+      "path": "src/aet/improvement/candidate/schema.py",
+      "reason": "This deterministic v1.16.0 change at src/aet/improvement/candidate/schema.py is covered by repository regression tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
+      "deterministic_proofs": [
+        "tests/improvement/integration/test_planned_cases.py",
+        "tests/improvement/integration/test_lifecycle.py"
+      ]
+    },
+    {
+      "path": "src/aet/improvement/cli/__init__.py",
+      "reason": "This deterministic v1.16.0 change at src/aet/improvement/cli/__init__.py is covered by repository regression tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
+      "deterministic_proofs": [
+        "tests/improvement/integration/test_planned_cases.py",
+        "tests/improvement/integration/test_lifecycle.py"
+      ]
+    },
+    {
+      "path": "src/aet/improvement/cli/improve.py",
+      "reason": "This deterministic v1.16.0 change at src/aet/improvement/cli/improve.py is covered by repository regression tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
+      "deterministic_proofs": [
+        "tests/improvement/integration/test_planned_cases.py",
+        "tests/improvement/integration/test_lifecycle.py"
+      ]
+    },
+    {
+      "path": "src/aet/improvement/constraint/__init__.py",
+      "reason": "This deterministic v1.16.0 change at src/aet/improvement/constraint/__init__.py is covered by repository regression tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
+      "deterministic_proofs": [
+        "tests/improvement/integration/test_planned_cases.py",
+        "tests/improvement/integration/test_lifecycle.py"
+      ]
+    },
+    {
+      "path": "src/aet/improvement/constraint/generator.py",
+      "reason": "This deterministic v1.16.0 change at src/aet/improvement/constraint/generator.py is covered by repository regression tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
+      "deterministic_proofs": [
+        "tests/improvement/integration/test_planned_cases.py",
+        "tests/improvement/integration/test_lifecycle.py"
+      ]
+    },
+    {
+      "path": "src/aet/improvement/constraint/rules.py",
+      "reason": "This deterministic v1.16.0 change at src/aet/improvement/constraint/rules.py is covered by repository regression tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
+      "deterministic_proofs": [
+        "tests/improvement/integration/test_planned_cases.py",
+        "tests/improvement/integration/test_lifecycle.py"
+      ]
+    },
+    {
+      "path": "src/aet/improvement/lifecycle/__init__.py",
+      "reason": "This deterministic v1.16.0 change at src/aet/improvement/lifecycle/__init__.py is covered by repository regression tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
+      "deterministic_proofs": [
+        "tests/improvement/integration/test_planned_cases.py",
+        "tests/improvement/integration/test_lifecycle.py"
+      ]
+    },
+    {
+      "path": "src/aet/improvement/lifecycle/compare.py",
+      "reason": "This deterministic v1.16.0 change at src/aet/improvement/lifecycle/compare.py is covered by repository regression tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
+      "deterministic_proofs": [
+        "tests/improvement/integration/test_planned_cases.py",
+        "tests/improvement/integration/test_lifecycle.py"
+      ]
+    },
+    {
+      "path": "src/aet/improvement/lifecycle/promote.py",
+      "reason": "This deterministic v1.16.0 change at src/aet/improvement/lifecycle/promote.py is covered by repository regression tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
+      "deterministic_proofs": [
+        "tests/improvement/integration/test_planned_cases.py",
+        "tests/improvement/integration/test_lifecycle.py"
+      ]
+    },
+    {
+      "path": "src/aet/improvement/lifecycle/verify.py",
+      "reason": "This deterministic v1.16.0 change at src/aet/improvement/lifecycle/verify.py is covered by repository regression tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
+      "deterministic_proofs": [
+        "tests/improvement/integration/test_planned_cases.py",
+        "tests/improvement/integration/test_lifecycle.py"
+      ]
+    },
+    {
+      "path": "src/aet/improvement/models/__init__.py",
+      "reason": "This deterministic v1.16.0 change at src/aet/improvement/models/__init__.py is covered by repository regression tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
+      "deterministic_proofs": [
+        "tests/improvement/integration/test_planned_cases.py",
+        "tests/improvement/integration/test_lifecycle.py"
+      ]
+    },
+    {
+      "path": "src/aet/improvement/models/candidate.py",
+      "reason": "This deterministic v1.16.0 change at src/aet/improvement/models/candidate.py is covered by repository regression tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
+      "deterministic_proofs": [
+        "tests/improvement/integration/test_planned_cases.py",
+        "tests/improvement/integration/test_lifecycle.py"
+      ]
+    },
+    {
+      "path": "src/aet/improvement/models/constraint.py",
+      "reason": "This deterministic v1.16.0 change at src/aet/improvement/models/constraint.py is covered by repository regression tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
+      "deterministic_proofs": [
+        "tests/improvement/integration/test_planned_cases.py",
+        "tests/improvement/integration/test_lifecycle.py"
+      ]
+    },
+    {
+      "path": "src/aet/improvement/models/issue.py",
+      "reason": "This deterministic v1.16.0 change at src/aet/improvement/models/issue.py is covered by repository regression tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
+      "deterministic_proofs": [
+        "tests/improvement/integration/test_planned_cases.py",
+        "tests/improvement/integration/test_lifecycle.py"
+      ]
+    },
+    {
+      "path": "src/aet/improvement/models/outcome.py",
+      "reason": "This deterministic v1.16.0 change at src/aet/improvement/models/outcome.py is covered by repository regression tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
+      "deterministic_proofs": [
+        "tests/improvement/integration/test_planned_cases.py",
+        "tests/improvement/integration/test_lifecycle.py"
+      ]
+    },
+    {
+      "path": "src/aet/improvement/models/verification.py",
+      "reason": "This deterministic v1.16.0 change at src/aet/improvement/models/verification.py is covered by repository regression tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
+      "deterministic_proofs": [
+        "tests/improvement/integration/test_planned_cases.py",
+        "tests/improvement/integration/test_lifecycle.py"
+      ]
+    },
+    {
+      "path": "src/aet/improvement/renderer/__init__.py",
+      "reason": "This deterministic v1.16.0 change at src/aet/improvement/renderer/__init__.py is covered by repository regression tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
+      "deterministic_proofs": [
+        "tests/improvement/integration/test_planned_cases.py",
+        "tests/improvement/integration/test_lifecycle.py"
+      ]
+    },
+    {
+      "path": "src/aet/improvement/renderer/agent_prompt.py",
+      "reason": "This deterministic v1.16.0 change at src/aet/improvement/renderer/agent_prompt.py is covered by repository regression tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
+      "deterministic_proofs": [
+        "tests/improvement/integration/test_planned_cases.py",
+        "tests/improvement/integration/test_lifecycle.py"
+      ]
+    },
+    {
+      "path": "src/aet/improvement/renderer/github_comment.py",
+      "reason": "This deterministic v1.16.0 change at src/aet/improvement/renderer/github_comment.py is covered by repository regression tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
+      "deterministic_proofs": [
+        "tests/improvement/integration/test_planned_cases.py",
+        "tests/improvement/integration/test_lifecycle.py"
+      ]
+    },
+    {
+      "path": "src/aet/improvement/renderer/human_report.py",
+      "reason": "This deterministic v1.16.0 change at src/aet/improvement/renderer/human_report.py is covered by repository regression tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
+      "deterministic_proofs": [
+        "tests/improvement/integration/test_planned_cases.py",
+        "tests/improvement/integration/test_lifecycle.py"
+      ]
+    },
+    {
+      "path": "src/aet/improvement/validator/__init__.py",
+      "reason": "This deterministic v1.16.0 change at src/aet/improvement/validator/__init__.py is covered by repository regression tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
+      "deterministic_proofs": [
+        "tests/improvement/integration/test_planned_cases.py",
+        "tests/improvement/integration/test_lifecycle.py"
+      ]
+    },
+    {
+      "path": "src/aet/improvement/validator/anti_gaming.py",
+      "reason": "This deterministic v1.16.0 change at src/aet/improvement/validator/anti_gaming.py is covered by repository regression tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
+      "deterministic_proofs": [
+        "tests/improvement/integration/test_planned_cases.py",
+        "tests/improvement/integration/test_lifecycle.py"
+      ]
+    },
+    {
+      "path": "src/aet/improvement/validator/grounding.py",
+      "reason": "This deterministic v1.16.0 change at src/aet/improvement/validator/grounding.py is covered by repository regression tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
+      "deterministic_proofs": [
+        "tests/improvement/integration/test_planned_cases.py",
+        "tests/improvement/integration/test_lifecycle.py"
+      ]
+    },
+    {
+      "path": "src/aet/improvement/validator/reference.py",
+      "reason": "This deterministic v1.16.0 change at src/aet/improvement/validator/reference.py is covered by repository regression tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
+      "deterministic_proofs": [
+        "tests/improvement/integration/test_planned_cases.py",
+        "tests/improvement/integration/test_lifecycle.py"
+      ]
+    },
+    {
+      "path": "src/aet/improvement/validator/scope.py",
+      "reason": "This deterministic v1.16.0 change at src/aet/improvement/validator/scope.py is covered by repository regression tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
+      "deterministic_proofs": [
+        "tests/improvement/integration/test_planned_cases.py",
+        "tests/improvement/integration/test_lifecycle.py"
+      ]
+    },
+    {
+      "path": "src/aet/improvement/validator/strength.py",
+      "reason": "This deterministic v1.16.0 change at src/aet/improvement/validator/strength.py is covered by repository regression tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
+      "deterministic_proofs": [
+        "tests/improvement/integration/test_planned_cases.py",
+        "tests/improvement/integration/test_lifecycle.py"
       ]
     },
     {
       "path": "src/aet/mcp_server.py",
-      "reason": "This deterministic v1.15.0 change at src/aet/mcp_server.py is covered by repository tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
+      "reason": "This deterministic v1.16.0 change at src/aet/mcp_server.py is covered by repository regression tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
       "deterministic_proofs": [
-        "tests/test_mcp_server.py"
+        "tests/test_mcp_server.py",
+        "tests/improvement/integration/test_planned_cases.py"
       ]
     }
   ]

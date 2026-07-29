@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "agent-engineering-toolkit"
-version = "1.15.0"
-description = "Lightweight evidence investigation for AI coding scope, real verification, and proof freshness."
+version = "1.16.0"
+description = "Portable evidence, visual investigation, and bounded code-improvement prompts for AI coding work."
 readme = "PYPI_README.md"
 requires-python = ">=3.11"
 license = "MIT"

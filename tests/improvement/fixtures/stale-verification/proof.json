@@ -1,0 +1,14 @@
+{
+  "candidate_id": "CAND-001",
+  "changed_paths": ["src/tool/result.py"],
+  "command_results": [
+    {
+      "command": "python -m unittest tests.test_tool",
+      "exit_code": 0
+    }
+  ],
+  "contract_id": "VC-001",
+  "freshness": "relevant_files_changed",
+  "id": "PROOF-STALE-001",
+  "status": "PASS"
+}

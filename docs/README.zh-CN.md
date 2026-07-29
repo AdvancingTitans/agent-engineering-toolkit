@@ -8,16 +8,17 @@
 
 **[English](../README.md) · [简体中文](README.zh-CN.md)**
 
-> **AET 把 AI 编码工作转成可移植、可检查的证据，再让人类和 Agent 在不允许模型编造事实的
-> 前提下完成调查。**
+> **AET 把 AI 编码工作转成可移植、可检查的证据，再从同一证据派生可追溯的
+> Evidence Atlas 与有边界的代码改进提示词，同时不允许模型编造事实。**
 
-AI 编码 Agent 说任务已经修好、测试已经通过。AET 帮你回答五个具体问题：
+AI 编码 Agent 说任务已经修好、测试已经通过。AET 帮你回答六个具体问题：
 
 1. 本次改动是否与用户任务相关？
 2. 声称的验证是否真的在当前工作区执行？
 3. 这份验证记录现在是否仍能代表当前代码？
 4. 另一个没有安装 AET 的 Agent 能否审查同一份证据？
 5. 人类能否沿一张可读调查地图追踪结论、反证与 `UNKNOWN`？
+6. 同一份证据能否形成可执行提示词，同时不把建议偷偷升级成 Evidence，也不自动授权 Agent 改代码？
 
 工具产生可复现事实；宿主 LLM 可以理解任务意图、提出竞争假设、调用授权工具、检查反方解释，
 并形成有条件的工程判断。AET 再用确定性代码检查引用、权限、结论强度和预算，并把结果导出为
@@ -25,7 +26,9 @@ AI 编码 Agent 说任务已经修好、测试已经通过。AET 帮你回答五
 
 ```text
 确定性事实 → 有边界的调查 → 依据校验
-          → 可移植证据交接 → Evidence Atlas
+          → Portable Evidence Bundle
+             ├─→ Evidence Atlas
+             └─→ 人类报告 + 有边界的 Agent 提示词
           → 独立审查 → 人工决定
 ```
 
@@ -156,11 +159,75 @@ from aet_bundle import load_bundle, query_claims, validate_bundle
 TypeScript 与 Python SDK 提供加载、查询、Blob 解析、Prompt Context 渲染和引用校验；
 MCP 暴露相同的有界规范化、调查、Bundle 查询和校验操作。消费 Bundle 不依赖任何便利层。
 
+## 真实案例：从证据生成有边界的代码改进提示词
+
+现实工作中，人类常问：“Agent，帮我审查这个项目，告诉我应该怎么改进。”可信回答不能只是一段
+语气肯定的文字；它需要说明哪个问题重要、引用哪条 Evidence、允许 Agent 改哪些文件、应运行
+什么验证，并在引用缺失时立即停止。
+
+仓库内置了一个可复现案例。示例中的缺陷 Adapter 会把空工具结果写成“未发现安全问题”这一事实；
+真实回归命令退出码为 `1`。AET 将失败记录为 `ev-empty-result-regression`，再确定性派生人类报告
+和有边界的 Agent 任务：
+
+![证据驱动的代码改进案例](assets/aet-improvement-case-zh-CN.gif)
+
+[静态 PNG](assets/aet-improvement-case-zh-CN.png) ·
+[可缩放 SVG](assets/aet-improvement-case-zh-CN.svg) ·
+[案例源码与预期产物](../examples/evidence-grounded-improvement/README.md) ·
+[媒体清单](assets/aet-improvement-media-manifest.json)
+
+```bash
+uv run python examples/evidence-grounded-improvement/build_example.py \
+  --output .aet/evidence/empty-result-review
+uv run aet improvement doctor .aet/evidence/empty-result-review
+uv run aet improve .aet/evidence/empty-result-review
+uv run aet improve prompt IMP-001
+uv run aet atlas build .aet/evidence/empty-result-review \
+  --perspectives claim-chain,conflicts,improvement-chain --no-llm
+```
+
+生成结果不是占位模板，而是这次真实执行的产物：
+
+| 产物 | 实际记录 |
+| --- | --- |
+| 人类报告 | `IMP-001` · `P1_HIGH` · `unsupported_claim` |
+| 依据 | Finding `claim-empty-result-is-grounded` 与反证 `ev-empty-result-regression` |
+| 允许范围 | 仅 `examples/evidence-grounded-improvement/sample_project/tool_result.py` |
+| 验证 | `python examples/evidence-grounded-improvement/sample_project/test_tool_result.py` |
+| Agent 任务 | `PROPOSED`；引用缺失、触及保护路径或无法形成有效 Proof 时停止 |
+| Atlas | Claim Chain 有依据；Improvement Chain 保持 `UNKNOWN` |
+
+提示词和 Atlas 是同一权威 Bundle 的两条同级派生链：
+
+```mermaid
+flowchart TD
+    H["人类：帮我审查项目"] --> B["Portable Evidence Bundle<br/>Claim · Evidence · Counter-evidence · Proof · Freshness"]
+    B --> I["Improvement Analyzer<br/>Issue · Constraint · Scope · Verification"]
+    I --> R["人类改进报告"]
+    I --> T["有边界的 Agent 任务<br/>PROPOSED"]
+    B --> G["Canonical Evidence Graph"]
+    G --> A["Evidence Atlas<br/>Claim Chain · Improvement Chain"]
+    R --> D["人工决定"]
+    T --> D
+    A --> D
+```
+
+两者共享稳定 Evidence ID，所以人类能从建议反查失败记录、命令和源文件；但它们**不会形成权威回路**：
+提示词绝不回写成 Evidence，Bundle v1 也没有独立 Improvement Record。因此，在后续当前 Proof
+和无回归比较真正建立 `verified_improvement` 前，`improvement-chain` 必须保持 `UNKNOWN`。
+AET 不会自动修改示例文件。
+
+已追踪产物包括
+[人类报告](../examples/evidence-grounded-improvement/artifacts/human-report.md)、
+[Agent 任务](../examples/evidence-grounded-improvement/artifacts/agent-task.md)、
+[Claim Chain](../examples/evidence-grounded-improvement/artifacts/claim-chain.mmd)和
+[Improvement Chain](../examples/evidence-grounded-improvement/artifacts/improvement-chain.mmd)。
+
 ## Evidence Atlas：可递归下钻的证据地图
 
-v1.15.0 把 Evidence Atlas 作为 Portable Evidence Bundle 的内置确定性投影。它不会让
-LLM 根据材料画一张“看起来合理”的图，而是先建立规范化 Evidence Graph，为每个权威节点和
-边保留字段级来源引用，再投影出八个固定视角：
+v1.15.0 引入 Evidence Atlas，作为 Portable Evidence Bundle 的内置确定性投影；v1.16.0
+在不改变证据权威的前提下新增两个面向改进的视角。它不会让 LLM 根据材料画一张“看起来合理”的
+图，而是先建立规范化 Evidence Graph，为每个权威节点和边保留字段级来源引用，再投影出十个固定视角：
 
 | 视角 | 回答的问题 |
 | --- | --- |
@@ -172,6 +239,8 @@ LLM 根据材料画一张“看起来合理”的图，而是先建立规范化 
 | Integration and Sources | 哪些系统、权限和信任边界提供了证据？ |
 | Conflict and Unknown | 哪些事实仍冲突、不可用、过期或未解决？ |
 | Freshness | 证据何时适用或失效，原因是什么？ |
+| Improvement Chain | 哪些有边界的 Issue、Constraint、Prompt 状态与未知项由 Finding 派生？ |
+| Regression Lineage | 验证改进需要哪份当前 Proof 与无回归比较？ |
 
 ![AET Evidence Atlas 静态架构](assets/aet-evidence-atlas-architecture-zh-CN.png)
 
@@ -180,7 +249,7 @@ LLM 根据材料画一张“看起来合理”的图，而是先建立规范化 
 ```mermaid
 flowchart LR
     B["Portable Evidence Bundle<br/>权威 JSON / JSONL"] --> G["Canonical Evidence Graph<br/>有来源的节点与边"]
-    G --> P["八个确定性 Perspective"]
+    G --> P["十个确定性 Perspective"]
     P --> H["递归层级<br/>复杂节点展开；简单节点保持叶子"]
     H --> R["Mermaid · Markdown · JSON"]
     R --> V["离线 Viewer"]
@@ -251,14 +320,14 @@ uv run aet atlas view /tmp/aet-atlas-bundle
 flowchart LR
     %% Evidence Atlas
     N_0b51dce8fe915eda{"[CONFLICT] The Bundle v1 change-scope view alone proves complete real diff grouping."}
-    N_6f91af1641ed1424{{"[SUPPORTED] AET projects eight fixed evidence perspectives and exposes complex nodes as recursive Viewer su..."}}
+    N_6f91af1641ed1424{{"[SUPPORTED] AET projects ten fixed evidence perspectives and exposes complex nodes as recursive Viewer subg..."}}
     N_8575658723b5d49d{{"[SUPPORTED] AET builds a canonical Evidence Graph from source-backed Bundle records without letting Mermaid..."}}
     N_5522d8dace1cb6e7{"[CONFLICT] Path binding is useful for scope context but insufficient to prove complete real diff grouping."}
     N_ac65699e766edc85["[UNKNOWN] Unresolved conflict conflict-change-scope-v1"]
     N_ef4722a060cacfda["[VERIFIED] Bundle Evidence records can bind facts to repository paths."]
     N_1ded0fae46344828["[VERIFIED] The Portable Evidence v1 Evidence record schema does not define an explicit Change Group field."]
     N_c075a66077dd6940["[VERIFIED] The Graph Builder creates canonical nodes and source-backed edges."]
-    N_e824b2ad012b224e["[VERIFIED] The Perspective module defines eight fixed deterministic projections."]
+    N_e824b2ad012b224e["[VERIFIED] The Perspective module defines ten fixed deterministic projections."]
     N_a42d56cfe9dff13d["[VERIFIED] The offline Viewer contains recursive subgraph navigation."]
     N_f797fb20a8448aa0["[RECORDED] Review AET's own Evidence Atlas implementation and retain support, counter-evidence, limitation..."]
     N_a17fb3165e6b0db5["[RECORDED] The view must display UNKNOWN rather than infer real diff groups."]
@@ -281,6 +350,7 @@ flowchart LR
     classDef observation fill:#e0f2fe,stroke:#0369a1,color:#082f49
     classDef candidate fill:#fef3c7,stroke:#92400e,color:#451a03,stroke-dasharray:5 3
     classDef supported fill:#ede9fe,stroke:#6d28d9,color:#2e1065,stroke-width:2px
+    classDef unsupported fill:#fee2e2,stroke:#b91c1c,color:#450a0a,stroke-width:2px,stroke-dasharray:5 3
     classDef conflict fill:#fee2e2,stroke:#b91c1c,color:#450a0a,stroke-width:2px
     classDef unknown fill:#f3f4f6,stroke:#4b5563,color:#111827,stroke-dasharray:5 3
     classDef stale fill:#ffedd5,stroke:#c2410c,color:#431407,stroke-dasharray:3 3
@@ -461,15 +531,14 @@ tests/auth/test_session.py   IN_SCOPE
 [查看可缩放 SVG](assets/aet-quick-workflow-zh-CN.svg) ·
 [查看动画校验报告](assets/aet-quick-workflow-zh-CN.motion.json)
 
-这张动态图展示当前可移植交接主链：
+这张动态图展示当前从证据到改进的交接主链：
 
-1. 执行 Agent 的原生运行记录进入 Source Adapter，形成带稳定 ID 和 Diagnostics 的规范 Run Record；
-2. 记录中的行为先成为 Observation，默认不能被当作 Reproduced Evidence；
-3. 只读 Investigator 在明确策略和预算内比较主假设与竞争假设；
-4. Git、Proof、Freshness 和授权事实继续由确定性证据组件掌握；
-5. Bundle Compiler 筛选、脱敏、哈希并连接 Claim、Evidence、Observation、Diagnostic 与 Blob；
-6. 独立 Reviewer 无需安装 AET，直接消费 JSON、JSONL 或 Markdown；
-7. Review 只提供判断依据，Fix、Merge、Push 和 Release 的最终权限仍由人掌握。
+1. 人类审查请求被编译成 Portable Evidence Bundle，保留稳定的 Claim、Evidence、反证、Proof 与 Freshness 引用；
+2. Evidence ID 是两条派生链共享的依据层；
+3. Improvement Analyzer 派生 Issue、Constraint、范围、验证和停止条件，形成报告与 `PROPOSED` Agent 任务；
+4. Evidence Atlas 从同一 Bundle 独立派生规范 Graph 和十个固定 Perspective；
+5. 两条链都回到人工审查，建议不会回写成 Evidence；
+6. Fix、Merge、Push 与 Release 权限仍由人掌握。
 
 ### 从当前代码库看，组件怎样组合
 
@@ -481,7 +550,8 @@ tests/auth/test_session.py   IN_SCOPE
 静态全景图回答“这些能力在当前仓库中怎样落地”。架构结论如下：
 
 - **实线表示证据生产主链。** 原生记录依次经过标准化、Observation/Candidate 提取、有界调查、
-  确定性验证、Bundle 编译和独立审查。
+  确定性验证和 Bundle 编译。
+- **Atlas 与改进提示词是同级审查产物。** 它们在 Bundle 编译后复用同一组 ID，但都不会成为证据生产者。
 - **虚线表示产品入口与消费层。** 四个 Quick Skill、CLI/MCP/SDK 便利层、实测消费者和
   Human/Lab 边界复用相同契约，但不会因此获得证据权威。
 - **Run Record、Observation 与 Verified Evidence 是不同类型。**
@@ -499,12 +569,12 @@ tests/auth/test_session.py   IN_SCOPE
 [观看中文 MP4](assets/aet-product-intro-zh-CN.mp4) ·
 [Watch the English MP4](assets/aet-product-intro-en.mp4)
 
-六幕视频依次解释：为什么 Run Record 不是 Proof、四个 Quick Skill 继续承担什么职责、
-Run Normalizer 怎样统一记录、Observation 与 Evidence 为什么必须分层、Reviewer 怎样无 SDK
-消费 Bundle，以及 Codex、Hermes、Ollama/Qwen 的真实互操作实测。详细契约见
+无声六幕视频从“人类请 Agent 审查项目”这一现实请求开始，保留四个 Quick Skill，解释
+Observation 与 Evidence 的边界和 Portable Bundle，再展示同源的人类报告、有边界 Agent
+提示词与 Evidence Atlas，最后落到可复现的空工具结果案例。详细契约见
 [可移植工作流](architecture/portable-evidence-workflow.md)。
 [媒体清单](assets/aet-quick-media-manifest.json)用 SHA-256 绑定双语 GIF、静态全景图和 MP4，
-并记录生成时测得的尺寸、帧数、帧率与时长。
+并记录生成时测得的尺寸、帧数、帧率与时长；MP4 为无声 H.264。
 
 只有 `/aet-proof` 会由 AET 自身执行命令并生成验证记录。其他本地或 MCP 工具结果由 Agent
 Host 写入调查记录：规范化 Payload 的哈希可以发现后续篡改，但不能独立证明外部 Host 确实
@@ -623,6 +693,7 @@ aet audit openhands --repo /path/to/OpenHands
 | 层级 | 用户 | 能力 | 默认状态 |
 | --- | --- | --- | --- |
 | AET Quick | 日常使用 Coding Agent 的开发者 | Check、Scope、Proof、Fresh | 分别安装与调用 |
+| 可移植审查 | 审查共享证据的人类与 Agent | Bundle、Evidence Atlas、人类报告、有边界 Agent 提示词 | 显式输入 Bundle；本地确定性运行 |
 | 可选扩展 | 需要项目来源链的团队 | Context、Decision、Evolve | 显式请求 |
 | AET Lab | Agent 工程师、Skill/平台作者 | Evidence Pack、Showcase、Quality、Learn、Replay、Gate、Tournament、Shadow、Stage、Adopt、统计分析 | 仅显式启用 |
 
@@ -670,6 +741,7 @@ AET 使用 Python 3.11+，确定性运行时保持轻依赖。贡献新规则时
 
 ## 高级文档
 
+- [Evidence-Grounded Improvement Layer](improvement.md)
 - [Evidence Atlas 架构](architecture/evidence-atlas.md)
 - [Portable Evidence Bundle v1](protocols/portable-evidence-bundle-v1.md)
 - [可移植证据工作流](architecture/portable-evidence-workflow.md)

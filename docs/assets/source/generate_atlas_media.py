@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate bilingual v1.15 Evidence Atlas architecture and video slides."""
+"""Generate bilingual v1.16 Evidence Atlas architecture and video slides."""
 
 from __future__ import annotations
 
@@ -7,6 +7,7 @@ import argparse
 import hashlib
 import json
 import subprocess
+import textwrap
 from html import escape
 from pathlib import Path
 
@@ -72,6 +73,12 @@ def _card(
     body: str,
     label: str = "",
 ) -> None:
+    body_lines = textwrap.wrap(
+        body,
+        width=max(18, (width - 48) // 7),
+        break_long_words=True,
+        break_on_hyphens=False,
+    )[:2]
     out.extend(
         [
             (
@@ -87,12 +94,13 @@ def _card(
                 f'<text x="{x + 24}" y="{y + 38}" font-size="20" '
                 f'font-weight="700" fill="{TEXT}">{escape(title)}</text>'
             ),
-            (
-                f'<text x="{x + 24}" y="{y + 68}" font-size="14" '
-                f'fill="{MUTED}">{escape(body)}</text>'
-            ),
         ]
     )
+    for index, line in enumerate(body_lines):
+        out.append(
+            f'<text x="{x + 24}" y="{y + 68 + index * 20}" '
+            f'font-size="14" fill="{MUTED}">{escape(line)}</text>'
+        )
     if label:
         out.append(
             f'<text class="mono" x="{x + 24}" y="{y + height - 18}" '
@@ -111,33 +119,33 @@ def _arrow(out: list[str], path: str, dashed: bool = False) -> None:
 
 def architecture(language: str, destination: Path) -> None:
     zh = language == "zh-CN"
-    title = "AET v1.15 证据图谱架构" if zh else "AET v1.15 Evidence Atlas Architecture"
+    title = "AET v1.16 证据图谱架构" if zh else "AET v1.16 Evidence Atlas Architecture"
     subtitle = (
-        "同一份可移植证据，形成可校验、可递归下钻的多视角调查地图"
+        "同一份可移植证据，同时形成可递归图谱与有边界的代码改进提示词"
         if zh
-        else "One portable evidence source, projected into a validated recursive investigation map"
+        else "One portable evidence source drives a recursive map and bounded code-improvement prompts"
     )
     names = (
         {
             "bundle": ("Portable Evidence Bundle", "Claims · Evidence · Observations · Conflicts"),
             "graph": ("规范化证据图", "来源节点 · 有依据的边 · 权限与时效"),
-            "views": ("八个固定视角", "结论 · 调查 · 范围 · 验证 · 数据 · 集成 · 冲突 · 时效"),
+            "views": ("十个固定视角", "八个证据视角 + Improvement Chain + Regression Lineage"),
             "recursive": ("递归分解", "复杂节点进入子图；叶节点保持简洁"),
             "render": ("确定性投影", "Diagram IR · Mermaid · Markdown · JSON"),
             "viewer": ("离线 Viewer", "三栏浏览 · 路径高亮 · 筛选 · 原始引用"),
             "validate": ("Fail-closed Validator", "反证保留 · stale 不升级 · UNKNOWN 可见"),
-            "consume": ("人类与 Agent 审查", "CLI · Python/TypeScript SDK · MCP · 静态文件"),
+            "consume": ("人类与 Agent 审查", "图谱 + 改进报告 + 有边界的 Agent 提示词"),
         }
         if zh
         else {
             "bundle": ("Portable Evidence Bundle", "Claims · Evidence · Observations · Conflicts"),
             "graph": ("Canonical Evidence Graph", "source nodes · grounded edges · authority · Freshness"),
-            "views": ("Eight fixed Perspectives", "claim · flow · scope · proof · data · integration · conflict · freshness"),
+            "views": ("Ten fixed Perspectives", "eight evidence views + Improvement Chain + Regression Lineage"),
             "recursive": ("Recursive decomposition", "complex nodes get subgraphs; leaves stay compact"),
             "render": ("Deterministic projections", "Diagram IR · Mermaid · Markdown · JSON"),
             "viewer": ("Offline Viewer", "three columns · path highlighting · filters · raw refs"),
             "validate": ("Fail-closed Validator", "counter-evidence retained · stale not upgraded · UNKNOWN visible"),
-            "consume": ("Human and Agent review", "CLI · Python/TypeScript SDK · MCP · static files"),
+            "consume": ("Human and Agent review", "graph + human report + bounded Agent prompt"),
         }
     )
     out = _start(title)
@@ -179,11 +187,11 @@ def architecture(language: str, destination: Path) -> None:
             f'<text x="105" y="655" font-size="18" font-weight="700" fill="{AMBER}">{escape("权威边界" if zh else "AUTHORITY BOUNDARY")}</text>',
             (
                 f'<text x="105" y="700" font-size="24" font-weight="700" fill="{TEXT}">'
-                f'{escape("Bundle Records → Graph → Perspective → Mermaid / 文档 / Viewer" if zh else "Bundle Records → Graph → Perspective → Mermaid / docs / Viewer")}</text>'
+                f'{escape("Bundle → Graph / Atlas；Bundle → Issue / Constraint / Prompt" if zh else "Bundle → Graph / Atlas; Bundle → Issue / Constraint / Prompt")}</text>'
             ),
             (
                 f'<text x="105" y="746" font-size="17" fill="{MUTED}">'
-                f'{escape("图表不创建证据、不隐藏反证、不改变 Freshness，也不授予 Fix、Merge、Push 或 Release 权限。" if zh else "Diagrams create no evidence, hide no counter-evidence, change no Freshness, and grant no fix, merge, push, or release authority.")}</text>'
+                f'{escape("两条派生链共享 Evidence ID，但提示词不会回写成证据；最终 Fix、Merge、Push、Release 仍由人决定。" if zh else "Both derivations share Evidence IDs, but prompts never write back as evidence; fix, merge, push, and release remain human decisions.")}</text>'
             ),
             "</svg>",
         ]
@@ -198,18 +206,18 @@ def slides(language: str, directory: Path) -> None:
         [
             ("证据文件很多，人类仍难看懂", "Bundle 是权威来源，但关系仍然分散", "01"),
             ("先建规范化 Evidence Graph", "每个节点和边都保留字段级来源引用", "02"),
-            ("同一份证据，八个调查视角", "结论、流程、范围、验证、数据、集成、冲突、时效", "03"),
+            ("同一份证据，十个调查视角", "八个证据视角，加上 Improvement Chain 与 Regression Lineage", "03"),
             ("复杂节点递归下钻", "确定性复杂度、深度预算、去重和循环阻断", "04"),
-            ("Mermaid 与离线 Viewer 只是投影", "路径高亮、UNKNOWN、反证与 stale 始终可见", "05"),
+            ("提示词与图谱是同源的两条派生链", "共享 Evidence ID；提示词绝不回写成证据", "05"),
             ("审查更直观，权威边界不变", "无 LLM 也完整可用；人类仍拥有最终行动权限", "06"),
         ]
         if zh
         else [
             ("Evidence is portable—but relationships stay hard to read.", "The Bundle is authoritative; its links are still distributed.", "01"),
             ("Build a canonical Evidence Graph first.", "Every authoritative node and edge keeps field-level source references.", "02"),
-            ("One evidence source. Eight investigation views.", "Claim, flow, scope, proof, data, integration, conflict, and Freshness.", "03"),
+            ("One evidence source. Ten investigation views.", "Eight evidence views plus Improvement Chain and Regression Lineage.", "03"),
             ("Drill into complex nodes recursively.", "Deterministic complexity, depth budgets, deduplication, and cycle stops.", "04"),
-            ("Mermaid and the offline Viewer are projections.", "Paths, UNKNOWN, counter-evidence, and stale state remain visible.", "05"),
+            ("Prompts and graphs are sibling derivations.", "They share Evidence IDs; prompts never write back as evidence.", "05"),
             ("Readable review. Unchanged authority boundary.", "Complete without an LLM; final action remains human-owned.", "06"),
         ]
     )
@@ -219,7 +227,7 @@ def slides(language: str, directory: Path) -> None:
         accent = accents[index]
         out.extend(
             [
-                f'<text x="90" y="90" class="mono" font-size="16" font-weight="700" fill="{accent}">AET EVIDENCE ATLAS · v1.15</text>',
+                f'<text x="90" y="90" class="mono" font-size="16" font-weight="700" fill="{accent}">AET EVIDENCE ATLAS · v1.16</text>',
                 f'<text x="1510" y="90" text-anchor="end" class="mono" font-size="16" fill="{MUTED}">{number} / 06</text>',
                 f'<text x="90" y="210" font-size="48" font-weight="800" fill="{TEXT}">{escape(title)}</text>',
                 f'<text x="90" y="260" font-size="22" fill="{MUTED}">{escape(body)}</text>',
@@ -235,11 +243,11 @@ def slides(language: str, directory: Path) -> None:
             _arrow(out, "M500 445H620")
             _arrow(out, "M980 445H1100")
         elif index == 2:
-            labels = ["Claim", "Flow", "Scope", "Proof", "Data", "Integration", "Conflict", "Freshness"]
+            labels = ["Claim", "Flow", "Scope", "Proof", "Data", "Integration", "Conflict", "Freshness", "Improvement", "Regression"]
             for idx, label in enumerate(labels):
-                x = 90 + (idx % 4) * 365
-                y = 350 + (idx // 4) * 175
-                _card(out, x, y, 325, 125, accents[idx % len(accents)], label, "deterministic projection")
+                x = 70 + (idx % 5) * 305
+                y = 350 + (idx // 5) * 175
+                _card(out, x, y, 275, 125, accents[idx % len(accents)], label, "deterministic projection")
         elif index == 3:
             _card(out, 130, 370, 350, 150, CYAN, "Finding", "mandatory decomposition")
             _card(out, 625, 320, 350, 150, GREEN, "Claim", "expandable")
@@ -247,16 +255,16 @@ def slides(language: str, directory: Path) -> None:
             _arrow(out, "M480 445H625")
             _arrow(out, "M975 395H1120")
         elif index == 4:
-            _card(out, 105, 360, 410, 165, CYAN, "Mermaid", "strict labels · no URLs · no HTML")
-            _card(out, 595, 360, 410, 165, GREEN, "Offline Viewer", "tree · graph · evidence detail")
-            _card(out, 1085, 360, 410, 165, RED, "Fail-visible", "conflict · UNKNOWN · stale")
+            _card(out, 105, 360, 410, 165, CYAN, "Human Report", "impact · evidence · scope · verification")
+            _card(out, 595, 360, 410, 165, PURPLE, "Agent Prompt", "PROPOSED · bounded · stop conditions")
+            _card(out, 1085, 360, 410, 165, GREEN, "Evidence Atlas", "same refs · counter-evidence · UNKNOWN")
         else:
             _card(out, 160, 360, 420, 165, GREEN, "No LLM required", "deterministic build and validation")
             _card(out, 590, 360, 420, 165, CYAN, "Portable", "HTML · Mermaid · Markdown · JSON")
             _card(out, 1020, 360, 420, 165, AMBER, "Human authority", "review, fix, merge, push, release")
         out.extend(
             [
-                f'<text x="90" y="842" font-size="16" fill="{MUTED}">{escape("AET v1.15 · 可递归审查，但不升级证据权限" if zh else "AET v1.15 · recursive review without authority inflation")}</text>',
+                f'<text x="90" y="842" font-size="16" fill="{MUTED}">{escape("AET v1.16 · 同源审查产物，但不升级证据权限" if zh else "AET v1.16 · sibling review artifacts without authority inflation")}</text>',
                 "</svg>",
             ]
         )
@@ -312,7 +320,7 @@ def main() -> int:
         )
     manifest = {
         "schema": "aet-readme-media/1.0",
-        "release": "v1.15.0",
+        "release": "v1.16.0",
         "example": {
             "bundle_id": "bundle-aet-atlas-self-review-v1",
             "builder": "examples/evidence-atlas/build_example.py",

@@ -36,7 +36,9 @@
               "evidence-data-flow",
               "integrations",
               "conflicts",
-              "freshness"
+              "freshness",
+              "improvement-chain",
+              "regression-lineage"
             ]
           },
           "root_node_id": {"type": "string", "pattern": "^node:"},

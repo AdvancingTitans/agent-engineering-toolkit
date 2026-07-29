@@ -1,0 +1,6 @@
+{
+  "evidence_refs": ["EV-EMPTY-001"],
+  "id": "FND-EMPTY-001",
+  "statement": "An empty tool result became an unsupported factual claim.",
+  "type": "unsupported_claim"
+}

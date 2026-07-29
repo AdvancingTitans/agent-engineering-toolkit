@@ -40,7 +40,7 @@ def _source(identifier: str, relative: str) -> dict[str, Any]:
         },
         "provenance": {
             "source_type": "deterministic_file_read",
-            "schema_version": "1.15.0",
+            "schema_version": "1.16.0",
             "configuration_hash": CONFIGURATION_HASH,
         },
         "integrity": {"content_hash": digest},
@@ -68,7 +68,7 @@ def _evidence(
         "source_refs": [source_id],
         "bindings": {
             "task_id": "task-aet-atlas-self-review",
-            "workspace_id": "aet-v1.15.0-source-tree",
+            "workspace_id": "aet-v1.16.0-source-tree",
             "repository": (
                 "https://github.com/AdvancingTitans/"
                 "agent-engineering-toolkit"
@@ -117,7 +117,7 @@ def payload() -> dict[str, Any]:
         {
             "id": "claim-recursive-perspectives",
             "statement": (
-                "AET projects eight fixed evidence perspectives and exposes "
+                "AET projects ten fixed evidence perspectives and exposes "
                 "complex nodes as recursive Viewer subgraphs."
             ),
             "status": "supported",
@@ -170,7 +170,7 @@ def payload() -> dict[str, Any]:
         ),
         _evidence(
             "ev-perspectives",
-            "The Perspective module defines eight fixed deterministic projections.",
+            "The Perspective module defines ten fixed deterministic projections.",
             "src-perspectives",
             SOURCE_PATHS["src-perspectives"],
             supports=["claim-recursive-perspectives"],
@@ -204,7 +204,7 @@ def payload() -> dict[str, Any]:
     return {
         "bundle_id": "bundle-aet-atlas-self-review-v1",
         "created_at": CREATED_AT,
-        "producer_version": "1.15.0",
+        "producer_version": "1.16.0",
         "task": {
             "task_id": "task-aet-atlas-self-review",
             "request": (
@@ -215,9 +215,9 @@ def payload() -> dict[str, Any]:
                 "https://github.com/AdvancingTitans/"
                 "agent-engineering-toolkit"
             ),
-            "workspace_id": "aet-v1.15.0-source-tree",
+            "workspace_id": "aet-v1.16.0-source-tree",
             "base_ref": "v1.14.0",
-            "head_ref": "v1.15.0",
+            "head_ref": "v1.16.0",
         },
         "investigation": {
             "investigation_id": "investigation-aet-atlas-self-review",

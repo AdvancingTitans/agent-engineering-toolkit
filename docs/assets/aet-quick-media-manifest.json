@@ -1,10 +1,10 @@
 {
   "schema_version": "aet-quick-media-manifest/v2",
-  "verified_with": "ffprobe 4.4-tessus",
+  "verified_with": "ffprobe 7.0",
   "generation": {
     "workflow_animation": "fireworks-tech-graph style 5 / agent-orchestration",
     "panorama_and_slides": "docs/assets/source/generate_readme_media.py",
-    "video": "FFmpeg libx264 + AAC"
+    "video": "AVFoundation H.264 (silent)"
   },
   "assets": [
     {
@@ -19,7 +19,7 @@
       "frame_rate": "20/1",
       "duration_seconds": 5.75,
       "motion_report": "aet-quick-workflow-en.motion.json",
-      "sha256": "af8b2b26100b97eafbf02eef81631d07d70fd1aa644b7cc668d26e2a7c3126f0"
+      "sha256": "a8df992d5f1c7a0c9c6a59f46307b87c6b7e3531600663c8b6e9f5aa017601ac"
     },
     {
       "kind": "workflow_animation",
@@ -33,21 +33,21 @@
       "frame_rate": "20/1",
       "duration_seconds": 5.75,
       "motion_report": "aet-quick-workflow-zh-CN.motion.json",
-      "sha256": "46113c7db3a35ce6eeb67652142bc588f2ec2b0debe159ee4d097fd1562c119e"
+      "sha256": "e1506592535a95d219b010628907e1619ef5337478b86d6a1ced4b64dde79992"
     },
     {
       "kind": "workflow_source",
       "format": "svg",
       "path": "aet-quick-workflow-en.svg",
       "language": "en",
-      "sha256": "7d229da60479fe5ff9debcec0f086d8d46e330574b566694d5864a00be0a0442"
+      "sha256": "8859943c75afe6424dabaa4ea35b54fb1c3656bfcc9b3fde750c3c39293291c9"
     },
     {
       "kind": "workflow_source",
       "format": "svg",
       "path": "aet-quick-workflow-zh-CN.svg",
       "language": "zh-CN",
-      "sha256": "f951f83953f8aade91b84ea3a36a8931e69f1b626649082b421a0ad6680b05d9"
+      "sha256": "a3979206ef7e4ff2a5c559f6088370d6f6ee1fdb75622ecc1c4f39c068517fbe"
     },
     {
       "kind": "project_panorama",
@@ -56,7 +56,7 @@
       "language": "en",
       "width": 1600,
       "height": 1000,
-      "sha256": "e4038aa4ad15f218e2fe9b7cc9a8d059cea7f86edfbb4d0321a778224233f021"
+      "sha256": "fb5f9c5d1915155474feda1e78b9917a3e16da1946fc60f45c50f23374319344"
     },
     {
       "kind": "project_panorama",
@@ -65,21 +65,21 @@
       "language": "zh-CN",
       "width": 1600,
       "height": 1000,
-      "sha256": "51d7ab4633477263328fa0550eda054658108bb39e004646ce497a8b6dc6a209"
+      "sha256": "4d755ac7ec733026b55cbeca41fccd7832abb4482618069990ac4b98677a8c0e"
     },
     {
       "kind": "project_panorama",
       "format": "svg",
       "path": "aet-project-panorama-en.svg",
       "language": "en",
-      "sha256": "b46ea459baab019954d98ed3014e1848d47ebe30d624c7519b44cdbf8e6eb907"
+      "sha256": "6682d640f9d1791cadd5c6f7e6c567b52ffad05e4d78376f5b034be6136830db"
     },
     {
       "kind": "project_panorama",
       "format": "svg",
       "path": "aet-project-panorama-zh-CN.svg",
       "language": "zh-CN",
-      "sha256": "399f82f03cfa1156a0c67aac30223e707530a79cbdc63f27d5f14e1b218f74f3"
+      "sha256": "559533698a7350666821f4be7c44b4060e4a631b54f9027e369fd4243f86506d"
     },
     {
       "kind": "product_video",
@@ -87,13 +87,13 @@
       "path": "aet-product-intro-en.mp4",
       "language": "en",
       "video_codec": "h264",
-      "audio_codec": "aac",
+      "audio_codec": null,
       "width": 1600,
       "height": 900,
       "frames": 900,
       "frame_rate": "30/1",
       "duration_seconds": 30.0,
-      "sha256": "3866059446e472f38fc83e7535d6a43700f308dc1d0aacd127a8c7529545ea00"
+      "sha256": "df8a530bf1e430f5e53ae71946d3719c739544e26b56f79014924a5211eede25"
     },
     {
       "kind": "product_video",
@@ -101,13 +101,13 @@
       "path": "aet-product-intro-zh-CN.mp4",
       "language": "zh-CN",
       "video_codec": "h264",
-      "audio_codec": "aac",
+      "audio_codec": null,
       "width": 1600,
       "height": 900,
       "frames": 900,
       "frame_rate": "30/1",
       "duration_seconds": 30.0,
-      "sha256": "3b3b773719b13807c0e4162e61e3ddea3ee3d6da3404157b223cc281f57b077c"
+      "sha256": "9ac0a8f569bc30a95be121f28dfe061a540443c81e4bc2c6d80b487f8aa9fdc8"
     }
   ]
 }

@@ -1,0 +1,20 @@
+{
+  "assumptions": [],
+  "claim_refs": ["CLM-001"],
+  "constraint_id": "IC-001",
+  "deleted_paths": [],
+  "evidence_refs": ["EV-001"],
+  "finding_refs": ["FND-001"],
+  "human_approval_required": true,
+  "id": "CAND-EVAL-001",
+  "risks": ["Human review is required before changing evaluation truth."],
+  "root_cause_status": "evidenced",
+  "strategy": "Propose a human-reviewed evaluation correction.",
+  "targets": [
+    {
+      "path": "eval/grader.py",
+      "symbol": "grade"
+    }
+  ],
+  "verification_plan": ["python -m unittest"]
+}

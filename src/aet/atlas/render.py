@@ -59,6 +59,7 @@ _NODE_CLASS_DEFINITIONS = (
     "classDef observation fill:#e0f2fe,stroke:#0369a1,color:#082f49",
     "classDef candidate fill:#fef3c7,stroke:#92400e,color:#451a03,stroke-dasharray:5 3",
     "classDef supported fill:#ede9fe,stroke:#6d28d9,color:#2e1065,stroke-width:2px",
+    "classDef unsupported fill:#fee2e2,stroke:#b91c1c,color:#450a0a,stroke-width:2px,stroke-dasharray:5 3",
     "classDef conflict fill:#fee2e2,stroke:#b91c1c,color:#450a0a,stroke-width:2px",
     "classDef unknown fill:#f3f4f6,stroke:#4b5563,color:#111827,stroke-dasharray:5 3",
     "classDef stale fill:#ffedd5,stroke:#c2410c,color:#431407,stroke-dasharray:3 3",
@@ -658,6 +659,8 @@ def _node_presentation(node_type: str, status: str) -> tuple[str, str]:
     if node_type == "verified_evidence" or status == "verified":
         return ("verified", "rectangle")
     if node_type in {"claim", "subclaim", "finding"}:
+        if status == "unsupported":
+            return ("unsupported", "hexagon")
         return ("supported", "hexagon")
     return ("evidenceDefault", "rectangle")
 

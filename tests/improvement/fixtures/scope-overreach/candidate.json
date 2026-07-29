@@ -1,0 +1,20 @@
+{
+  "assumptions": [],
+  "claim_refs": ["CLM-001"],
+  "constraint_id": "IC-001",
+  "deleted_paths": [],
+  "evidence_refs": ["EV-001"],
+  "finding_refs": ["FND-001"],
+  "human_approval_required": false,
+  "id": "CAND-SCOPE-001",
+  "risks": [],
+  "root_cause_status": "evidenced",
+  "strategy": "Modify an unrelated payment component.",
+  "targets": [
+    {
+      "path": "src/payment/card.py",
+      "symbol": "charge"
+    }
+  ],
+  "verification_plan": ["python -m unittest"]
+}

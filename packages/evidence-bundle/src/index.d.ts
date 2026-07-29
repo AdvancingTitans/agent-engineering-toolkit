@@ -168,7 +168,9 @@ export type EvidenceAtlasPerspectiveId =
   | "evidence-data-flow"
   | "integrations"
   | "conflicts"
-  | "freshness";
+  | "freshness"
+  | "improvement-chain"
+  | "regression-lineage";
 
 export interface EvidenceAtlasPerspective {
   schema_version: "aet-evidence-perspective/1.0";
@@ -235,7 +237,7 @@ export interface EvidenceGraphValidationReport {
   bundle_id: string;
   node_count: number;
   edge_count: number;
-  perspective_count: 8;
+  perspective_count: 10;
 }
 
 export interface EvidenceGraphQueryOptions {

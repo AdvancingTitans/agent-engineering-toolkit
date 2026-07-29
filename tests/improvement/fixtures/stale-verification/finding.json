@@ -1,0 +1,6 @@
+{
+  "evidence_refs": ["EV-STALE-001"],
+  "freshness_status": "relevant_files_changed",
+  "id": "FND-STALE-001",
+  "statement": "Historical Proof no longer applies to the relevant files."
+}

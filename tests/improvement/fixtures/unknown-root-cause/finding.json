@@ -1,0 +1,6 @@
+{
+  "evidence_refs": ["EV-UNKNOWN-001"],
+  "id": "FND-UNKNOWN-001",
+  "root_cause_status": "unknown",
+  "statement": "The failure is recorded but its root cause is unknown."
+}

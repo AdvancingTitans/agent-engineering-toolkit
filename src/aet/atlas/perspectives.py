@@ -181,6 +181,67 @@ _SPECS: dict[str, dict[str, Any]] = {
         "required": (("freshness_result",),),
         "missing": "Bundle 中没有 Evidence Freshness Result。",
     },
+    "improvement-chain": {
+        "title": "Improvement Chain",
+        "question": "Finding 如何约束 Candidate，并由 Verification 与 Outcome 闭环？",
+        "description": (
+            "展示有来源依据的 Finding、Constraint、Candidate、Verification 与 Outcome；"
+            "Bundle 未携带独立 Improvement 记录时保持 UNKNOWN。"
+        ),
+        "diagram_type": "flowchart",
+        "direction": "LR",
+        "node_types": {
+            "finding", "constraint", "recommendation", "proof", "claim",
+            "verified_evidence", "unknown", "limitation", "conflict",
+        },
+        "edge_types": {
+            "CONSTRAINED_BY", "RECOMMENDS", "VALIDATES", "SUPPORTED_BY",
+            "PARTIALLY_SUPPORTED_BY", "DERIVED_FROM", "LEAVES_UNKNOWN",
+            "LIMITED_BY", "INVALIDATED_BY",
+        },
+        "root_types": ("finding", "claim"),
+        "required": (
+            ("finding",),
+            ("constraint",),
+            ("recommendation",),
+            ("proof",),
+        ),
+        "missing": (
+            "Bundle 中缺少独立 Improvement Finding、Constraint、Candidate、"
+            "Verification 或 Outcome 记录；不得从建议推断已验证改进。"
+        ),
+    },
+    "regression-lineage": {
+        "title": "Regression Lineage",
+        "question": "已验证改进如何绑定到后续 Regression Fixture 与 CI 检查？",
+        "description": (
+            "追踪 Proof、Freshness、Finding 与回归建议；"
+            "缺少 Improvement Outcome 或 Regression Fixture 时保持 UNKNOWN。"
+        ),
+        "diagram_type": "flowchart",
+        "direction": "LR",
+        "node_types": {
+            "finding", "proof", "freshness_result", "verified_evidence",
+            "claim", "recommendation", "artifact", "unknown", "limitation",
+            "conflict",
+        },
+        "edge_types": {
+            "FRESH_FOR", "STALE_FOR", "INVALIDATED_BY", "VALIDATES",
+            "SUPPORTED_BY", "PARTIALLY_SUPPORTED_BY", "DERIVED_FROM",
+            "RECOMMENDS", "LIMITED_BY", "LEAVES_UNKNOWN",
+            "CONTRADICTED_BY", "PRODUCED_BY",
+        },
+        "root_types": ("proof", "verified_evidence"),
+        "required": (
+            ("proof", "verified_evidence"),
+            ("freshness_result",),
+            ("finding",),
+        ),
+        "missing": (
+            "Bundle 中缺少可绑定的 Improvement Outcome、Regression Fixture "
+            "或 Finding；不得推断回归已沉淀。"
+        ),
+    },
 }
 
 
@@ -384,6 +445,10 @@ def _perspective_constraints(perspective_id: str) -> list[str]:
         common.append("Proof 只覆盖记录的命令与路径；必须保留 does_not_prove。")
     if perspective_id == "integrations":
         common.append("Source provenance 不会被解释为 Agent 身份。")
+    if perspective_id == "improvement-chain":
+        common.append("Candidate 仍是 PROPOSED；只有有效 Proof 才能形成 Verified Outcome。")
+    if perspective_id == "regression-lineage":
+        common.append("Regression Fixture 必须绑定已验证 Outcome，不能由建议自动生成事实。")
     return common
 
 
@@ -392,6 +457,8 @@ def _perspective_concerns(perspective_id: str) -> list[str]:
         return ["Evidence Candidate 可能只有 Ledger reference，没有完整候选记录。"]
     if perspective_id == "freshness":
         return ["Bundle v1 记录当前 Freshness 快照，不保证包含完整历史事件序列。"]
+    if perspective_id in {"improvement-chain", "regression-lineage"}:
+        return ["Portable Evidence Bundle v1 尚无独立 Improvement 记录集合。"]
     return []
 
 

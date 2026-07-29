@@ -105,6 +105,8 @@ PERSPECTIVES = (
     "integrations",
     "conflicts",
     "freshness",
+    "improvement-chain",
+    "regression-lineage",
 )
 
 DEFAULT_GENERATION_POLICY = {
@@ -208,7 +210,7 @@ def merge_policy(overrides: Mapping[str, Any] | None = None) -> dict[str, Any]:
             raise ValueError(f"{name} must be a boolean")
     if policy["llm_enabled"]:
         raise ValueError(
-            "AET v1.15 Atlas is deterministic; host LLM narratives are optional "
+            "AET v1.16 Atlas is deterministic; host LLM narratives are optional "
             "consumer extensions and cannot be enabled by the core builder"
         )
     if policy["mermaid_security_level"] != "strict":

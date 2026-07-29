@@ -1,0 +1,31 @@
+flowchart LR
+    %% Evidence Atlas
+    N_063972f13ec74307{{"[UNSUPPORTED] An empty tool result is evidence-grounded and may be reported as “No security issues were found..."}}
+    N_a3d11a0ad1bce982["[UNKNOWN] UNKNOWN: improvement-chain"]
+    N_150d98da0dbd21bd["[VERIFIED] exit_code=1； empty result was rendered as a factual success instead of no_evidence"]
+    N_8af476aaf5724dd4["[RECORDED] The root cause is bounded to the sample adapter."]
+    N_9f14243c194ddc57["[RECORDED] No production repository behavior is inferred from this fixture."]
+    N_14ed4b33e253a53f["[RECORDED] A failing regression identifies the behavior, not a holistic trust score."]
+    N_b6c43f21b9f093ca["[RECORDED] Change only the adapter and make the recorded regression command pass without weakening the tes..."]
+    N_063972f13ec74307 -->|"limited by"| N_8af476aaf5724dd4
+    N_063972f13ec74307 -->|"limited by"| N_9f14243c194ddc57
+    N_150d98da0dbd21bd -->|"limited by"| N_14ed4b33e253a53f
+    N_063972f13ec74307 -->|"next action"| N_b6c43f21b9f093ca
+    classDef verified fill:#dcfce7,stroke:#166534,color:#052e16,stroke-width:2px
+    classDef observation fill:#e0f2fe,stroke:#0369a1,color:#082f49
+    classDef candidate fill:#fef3c7,stroke:#92400e,color:#451a03,stroke-dasharray:5 3
+    classDef supported fill:#ede9fe,stroke:#6d28d9,color:#2e1065,stroke-width:2px
+    classDef unsupported fill:#fee2e2,stroke:#b91c1c,color:#450a0a,stroke-width:2px,stroke-dasharray:5 3
+    classDef conflict fill:#fee2e2,stroke:#b91c1c,color:#450a0a,stroke-width:2px
+    classDef unknown fill:#f3f4f6,stroke:#4b5563,color:#111827,stroke-dasharray:5 3
+    classDef stale fill:#ffedd5,stroke:#c2410c,color:#431407,stroke-dasharray:3 3
+    classDef authorization fill:#ecfccb,stroke:#3f6212,color:#1a2e05
+    classDef omitted fill:#f3f4f6,stroke:#6b7280,color:#111827,stroke-dasharray:2 3
+    classDef evidenceDefault fill:#ffffff,stroke:#475569,color:#0f172a
+    class N_063972f13ec74307 unsupported
+    class N_a3d11a0ad1bce982 unknown
+    class N_150d98da0dbd21bd verified
+    class N_8af476aaf5724dd4 evidenceDefault
+    class N_9f14243c194ddc57 evidenceDefault
+    class N_14ed4b33e253a53f evidenceDefault
+    class N_b6c43f21b9f093ca evidenceDefault

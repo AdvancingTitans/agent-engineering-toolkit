@@ -8,11 +8,12 @@
 
 **[English](README.md) · [简体中文](docs/README.zh-CN.md)**
 
-> **AET turns AI coding work into portable, inspectable evidence—then lets
-> humans and Agents investigate it without letting a model invent the facts.**
+> **AET turns AI coding work into portable, inspectable evidence—then derives
+> a traceable Evidence Atlas and bounded code-improvement prompts without
+> letting a model invent the facts.**
 
 An AI coding Agent says it fixed the task and ran the tests. AET helps answer
-five concrete questions:
+six concrete questions:
 
 1. Did the change stay relevant to the user's task?
 2. Did the claimed verification actually run on this workspace?
@@ -20,6 +21,8 @@ five concrete questions:
 4. Can another Agent review the same evidence without installing AET?
 5. Can a human trace a conclusion, counter-evidence, and `UNKNOWN` through a
    readable investigation map?
+6. Can the same evidence become an actionable prompt without silently turning
+   advice into evidence or granting an Agent permission to edit?
 
 Tools produce reproducible facts. The host LLM may recover intent, form
 competing hypotheses, call authorized tools, test counter-explanations, and
@@ -30,7 +33,9 @@ self-describing evidence handoff. A human decides what happens next.
 
 ```text
 deterministic facts → bounded investigation → grounding validation
-                    → portable evidence handoff → Evidence Atlas
+                    → Portable Evidence Bundle
+                       ├─→ Evidence Atlas
+                       └─→ Human report + bounded Agent prompt
                     → independent review → human decision
 ```
 
@@ -174,13 +179,85 @@ prompt-context rendering, and reference validation. MCP exposes the same
 bounded normalization, investigation, Bundle lookup, and validation operations;
 none of these convenience layers is required to consume a Bundle.
 
+## Real case: evidence becomes a bounded improvement prompt
+
+Imagine the everyday request: “Agent, review this project and tell me what I
+should improve.” A confident paragraph is not enough. The review should say
+which finding matters, show the Evidence ID behind it, limit the files an Agent
+may touch, name the verification command, and stop when a required reference is
+missing.
+
+The checked-in example makes that workflow reproducible. Its deliberately
+flawed adapter turns an empty tool result into the factual sentence “No
+security issues were found.” A real regression command exits `1`; AET records
+that failure as `ev-empty-result-regression`, then deterministically derives
+both a human report and a bounded Agent task:
+
+![Evidence-grounded code-improvement case](docs/assets/aet-improvement-case-en.gif)
+
+[Static PNG](docs/assets/aet-improvement-case-en.png) ·
+[scalable SVG](docs/assets/aet-improvement-case-en.svg) ·
+[case source and expected artifacts](examples/evidence-grounded-improvement/README.md) ·
+[media manifest](docs/assets/aet-improvement-media-manifest.json)
+
+```bash
+uv run python examples/evidence-grounded-improvement/build_example.py \
+  --output .aet/evidence/empty-result-review
+uv run aet improvement doctor .aet/evidence/empty-result-review
+uv run aet improve .aet/evidence/empty-result-review
+uv run aet improve prompt IMP-001
+uv run aet atlas build .aet/evidence/empty-result-review \
+  --perspectives claim-chain,conflicts,improvement-chain --no-llm
+```
+
+The generated outputs are concrete, not a template:
+
+| Output | Recorded result |
+| --- | --- |
+| Human report | `IMP-001` · `P1_HIGH` · `unsupported_claim` |
+| Grounding | Finding `claim-empty-result-is-grounded` and counter-evidence `ev-empty-result-regression` |
+| Allowed scope | Only `examples/evidence-grounded-improvement/sample_project/tool_result.py` |
+| Verification | `python examples/evidence-grounded-improvement/sample_project/test_tool_result.py` |
+| Agent task | `PROPOSED`; stop on missing references, protected paths, or invalid Proof |
+| Atlas | Claim Chain is grounded; Improvement Chain remains `UNKNOWN` |
+
+The prompt and Atlas are sibling projections of the same authoritative Bundle:
+
+```mermaid
+flowchart TD
+    H["Human: review this project"] --> B["Portable Evidence Bundle<br/>Claim · Evidence · Counter-evidence · Proof · Freshness"]
+    B --> I["Improvement Analyzer<br/>Issue · Constraint · Scope · Verification"]
+    I --> R["Human report"]
+    I --> T["Bounded Agent task<br/>PROPOSED"]
+    B --> G["Canonical Evidence Graph"]
+    G --> A["Evidence Atlas<br/>Claim Chain · Improvement Chain"]
+    R --> D["Human decision"]
+    T --> D
+    A --> D
+```
+
+They share stable Evidence IDs so a human can move from advice back to the
+failure, command, and source path. They do **not** form an authority loop:
+prompts never write back as Evidence, and Bundle v1 has no independent
+Improvement record. Therefore `improvement-chain` correctly stays `UNKNOWN`
+until a later current Proof and no-regression comparison can establish a
+`verified_improvement`. AET does not edit the file automatically.
+
+Tracked outputs include the
+[human report](examples/evidence-grounded-improvement/artifacts/human-report.md),
+[Agent task](examples/evidence-grounded-improvement/artifacts/agent-task.md),
+[Claim Chain](examples/evidence-grounded-improvement/artifacts/claim-chain.mmd),
+and
+[Improvement Chain](examples/evidence-grounded-improvement/artifacts/improvement-chain.mmd).
+
 ## Evidence Atlas: a recursive map of the evidence
 
-v1.15.0 adds Evidence Atlas as a built-in, deterministic projection of a
-Portable Evidence Bundle. It does not ask an LLM to draw a plausible diagram.
-It builds a canonical Evidence Graph first, retains field-level source
-references for authoritative nodes and edges, then derives eight fixed
-Perspectives:
+v1.15.0 introduced Evidence Atlas as a built-in, deterministic projection of a
+Portable Evidence Bundle. v1.16.0 adds two improvement-aware views while
+preserving the same source authority. It does not ask an LLM to draw a
+plausible diagram. It builds a canonical Evidence Graph first, retains
+field-level source references for authoritative nodes and edges, then derives
+ten fixed Perspectives:
 
 | Perspective | Question answered |
 | --- | --- |
@@ -192,6 +269,8 @@ Perspectives:
 | Integration and Sources | Which systems, permissions, and trust boundaries supplied the evidence? |
 | Conflict and Unknown | What remains contradicted, unavailable, stale, or unresolved? |
 | Freshness | When did evidence become applicable or stale, and why? |
+| Improvement Chain | Which bounded issue, constraints, prompt status, and unknowns derive from a finding? |
+| Regression Lineage | Which current Proof and no-regression comparison would be required to verify an improvement? |
 
 ![AET Evidence Atlas static architecture](docs/assets/aet-evidence-atlas-architecture-en.png)
 
@@ -200,7 +279,7 @@ The authority direction is one-way:
 ```mermaid
 flowchart LR
     B["Portable Evidence Bundle<br/>authoritative JSON / JSONL"] --> G["Canonical Evidence Graph<br/>grounded nodes and edges"]
-    G --> P["Eight deterministic Perspectives"]
+    G --> P["Ten deterministic Perspectives"]
     P --> H["Recursive hierarchy<br/>complex nodes expand; leaves stay compact"]
     H --> R["Mermaid · Markdown · JSON"]
     R --> V["Offline Viewer"]
@@ -277,14 +356,14 @@ conflicted scope claim, its counter-evidence, and an unresolved node:
 flowchart LR
     %% Evidence Atlas
     N_0b51dce8fe915eda{"[CONFLICT] The Bundle v1 change-scope view alone proves complete real diff grouping."}
-    N_6f91af1641ed1424{{"[SUPPORTED] AET projects eight fixed evidence perspectives and exposes complex nodes as recursive Viewer su..."}}
+    N_6f91af1641ed1424{{"[SUPPORTED] AET projects ten fixed evidence perspectives and exposes complex nodes as recursive Viewer subg..."}}
     N_8575658723b5d49d{{"[SUPPORTED] AET builds a canonical Evidence Graph from source-backed Bundle records without letting Mermaid..."}}
     N_5522d8dace1cb6e7{"[CONFLICT] Path binding is useful for scope context but insufficient to prove complete real diff grouping."}
     N_ac65699e766edc85["[UNKNOWN] Unresolved conflict conflict-change-scope-v1"]
     N_ef4722a060cacfda["[VERIFIED] Bundle Evidence records can bind facts to repository paths."]
     N_1ded0fae46344828["[VERIFIED] The Portable Evidence v1 Evidence record schema does not define an explicit Change Group field."]
     N_c075a66077dd6940["[VERIFIED] The Graph Builder creates canonical nodes and source-backed edges."]
-    N_e824b2ad012b224e["[VERIFIED] The Perspective module defines eight fixed deterministic projections."]
+    N_e824b2ad012b224e["[VERIFIED] The Perspective module defines ten fixed deterministic projections."]
     N_a42d56cfe9dff13d["[VERIFIED] The offline Viewer contains recursive subgraph navigation."]
     N_f797fb20a8448aa0["[RECORDED] Review AET's own Evidence Atlas implementation and retain support, counter-evidence, limitation..."]
     N_a17fb3165e6b0db5["[RECORDED] The view must display UNKNOWN rather than infer real diff groups."]
@@ -307,6 +386,7 @@ flowchart LR
     classDef observation fill:#e0f2fe,stroke:#0369a1,color:#082f49
     classDef candidate fill:#fef3c7,stroke:#92400e,color:#451a03,stroke-dasharray:5 3
     classDef supported fill:#ede9fe,stroke:#6d28d9,color:#2e1065,stroke-width:2px
+    classDef unsupported fill:#fee2e2,stroke:#b91c1c,color:#450a0a,stroke-width:2px,stroke-dasharray:5 3
     classDef conflict fill:#fee2e2,stroke:#b91c1c,color:#450a0a,stroke-width:2px
     classDef unknown fill:#f3f4f6,stroke:#4b5563,color:#111827,stroke-dasharray:5 3
     classDef stale fill:#ffedd5,stroke:#c2410c,color:#431407,stroke-dasharray:3 3
@@ -517,15 +597,17 @@ normalized Runs are published; private Codex JSONL is not.
 [scalable SVG](docs/assets/aet-quick-workflow-en.svg) ·
 [motion validation report](docs/assets/aet-quick-workflow-en.motion.json)
 
-The animated workflow shows the new portable handoff:
+The animated workflow shows the current evidence-to-improvement handoff:
 
-1. A native executor run enters a source adapter and becomes canonical Run Records with stable IDs and diagnostics.
-2. Recorded behavior becomes an Observation, never reproduced proof by default.
-3. A read-only Investigator tests a primary and competing hypothesis within explicit policy and budget.
-4. Git, Proof, Freshness, and authority facts remain owned by deterministic evidence components.
-5. The Bundle Compiler selects, redacts, hashes, and links Claims, Evidence, Observations, diagnostics, and Blobs.
-6. An independent reviewer consumes the resulting JSON, JSONL, or Markdown without installing AET.
-7. Review remains advisory; a human still owns fix, merge, push, and release decisions.
+1. A human review request is compiled into a Portable Evidence Bundle with
+   stable Claim, Evidence, counter-evidence, Proof, and Freshness references.
+2. Evidence IDs remain the common grounding layer.
+3. The Improvement Analyzer derives Issue, Constraint, scope, verification,
+   and stop conditions for a human report and `PROPOSED` Agent task.
+4. Evidence Atlas independently derives a canonical Graph and ten fixed
+   Perspectives from the same Bundle.
+5. Both paths return to human review; neither writes advice back as Evidence.
+6. Fix, merge, push, and release authority remains human-owned.
 
 ### The current repository as a system
 
@@ -538,7 +620,9 @@ The static panorama answers how that workflow maps to this repository:
 
 - **Solid arrows are the evidence-production path.** Native runs flow through
   normalization, Observation/Candidate extraction, bounded investigation,
-  deterministic verification, Bundle compilation, and independent review.
+  deterministic verification, and Bundle compilation.
+- **Atlas and improvement prompts are sibling review artifacts.** They reuse
+  the same IDs after Bundle compilation but do not become evidence producers.
 - **Dashed arrows are product and consumption surfaces.** Four Quick Skills,
   CLI/MCP/SDK conveniences, measured consumers, and the human/Lab boundary use
   the same contracts without becoming evidence authorities.
@@ -560,14 +644,15 @@ The static panorama answers how that workflow maps to this repository:
 [Watch the English MP4](docs/assets/aet-product-intro-en.mp4) ·
 [观看中文 MP4](docs/assets/aet-product-intro-zh-CN.mp4)
 
-The six-scene video explains why a Run Record is not proof, keeps the four Quick
-Skills visible, introduces Run Normalization, separates Observation from
-Evidence, shows SDK-free Bundle consumption, and closes with the measured
-Codex, Hermes, and Ollama/Qwen interoperability check. The
+The silent six-scene video starts from a real developer asking an Agent to
+review a project, keeps the four Quick Skills visible, separates Observation
+from Evidence, shows the Portable Bundle, then follows the sibling human
+report, bounded Agent prompt, and Evidence Atlas into the reproducible empty
+tool-result case. The
 [portable workflow](docs/architecture/portable-evidence-workflow.md) provides
 the detailed contract. The
 [media manifest](docs/assets/aet-quick-media-manifest.json) binds the bilingual
-GIFs, panoramas, and H.264 MP4 videos by SHA-256 and records their generated
+GIFs, panoramas, and silent H.264 MP4 videos by SHA-256 and records their generated
 dimensions, frame counts, frame rates, and durations.
 
 ## Why the LLM is constrained, not disabled
@@ -704,6 +789,7 @@ quality grade for the upstream repository.
 | Layer | Audience | Capabilities | Default |
 | --- | --- | --- | --- |
 | AET Quick | Developers using coding Agents day to day | Check, Scope, Proof, Fresh | Installed and invoked individually |
+| Portable review | Humans and Agents reviewing shared evidence | Bundle, Evidence Atlas, human report, bounded Agent prompt | Explicit Bundle input; deterministic and local |
 | Optional extensions | Teams needing project provenance | Context, Decision, Evolve | Explicit request |
 | AET Lab | Agent engineers and Skill/platform authors | Evidence Pack, Showcase, Quality, Learn, Replay, Gate, Tournament, Shadow, Stage, Adopt, statistics | Explicit opt-in only |
 
@@ -753,6 +839,7 @@ provenance, and avoid broadening a Quick command beyond its question. See
 
 ## Advanced documentation
 
+- [Evidence-Grounded Improvement Layer](docs/improvement.md)
 - [Evidence Atlas architecture](docs/architecture/evidence-atlas.md)
 - [Portable Evidence Bundle v1](docs/protocols/portable-evidence-bundle-v1.md)
 - [Portable evidence workflow](docs/architecture/portable-evidence-workflow.md)

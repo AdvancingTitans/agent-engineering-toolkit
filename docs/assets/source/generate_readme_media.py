@@ -88,16 +88,16 @@ def _arrow(lines: list[str], path: str, color: str, marker: str, dashed: bool = 
 
 def render_panorama(language: str, output: Path) -> None:
     zh = language == "zh-CN"
-    title = "AET v1.14 项目架构全景" if zh else "AET v1.14 Project Architecture Panorama"
+    title = "AET v1.16 项目架构全景" if zh else "AET v1.16 Project Architecture Panorama"
     subtitle = (
-        "从多 Agent 运行记录到可移植证据交接；观察、证据与判断保持分层"
+        "从 Agent 运行记录到可移植证据、改进提示词与 Evidence Atlas；权威始终分层"
         if zh
-        else "From multi-Agent run records to portable evidence handoff; observations, evidence, and judgment stay separate"
+        else "From Agent runs to portable evidence, bounded improvement prompts, and Evidence Atlas—with authority kept separate"
     )
     section_titles = (
-        ("采集与标准化", "有边界的调查与验证", "可移植证据交接", "产品入口与治理")
+        ("采集与标准化", "有边界的调查与验证", "证据派生的审查产物", "产品入口与治理")
         if zh
-        else ("Capture and normalization", "Bounded investigation and verification", "Portable evidence handoff", "Product surfaces and governance")
+        else ("Capture and normalization", "Bounded investigation and verification", "Evidence-derived review artifacts", "Product surfaces and governance")
     )
     cards = {
         "skills": ("原生 Agent 运行记录", "Codex · Claude Code · JSONL", "") if zh else ("Native Agent runs", "Codex · Claude Code · JSONL", ""),
@@ -109,12 +109,12 @@ def render_panorama(language: str, output: Path) -> None:
         "ledger": ("只读 Investigator", "主假设 · 竞争假设 · 停止条件", "investigation/portable.py") if zh else ("Read-only Investigator", "primary · competing · stop conditions", "investigation/portable.py"),
         "validator": ("确定性证据权威", "Git · Proof · Freshness · 权限", "quick/* · grounding.py") if zh else ("Deterministic authority", "Git · Proof · Freshness · authority", "quick/* · grounding.py"),
         "evidence": ("Bundle Compiler", "筛选 · 脱敏 · 内容寻址", "src/aet/bundle/compiler.py") if zh else ("Bundle Compiler", "select · redact · content-address", "src/aet/bundle/compiler.py"),
-        "binding": ("Index / Core / Archive", "Claim · Evidence · Observation · Blob", "schemas/evidence-bundle/v1/*") if zh else ("Index / Core / Archive", "Claim · Evidence · Observation · Blob", "schemas/evidence-bundle/v1/*"),
-        "contracts": ("完整性与时效", "SHA-256 · 引用闭包 · Freshness", "bundle/integrity.py · validator.py") if zh else ("Integrity and freshness", "SHA-256 · reference closure · Freshness", "bundle/integrity.py · validator.py"),
-        "quality": ("独立审查与校验", "无 SDK 消费 · 可选 Review Validator", "bundle/review_validator.py") if zh else ("Independent review", "SDK-free consumption · optional validator", "bundle/review_validator.py"),
+        "binding": ("Portable Evidence Bundle", "Claim · Evidence · Observation · Proof", "schemas/evidence-bundle/v1/*") if zh else ("Portable Evidence Bundle", "Claim · Evidence · Observation · Proof", "schemas/evidence-bundle/v1/*"),
+        "contracts": ("Evidence Atlas", "十个视角 · 递归图 · UNKNOWN 可见", "src/aet/atlas/*") if zh else ("Evidence Atlas", "ten views · recursive graph · visible UNKNOWN", "src/aet/atlas/*"),
+        "quality": ("改进报告与 Agent 提示词", "Issue · Constraint · Scope · Stop", "src/aet/improvement/*") if zh else ("Human report and Agent prompt", "Issue · Constraint · Scope · Stop", "src/aet/improvement/*"),
         "showcase": ("四个 Quick Skill", "Check · Scope · Proof · Fresh", "skills/aet-* · src/aet/quick/*") if zh else ("Four Quick Skills", "Check · Scope · Proof · Fresh", "skills/aet-* · src/aet/quick/*"),
         "memory": ("便利接入层", "CLI · MCP · TypeScript / Python SDK", "src/aet/mcp_server.py · packages/*") if zh else ("Convenience integrations", "CLI · MCP · TypeScript / Python SDK", "src/aet/mcp_server.py · packages/*"),
-        "learn": ("跨 Agent 消费实测", "Codex · Hermes · Ollama / Qwen", "eval/bundle-consumption/*") if zh else ("Cross-Agent measured runs", "Codex · Hermes · Ollama / Qwen", "eval/bundle-consumption/*"),
+        "learn": ("可复现现实案例", "空工具结果 → 反证 → IMP-001", "examples/evidence-grounded-improvement/*") if zh else ("Reproducible real-world case", "empty result → counter-evidence → IMP-001", "examples/evidence-grounded-improvement/*"),
         "gate": ("人工决定与 Lab 边界", "不自动 Fix · Merge · Push · Release", "docs/quick-vs-lab-boundary.md") if zh else ("Human decision and Lab", "no automatic fix · merge · push · release", "docs/quick-vs-lab-boundary.md"),
     }
     lines = _svg_start(1600, 1000, title)
@@ -122,7 +122,7 @@ def render_panorama(language: str, output: Path) -> None:
         [
             f'<text x="60" y="60" font-size="34" font-weight="800" fill="{TEXT}">{escape(title)}</text>',
             f'<text x="60" y="88" font-size="16" fill="{MUTED}">{escape(subtitle)}</text>',
-            f'<text x="1540" y="62" text-anchor="end" class="mono" font-size="13" fill="{GREEN}">PORTABLE EVIDENCE · v1.14</text>',
+            f'<text x="1540" y="62" text-anchor="end" class="mono" font-size="13" fill="{GREEN}">EVIDENCE → IMPROVEMENT · v1.16</text>',
         ]
     )
     for args in (
@@ -215,12 +215,12 @@ def render_slides(language: str, output_dir: Path) -> None:
     output_dir.mkdir(parents=True, exist_ok=True)
     content = [
         (
-            "执行记录很多，但哪些能成为证据？" if zh else "The run is verbose. What can become evidence?",
-            "DEVELOPER REALITY" if not zh else "开发者的真实困惑",
+            "让 Agent 审查项目，怎样避免只得到一段自信叙述？" if zh else "You ask an Agent to review a project. What can you actually trust?",
+            "DEVELOPER REALITY" if not zh else "现实开发场景",
             [
-                ("Agent 自述只能作为上下文" if zh else "Agent self-report remains context", BLUE),
-                ("工具日志只证明记录里出现了什么" if zh else "Tool logs prove only what the run recorded", PURPLE),
-                ("当前事实需要独立绑定与时效检查" if zh else "Current facts need bindings and Freshness", AMBER),
+                ("Agent 自述仍只是上下文" if zh else "Agent self-report remains context", BLUE),
+                ("空工具结果不能变成“没有问题”" if zh else "An empty tool result cannot become “no issues”", PURPLE),
+                ("结论必须绑定 Evidence、Proof 与 Freshness" if zh else "Conclusions need Evidence, Proof, and Freshness", AMBER),
             ],
         ),
         (
@@ -234,41 +234,41 @@ def render_slides(language: str, output_dir: Path) -> None:
             ],
         ),
         (
-            "把不同 Agent 的运行记录变成同一种结构" if zh else "Normalize different Agent runs into one structure.",
-            "RUN NORMALIZER",
+            "先把审查事实编译成可移植证据" if zh else "Compile review facts into portable evidence first.",
+            "PORTABLE EVIDENCE",
             [
-                ("Codex / Claude Code", "NATIVE RUN", BLUE),
-                ("Stable ID + Content Hash", "CANONICAL RECORD", GREEN),
-                ("Tool Call ↔ Tool Result", "LINKED + DIAGNOSTIC", AMBER),
+                ("Run / File / Proof", "SOURCE RECORDS", BLUE),
+                ("Claim + Counter-evidence", "BOUNDED JUDGMENT", GREEN),
+                ("Stable ID + SHA-256", "PORTABLE BUNDLE", AMBER),
             ],
         ),
         (
             "观察不是证据，证据也不是最终判断" if zh else "Observation is not evidence; evidence is not judgment.",
             "EVIDENCE BOUNDARY",
             [
-                ("运行观察" if zh else "Observation", "必须声明 doesNotProve", BLUE),
+                ("运行观察" if zh else "Observation", "必须声明 doesNotProve" if zh else "must declare doesNotProve", BLUE),
                 ("已验证证据" if zh else "Verified Evidence", "Git · Proof · Freshness", GREEN),
-                ("独立判断" if zh else "Independent judgment", "引用 Claim / Evidence ID", AMBER),
+                ("独立判断" if zh else "Independent judgment", "引用 Claim / Evidence ID" if zh else "cites Claim / Evidence IDs", AMBER),
             ],
         ),
         (
-            "一次编译，任意审查者直接读取" if zh else "Compile once. Any reviewer can consume it.",
-            "PORTABLE EVIDENCE BUNDLE",
+            "同一份 Bundle，生成两种互补的审查视图" if zh else "One Bundle drives two complementary review views.",
+            "EVIDENCE-GROUNDED IMPROVEMENT",
             [
-                ("开放格式" if zh else "Open formats", "JSON · JSONL · Markdown", BLUE),
-                ("分层加载" if zh else "Layered loading", "Index · Core · Archive", PURPLE),
-                ("完整性" if zh else "Integrity", "SHA-256 · 引用闭包 · Blob", GREEN),
-                ("无需 SDK" if zh else "No SDK required", "Codex · Hermes · Ollama", AMBER),
+                ("人类改进报告" if zh else "Human report", "问题 · 影响 · 证据 · 验证" if zh else "issue · impact · evidence · verification", BLUE),
+                ("Agent 任务提示词" if zh else "Agent task", "允许范围 · 禁止范围 · 停止条件" if zh else "allowed · forbidden · stop conditions", PURPLE),
+                ("Evidence Atlas", "Claim Chain · 反证 · UNKNOWN" if zh else "Claim Chain · counter-evidence · UNKNOWN", GREEN),
+                ("权威边界" if zh else "Authority boundary", "提示词绝不回写成 Evidence" if zh else "prompts never write back as Evidence", AMBER),
             ],
         ),
         (
-            "真实 CLI 消费，严格 JSON 与语义边界同时通过" if zh else "Real CLIs pass strict JSON and semantic boundaries.",
-            "10 个合成场景实测" if zh else "10 SYNTHETIC SCENARIOS",
+            "真实案例：空结果不能伪装成“未发现问题”" if zh else "Real case: an empty result cannot masquerade as “no issues.”",
+            "REPRODUCIBLE CASE" if not zh else "可复现案例",
             [
-                ("Codex / Hermes" if zh else "Codex / Hermes", "严格 JSON · 10/10 场景" if zh else "strict JSON · 10/10 scenarios", GREEN),
-                ("Ollama / Qwen" if zh else "Ollama / Qwen", "完整 JSON Schema 约束" if zh else "complete JSON Schema constraint", BLUE),
-                ("每个消费者" if zh else "Each consumer", "62 PASS · 38 N/A · 0 FAIL", PURPLE),
-                ("测量边界" if zh else "Measurement boundary", "非通用准确率 · 非可信度评分" if zh else "not general accuracy · no trust score", AMBER),
+                ("Proof Receipt" if zh else "Proof Receipt", "exit_code=1 · VERIFIED failure", GREEN),
+                ("改进问题" if zh else "Improvement Issue", "IMP-001 · P1_HIGH", BLUE),
+                ("Agent 提示词" if zh else "Agent prompt", "PROPOSED · 单文件范围" if zh else "PROPOSED · one-file scope", PURPLE),
+                ("图谱边界" if zh else "Graph boundary", "improvement-chain = UNKNOWN", AMBER),
             ],
         ),
     ]
@@ -306,7 +306,7 @@ def render_slides(language: str, output_dir: Path) -> None:
                 _slide_card(lines, x, y, 680, 205, accent, left, [right])
         lines.extend(
             [
-                f'<text x="90" y="850" font-size="16" fill="{MUTED}">{escape("AET v1.14 · 从 Agent 运行记录到可移植工程证据" if zh else "AET v1.14 · from Agent runs to portable engineering evidence")}</text>',
+                f'<text x="90" y="850" font-size="16" fill="{MUTED}">{escape("AET v1.16 · 从可移植证据到有边界的代码改进" if zh else "AET v1.16 · from portable evidence to bounded code improvement")}</text>',
                 "</svg>",
             ]
         )

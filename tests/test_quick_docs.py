@@ -71,8 +71,8 @@ class QuickDocumentationTests(unittest.TestCase):
     def test_bilingual_workflow_panorama_and_intro_media_are_real_files(self) -> None:
         assets = ROOT / "docs" / "assets"
         expected_workflow_titles = {
-            "en": "Portable Evidence Handoff",
-            "zh-CN": "可移植证据交接",
+            "en": "Evidence-to-Improvement Review",
+            "zh-CN": "从证据到代码改进",
         }
         for locale in ("en", "zh-CN"):
             workflow_svg = assets / f"aet-quick-workflow-{locale}.svg"
@@ -143,12 +143,31 @@ class QuickDocumentationTests(unittest.TestCase):
             self.assertEqual(report["artifact"]["sha256"], item["sha256"])
         for item in videos:
             self.assertEqual(item["video_codec"], "h264")
-            self.assertEqual(item["audio_codec"], "aac")
+            self.assertIsNone(item["audio_codec"])
             self.assertEqual((item["width"], item["height"]), (1600, 900))
             self.assertEqual(item["frames"], 900)
             self.assertEqual(item["frame_rate"], "30/1")
             self.assertEqual(item["duration_seconds"], 30.0)
         self.assertEqual(len(hashes), 10, "all bilingual media must be byte-distinct")
+
+    def test_improvement_case_media_is_bilingual_and_content_addressed(self) -> None:
+        assets = ROOT / "docs" / "assets"
+        manifest = json.loads(
+            (assets / "aet-improvement-media-manifest.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        self.assertEqual(manifest["release"], "v1.16.0")
+        self.assertEqual(manifest["example"]["issue_id"], "IMP-001")
+        self.assertEqual(manifest["motion"]["frames"], 6)
+        self.assertEqual(len(manifest["media"]), 6)
+        for item in manifest["media"]:
+            artifact = ROOT / item["path"]
+            self.assertEqual(artifact.stat().st_size, item["bytes"])
+            self.assertEqual(
+                hashlib.sha256(artifact.read_bytes()).hexdigest(),
+                item["sha256"],
+            )
 
 
 if __name__ == "__main__":

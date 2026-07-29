@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-label="AET v1.15 证据图谱架构">
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-label="AET v1.16 证据图谱架构">
 <defs>
 <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#070a10"/><stop offset=".55" stop-color="#0b1220"/><stop offset="1" stop-color="#08141b"/></linearGradient>
 <pattern id="grid" width="30" height="30" patternUnits="userSpaceOnUse"><path d="M30 0H0V30" fill="none" stroke="#334155" stroke-opacity=".16"/></pattern>
@@ -8,13 +8,14 @@
 </defs>
 <rect width="1600" height="900" fill="url(#bg)"/>
 <rect width="1600" height="900" fill="url(#grid)"/>
-<text x="60" y="65" font-size="36" font-weight="800" fill="#edf4ff">AET v1.15 证据图谱架构</text>
-<text x="60" y="98" font-size="16" fill="#94a3b8">同一份可移植证据，形成可校验、可递归下钻的多视角调查地图</text>
+<text x="60" y="65" font-size="36" font-weight="800" fill="#edf4ff">AET v1.16 证据图谱架构</text>
+<text x="60" y="98" font-size="16" fill="#94a3b8">同一份可移植证据，同时形成可递归图谱与有边界的代码改进提示词</text>
 <text x="1540" y="66" text-anchor="end" class="mono" font-size="13" fill="#71db9b">DETERMINISTIC · OFFLINE · STRICT</text>
 <g filter="url(#shadow)"><rect x="70" y="165" width="310" height="118" rx="18" fill="#101722" fill-opacity=".94" stroke="#45d7e8" stroke-opacity=".42"/>
 <rect x="70" y="165" width="5" height="118" rx="2.5" fill="#45d7e8"/>
 <text x="94" y="203" font-size="20" font-weight="700" fill="#edf4ff">Portable Evidence Bundle</text>
-<text x="94" y="233" font-size="14" fill="#94a3b8">Claims · Evidence · Observations · Conflicts</text>
+<text x="94" y="233" font-size="14" fill="#94a3b8">Claims · Evidence · Observations ·</text>
+<text x="94" y="253" font-size="14" fill="#94a3b8">Conflicts</text>
 </g>
 <g filter="url(#shadow)"><rect x="465" y="165" width="310" height="118" rx="18" fill="#101722" fill-opacity=".94" stroke="#71db9b" stroke-opacity=".42"/>
 <rect x="465" y="165" width="5" height="118" rx="2.5" fill="#71db9b"/>
@@ -23,8 +24,9 @@
 </g>
 <g filter="url(#shadow)"><rect x="860" y="165" width="310" height="118" rx="18" fill="#101722" fill-opacity=".94" stroke="#b99aff" stroke-opacity=".42"/>
 <rect x="860" y="165" width="5" height="118" rx="2.5" fill="#b99aff"/>
-<text x="884" y="203" font-size="20" font-weight="700" fill="#edf4ff">八个固定视角</text>
-<text x="884" y="233" font-size="14" fill="#94a3b8">结论 · 调查 · 范围 · 验证 · 数据 · 集成 · 冲突 · 时效</text>
+<text x="884" y="203" font-size="20" font-weight="700" fill="#edf4ff">十个固定视角</text>
+<text x="884" y="233" font-size="14" fill="#94a3b8">八个证据视角 + Improvement Chain +</text>
+<text x="884" y="253" font-size="14" fill="#94a3b8">Regression Lineage</text>
 </g>
 <g filter="url(#shadow)"><rect x="1255" y="165" width="280" height="118" rx="18" fill="#101722" fill-opacity=".94" stroke="#f3b95f" stroke-opacity=".42"/>
 <rect x="1255" y="165" width="5" height="118" rx="2.5" fill="#f3b95f"/>
@@ -34,7 +36,8 @@
 <g filter="url(#shadow)"><rect x="1255" y="390" width="280" height="118" rx="18" fill="#101722" fill-opacity=".94" stroke="#45d7e8" stroke-opacity=".42"/>
 <rect x="1255" y="390" width="5" height="118" rx="2.5" fill="#45d7e8"/>
 <text x="1279" y="428" font-size="20" font-weight="700" fill="#edf4ff">确定性投影</text>
-<text x="1279" y="458" font-size="14" fill="#94a3b8">Diagram IR · Mermaid · Markdown · JSON</text>
+<text x="1279" y="458" font-size="14" fill="#94a3b8">Diagram IR · Mermaid · Markdown ·</text>
+<text x="1279" y="478" font-size="14" fill="#94a3b8">JSON</text>
 </g>
 <g filter="url(#shadow)"><rect x="860" y="390" width="310" height="118" rx="18" fill="#101722" fill-opacity=".94" stroke="#71db9b" stroke-opacity=".42"/>
 <rect x="860" y="390" width="5" height="118" rx="2.5" fill="#71db9b"/>
@@ -49,7 +52,7 @@
 <g filter="url(#shadow)"><rect x="70" y="390" width="310" height="118" rx="18" fill="#101722" fill-opacity=".94" stroke="#f3b95f" stroke-opacity=".42"/>
 <rect x="70" y="390" width="5" height="118" rx="2.5" fill="#f3b95f"/>
 <text x="94" y="428" font-size="20" font-weight="700" fill="#edf4ff">人类与 Agent 审查</text>
-<text x="94" y="458" font-size="14" fill="#94a3b8">CLI · Python/TypeScript SDK · MCP · 静态文件</text>
+<text x="94" y="458" font-size="14" fill="#94a3b8">图谱 + 改进报告 + 有边界的 Agent 提示词</text>
 </g>
 <path d="M380 224H465" fill="none" stroke="#45d7e8" stroke-width="2.5" marker-end="url(#arrow)"/>
 <path d="M775 224H860" fill="none" stroke="#45d7e8" stroke-width="2.5" marker-end="url(#arrow)"/>
@@ -61,6 +64,6 @@
 <path d="M620 390V315H1020V283" fill="none" stroke="#45d7e8" stroke-width="2.5" stroke-dasharray="8 8" marker-end="url(#arrow)"/>
 <rect x="70" y="610" width="1465" height="180" rx="22" fill="#ffffff" fill-opacity=".025" stroke="#f3b95f" stroke-opacity=".4" stroke-dasharray="8 8"/>
 <text x="105" y="655" font-size="18" font-weight="700" fill="#f3b95f">权威边界</text>
-<text x="105" y="700" font-size="24" font-weight="700" fill="#edf4ff">Bundle Records → Graph → Perspective → Mermaid / 文档 / Viewer</text>
-<text x="105" y="746" font-size="17" fill="#94a3b8">图表不创建证据、不隐藏反证、不改变 Freshness，也不授予 Fix、Merge、Push 或 Release 权限。</text>
+<text x="105" y="700" font-size="24" font-weight="700" fill="#edf4ff">Bundle → Graph / Atlas；Bundle → Issue / Constraint / Prompt</text>
+<text x="105" y="746" font-size="17" fill="#94a3b8">两条派生链共享 Evidence ID，但提示词不会回写成证据；最终 Fix、Merge、Push、Release 仍由人决定。</text>
 </svg>

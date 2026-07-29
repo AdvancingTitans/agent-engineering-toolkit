@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-label="AET v1.16 · 证据驱动的代码改进案例" data-generator="fireworks-tech-graph" data-schema-version="1" data-style-id="1" data-visual-theme="Flat Icon" data-diagram-type="architecture" data-semantic-profile="generic" data-semantic-valid="true" data-quality-profile="showcase">
+<defs>
+<marker id="arrow-blue" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0,10 3.5,0 7" fill="#2563eb"/></marker>
+<marker id="arrow-purple" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0,10 3.5,0 7" fill="#7c3aed"/></marker>
+<marker id="arrow-green" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0,10 3.5,0 7" fill="#059669"/></marker>
+<marker id="arrow-red" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0,10 3.5,0 7" fill="#dc2626"/></marker>
+<filter id="shadow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#0f172a" flood-opacity=".10"/></filter>
+<style>text{font-family:"Helvetica Neue",Helvetica,Arial,"PingFang SC","Microsoft YaHei",sans-serif}.mono{font-family:"SFMono-Regular",Consolas,monospace}</style>
+</defs>
+<rect width="1600" height="900" fill="#ffffff" data-graph-role="background"/>
+<rect width="1600" height="92" fill="#f8fafc" data-graph-role="decoration" data-owner="canvas"/>
+<text x="60" y="47" font-size="28" font-weight="800" fill="#111827">AET v1.16 · 证据驱动的代码改进案例</text>
+<text x="60" y="76" font-size="15" fill="#6b7280">人类问 Agent“帮我审查项目”；AET 用同一份证据交付可执行提示词与可追溯图谱</text>
+<text x="1540" y="52" text-anchor="end" class="mono" font-size="13" font-weight="800" fill="#059669">BUNDLE → PROMPT + ATLAS</text>
+<g data-graph-role="node" data-node-id="human-request" data-graph-bounds="70,145,490,265" filter="url(#shadow)">
+<rect x="70" y="145" width="420" height="120" rx="14" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+<text x="96" y="187" font-size="22" font-weight="700" fill="#111827">人类</text>
+<text x="96" y="217" font-size="15" fill="#6b7280">“请审查这个项目，并告诉我应该怎样安全改进。”</text>
+</g>
+<g data-graph-role="node" data-node-id="portable-bundle" data-graph-bounds="590,145,1010,265" filter="url(#shadow)">
+<rect x="590" y="145" width="420" height="120" rx="14" fill="#f0fdf4" stroke="#059669" stroke-width="2"/>
+<text x="616" y="187" font-size="22" font-weight="700" fill="#111827">Portable Evidence Bundle</text>
+<text x="616" y="217" font-size="15" fill="#6b7280">Claim · Evidence · Counter-evidence · Proof · Freshness</text>
+</g>
+<path id="request-to-bundle" data-graph-role="edge" data-source="human-request" data-target="portable-bundle" d="M490 205H590" fill="none" stroke="#2563eb" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow-blue)"/>
+<text x="540" y="192" text-anchor="middle" font-size="13" font-weight="600" fill="#2563eb">审查请求</text>
+<g data-graph-role="container" data-container-id="improvement-prompt" data-graph-bounds="70,350,750,715" filter="url(#shadow)">
+<rect x="70" y="350" width="680" height="365" rx="14" fill="#faf5ff" stroke="#7c3aed" stroke-width="2" data-graph-role="container"/>
+<text x="96" y="392" font-size="22" font-weight="700" fill="#111827">给人类与 Agent 的改进提示词</text>
+<text x="96" y="422" font-size="15" fill="#6b7280">确定性派生；不是代码修改，也不是 Evidence</text>
+</g>
+<rect x="100" y="440" width="102" height="32" rx="16" fill="#dc2626" fill-opacity=".12"/>
+<text x="151" y="462" text-anchor="middle" class="mono" font-size="12" font-weight="800" fill="#dc2626">ISSUE</text>
+<text x="224" y="462" class="mono" font-size="15" fill="#111827">IMP-001 · P1_HIGH · unsupported_claim</text>
+<rect x="100" y="488" width="102" height="32" rx="16" fill="#2563eb" fill-opacity=".12"/>
+<text x="151" y="510" text-anchor="middle" class="mono" font-size="12" font-weight="800" fill="#2563eb">EVIDENCE</text>
+<text x="224" y="510" class="mono" font-size="15" fill="#111827">ev-empty-result-regression</text>
+<rect x="100" y="536" width="102" height="32" rx="16" fill="#059669" fill-opacity=".12"/>
+<text x="151" y="558" text-anchor="middle" class="mono" font-size="12" font-weight="800" fill="#059669">ALLOWED</text>
+<text x="224" y="558" class="mono" font-size="15" fill="#111827">sample_project/tool_result.py</text>
+<rect x="100" y="584" width="102" height="32" rx="16" fill="#d97706" fill-opacity=".12"/>
+<text x="151" y="606" text-anchor="middle" class="mono" font-size="12" font-weight="800" fill="#d97706">VERIFY</text>
+<text x="224" y="606" class="mono" font-size="15" fill="#111827">python …/test_tool_result.py</text>
+<rect x="100" y="632" width="102" height="32" rx="16" fill="#7c3aed" fill-opacity=".12"/>
+<text x="151" y="654" text-anchor="middle" class="mono" font-size="12" font-weight="800" fill="#7c3aed">STATUS</text>
+<text x="224" y="654" class="mono" font-size="15" fill="#111827">PROPOSED · 遇到缺失引用立即停止</text>
+<path id="bundle-to-prompt" data-graph-role="edge" data-source="portable-bundle" data-target="improvement-prompt" d="M720 265V305H410V350" fill="none" stroke="#7c3aed" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow-purple)"/>
+<text x="555" y="294" text-anchor="middle" font-size="13" font-weight="600" fill="#7c3aed">Issue + Constraint</text>
+<g data-graph-role="container" data-container-id="evidence-atlas" data-graph-bounds="850,350,1530,715" filter="url(#shadow)">
+<rect x="850" y="350" width="680" height="365" rx="14" fill="#f0fdf4" stroke="#059669" stroke-width="2" data-graph-role="container"/>
+<text x="876" y="392" font-size="22" font-weight="700" fill="#111827">可视化 Evidence Atlas</text>
+<text x="876" y="422" font-size="15" fill="#6b7280">同一 Bundle 的只读投影；反证与 UNKNOWN 始终可见</text>
+</g>
+<g data-graph-role="node" data-node-id="atlas-0">
+<rect x="900" y="468" width="170" height="72" rx="12" fill="#fef2f2" stroke="#dc2626" stroke-width="2"/>
+<text x="985" y="497" text-anchor="middle" class="mono" font-size="12" font-weight="800" fill="#dc2626">UNSUPPORTED</text>
+<text x="985" y="523" text-anchor="middle" font-size="14" font-weight="650" fill="#111827">Claim</text>
+</g>
+<g data-graph-role="node" data-node-id="atlas-1">
+<rect x="1160" y="440" width="290" height="92" rx="12" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
+<text x="1305" y="469" text-anchor="middle" class="mono" font-size="12" font-weight="800" fill="#059669">VERIFIED FAIL</text>
+<text x="1305" y="495" text-anchor="middle" font-size="14" font-weight="650" fill="#111827">ev-empty-result-regression</text>
+</g>
+<g data-graph-role="node" data-node-id="atlas-2">
+<rect x="1160" y="590" width="290" height="72" rx="12" fill="#f3f4f6" stroke="#6b7280" stroke-width="2"/>
+<text x="1305" y="619" text-anchor="middle" class="mono" font-size="12" font-weight="800" fill="#6b7280">UNKNOWN</text>
+<text x="1305" y="645" text-anchor="middle" font-size="14" font-weight="650" fill="#111827">improvement-chain</text>
+</g>
+<path id="atlas-counter" data-graph-role="edge" data-source="atlas-0" data-target="atlas-1" d="M1070 504H1160" fill="none" stroke="#dc2626" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow-red)"/>
+<text x="1115" y="492" text-anchor="middle" font-size="13" font-weight="600" fill="#dc2626">反证</text>
+<path id="atlas-unknown" data-graph-role="edge" data-source="atlas-1" data-target="atlas-2" d="M1305 532V590" fill="none" stroke="#059669" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow-green)"/>
+<text x="1390" y="567" text-anchor="middle" font-size="13" font-weight="600" fill="#059669">不推断 Outcome</text>
+<path id="bundle-to-atlas" data-graph-role="edge" data-source="portable-bundle" data-target="evidence-atlas" d="M880 265V305H1190V350" fill="none" stroke="#059669" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow-green)"/>
+<text x="1035" y="294" text-anchor="middle" font-size="13" font-weight="600" fill="#059669">Graph + Perspectives</text>
+<rect x="585" y="752" width="430" height="42" rx="21" fill="#fff7ed" stroke="#d97706"/>
+<text x="800" y="779" text-anchor="middle" class="mono" font-size="14" font-weight="800" fill="#d97706">共享 Evidence ID · 无权威回路</text>
+<rect x="70" y="825" width="1460" height="48" rx="12" fill="#111827"/>
+<text x="800" y="855" text-anchor="middle" font-size="15" font-weight="650" fill="#ffffff">AET 不自动修改代码；Candidate 保持 PROPOSED，只有当前 Proof + 无回归比较才能成为 verified_improvement。</text>
+</svg>

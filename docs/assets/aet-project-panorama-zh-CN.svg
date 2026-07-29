@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000" role="img" aria-label="AET v1.14 项目架构全景">
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000" role="img" aria-label="AET v1.16 项目架构全景">
 <defs>
 <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#070a12"/><stop offset=".55" stop-color="#0d1324"/><stop offset="1" stop-color="#07111c"/></linearGradient>
 <radialGradient id="blueGlow"><stop stop-color="#2563eb" stop-opacity=".20"/><stop offset="1" stop-color="#2563eb" stop-opacity="0"/></radialGradient>
@@ -16,9 +16,9 @@
 <circle data-graph-role="decoration" data-owner="canvas" cx="288" cy="250" r="512" fill="url(#blueGlow)"/>
 <circle data-graph-role="decoration" data-owner="canvas" cx="1312" cy="550" r="448" fill="url(#purpleGlow)"/>
 <rect width="1600" height="1000" fill="url(#grid)"/>
-<text x="60" y="60" font-size="34" font-weight="800" fill="#f8fafc">AET v1.14 项目架构全景</text>
-<text x="60" y="88" font-size="16" fill="#94a3b8">从多 Agent 运行记录到可移植证据交接；观察、证据与判断保持分层</text>
-<text x="1540" y="62" text-anchor="end" class="mono" font-size="13" fill="#34d399">PORTABLE EVIDENCE · v1.14</text>
+<text x="60" y="60" font-size="34" font-weight="800" fill="#f8fafc">AET v1.16 项目架构全景</text>
+<text x="60" y="88" font-size="16" fill="#94a3b8">从 Agent 运行记录到可移植证据、改进提示词与 Evidence Atlas；权威始终分层</text>
+<text x="1540" y="62" text-anchor="end" class="mono" font-size="13" fill="#34d399">EVIDENCE → IMPROVEMENT · v1.16</text>
 <rect x="40" y="115" width="1520" height="150" rx="24" fill="#ffffff" fill-opacity=".025" stroke="#60a5fa" stroke-opacity=".32" stroke-dasharray="7 8"/>
 <circle cx="70" cy="143" r="16" fill="#60a5fa" fill-opacity=".18" stroke="#60a5fa"/>
 <text x="70" y="149" text-anchor="middle" font-size="13" font-weight="800" fill="#60a5fa">01</text>
@@ -30,7 +30,7 @@
 <rect x="40" y="525" width="1520" height="190" rx="24" fill="#ffffff" fill-opacity=".025" stroke="#34d399" stroke-opacity=".32" stroke-dasharray="7 8"/>
 <circle cx="70" cy="553" r="16" fill="#34d399" fill-opacity=".18" stroke="#34d399"/>
 <text x="70" y="559" text-anchor="middle" font-size="13" font-weight="800" fill="#34d399">03</text>
-<text x="98" y="560" font-size="18" font-weight="750" fill="#f8fafc">可移植证据交接</text>
+<text x="98" y="560" font-size="18" font-weight="750" fill="#f8fafc">证据派生的审查产物</text>
 <rect x="40" y="745" width="1520" height="190" rx="24" fill="#ffffff" fill-opacity=".025" stroke="#f59e0b" stroke-opacity=".32" stroke-dasharray="7 8"/>
 <circle cx="70" cy="773" r="16" fill="#f59e0b" fill-opacity=".18" stroke="#f59e0b"/>
 <text x="70" y="779" text-anchor="middle" font-size="13" font-weight="800" fill="#f59e0b">04</text>
@@ -100,23 +100,23 @@
 <g filter="url(#shadow)">
 <rect x="430" y="585" width="320" height="98" rx="18" fill="#111827" fill-opacity=".86" stroke="#ffffff" stroke-opacity=".12"/>
 <rect x="430" y="585" width="5" height="98" rx="2.5" fill="#60a5fa"/>
-<text x="454" y="619" font-size="19" font-weight="700" fill="#f8fafc">Index / Core / Archive</text>
-<text x="454" y="646" font-size="14" fill="#94a3b8">Claim · Evidence · Observation · Blob</text>
+<text x="454" y="619" font-size="19" font-weight="700" fill="#f8fafc">Portable Evidence Bundle</text>
+<text x="454" y="646" font-size="14" fill="#94a3b8">Claim · Evidence · Observation · Proof</text>
 <text class="mono" x="454" y="667" font-size="12" fill="#60a5fa">schemas/evidence-bundle/v1/*</text>
 </g>
 <g filter="url(#shadow)">
 <rect x="790" y="585" width="320" height="98" rx="18" fill="#111827" fill-opacity=".86" stroke="#ffffff" stroke-opacity=".12"/>
 <rect x="790" y="585" width="5" height="98" rx="2.5" fill="#c084fc"/>
-<text x="814" y="619" font-size="19" font-weight="700" fill="#f8fafc">完整性与时效</text>
-<text x="814" y="646" font-size="14" fill="#94a3b8">SHA-256 · 引用闭包 · Freshness</text>
-<text class="mono" x="814" y="667" font-size="12" fill="#c084fc">bundle/integrity.py · validator.py</text>
+<text x="814" y="619" font-size="19" font-weight="700" fill="#f8fafc">Evidence Atlas</text>
+<text x="814" y="646" font-size="14" fill="#94a3b8">十个视角 · 递归图 · UNKNOWN 可见</text>
+<text class="mono" x="814" y="667" font-size="12" fill="#c084fc">src/aet/atlas/*</text>
 </g>
 <g filter="url(#shadow)">
 <rect x="1150" y="585" width="340" height="98" rx="18" fill="#111827" fill-opacity=".86" stroke="#ffffff" stroke-opacity=".12"/>
 <rect x="1150" y="585" width="5" height="98" rx="2.5" fill="#f59e0b"/>
-<text x="1174" y="619" font-size="19" font-weight="700" fill="#f8fafc">独立审查与校验</text>
-<text x="1174" y="646" font-size="14" fill="#94a3b8">无 SDK 消费 · 可选 Review Validator</text>
-<text class="mono" x="1174" y="667" font-size="12" fill="#f59e0b">bundle/review_validator.py</text>
+<text x="1174" y="619" font-size="19" font-weight="700" fill="#f8fafc">改进报告与 Agent 提示词</text>
+<text x="1174" y="646" font-size="14" fill="#94a3b8">Issue · Constraint · Scope · Stop</text>
+<text class="mono" x="1174" y="667" font-size="12" fill="#f59e0b">src/aet/improvement/*</text>
 </g>
 <g filter="url(#shadow)">
 <rect x="70" y="825" width="320" height="88" rx="18" fill="#111827" fill-opacity=".86" stroke="#ffffff" stroke-opacity=".12"/>
@@ -135,9 +135,9 @@
 <g filter="url(#shadow)">
 <rect x="790" y="825" width="320" height="88" rx="18" fill="#111827" fill-opacity=".86" stroke="#ffffff" stroke-opacity=".12"/>
 <rect x="790" y="825" width="5" height="88" rx="2.5" fill="#c084fc"/>
-<text x="814" y="859" font-size="19" font-weight="700" fill="#f8fafc">跨 Agent 消费实测</text>
-<text x="814" y="886" font-size="14" fill="#94a3b8">Codex · Hermes · Ollama / Qwen</text>
-<text class="mono" x="814" y="897" font-size="12" fill="#c084fc">eval/bundle-consumption/*</text>
+<text x="814" y="859" font-size="19" font-weight="700" fill="#f8fafc">可复现现实案例</text>
+<text x="814" y="886" font-size="14" fill="#94a3b8">空工具结果 → 反证 → IMP-001</text>
+<text class="mono" x="814" y="897" font-size="12" fill="#c084fc">examples/evidence-grounded-improvement/*</text>
 </g>
 <g filter="url(#shadow)">
 <rect x="1150" y="825" width="340" height="88" rx="18" fill="#111827" fill-opacity=".86" stroke="#ffffff" stroke-opacity=".12"/>

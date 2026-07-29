@@ -135,16 +135,16 @@ class EvidenceAtlasProtocolTests(unittest.TestCase):
             fields["concerns.md"],
         )
 
-    def test_global_diagram_budget_reserves_all_eight_roots(self) -> None:
+    def test_global_diagram_budget_reserves_all_ten_roots(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             atlas = Path(temporary) / "bounded.atlas"
             result = build_evidence_atlas(
                 MINIMAL,
                 output=atlas,
-                generation_policy={"max_total_diagrams": 8},
+                generation_policy={"max_total_diagrams": 10},
             )
             self.assertEqual(
-                8,
+                10,
                 sum(
                     len(item["diagrams"])
                     for item in result["hierarchies"].values()
@@ -353,6 +353,32 @@ class EvidenceAtlasProtocolTests(unittest.TestCase):
         ):
             with self.assertRaises(AtlasValidationError):
                 validate_mermaid(unsafe)
+
+    def test_unsupported_claim_has_a_distinct_mermaid_class(self) -> None:
+        bundle = copy.deepcopy(validate_bundle(MINIMAL))
+        bundle["claims"][0]["status"] = "unsupported"
+        bundle["claims"][0]["evidence_refs"] = []
+        graph = build_evidence_graph(bundle)
+        perspective = build_perspectives(graph)[0]
+        rendered = render_projection(
+            graph,
+            node_ids=perspective["node_ids"],
+            edge_ids=perspective["edge_ids"],
+            diagram_type=perspective["diagram_type"],
+            direction=perspective["direction"],
+            max_nodes=25,
+            root_ids=perspective["root_node_ids"],
+        )
+        self.assertIn("classDef unsupported", rendered["diagram"])
+        claim_id = next(
+            node["id"]
+            for node in rendered["diagram_ir"]["nodes"]
+            if node["canonical_id"] == "node:claim:claim-001"
+        )
+        self.assertIn(
+            f"class {claim_id} unsupported",
+            rendered["diagram"],
+        )
 
     def test_oversized_diagram_is_bounded_and_reports_omissions(self) -> None:
         graph = build_evidence_graph(MINIMAL)

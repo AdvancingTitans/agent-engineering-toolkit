@@ -6,34 +6,34 @@
   },
   "media": [
     {
-      "bytes": 1104051,
+      "bytes": 1107558,
       "path": "docs/assets/aet-evidence-atlas-architecture-en.png",
-      "sha256": "e1a8812e6eb81523c1fb5c103c0350ac68d202b132a390f0a2721fc2966c969c"
+      "sha256": "16bb820f3227cc8830c7d161bc987f66174472a1560f55d6e2793106ef5fedb4"
     },
     {
-      "bytes": 6434,
+      "bytes": 6882,
       "path": "docs/assets/aet-evidence-atlas-architecture-en.svg",
-      "sha256": "9f49db8ecde92ba941191712fed2c76a706d2fc6f2eda8b4ad896257592fadb9"
+      "sha256": "bdf18853166ce41a5248206427bf3093d820001db24d3a7677a36407d0aa3998"
     },
     {
-      "bytes": 1109605,
+      "bytes": 1111667,
       "path": "docs/assets/aet-evidence-atlas-architecture-zh-CN.png",
-      "sha256": "3d09f325d268252f73b4e4b2b939c64dd24cb34f419c024727c96b5287753956"
+      "sha256": "e47455dd820743c039eb9838908d9404c0d192632b750a160daee1d72f3498e7"
     },
     {
-      "bytes": 6338,
+      "bytes": 6509,
       "path": "docs/assets/aet-evidence-atlas-architecture-zh-CN.svg",
-      "sha256": "babfddecc86fd7e7b1e2f15c62b30d22d5c3b2600cbf0513866de3a5fd2be68f"
+      "sha256": "8edafaaf781bd979ae0df9b2f0925da3b25977a505595b853f8a3343f919db26"
     },
     {
-      "bytes": 5725949,
+      "bytes": 5821775,
       "path": "docs/assets/aet-evidence-atlas-intro-en.mp4",
-      "sha256": "6948e0d1eac495a3fd8fe0bed4ddad771a48e11c37967151b6a5cf3c477a6a27"
+      "sha256": "4241974258be67be31ac3d73c02461d302d60110fd963fba8c65c26607b5a22f"
     },
     {
-      "bytes": 5461336,
+      "bytes": 5579866,
       "path": "docs/assets/aet-evidence-atlas-intro-zh-CN.mp4",
-      "sha256": "298fd103199fa81058c82f353dd6d0cee3fb187346bb2b6908a7fcd259a9735a"
+      "sha256": "1b65393a1ca21082f0587e039abcb8d4a0870a4a444ee130342e2931f94183cf"
     },
     {
       "bytes": 826089,
@@ -53,6 +53,6 @@
       "size": "1600x900"
     }
   },
-  "release": "v1.15.0",
+  "release": "v1.16.0",
   "schema": "aet-readme-media/1.0"
 }

@@ -1,0 +1,26 @@
+[
+  {
+    "category": "unsupported_claim",
+    "confidence": "high",
+    "evidence_refs": [
+      "ev-empty-result-regression"
+    ],
+    "finding_refs": [
+      "claim-empty-result-is-grounded"
+    ],
+    "id": "IMP-001",
+    "impact": {
+      "behavior": "unsupported_claim",
+      "component": "unknown",
+      "evidence_pattern": "ev-empty-result-regression",
+      "limitations": [
+        "No production repository behavior is inferred from this fixture.",
+        "The root cause is bounded to the sample adapter."
+      ],
+      "root_cause_status": "not_recorded",
+      "statement": "An empty tool result is evidence-grounded and may be reported as “No security issues were found.”"
+    },
+    "priority": "P1_HIGH",
+    "title": "Claim is not supported by evidence"
+  }
+]

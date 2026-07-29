@@ -126,7 +126,9 @@
         "evidence-data-flow",
         "integrations",
         "conflicts",
-        "freshness"
+        "freshness",
+        "improvement-chain",
+        "regression-lineage"
       ]
     },
     "hashMap": {

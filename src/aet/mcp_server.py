@@ -144,7 +144,7 @@ _TOOLS = [
     },
     {
         "name": "aet_graph_list_perspectives",
-        "description": "List the eight deterministic Perspectives in a validated local Evidence Atlas.",
+        "description": "List the ten deterministic Perspectives in a validated local Evidence Atlas.",
         "inputSchema": _path_schema("atlas", "bundle"),
     },
     {

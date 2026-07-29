@@ -67,6 +67,14 @@ from .atlas.storage import (
 )
 from .atlas.validator import AtlasValidationError, validate_evidence_atlas
 from .atlas.viewer import serve_atlas, single_html
+from .improvement.cli.improve import (
+    compare_improvement_metrics,
+    doctor_bundle,
+    generate_agent_prompt,
+    generate_improvements,
+    validate_candidate_file,
+    verify_issue,
+)
 
 
 def _perspective_selection(value: str) -> tuple[str, ...]:
@@ -434,7 +442,7 @@ def build_parser() -> argparse.ArgumentParser:
     atlas_build.add_argument(
         "--perspectives",
         type=_perspective_selection,
-        help="Comma-separated fixed Perspective IDs; default builds all eight.",
+        help="Comma-separated fixed Perspective IDs; default builds all ten.",
     )
     atlas_build.add_argument("--no-llm", action="store_true")
     atlas_build.add_argument("--no-replace", action="store_true")
@@ -475,6 +483,21 @@ def build_parser() -> argparse.ArgumentParser:
     atlas_diff.add_argument("--before-bundle", type=Path)
     atlas_diff.add_argument("--after-bundle", type=Path)
     atlas_diff.add_argument("--output", type=Path)
+    improvement_parser = commands.add_parser(
+        "improvement",
+        help="Inspect Evidence Bundle readiness for deterministic improvements.",
+    )
+    improvement_commands = improvement_parser.add_subparsers(
+        dest="improvement_command",
+        required=True,
+    )
+    improvement_doctor = improvement_commands.add_parser("doctor")
+    improvement_doctor.add_argument("bundle", type=Path)
+    improve_parser = commands.add_parser(
+        "improve",
+        help="Generate deterministic evidence-grounded improvements.",
+    )
+    improve_parser.add_argument("arguments", nargs="+")
     mcp_parser = commands.add_parser(
         "mcp",
         help="Serve the optional Portable Evidence Bundle MCP convenience layer.",
@@ -704,6 +727,39 @@ def main(argv: Sequence[str] | None = None) -> int:
             raise SystemExit(
                 f"aet: atlas {args.atlas_command} failed: {error}"
             ) from error
+    if args.command == "improvement":
+        try:
+            print(doctor_bundle(args.bundle), end="")
+            return 0
+        except (BundleError, OSError, ValueError) as error:
+            raise SystemExit(f"aet: improvement doctor failed: {error}") from error
+    if args.command == "improve":
+        try:
+            action = args.arguments[0]
+            if action == "prompt":
+                if len(args.arguments) != 2:
+                    parser.error("aet improve prompt requires one Improvement Issue ID")
+                report = generate_agent_prompt(args.arguments[1])
+            elif action == "validate":
+                if len(args.arguments) != 2:
+                    parser.error("aet improve validate requires one candidate JSON path")
+                report = validate_candidate_file(Path(args.arguments[1]))
+            elif action == "verify":
+                if len(args.arguments) != 2:
+                    parser.error("aet improve verify requires one Improvement Issue ID")
+                report = verify_issue(args.arguments[1])
+            elif action == "compare":
+                if len(args.arguments) != 1:
+                    parser.error("aet improve compare takes no additional arguments")
+                report = compare_improvement_metrics()
+            else:
+                if len(args.arguments) != 1:
+                    parser.error("aet improve <bundle> accepts one Bundle path")
+                report = generate_improvements(Path(action))
+            print(render_json(report), end="")
+            return 0 if report.get("valid", True) else 1
+        except (BundleError, OSError, ValueError) as error:
+            raise SystemExit(f"aet: improve failed: {error}") from error
     if args.command == "mcp":
         from .mcp_server import serve_stdio
 

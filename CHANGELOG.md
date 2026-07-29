@@ -1,5 +1,32 @@
 # Changelog
 
+## 1.16.0 — 2026-07-29
+
+- Added the deterministic Evidence-Grounded Improvement Layer: validated
+  Portable Evidence Bundle records become bounded Improvement Issues,
+  Constraints, human reports, `PROPOSED` Agent tasks, Verification Contracts,
+  and outcomes without editing code or granting recommendations evidence
+  authority.
+- Added `aet improvement doctor` and `aet improve
+  <bundle>|prompt|validate|verify|compare`, strict grounding/scope/strength and
+  anti-gaming checks, protected-path enforcement, Proof/Freshness binding, and
+  before/after comparison that retains `PASS`, `FAIL`, `UNKNOWN`, and
+  `NOT_APPLICABLE`.
+- Extended Evidence Atlas from eight to ten fixed Perspectives with
+  Improvement Chain and Regression Lineage. Bundle v1 has no independent
+  Improvement records, so these views remain explicitly `UNKNOWN` until
+  source-bound records exist; prompts never write back as Evidence.
+- Added a reproducible project-review case in which an empty tool result is
+  incorrectly emitted as “no issues.” A real failing regression becomes
+  counter-evidence for `IMP-001`, grounding the human report, one-file Agent
+  scope, verification command, and Claim/Improvement Chain diagrams.
+- Fixed Mermaid rendering so unsupported Claims use a distinct red dashed
+  class instead of the supported-Claim style.
+- Rebuilt the English and Simplified Chinese README product narrative,
+  commands, architecture and process diagrams, real-case GIF/PNG/SVG assets,
+  Evidence Atlas visuals, and silent 30-second H.264 introduction videos with
+  refreshed SHA-256 manifests.
+
 ## 1.15.0 — 2026-07-26
 
 - Added Evidence Atlas, a deterministic canonical Evidence Graph derived from

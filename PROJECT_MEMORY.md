@@ -547,7 +547,7 @@ deterministic core.
   boundary, explicit counter-evidence/`UNKNOWN`/Freshness semantics, and the
   seven pre-existing untracked files outside version control.
 
-## Evidence-Grounded Improvement implementation — 2026-07-29
+## v1.16.0 Evidence-Grounded Improvement release — 2026-07-29
 
 - Added the planned deterministic `src/aet/improvement/` subsystem with
   Issue, Constraint, Candidate, Verification Contract, and Outcome models;
@@ -566,15 +566,34 @@ deterministic core.
   `improvement-chain` / `regression-lineage` Atlas Perspectives. Python Atlas
   schemas, MCP description, and the TypeScript SDK now agree on ten fixed
   Perspectives.
-- Added six planned Golden Fixture families, 31 Improvement tests, and
-  `docs/improvement.md`. Final acceptance: 475 Python unit tests passed;
-  TypeScript SDK 16/16, distribution smoke 1/1, compatibility guard, and
-  `git diff --check` passed.
+- Added a reproducible empty-tool-result review case. Its failing regression
+  evidence grounds `IMP-001`, a human report, and a bounded `PROPOSED` Agent
+  task. The same Bundle independently drives Claim Chain and Improvement Chain
+  Atlas views; the latter remains `UNKNOWN` because Bundle v1 has no
+  independent Improvement records.
+- Updated the English and Simplified Chinese READMEs, static architecture,
+  animated workflow, project panorama, Atlas architecture, and silent 30-second
+  H.264 product/Atlas videos. Added bilingual case SVG/PNG/GIF media and
+  SHA-256 manifests. Geometry, composition, semantic motion, frame, hash, and
+  manual visual checks passed.
+- Added six planned Golden Fixture families and `docs/improvement.md`. Final
+  acceptance: unittest discovered 478 passing tests; the release-gate pytest
+  run passed 488 tests and 636 subtests; TypeScript SDK 16/16, distribution
+  smoke 1/1, compatibility guard, Viewer/Mermaid, stale-proof, four suites,
+  strict audit, build, isolated Wheel smoke, and `git diff --check` passed.
 - Remaining unmeasured product targets are the SC-001 human comprehension
   percentage and real Codex/Claude `pass@1` / `pass^3` execution metrics.
   CI publication behavior has local contract coverage but has not been
   observed on a live pull request.
-- Resume point: review the uncommitted Evidence-Grounded Improvement change,
-  then decide whether to run real Agent evaluation and release gates. Preserve
-  the seven pre-existing untracked files and do not reinterpret Candidate or
-  Atlas Recommendation nodes as verified facts.
+- Released `v1.16.0` from commit
+  `bfe062a9f68b805a5b629f32828510a411c9a1f9`. Exact-tag CI Run
+  `30420607956` and GitHub Release Run `30420768704` passed. Release ID
+  `361498297` publishes the exact CI Wheel, sdist, manifest, Diff-bound
+  classification, classification verification, and release-evidence record at
+  `https://github.com/AdvancingTitans/agent-engineering-toolkit/releases/tag/v1.16.0`.
+  Real Host Gate is `NOT_APPLICABLE`; no PyPI publication was performed.
+- Resume point: begin the next change from `v1.16.0`; preserve Bundle v1
+  compatibility, Graph authority, prompt/Atlas sibling projection, explicit
+  counter-evidence/`UNKNOWN` semantics, and the seven pre-existing untracked
+  files outside version control. Real Agent and user-comprehension metrics
+  remain unmeasured.

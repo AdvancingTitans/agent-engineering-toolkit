@@ -715,6 +715,9 @@ deterministic core.
   limitations are published in Discussion #5.
 - Resume point: preserve the released `v1.18.0` authority boundaries and the
   pre-existing user-owned files. Phase 5/6 time-window measurements, skills.sh
-  indexing, the separate Marketplace Action, MCP Registry eligibility, and
-  human-owned outreach remain follow-up work; never convert their unavailable
-  or deferred state into a success claim.
+  indexing, MCP Registry eligibility, and human-owned outreach remain
+  follow-up work. The separate public Action repository exists at commit
+  `55f3c8f0e505fab5567694da2d1b5d834a227922` with tag `v1`, but Marketplace
+  publication remains blocked on action-time confirmation before accepting
+  legal terms. Never convert unavailable, blocked, or deferred state into a
+  success claim.

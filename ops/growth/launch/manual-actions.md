@@ -15,7 +15,7 @@ No item in this file authorizes Codex or a workflow to perform the action.
 | Pin repository on profile | `COMPLETE` | Repository was already pinned; no change required. |
 | Verify Community Profile | `COMPLETE` | GitHub reports 100% health after community files landed. |
 | Verify five skills.sh pages | `UNAVAILABLE` | All five routes return HTTP 200 fallback pages stating the Skill is not available in this repository. |
-| Create Action repository | `MANUAL_NOT_STARTED` | Create `AdvancingTitans/aet-evidence-action`, copy only the template, test, accept Marketplace terms, and publish manually. |
+| Create Action repository | `BLOCKED_LEGAL_CONFIRMATION` | Public repo, tested template, commit `55f3c8f`, and tag `v1` exist; Marketplace publication requires action-time confirmation before accepting its legal terms. |
 | Publish MCP Registry entry | `DEFERRED_WITH_REASON` | Exact PyPI release, current schema/publisher validation, documented permissions, and namespace proof are incomplete. |
 | Submit Awesome List PRs | `MANUAL_NOT_STARTED` | Read each list's current rules and submit only individually relevant entries. |
 | Publish external channel content | `MANUAL_NOT_STARTED` | Human owner must rewrite, verify current rules, and post manually. |

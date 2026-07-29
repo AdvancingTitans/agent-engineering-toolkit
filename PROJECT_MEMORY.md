@@ -642,7 +642,7 @@ deterministic core.
   real-case screenshots, project panoramas, and exact 30-second silent H.264
   product videos. Motion, geometry, composition, frame, SHA-256, and manual
   visual checks passed.
-- Acceptance evidence in the implementation working tree: 533 unittest tests
+- Acceptance evidence in the implementation working tree: 536 unittest tests
   passed after a non-editable reinstall; Planner line coverage is `90%` and
   validator branch coverage is `96%`; TypeScript SDK build/test/check passed
   19 tests; strict repository Skill audit passed; Host Skill validation passed;
@@ -650,11 +650,19 @@ deterministic core.
   Fresh Wheel and sdist built successfully, the isolated Wheel reported
   `1.17.0`, exposed the Planning Python APIs/CLI, and contained all six
   Planning Schemas.
-- This is the release-candidate working tree. Commit, tag, exact-tag CI, and
-  GitHub Release are pending. Separate human sign-off of the independently
-  authored frozen Gold set, human comprehension, implementation success after
-  Plan consumption, and computational reference-reuse rate remain `UNKNOWN`.
-- Resume point: review `执行报告.md` and the v1.17.0 working tree. Preserve
-  Bundle v1 compatibility, Graph authority, strict `PROPOSED` planning
-  authority, explicit counter-evidence/`UNKNOWN` semantics, and the
-  pre-existing user-owned untracked files.
+- Released `v1.17.0` from commit
+  `19efd8426572de8f75164a78c917a51a245976de`. Exact-tag CI Run
+  `30435701149` and GitHub Release Run `30435886299` passed. Release ID
+  `361603943` publishes the exact CI Wheel, sdist, manifest, Diff-bound
+  classification, classification verification, and release-evidence record at
+  `https://github.com/AdvancingTitans/agent-engineering-toolkit/releases/tag/v1.17.0`.
+  The deterministic classification covers 34 behavior-sensitive paths with
+  exact test exceptions; Real Host adoption Gate is `NOT_APPLICABLE` because
+  no governance asset was adopted. No PyPI publication was performed.
+- Separate human sign-off of the independently authored frozen Gold set, human
+  comprehension, implementation success after Plan consumption, and
+  computational reference-reuse rate remain `UNKNOWN`.
+- Resume point: begin the next change from `v1.17.0`. Preserve Bundle v1
+  compatibility, Graph authority, strict `PROPOSED` planning authority,
+  explicit counter-evidence/`UNKNOWN` semantics, and the pre-existing
+  user-owned untracked files.

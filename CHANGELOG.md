@@ -1,5 +1,21 @@
 # Changelog
 
+## 1.18.0 — Unreleased
+
+- Added an installed-wheel `aet demo stale-proof` path that runs a real
+  standard-library test, records Proof with the existing Quick API, verifies
+  `EXACT_MATCH`, mutates a declared source, and verifies
+  `RELEVANT_FILES_CHANGED`.
+- Reframed the first-run experience around proof-carrying workflows for coding
+  agents, with focused English and Simplified Chinese documentation, a static
+  no-tracking site, community guidance, and reproducible visual assets.
+- Added strict Skills catalog validation, a read-only GitHub Action template,
+  launch-readiness checks, and privacy-preserving growth snapshots. All
+  external publication, repository settings, and outreach remain manual.
+- This activation and distribution release does not change core Evidence
+  authority semantics: tests and Proof remain source-bound, missing facts
+  remain explicit, and human adoption and release authority are unchanged.
+
 ## 1.17.0 — 2026-07-29
 
 - Added Evidence-Guided Planner as a read-only Host boundary:

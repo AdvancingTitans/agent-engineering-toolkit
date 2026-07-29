@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="640" viewBox="0 0 1280 640" role="img" aria-labelledby="title desc">
+  <title id="title">Agent Engineering Toolkit</title>
+  <desc id="desc">Did the agent test this code, or an older version?</desc>
+  <rect width="1280" height="640" fill="#07111f"/>
+  <rect x="72" y="72" width="1136" height="496" rx="30" fill="#0b1728" stroke="#28415f" stroke-width="2"/>
+  <text x="126" y="162" fill="#49e3a4" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="32" font-weight="700">AET</text>
+  <text x="126" y="250" fill="#f4f8fc" font-family="Inter, system-ui, sans-serif" font-size="52" font-weight="750">Did the agent test this code,</text>
+  <text x="126" y="316" fill="#f4f8fc" font-family="Inter, system-ui, sans-serif" font-size="52" font-weight="750">or an older version?</text>
+  <g font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="23" font-weight="700">
+    <rect x="126" y="382" width="146" height="52" rx="26" fill="#123d35"/>
+    <text x="164" y="415" fill="#49e3a4">PASS</text>
+    <path d="M293 408h66" stroke="#6d87a6" stroke-width="3"/>
+    <path d="m350 396 14 12-14 12" fill="none" stroke="#6d87a6" stroke-width="3"/>
+    <rect x="386" y="382" width="236" height="52" rx="26" fill="#113653"/>
+    <text x="416" y="415" fill="#62b7ff">CODE CHANGED</text>
+    <path d="M644 408h66" stroke="#6d87a6" stroke-width="3"/>
+    <path d="m701 396 14 12-14 12" fill="none" stroke="#6d87a6" stroke-width="3"/>
+    <rect x="737" y="382" width="174" height="52" rx="26" fill="#4a2a1a"/>
+    <text x="776" y="415" fill="#ffad66">STALE</text>
+  </g>
+  <text x="126" y="505" fill="#a9bdd2" font-family="Inter, system-ui, sans-serif" font-size="26">Proof-carrying workflows for coding agents.</text>
+</svg>

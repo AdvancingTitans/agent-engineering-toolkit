@@ -1,283 +1,197 @@
 {
   "schema_version": "release-classification/v1",
-  "release_tag": "v1.17.0",
-  "base_tag": "v1.16.0",
-  "changed_paths_sha256": "4d6b8601230b0e43eb923bb43dc7ea11ca6c3f23d107ab9fa0d93412c062afad",
-  "changed_content_sha256": "83d5930f4a0d70e3ab906e08daab024963a86bfe394d11edbe6dfa51ff9c2490",
+  "release_tag": "v1.18.0",
+  "base_tag": "v1.17.0",
+  "changed_paths_sha256": "aaa724176facd9b56cd9e2567201ccceb298a9d6583d9eabd4a0926afde3a438",
+  "changed_content_sha256": "e50ebab23af040ac1bd1acee83ca361f7c4a067457301aaccbd13b2da4379160",
   "release_class": "deterministic",
   "real_host_gate": "NOT_APPLICABLE",
   "observed_behavior_claims": [],
   "governance_asset_adoptions": [],
   "not_applicable_exceptions": [
     {
-      "path": "release-classification.json",
-      "reason": "This deterministic v1.17.0 change at release-classification.json is covered by repository regression tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
+      "path": ".github/workflows/ci.yml",
+      "reason": "The v1.18.0 CI change adds deterministic installed-wheel demo coverage and adopts no learned governance behavior.",
+      "deterministic_proofs": [
+        "tests/test_business_quality_flows.py",
+        "tests/demo/test_wheel.py"
+      ]
+    },
+    {
+      "path": "aet.intent.json",
+      "reason": "The v1.18.0 intent records the approved deterministic delivery scope and grants no Agent adoption or release authority.",
       "deterministic_proofs": [
         "tests/test_business_quality_flows.py"
       ]
     },
     {
-      "path": "schemas/planning/evidence-linked-plan-v1.schema.json",
-      "reason": "This deterministic v1.17.0 change at schemas/planning/evidence-linked-plan-v1.schema.json is covered by repository regression tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
+      "path": "release-classification.json",
+      "reason": "This contract classifies the v1.18.0 repository diff as deterministic and declares no learned governance adoption.",
       "deterministic_proofs": [
-        "tests/planning/test_schemas.py",
-        "tests/planning/test_validator.py"
+        "tests/test_business_quality_flows.py"
       ]
     },
     {
-      "path": "schemas/planning/plan-candidate-v1.schema.json",
-      "reason": "This deterministic v1.17.0 change at schemas/planning/plan-candidate-v1.schema.json is covered by repository regression tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
+      "path": "schemas/demo/v1/demo-manifest.schema.json",
+      "reason": "The Demo manifest Schema is a deterministic validation contract covered by the Demo model and registry tests.",
       "deterministic_proofs": [
-        "tests/planning/test_schemas.py",
-        "tests/planning/test_validator.py"
+        "tests/demo/test_models.py",
+        "tests/demo/test_registry.py"
       ]
     },
     {
-      "path": "schemas/planning/plan-manifest-v1.schema.json",
-      "reason": "This deterministic v1.17.0 change at schemas/planning/plan-manifest-v1.schema.json is covered by repository regression tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
+      "path": "schemas/demo/v1/demo-result.schema.json",
+      "reason": "The Demo result Schema is a deterministic validation contract covered by the Demo model and renderer tests.",
       "deterministic_proofs": [
-        "tests/planning/test_schemas.py",
-        "tests/planning/test_validator.py"
+        "tests/demo/test_models.py",
+        "tests/demo/test_renderer.py"
       ]
     },
     {
-      "path": "schemas/planning/plan-reference-v1.schema.json",
-      "reason": "This deterministic v1.17.0 change at schemas/planning/plan-reference-v1.schema.json is covered by repository regression tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
+      "path": "skills/README.md",
+      "reason": "The Skill installation guide documents existing bounded read-only surfaces and adopts no governance asset.",
       "deterministic_proofs": [
-        "tests/planning/test_schemas.py",
-        "tests/planning/test_validator.py"
+        "tests/growth/test_validate_launch.py",
+        "tests/test_quick_docs.py"
       ]
     },
     {
-      "path": "schemas/planning/planning-context-v1.schema.json",
-      "reason": "This deterministic v1.17.0 change at schemas/planning/planning-context-v1.schema.json is covered by repository regression tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
+      "path": "skills/catalog.json",
+      "reason": "The Skill catalog deterministically enumerates existing bounded surfaces and is covered by strict launch validation.",
       "deterministic_proofs": [
-        "tests/planning/test_schemas.py",
-        "tests/planning/test_validator.py"
-      ]
-    },
-    {
-      "path": "schemas/planning/planning-request-v1.schema.json",
-      "reason": "This deterministic v1.17.0 change at schemas/planning/planning-request-v1.schema.json is covered by repository regression tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
-      "deterministic_proofs": [
-        "tests/planning/test_schemas.py",
-        "tests/planning/test_validator.py"
-      ]
-    },
-    {
-      "path": "skills/aet-plan/SKILL.md",
-      "reason": "This deterministic v1.17.0 change at skills/aet-plan/SKILL.md is covered by repository regression tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
-      "deterministic_proofs": [
-        "tests/planning/test_skill_exporter.py",
-        "tests/planning/test_prompt_injection.py"
-      ]
-    },
-    {
-      "path": "skills/aet-plan/references/authority-boundary.md",
-      "reason": "This deterministic v1.17.0 change at skills/aet-plan/references/authority-boundary.md is covered by repository regression tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
-      "deterministic_proofs": [
-        "tests/planning/test_skill_exporter.py",
-        "tests/planning/test_prompt_injection.py"
-      ]
-    },
-    {
-      "path": "skills/aet-plan/references/contract.md",
-      "reason": "This deterministic v1.17.0 change at skills/aet-plan/references/contract.md is covered by repository regression tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
-      "deterministic_proofs": [
-        "tests/planning/test_skill_exporter.py",
-        "tests/planning/test_prompt_injection.py"
-      ]
-    },
-    {
-      "path": "skills/aet-plan/references/examples.md",
-      "reason": "This deterministic v1.17.0 change at skills/aet-plan/references/examples.md is covered by repository regression tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
-      "deterministic_proofs": [
-        "tests/planning/test_skill_exporter.py",
-        "tests/planning/test_prompt_injection.py"
-      ]
-    },
-    {
-      "path": "skills/aet-plan/references/planner-protocol.md",
-      "reason": "This deterministic v1.17.0 change at skills/aet-plan/references/planner-protocol.md is covered by repository regression tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
-      "deterministic_proofs": [
-        "tests/planning/test_skill_exporter.py",
-        "tests/planning/test_prompt_injection.py"
+        "tests/growth/test_validate_launch.py",
+        "tests/test_quick_docs.py"
       ]
     },
     {
       "path": "src/aet/__init__.py",
-      "reason": "This deterministic v1.17.0 change at src/aet/__init__.py is covered by repository regression tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
+      "reason": "The runtime version update is deterministic package metadata and carries no learned Agent behavior claim.",
       "deterministic_proofs": [
-        "tests/planning/test_models.py",
-        "tests/integration/test_plan_cli.py"
+        "tests/demo/test_cli.py",
+        "tests/demo/test_wheel.py"
       ]
     },
     {
       "path": "src/aet/cli.py",
-      "reason": "This deterministic v1.17.0 change at src/aet/cli.py is covered by repository regression tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
+      "reason": "The CLI change exposes the deterministic Demo commands and preserves all existing authority boundaries.",
       "deterministic_proofs": [
-        "tests/integration/test_plan_cli.py",
-        "tests/planning/test_handoff.py"
+        "tests/demo/test_cli.py",
+        "tests/test_business_quality_flows.py"
       ]
     },
     {
-      "path": "src/aet/mcp_server.py",
-      "reason": "This deterministic v1.17.0 change at src/aet/mcp_server.py is covered by repository regression tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
+      "path": "src/aet/demo/__init__.py",
+      "reason": "The Demo package export is deterministic and covered by the installed fixture and runner tests.",
       "deterministic_proofs": [
-        "tests/planning/test_mcp_planning.py",
-        "tests/test_mcp_server.py"
+        "tests/demo/test_runner.py",
+        "tests/demo/test_wheel.py"
       ]
     },
     {
-      "path": "src/aet/planning/__init__.py",
-      "reason": "This deterministic v1.17.0 change at src/aet/planning/__init__.py is covered by repository regression tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
+      "path": "src/aet/demo/cli.py",
+      "reason": "The Demo CLI performs bounded local orchestration with stable failures and no governance adoption.",
       "deterministic_proofs": [
-        "tests/planning/test_validator.py",
-        "tests/integration/test_planner_e2e.py"
+        "tests/demo/test_cli.py"
       ]
     },
     {
-      "path": "src/aet/planning/atlas_adapter.py",
-      "reason": "This deterministic v1.17.0 change at src/aet/planning/atlas_adapter.py is covered by repository regression tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
+      "path": "src/aet/demo/errors.py",
+      "reason": "The Demo error taxonomy is deterministic and covered by CLI, registry, runner, and sandbox failure tests.",
       "deterministic_proofs": [
-        "tests/planning/test_validator.py",
-        "tests/integration/test_planner_e2e.py"
+        "tests/demo/test_cli.py",
+        "tests/demo/test_runner.py",
+        "tests/demo/test_sandbox.py"
       ]
     },
     {
-      "path": "src/aet/planning/bundle_loader.py",
-      "reason": "This deterministic v1.17.0 change at src/aet/planning/bundle_loader.py is covered by repository regression tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
+      "path": "src/aet/demo/fixtures/stale-proof/manifest.json",
+      "reason": "The packaged manifest binds exact fixture bytes and mutation preconditions under deterministic registry validation.",
       "deterministic_proofs": [
-        "tests/planning/test_validator.py",
-        "tests/integration/test_planner_e2e.py"
+        "tests/demo/test_registry.py",
+        "tests/demo/test_wheel.py"
       ]
     },
     {
-      "path": "src/aet/planning/candidate_parser.py",
-      "reason": "This deterministic v1.17.0 change at src/aet/planning/candidate_parser.py is covered by repository regression tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
+      "path": "src/aet/demo/fixtures/stale-proof/repo/src/__init__.py",
+      "reason": "This standard-library fixture file is static deterministic input covered by the installed-wheel demo tests.",
       "deterministic_proofs": [
-        "tests/planning/test_validator.py",
-        "tests/integration/test_planner_e2e.py"
+        "tests/demo/test_runner.py",
+        "tests/demo/test_wheel.py"
       ]
     },
     {
-      "path": "src/aet/planning/context_builder.py",
-      "reason": "This deterministic v1.17.0 change at src/aet/planning/context_builder.py is covered by repository regression tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
+      "path": "src/aet/demo/fixtures/stale-proof/repo/src/calc.py",
+      "reason": "This exact source fixture is hash-bound by the manifest and covered by the real stale-proof transition test.",
       "deterministic_proofs": [
-        "tests/planning/test_validator.py",
-        "tests/integration/test_planner_e2e.py"
+        "tests/demo/test_registry.py",
+        "tests/demo/test_runner.py"
       ]
     },
     {
-      "path": "src/aet/planning/errors.py",
-      "reason": "This deterministic v1.17.0 change at src/aet/planning/errors.py is covered by repository regression tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
+      "path": "src/aet/demo/fixtures/stale-proof/repo/tests/__init__.py",
+      "reason": "This standard-library test fixture package marker is deterministic and covered by installed-wheel execution.",
       "deterministic_proofs": [
-        "tests/planning/test_validator.py",
-        "tests/integration/test_planner_e2e.py"
+        "tests/demo/test_runner.py",
+        "tests/demo/test_wheel.py"
       ]
     },
     {
-      "path": "src/aet/planning/gap_detector.py",
-      "reason": "This deterministic v1.17.0 change at src/aet/planning/gap_detector.py is covered by repository regression tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
+      "path": "src/aet/demo/fixtures/stale-proof/repo/tests/test_calc.py",
+      "reason": "This standard-library fixture test is executed by the real Demo and covered by installed-wheel validation.",
       "deterministic_proofs": [
-        "tests/planning/test_validator.py",
-        "tests/integration/test_planner_e2e.py"
+        "tests/demo/test_runner.py",
+        "tests/demo/test_wheel.py"
       ]
     },
     {
-      "path": "src/aet/planning/handoff.py",
-      "reason": "This deterministic v1.17.0 change at src/aet/planning/handoff.py is covered by repository regression tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
+      "path": "src/aet/demo/models.py",
+      "reason": "The immutable Demo models and serialization contract are deterministic and directly covered by model tests.",
       "deterministic_proofs": [
-        "tests/planning/test_validator.py",
-        "tests/integration/test_planner_e2e.py"
+        "tests/demo/test_models.py"
       ]
     },
     {
-      "path": "src/aet/planning/helper.py",
-      "reason": "This deterministic v1.17.0 change at src/aet/planning/helper.py is covered by repository regression tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
+      "path": "src/aet/demo/registry.py",
+      "reason": "The Demo registry validates packaged manifests and file hashes deterministically and fails closed.",
       "deterministic_proofs": [
-        "tests/planning/test_validator.py",
-        "tests/integration/test_planner_e2e.py"
+        "tests/demo/test_registry.py"
       ]
     },
     {
-      "path": "src/aet/planning/models.py",
-      "reason": "This deterministic v1.17.0 change at src/aet/planning/models.py is covered by repository regression tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
+      "path": "src/aet/demo/renderer.py",
+      "reason": "The Demo renderer creates deterministic text, JSON, and Markdown projections without changing evidence.",
       "deterministic_proofs": [
-        "tests/planning/test_validator.py",
-        "tests/integration/test_planner_e2e.py"
+        "tests/demo/test_renderer.py"
       ]
     },
     {
-      "path": "src/aet/planning/package_builder.py",
-      "reason": "This deterministic v1.17.0 change at src/aet/planning/package_builder.py is covered by repository regression tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
+      "path": "src/aet/demo/runner.py",
+      "reason": "The Demo runner invokes existing Quick Proof and Fresh logic and deterministically checks the expected transition.",
       "deterministic_proofs": [
-        "tests/planning/test_validator.py",
-        "tests/integration/test_planner_e2e.py"
+        "tests/demo/test_runner.py"
       ]
     },
     {
-      "path": "src/aet/planning/policy.py",
-      "reason": "This deterministic v1.17.0 change at src/aet/planning/policy.py is covered by repository regression tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
+      "path": "src/aet/demo/sandbox.py",
+      "reason": "The Demo sandbox performs bounded local fixture copying and Git setup with fail-closed path validation.",
       "deterministic_proofs": [
-        "tests/planning/test_validator.py",
-        "tests/integration/test_planner_e2e.py"
+        "tests/demo/test_sandbox.py"
       ]
     },
     {
-      "path": "src/aet/planning/relevance.py",
-      "reason": "This deterministic v1.17.0 change at src/aet/planning/relevance.py is covered by repository regression tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
+      "path": "src/aet/evidence.py",
+      "reason": "The timeout addition preserves existing Trace output for non-timeouts and deterministically terminates timed-out commands.",
       "deterministic_proofs": [
-        "tests/planning/test_validator.py",
-        "tests/integration/test_planner_e2e.py"
+        "tests/test_audit.py",
+        "tests/demo/test_runner.py"
       ]
     },
     {
-      "path": "src/aet/planning/renderer.py",
-      "reason": "This deterministic v1.17.0 change at src/aet/planning/renderer.py is covered by repository regression tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
+      "path": "src/aet/quick/proof.py",
+      "reason": "Quick Proof forwards an explicit timeout while preserving source-bound evidence and existing authority semantics.",
       "deterministic_proofs": [
-        "tests/planning/test_validator.py",
-        "tests/integration/test_planner_e2e.py"
-      ]
-    },
-    {
-      "path": "src/aet/planning/request_normalizer.py",
-      "reason": "This deterministic v1.17.0 change at src/aet/planning/request_normalizer.py is covered by repository regression tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
-      "deterministic_proofs": [
-        "tests/planning/test_validator.py",
-        "tests/integration/test_planner_e2e.py"
-      ]
-    },
-    {
-      "path": "src/aet/planning/schemas.py",
-      "reason": "This deterministic v1.17.0 change at src/aet/planning/schemas.py is covered by repository regression tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
-      "deterministic_proofs": [
-        "tests/planning/test_validator.py",
-        "tests/integration/test_planner_e2e.py"
-      ]
-    },
-    {
-      "path": "src/aet/planning/skill_exporter.py",
-      "reason": "This deterministic v1.17.0 change at src/aet/planning/skill_exporter.py is covered by repository regression tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
-      "deterministic_proofs": [
-        "tests/planning/test_validator.py",
-        "tests/integration/test_planner_e2e.py"
-      ]
-    },
-    {
-      "path": "src/aet/planning/source_navigator.py",
-      "reason": "This deterministic v1.17.0 change at src/aet/planning/source_navigator.py is covered by repository regression tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
-      "deterministic_proofs": [
-        "tests/planning/test_validator.py",
-        "tests/integration/test_planner_e2e.py"
-      ]
-    },
-    {
-      "path": "src/aet/planning/validator.py",
-      "reason": "This deterministic v1.17.0 change at src/aet/planning/validator.py is covered by repository regression tests and defines no learned governance adoption or release-authorizing Agent behavior claim.",
-      "deterministic_proofs": [
-        "tests/planning/test_validator.py",
-        "tests/integration/test_planner_e2e.py"
+        "tests/test_quick.py",
+        "tests/demo/test_runner.py"
       ]
     }
   ]

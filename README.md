@@ -1,468 +1,154 @@
 # Agent Engineering Toolkit
 
-[![CI](https://github.com/AdvancingTitans/agent-engineering-toolkit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/AdvancingTitans/agent-engineering-toolkit/actions/workflows/ci.yml)
-[![Release](https://img.shields.io/github/v/release/AdvancingTitans/agent-engineering-toolkit?display_name=tag&sort=semver)](https://github.com/AdvancingTitans/agent-engineering-toolkit/releases)
-[![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-3776AB)](https://www.python.org/)
-[![License: MIT](https://img.shields.io/badge/license-MIT-2ea44f)](LICENSE)
-[![中文](https://img.shields.io/badge/docs-%E4%B8%AD%E6%96%87-red)](docs/README.zh-CN.md)
+[简体中文](docs/README.zh-CN.md) · [Start here](docs/start-here.md) · [Full product reference](docs/reference/full-product-overview.md)
 
-**[English](README.md) · [简体中文](docs/README.zh-CN.md)**
+> **Your coding agent says tests passed. AET proves which code was actually tested.**
 
-> **AET turns AI coding work into portable, inspectable evidence, then compiles
-> that evidence into traceable maps, bounded improvement prompts, and a
-> reviewable read-only Plan before a code Agent edits.**
+**Proof-carrying workflows for coding agents.** AET binds test runs, changed
+files, artifacts, and agent claims into portable evidence, then tells you when
+that proof no longer applies.
 
-An AI coding Agent says it fixed the task and ran the tests. AET helps answer
-seven concrete questions:
+```bash
+uvx --from agent-engineering-toolkit aet demo stale-proof
+```
 
-1. Did the change stay relevant to the user's task?
-2. Did the claimed verification actually run on this workspace?
-3. Does that proof still apply to the current code?
-4. Can another Agent review the same evidence without installing AET?
-5. Can a human trace a conclusion, counter-evidence, and `UNKNOWN` through a
-   readable investigation map?
-6. Can the same evidence become an actionable prompt without silently turning
-   advice into evidence or granting an Agent permission to edit?
-7. Before an Agent edits, can its Planner name the required source locations,
-   linked change sites, verification requirements, and remaining unknowns?
-
-Tools produce reproducible facts. The host LLM may recover intent, form
-competing hypotheses, call authorized tools, test counter-explanations, and
-make a conditional engineering judgment. AET's deterministic Grounding API
-validates the recorded references, permissions, evidence strength, and declared
-budget usage before rendering. AET can then export the result as a portable,
-self-describing evidence handoff. A human decides what happens next.
+> PyPI currently serves v1.11.1. The command above is the v1.18.0 target
+> interface and must not be used in launch posts until that exact release is
+> published. For the release candidate, install the exact wheel produced by CI.
 
 ```text
-deterministic facts → bounded investigation → grounding validation
-                    → Portable Evidence Bundle
-                       ├─→ Evidence Atlas
-                       ├─→ Human report + bounded Agent prompt
-                       └─→ read-only Evidence-Guided Plan
-                    → independent review → human decision
+AET stale-proof demo
+
+1. Test command executed                    PASS
+2. Proof matches the tested source          EXACT_MATCH
+3. Source changed without rerunning tests   RELEVANT_FILES_CHANGED
+
+The test really passed, but that proof no longer applies to the current code.
+Demo result: PASS
 ```
+
+![AET detects stale test proof](docs/assets/hero-stale-proof.png)
+
+AET is not another coding agent. AET does not replace tests or CI. It does not
+turn missing evidence into `PASS`, and it does not auto-edit, auto-commit,
+push, merge, or release.
+
+## What the demo proves
+
+The installed demo runs a real standard-library test in a temporary Git
+repository, records a Quick Proof against the exact fixture source, verifies
+`EXACT_MATCH`, changes a declared relevant file without rerunning the test, and
+then reports `RELEVANT_FILES_CHANGED`.
+
+That means:
+
+- the test really executed and passed;
+- the historical result remains a real fact;
+- the old proof no longer applies to the changed source;
+- the expected stale detection makes the demo itself pass.
+
+It does **not** prove that every test passed, that an Agent's implementation is
+correct, or that a change should be merged. Git is required. Missing
+dependencies, unreadable fixtures, timeouts, and broken proof data fail closed
+as `UNAVAILABLE`, `UNKNOWN`, or a nonzero exit.
 
 ## Four Quick Skills
 
-Each Skill answers one question, emits one bounded result, and stops.
-
-| Skill | Use it when | Main result |
+| Question | Skill | CLI |
 | --- | --- | --- |
-| `/aet-check` | Agent instructions, Skills, or completion rules may be unsafe or unverifiable | Up to five evidence-backed engineering findings |
-| `/aet-scope` | You need to know whether a diff fits the task, including necessary cross-module work | A disposition for each change group, with counter-explanation |
-| `/aet-proof` | A command must be executed now and bound to the current workspace | One minimal JSON proof receipt |
-| `/aet-fresh` | You need to know whether an older proof still applies | Exact, relevant-file, artifact, environment, or unknown freshness |
+| Are Agent instructions usable and verifiable? | `/aet-check` | `aet quick check .` |
+| Does this diff stay inside the approved task? | `/aet-scope` | `aet quick scope . --base main --intent aet.intent.json` |
+| Did this exact command run on these files? | `/aet-proof` | `aet quick proof --output proof.json --relevant-path src/app.py -- python -m unittest` |
+| Does an older proof still apply? | `/aet-fresh` | `aet quick fresh --proof proof.json` |
+| What should change, without editing yet? | `/aet-plan` | `aet plan context ...` |
 
-The portable host Skills live in
-[`skills/aet-check`](skills/aet-check),
-[`skills/aet-scope`](skills/aet-scope),
-[`skills/aet-proof`](skills/aet-proof), and
-[`skills/aet-fresh`](skills/aet-fresh). The deterministic runtime is:
+The first four are bounded daily Quick surfaces. `/aet-plan` is a separate,
+read-only `PROPOSED` planning handoff; it never grants implementation or
+verification authority.
+
+## Real workflows
+
+### Stale proof
+
+A green log can be historically true and currently inapplicable. See the
+[reproducible stale-proof case](docs/use-cases/stale-proof.md).
+
+### Scope drift
+
+AET distinguishes task-relevant cross-module work from unrelated expansion;
+it does not treat every multi-file change as scope drift. See
+[scope drift](docs/use-cases/scope-drift.md).
+
+### Cross-Agent handoff
+
+A reviewer without AET installed can consume the JSON/JSONL records and
+Markdown projection in a Portable Evidence Bundle. See
+[cross-Agent handoff](docs/use-cases/cross-agent-handoff.md).
+
+## Install
+
+| Path | Command | Status |
+| --- | --- | --- |
+| Public package | `uv tool install agent-engineering-toolkit` | PyPI is currently v1.11.1 |
+| One-shot demo | `uvx --from agent-engineering-toolkit aet demo stale-proof` | Target for v1.18.0 |
+| Exact Release wheel | `uv tool install <exact-v1.18.0-wheel-url>` | Use only after Release asset exists |
+| Agent Skills | `npx skills add AdvancingTitans/agent-engineering-toolkit` | External CLI; see telemetry note |
+
+To opt out of the skills.sh CLI's anonymous installation telemetry:
 
 ```bash
-aet quick check .
-aet quick scope . --base main --intent aet.intent.json
-aet quick proof --output .aet/proofs/auth.json \
-  --relevant-path src/auth/session.py -- pytest tests/auth
-aet quick fresh --proof .aet/proofs/auth.json
+DISABLE_TELEMETRY=1 npx skills add AdvancingTitans/agent-engineering-toolkit
 ```
 
-The legacy `aet audit`, `review`, `trace`, and `evidence receipt` commands
-remain compatible throughout 1.x. They are advanced native vocabulary, not the
-default Quick product surface.
+AET itself adds no telemetry, account, API key, model call, or cloud service.
+Python 3.11+ is required.
+
+## Use it with your Agent
+
+- [Codex](docs/integrations/codex.md)
+- [Claude Code](docs/integrations/claude-code.md)
+- [Cursor](docs/integrations/cursor.md)
+- [GitHub Actions](docs/integrations/github-actions.md)
+- [skills.sh](docs/integrations/skills-sh.md)
+- [MCP](docs/integrations/mcp.md)
+
+Start with the [five-minute guide](docs/start-here.md), then use the smallest
+surface that answers your question. For precise state and authority semantics,
+read [status and authority](docs/reference/status-and-authority.md).
+
+## How AET relates to existing tools
+
+- [AET vs Plan Mode](docs/comparisons/aet-vs-plan-mode.md)
+- [AET vs CI](docs/comparisons/aet-vs-ci.md)
+- [AET vs observability](docs/comparisons/aet-vs-observability.md)
+
+CI verifies checks. AET records what ran, what it was bound to, and whether that
+evidence still applies. Plan Mode proposes work. AET can ground a bounded plan
+without executing it. Observability explains broad system behavior. AET
+focuses on local engineering evidence and authority.
+
+## Advanced product surfaces
+
+Portable Evidence Bundles, Evidence Atlas, grounded Improvements,
+Evidence-Guided Planner, evaluation suites, schemas, release gates, and
+Repository Evolution remain supported. They are intentionally not all first-
+screen concepts. See the [complete technical overview](docs/reference/full-product-overview.md).
+
+Freshness remains explicit: `EXACT_MATCH`, `RELEVANT_FILES_MATCH`,
+`HEAD_CHANGED_RELEVANT_FILES_MATCH`, `RELEVANT_FILES_CHANGED`,
+`ARTIFACT_CHANGED`, `ENVIRONMENT_CHANGED`, or `UNKNOWN`.
 
 ## Evidence-Guided Planner
 
-> “Review this project and tell me what must change—but do not edit anything
-> yet.”
-
-`/aet-plan` gives a code Agent's Planner a bounded, read-only handoff. AET
-combines the request, validated Bundle, optional matching Atlas, and current
-hash-bound Source into a Planning Context. The Host supplies engineering
-judgment as strict Candidate JSON; AET then validates paths, evidence
-references, source locators, edit linkages, tests, budgets, and unknowns into a
-portable `PROPOSED` Plan. This is **bounded localization**, not implementation.
-
-![Animated Evidence-Guided Planner workflow](docs/assets/aet-planner-workflow-en.gif)
-
-[Simplified Chinese GIF](docs/assets/aet-planner-workflow-zh-CN.gif) ·
-[static PNG](docs/assets/aet-planner-workflow-en.png) ·
-[scalable SVG](docs/assets/aet-planner-workflow-en.svg) ·
-[motion report](docs/assets/aet-planner-workflow-en.motion.json)
-
-```mermaid
-flowchart LR
-    H["Developer review request"] --> C["AET Planning Context"]
-    B["Bundle + Atlas + current Source"] --> C
-    C --> P["Code Agent Planner candidate"]
-    P --> V["AET deterministic validation"]
-    V --> R["PROPOSED Plan package"]
-    R --> A["Human review"]
-    A --> I["External implementation"]
-    I --> Q["Verification handoff<br/>UNKNOWN / PENDING"]
-    Q --> E["Explicit AET Proof"]
-```
-
-### Real AET self-review: with a Plan versus without one
-
-We asked Codex `gpt-5.6-sol` to localize a real AET change spanning Graph
-Builder, a fixed Perspective, recursive Viewer behavior, Bundle compatibility,
-and focused tests. The same task ran once in each group: source-only, v1.16
-Bundle + Atlas, and a v1.17 validated Plan consumed by the code Agent's planning
-stage.
-
-![Real Planner scope-localization comparison](docs/assets/aet-planner-real-case-en.png)
-
-[Simplified Chinese screenshot](docs/assets/aet-planner-real-case-zh-CN.png) ·
-[gold contract](eval/evidence-guided-planner/real-case/gold.json) ·
-[raw structured observations](eval/evidence-guided-planner/real-case/observations.json) ·
-[scorer](eval/evidence-guided-planner/run_real_case.py) ·
-[result](eval/evidence-guided-planner/results/v1.17.0-real-codex.json)
-
-| Separately reported metric | Source only | v1.16 evidence only | v1.17 validated Plan |
-| --- | ---: | ---: | ---: |
-| Required production-path recall | 100% | 100% | 100% |
-| Production decision precision | 44.44% | 100% | 100% |
-| Path disposition accuracy | 75% | 50% | 100% |
-| Required-test recall | 100% | 0% | 100% |
-| Evidence-reference coverage | 0% | 100% | 100% |
-| Source-location coverage | 100% | 100% | 100% |
-| Cross-edit linkage coverage | 33.33% | 100% | 100% |
-| `UNKNOWN` preservation | 0% | 50% | 100% |
-
-Against source-only, the validated Plan improved production decision precision
-by **55.56 percentage points**, evidence-reference coverage by **100 points**,
-cross-edit linkage coverage by **66.67 points**, and `UNKNOWN` preservation by
-**100 points**. Required path and test recall did **not** improve because the
-source-only run already found them; the gain was rejecting five unrelated
-production paths and making the edit relationships reviewable. Against v1.16
-evidence-only, v1.17 improved disposition accuracy by **50 points**,
-required-test recall by **100 points**, and `UNKNOWN` preservation by **50
-points**.
-
-This is one real repository case with one run per group, not a general
-model-quality or trust claim. An initial unconstrained source search traversed
-vendored/minified assets and was rejected as a harness failure; the recorded
-source-only rerun used the same source-root and generated/vendor exclusions as
-the other groups. No aggregate “trust score” is produced.
-
-### Relationship to v1.16 and daily use
-
-v1.16's Bundle, Atlas, and Improvement artifacts remain authoritative upstream
-siblings. v1.17 does not rewrite them or promote advice into Evidence; it adds
-Planning Context, Candidate validation, Plan packaging, and a post-diff
-verification handoff. Plan authority stays `PROPOSED`, and Proof stays
-`UNKNOWN`/`PENDING` until explicitly executed.
-
-```bash
-aet plan context --workspace . --request request.md \
-  --bundle evidence-bundle --output planning-context.json
-aet plan validate-candidate --context planning-context.json \
-  --candidate plan-candidate.json --output .aet/plans/PLAN-001
-aet plan explain .aet/plans/PLAN-001 --edit EDIT-001
-aet plan export-skill .aet/plans/PLAN-001 \
-  --target codex --output .aet/skills/PLAN-001
-aet plan verification-handoff .aet/plans/PLAN-001 \
-  --diff agent.diff --output verification-request.json
-```
-
-Planner never edits source, executes verification argv, writes into Bundle Core
-Evidence, or guarantees every modification point was found. Missing support
-stays `NEEDS_EVIDENCE`; omissions stay `PARTIAL`; Proof stays `UNKNOWN` until
-explicitly run. See the [complete guide](docs/evidence-guided-planner.md),
-[surface comparison](docs/planner-helper-scenarios.md), and
-[three reproducible examples](examples/evidence-guided-planner). Reproduce the
-real comparison with:
-
-```bash
-uv run --no-editable python eval/evidence-guided-planner/run_real_case.py \
-  --output /tmp/aet-planner-real.json >/dev/null
-cmp /tmp/aet-planner-real.json \
-  eval/evidence-guided-planner/results/v1.17.0-real-codex.json
-```
-
-## Cross-Agent portable evidence handoff
-
-The four Quick Skills remain the daily entrypoints. v1.14.0 introduced a separate
-handoff path for a reviewer that may be Codex, Claude Code, Hermes, a local
-model, or another JSON-capable Agent—and must not be assumed to have AET
-installed.
-
-```text
-native Agent run
-  → Run Normalizer
-  → Run Record
-  → Observation / Evidence Candidate
-  → read-only Investigator
-  → bounded observations + explicit UNKNOWN
-  → Portable Evidence Bundle
-  → independent reviewer
-```
-
-The authority boundary is deliberate:
-
-| Layer | What it establishes | What it does not establish |
-| --- | --- | --- |
-| Run Record | What the normalized execution record contains | That a recorded command ran in the current workspace |
-| Observation | A traceable statement with `proves` and `does_not_prove` | Reproduced engineering proof |
-| Evidence Candidate | A proposition that may deserve verification | Permission to promote its strength |
-| Verified Evidence | Git, file, Proof, Freshness, artifact, or authority facts with bindings | The final review judgment |
-| Portable Claim | The bounded investigation status, evidence, counter-evidence, and limitations | Merge, publish, or release authority |
-
-The first-party normalizers support Codex and Claude Code run records, including
-stable identity, content hashes, tool-call/result linking, diagnostics, partial
-input, and incremental continuation:
-
-```bash
-aet run normalize --source codex \
-  --input session.jsonl --output .aet/runs/session
-
-aet investigate --request investigation-request.json \
-  --run .aet/runs/session --output .aet/investigations/review.json
-
-# Optional: inspect an explicit deterministic Proof and current Freshness.
-aet investigate --request investigation-request.json \
-  --run .aet/runs/session --workspace . --proof .aet/proof.json \
-  --output .aet/investigations/verified-review.json
-
-aet bundle create --investigation .aet/investigations/review.json \
-  --output evidence-bundle
-aet bundle validate evidence-bundle
-```
-
-The Investigator is read-only: it cannot execute arbitrary commands, write
-source files, repair code, commit, push, merge, or publish. Run Observations
-remain historical records. Only an explicitly supplied AET Proof that matches a
-recorded command Candidate—and an authorized Freshness check—may create
-Verified Evidence. It requires a primary hypothesis, a competing hypothesis,
-disconfirming search, explicit tool/evidence budgets, and a bounded stop
-condition.
-
-A Bundle provides canonical JSON metadata, JSONL Core records, complete
-Archive references, optional content-addressed Blobs, a deterministic Markdown
-report, and a consumer guide:
-
-```text
-evidence-bundle/
-├── manifest.json
-├── index.json
-├── core/{claims,evidence,observations}.jsonl
-├── archive/{sources,diagnostics,conflicts,ledger}.jsonl
-├── policy.json
-├── consumer-guide.md
-└── report.md
-```
-
-JSON and JSONL are authoritative; Markdown is a deterministic projection. A
-reviewer can read these files directly with no Python package, Node package,
-SDK, MCP server, or AET installation. Observations stay separate from Evidence,
-counter-evidence remains visible, stale evidence keeps its historical result
-but loses current applicability, and missing evidence remains `UNKNOWN`.
-
-Structured reviewers may emit `portable-review-result/1.0`, then use the
-optional reference validator:
-
-```bash
-aet bundle validate-review \
-  --bundle evidence-bundle --review review-result.json
-```
-
-The validator checks Bundle identity, references, counter-evidence retention,
-Freshness, and conclusion strength; it does not replace reviewer judgment.
-Convenience integrations are optional:
-
-```bash
-aet mcp serve
-```
-
-```ts
-import {
-  loadBundle,
-  queryClaims,
-  validateBundle,
-} from "@aet/evidence-bundle";
-```
-
-```python
-from aet_bundle import load_bundle, query_claims, validate_bundle
-```
-
-The TypeScript and Python SDKs provide loading, querying, Blob resolution,
-prompt-context rendering, and reference validation. MCP exposes the same
-bounded normalization, investigation, Bundle lookup, and validation operations;
-none of these convenience layers is required to consume a Bundle.
-
-## Real case: evidence becomes a bounded improvement prompt
-
-Imagine the everyday request: “Agent, review this project and tell me what I
-should improve.” A confident paragraph is not enough. The review should say
-which finding matters, show the Evidence ID behind it, limit the files an Agent
-may touch, name the verification command, and stop when a required reference is
-missing.
-
-The checked-in example makes that workflow reproducible. Its deliberately
-flawed adapter turns an empty tool result into the factual sentence “No
-security issues were found.” A real regression command exits `1`; AET records
-that failure as `ev-empty-result-regression`, then deterministically derives
-both a human report and a bounded Agent task:
-
-![Evidence-grounded code-improvement case](docs/assets/aet-improvement-case-en.gif)
-
-[Static PNG](docs/assets/aet-improvement-case-en.png) ·
-[scalable SVG](docs/assets/aet-improvement-case-en.svg) ·
-[case source and expected artifacts](examples/evidence-grounded-improvement/README.md) ·
-[media manifest](docs/assets/aet-improvement-media-manifest.json)
-
-```bash
-uv run python examples/evidence-grounded-improvement/build_example.py \
-  --output .aet/evidence/empty-result-review
-uv run aet improvement doctor .aet/evidence/empty-result-review
-uv run aet improve .aet/evidence/empty-result-review
-uv run aet improve prompt IMP-001
-uv run aet atlas build .aet/evidence/empty-result-review \
-  --perspectives claim-chain,conflicts,improvement-chain --no-llm
-```
-
-The generated outputs are concrete, not a template:
-
-| Output | Recorded result |
-| --- | --- |
-| Human report | `IMP-001` · `P1_HIGH` · `unsupported_claim` |
-| Grounding | Finding `claim-empty-result-is-grounded` and counter-evidence `ev-empty-result-regression` |
-| Allowed scope | Only `examples/evidence-grounded-improvement/sample_project/tool_result.py` |
-| Verification | `python examples/evidence-grounded-improvement/sample_project/test_tool_result.py` |
-| Agent task | `PROPOSED`; stop on missing references, protected paths, or invalid Proof |
-| Atlas | Claim Chain is grounded; Improvement Chain remains `UNKNOWN` |
-
-The prompt and Atlas are sibling projections of the same authoritative Bundle:
-
-```mermaid
-flowchart TD
-    H["Human: review this project"] --> B["Portable Evidence Bundle<br/>Claim · Evidence · Counter-evidence · Proof · Freshness"]
-    B --> I["Improvement Analyzer<br/>Issue · Constraint · Scope · Verification"]
-    I --> R["Human report"]
-    I --> T["Bounded Agent task<br/>PROPOSED"]
-    B --> G["Canonical Evidence Graph"]
-    G --> A["Evidence Atlas<br/>Claim Chain · Improvement Chain"]
-    R --> D["Human decision"]
-    T --> D
-    A --> D
-```
-
-They share stable Evidence IDs so a human can move from advice back to the
-failure, command, and source path. They do **not** form an authority loop:
-prompts never write back as Evidence, and Bundle v1 has no independent
-Improvement record. Therefore `improvement-chain` correctly stays `UNKNOWN`
-until a later current Proof and no-regression comparison can establish a
-`verified_improvement`. AET does not edit the file automatically.
-
-Tracked outputs include the
-[human report](examples/evidence-grounded-improvement/artifacts/human-report.md),
-[Agent task](examples/evidence-grounded-improvement/artifacts/agent-task.md),
-[Claim Chain](examples/evidence-grounded-improvement/artifacts/claim-chain.mmd),
-and
-[Improvement Chain](examples/evidence-grounded-improvement/artifacts/improvement-chain.mmd).
-
-## Evidence Atlas: a recursive map of the evidence
-
-v1.15.0 introduced Evidence Atlas as a built-in, deterministic projection of a
-Portable Evidence Bundle. v1.16.0 adds two improvement-aware views while
-preserving the same source authority. It does not ask an LLM to draw a
-plausible diagram. It builds a canonical Evidence Graph first, retains
-field-level source references for authoritative nodes and edges, then derives
-ten fixed Perspectives:
-
-| Perspective | Question answered |
-| --- | --- |
-| Claim Chain | What supports, contradicts, or limits this conclusion? |
-| Investigation Flow | How did the investigation reach its bounded finding? |
-| Change Scope | Which changes are in scope, justified expansions, or still unknown? |
-| Verification Coverage | What did a Proof establish—and what did it not establish? |
-| Evidence Data Flow | How did records become observations, evidence, claims, and review material? |
-| Integration and Sources | Which systems, permissions, and trust boundaries supplied the evidence? |
-| Conflict and Unknown | What remains contradicted, unavailable, stale, or unresolved? |
-| Freshness | When did evidence become applicable or stale, and why? |
-| Improvement Chain | Which bounded issue, constraints, prompt status, and unknowns derive from a finding? |
-| Regression Lineage | Which current Proof and no-regression comparison would be required to verify an improvement? |
-
-![AET Evidence Atlas static architecture](docs/assets/aet-evidence-atlas-architecture-en.png)
-
-The authority direction is one-way:
-
-```mermaid
-flowchart LR
-    B["Portable Evidence Bundle<br/>authoritative JSON / JSONL"] --> G["Canonical Evidence Graph<br/>grounded nodes and edges"]
-    G --> P["Ten deterministic Perspectives"]
-    P --> H["Recursive hierarchy<br/>complex nodes expand; leaves stay compact"]
-    H --> R["Mermaid · Markdown · JSON"]
-    R --> V["Offline Viewer"]
-    G --> X["Fail-closed validation"]
-    X --> P
-```
-
-Mermaid, Markdown, and the Viewer are rebuildable projections. They create no
-evidence, hide no counter-evidence, change no Freshness state, and grant no
-fix, merge, push, or release authority. The default output is a sibling
-sidecar, `<bundle>.atlas/`, because Bundle v1 manifests hash the exact files in
-the Bundle root:
-
-```text
-evidence-bundle/          # authoritative Portable Evidence Bundle
-evidence-bundle.atlas/
-├── graph/
-│   ├── graph.json
-│   ├── nodes.jsonl
-│   ├── edges.jsonl
-│   ├── hierarchy.json
-│   ├── diagnostics.jsonl
-│   └── perspectives/{claim-chain,...}/
-└── atlas/
-    ├── index.html
-    └── assets/           # local Mermaid runtime; no network required
-```
-
-Build, validate, query, compare, and open it with:
-
-```bash
-aet atlas build evidence-bundle --no-llm
-# Optional: materialize only selected fixed Perspectives.
-aet atlas build evidence-bundle --perspectives claim-chain,verification-coverage,conflicts
-aet atlas validate evidence-bundle
-aet atlas query evidence-bundle --perspective claim-chain \
-  --root node:claim:CLM-0042 --format json
-aet atlas explain evidence-bundle --node node:claim:CLM-0042
-aet atlas diff previous-bundle current-bundle
-aet atlas view evidence-bundle
-```
-
-Every node receives a deterministic complexity evaluation. Expandable nodes
-get typed child diagrams; simple nodes remain leaves. Depth, nodes per diagram,
-children per node, and total diagrams are bounded. Canonical node IDs prevent
-tree duplication, cycles stop at reference nodes, and unchanged Perspectives
-and unaffected recursive subgraphs are reused during incremental rebuilds.
-
-### Dynamic Viewer example from AET itself
-
-This is not a mockup. The repository hashes and reviews its own Graph Builder,
-Perspective definitions, Viewer, and Bundle schema, builds
-`bundle-aet-atlas-self-review-v1`, then records real offline Viewer states:
-
-![AET Evidence Atlas recursive Viewer](docs/assets/aet-evidence-atlas-viewer.gif)
-
-[Watch the 30-second Evidence Atlas walkthrough (MP4)](docs/assets/aet-evidence-atlas-intro-en.mp4)
-· [Media hashes and capture identity](docs/assets/aet-evidence-atlas-media-manifest.json)
-
-Reproduce the source Bundle and Atlas:
-
-```bash
-uv run python examples/evidence-atlas/build_example.py --output /tmp/aet-atlas-bundle
-uv run aet atlas build /tmp/aet-atlas-bundle --max-nodes 14 --max-depth 4 --no-llm
-uv run aet atlas validate /tmp/aet-atlas-bundle
-uv run aet atlas view /tmp/aet-atlas-bundle
-```
-
-The real Claim Chain generated from that self-review deliberately keeps a
-conflicted scope claim, its counter-evidence, and an unresolved node:
+The v1.17 Planner is a separate read-only `PROPOSED` surface built on v1.16
+evidence. It performs bounded localization, preserves `NEEDS_EVIDENCE` and
+`UNKNOWN`, and never implements edits. In one bounded real case—not a general
+model-quality claim—production decision precision moved from 44.44% to 100%
+(+55.56 points). See the [full product reference](docs/reference/full-product-overview.md).
+
+## Real-world Repository Audit Showcase
+
+The commit-locked static cases remain in the [full product reference](docs/reference/full-product-overview.md).
 
 <!-- atlas-self-review-mermaid:start -->
 ```mermaid
@@ -523,460 +209,16 @@ flowchart LR
 ```
 <!-- atlas-self-review-mermaid:end -->
 
-The complete generated diagram is tracked as
-[`examples/evidence-atlas/aet-self-review-claim-chain.mmd`](examples/evidence-atlas/aet-self-review-claim-chain.mmd).
-The Python and TypeScript SDKs expose graph build/load/query/trace/validate and
-Mermaid rendering APIs; MCP adds eight read-only `aet_graph_*` tools with
-bounded node/depth queries. The Viewer stays a static, offline consumer.
-
-## See it in 30 seconds
-
-### Investigate scope without treating paths as guilt
-
-```bash
-aet quick scope . --base main --intent aet.intent.json --format json
-```
-
-If a payment file changes during an authentication fix, the preflight records a
-path mismatch but does **not** declare it out of scope. The host investigates
-direct calls, shared interfaces, tests, later authorization, and a reasonable
-counter-hypothesis before choosing one of:
-
-```text
-IN_SCOPE
-JUSTIFIED_EXPANSION
-POSSIBLE_SCOPE_EXPANSION
-OUT_OF_SCOPE
-INSUFFICIENT_INTENT
-```
-
-### Record proof, then detect drift
-
-```bash
-aet quick proof --output .aet/proofs/auth.json \
-  --relevant-path src/auth/session.py -- pytest tests/auth
-
-# edit src/auth/session.py
-
-aet quick fresh --proof .aet/proofs/auth.json
-```
-
-The historical command result remains unchanged. The current applicability
-becomes `RELEVANT_FILES_CHANGED`, so AET recommends rerunning only the affected
-proof instead of pretending the old green log still represents the code.
-
-The repository also includes a runnable
-[stale-proof demo](examples/stale-proof-demo.sh) and a
-[case study](docs/case-studies/stale-proof.md).
-
-## An everyday coding example
-
-The following is an illustrative example, not a measured repository result.
-
-You ask an Agent:
-
-> Fix the intermittent login timeout. Do not change payment behavior and do
-> not add a production dependency.
-
-The Agent changes:
-
-```text
-src/auth/session.py
-src/cache/session_cache.py
-src/payment/order.py
-tests/auth/test_session.py
-```
-
-Without AET, the review usually collapses into one of two weak shortcuts:
-“everything outside `auth/` is out of scope,” or “the Agent says the shared
-cache and payment edits were necessary.” `/aet-scope` instead treats each
-change group as a hypothesis to investigate:
-
-```text
-src/auth/session.py          IN_SCOPE
-src/cache/session_cache.py   JUSTIFIED_EXPANSION
-src/payment/order.py         POSSIBLE_SCOPE_EXPANSION
-tests/auth/test_session.py   IN_SCOPE
-```
-
-The cache result cites the direct login call path and the focused regression
-test. The payment result records the counter-explanation—perhaps a shared
-interface required synchronized work—and why the inspected references did not
-support it. The result names the unresolved possibility of authorization in
-another conversation and recommends splitting the payment cleanup or supplying
-that authorization. Then `/aet-scope` stops; it does not run tests or edit code.
-
-If you choose to verify the fix, `/aet-proof` records the real command and
-workspace binding. If the Agent edits `session.py` afterward, `/aet-fresh`
-changes applicability to `RELEVANT_FILES_CHANGED` without rewriting the
-historical test exit code.
-
-## What changes after adding AET
-
-| Daily situation | Without AET | With AET Quick |
-| --- | --- | --- |
-| A fix crosses directories | A path rule over-rejects it, or the Agent's explanation is accepted on trust | Necessary shared work is investigated; unsupported expansion stays visible |
-| “Tests passed” | A green sentence or old log is easy to reuse | argv, exit code, workspace, relevant files, artifacts, and environment bindings are recorded |
-| Code changes after testing | The old result still looks green | Applicability changes to a precise Freshness state |
-| LLM review | Facts, inference, counter-case, and advice blur together | Each layer is rendered separately and cites recorded evidence |
-| Investigation grows | The Agent may keep reading and calling tools | Budgets and stop conditions return a bounded result |
-
-| AET Quick can | AET Quick cannot |
-| --- | --- |
-| Record reproducible Git, command, hash, and Freshness facts | Prove that all code is correct |
-| Investigate whether a change is necessary for the task | Declare scope violation from path mismatch alone |
-| Execute and bind an explicitly requested verification command | Turn an unexecuted test into a pass |
-| Preserve conflicts, missing facts, and `UNKNOWN` | Hide recorded counter-evidence or invent a holistic trust score |
-| Recommend the smallest next action | Auto-fix, merge, push, publish, or enter AET Lab |
-
-## Measured trade-offs, not a trust score
-
-### v1.14.0 portable consumption check
-
-The tracked
-[v1.14.0 result](eval/bundle-consumption/results/v1.14.0.json) gives three
-prompt-only consumers the same ten deterministic synthetic Bundles without an
-AET SDK:
-
-| Consumer | Runtime and model | Scenarios | Applicable metric statuses | Not applicable |
-| --- | --- | ---: | --- | ---: |
-| Codex | Codex CLI 0.144.1 · `gpt-5.6-sol` | 10 | 62 `PASS` · 0 `FAIL` · 0 `UNKNOWN` | 38 |
-| Hermes | Hermes Agent 0.17.0 · `kimi-k2.6` | 10 | 62 `PASS` · 0 `FAIL` · 0 `UNKNOWN` | 38 |
-| Local structured consumer | Ollama 0.32.3 · `qwen3:8b` | 10 | 62 `PASS` · 0 `FAIL` · 0 `UNKNOWN` | 38 |
-
-The ten scenarios cover self-report without Proof, stale tool output,
-conflicting Evidence, missing authorization, truncation, content-identity
-fallback, irrelevant Evidence, an old Bundle applied to a new commit, an
-unknown Claim, and missing-evidence overreach. Each response is strict JSON,
-covers every scenario exactly once, and is scored across ten independent
-metrics. The 38 `NOT_APPLICABLE` outcomes are metrics without a relevant
-denominator in that scenario—not hidden successes.
-
-This is a bounded interoperability check on synthetic fixtures, not a general
-model-accuracy claim. It calculates no aggregate or trust score and grants no
-merge, release, or publication authority. The complete
-[harness and limitations](eval/bundle-consumption/README.md) remain
-independently inspectable.
-
-### v1.13.0 Quick investigation trade-offs
-
-The opt-in [Quick investigation benchmark](eval/quick-investigation/README.md)
-compares the four review modes required by the design across eight synthetic Scope
-scenarios. The tracked
-[v1.13.0 result](eval/quick-investigation/results/v1.13.0.json) used
-`gpt-5.6-sol`, `medium` reasoning, two repetitions per scenario, and 16 Runs per
-group:
-
-| Mode | Effective recall | False discovery proportion | Mean tools | Mean time | Mean Tokens |
-| --- | ---: | ---: | ---: | ---: | ---: |
-| Pure rules | 60% | 50.0% | 0.00 | <0.001 s | 0 |
-| One-shot LLM | 80% | 38.5% | 0.00 | 7.33 s | 21,702 |
-| Investigated AET | 90% | 25.0% | 1.63 | 18.32 s | 64,147 |
-| Grounding-aware investigation + Validator | 90% | 25.0% | 0.75 | 14.84 s | 38,831 |
-
-The comparison separates three effects:
-
-1. Against one-shot review, the grounding-aware group gained 10 percentage
-   points of effective recall and reduced false discovery proportion by 13.5
-   points, at the cost of 0.75 tool calls, about 7.51 seconds, and 17,129
-   Tokens per Run.
-2. Against Investigated AET, it kept the same 90% recall and 25% false
-   discovery proportion while using about 54% fewer tools, 19% less time, and
-   39% fewer Tokens. This sampled efficiency belongs to the complete
-   grounding-aware Agent configuration, not to the Validator alone.
-3. The in-repository Validator is a deterministic acceptance boundary after
-   investigation: it checks references, real test success, counter-explanation,
-   authority, and budget. It rejected zero Claims in these 16 Runs, so this
-   table demonstrates no Validator-driven accuracy gain; deterministic unit
-   tests separately prove its rejection paths.
-
-Grounding-aware investigation changes **how the LLM investigates and structures
-a Claim**. The Validator decides **whether the recorded Claim meets the minimum
-engineering contract for rendering**. The two investigated groups use different
-prompts and structured-output requirements, so they are not a paired
-Validator-only ablation.
-
-Manual review time and user understanding remain `UNKNOWN` because no timed
-human annotations were supplied. These 64 Runs cover eight synthetic Scope
-scenarios: they are one bounded, independently rescorable Lab measurement, not
-a general accuracy claim or permission to release code. Privacy-reviewed
-normalized Runs are published; private Codex JSONL is not.
-
-## Architecture: one workflow, separate authority
-
-![AET animated Evidence-Guided Planner architecture](docs/assets/aet-planner-workflow-en.gif)
-
-[Simplified Chinese GIF](docs/assets/aet-planner-workflow-zh-CN.gif) ·
-[static PNG](docs/assets/aet-planner-workflow-en.png) ·
-[scalable SVG](docs/assets/aet-planner-workflow-en.svg) ·
-[motion validation report](docs/assets/aet-planner-workflow-en.motion.json)
-
-The animated workflow shows the current evidence-to-plan handoff:
-
-1. A human review request is compiled into a Portable Evidence Bundle with
-   stable Claim, Evidence, counter-evidence, Proof, and Freshness references.
-2. Bundle, Atlas, source hashes, human scope, protected paths, and budgets
-   compile into a bounded Planning Context.
-3. A Host Planner proposes paths, dispositions, source locators, linkages,
-   tests, risks, and unknowns; it does not gain edit authority.
-4. AET validates that Candidate deterministically and emits a sealed,
-   portable `PROPOSED` Plan package.
-5. A code Agent may consume the Plan only after human review. Its implementation
-   remains external to AET.
-6. The external diff returns as an `UNKNOWN`/`PENDING` verification handoff;
-   only explicit Proof can establish execution.
-
-### The current repository as a system
-
-![AET project architecture panorama](docs/assets/aet-project-panorama-en.png)
-
-[Simplified Chinese panorama](docs/assets/aet-project-panorama-zh-CN.png) ·
-[scalable SVG](docs/assets/aet-project-panorama-en.svg)
-
-The static panorama answers how that workflow maps to this repository:
-
-- **Solid arrows are the evidence-production path.** Native runs flow through
-  normalization, Observation/Candidate extraction, bounded investigation,
-  deterministic verification, and Bundle compilation.
-- **Atlas, improvement prompts, and Plans are sibling review artifacts.** They
-  reuse the same IDs after Bundle compilation but do not become evidence
-  producers.
-- **Dashed arrows are product and consumption surfaces.** Five Host Skills,
-  CLI/MCP/SDK conveniences, measured consumers, and the human/Lab boundary use
-  the same contracts without becoming evidence authorities.
-- **Run records, observations, and verified evidence are different types.**
-  `src/aet/run_normalization/*`, `src/aet/observations/*`, and
-  `src/aet/evidence_core/*` enforce that distinction before compilation.
-- **The exchange format is implementation-independent.**
-  `schemas/evidence-bundle/v1/*` defines Index/Core/Archive records, integrity,
-  Freshness, conflicts, diagnostics, and review references; an SDK is optional.
-- **Quick remains the small daily surface.** `src/aet/quick/*` continues to
-  expose Check, Scope, Proof, and Fresh. `/aet-plan` is deliberately separate:
-  a read-only planning bridge, not an automatic transition into implementation
-  or Lab.
-- **Tests and measured consumers prove different things.** `tests/*` covers
-  deterministic rejection paths; `eval/bundle-consumption/*` checks sampled
-  interoperability. Neither becomes a trust score or action authority.
-
-### 30-second product introduction
-
-[Watch the English MP4](docs/assets/aet-product-intro-en.mp4) ·
-[观看中文 MP4](docs/assets/aet-product-intro-zh-CN.mp4)
-
-The silent six-scene v1.17 video starts from a developer asking an Agent to
-review a project without drifting scope. It explains the v1.16-to-v1.17
-relationship, Planning Context, the Host/AET validation boundary, the code
-Agent handoff, and the real Atlas Change Group comparison. The
-[Planner guide](docs/evidence-guided-planner.md) provides the detailed
-contract. The
-[media manifest](docs/assets/aet-quick-media-manifest.json) binds the bilingual
-GIFs, panoramas, and silent H.264 MP4 videos by SHA-256 and records their generated
-dimensions, frame counts, frame rates, and durations. The separate
-[Planner media manifest](docs/assets/aet-planner-media-manifest.json) binds the
-workflow and real-case screenshots.
-
-## Why the LLM is constrained, not disabled
-
-Pure path rules cannot tell whether a shared cache change is necessary for an
-authentication fix. An unconstrained LLM can sound persuasive without proving
-anything. AET uses both, with distinct authority:
-
-| Capability | Deterministic runtime | Host LLM |
-| --- | --- | --- |
-| Git diff, hashes, exit code, artifact and freshness facts | Owns | Cannot rewrite |
-| Intent recovery and competing hypotheses | Supplies sources | Owns, with provenance |
-| Tool choice | Validates recorded policy and budget usage | Plans authorized calls |
-| Engineering judgment | Validates grounding | Owns, conditionally |
-| Merge, publish, adopt, or release authority | Never grants | Never grants |
-
-Finding origin is explicit:
-
-- `DETERMINISTIC_FINDING`: directly produced by a rule, command, or comparison.
-- `INVESTIGATED_FINDING`: produced after a traceable tool investigation.
-- `HYPOTHESIS`: a direction for further investigation; never a blocking result.
-
-Only `/aet-proof` is an AET-executed command receipt. Other local or MCP tool
-results enter the Ledger through the Agent host: their canonical payload hash
-detects later mutation, but does not independently prove that an external host
-performed the call. Hosts must preserve that provenance and run
-`aet.investigation.validate_investigated_finding` before rendering; otherwise
-the result remains `HYPOTHESIS`/`UNKNOWN`.
-
-Evidence remains authoritative as `PASS`, `FAIL`, `UNKNOWN`, or
-`NOT_APPLICABLE`. Semantic support is stored separately as `CONFIRMED`,
-`SUPPORTED`, `SUPPORTED_WITH_LIMITS`, `CONFLICTED`, `UNSUPPORTED`, `UNKNOWN`,
-or `NOT_APPLICABLE`. A semantic narrative cannot overwrite machine evidence.
-
-## Command boundaries and budgets
-
-| Quick Skill | Default boundary | Default budget |
-| --- | --- | --- |
-| `/aet-check` | Read Agent assets and relevant configuration; no project execution, history scan, remote access, or writes | 30 s, 3 rounds, ≤2 LLM, ≤6 tools, ≤1 expensive call, ≤5 findings |
-| `/aet-scope` | Inspect intent and current diff; no code writes; at most one discriminating low-cost test | 45 s, 4 rounds, ≤2 LLM, ≤8 tools, ≤2 authorized remote reads, ≤1 expensive call |
-| `/aet-proof` | Execute only explicit argv; the requested JSON receipt is the only default write | Command duration; ≤1 LLM only when locating the command |
-| `/aet-fresh` | Compare the supplied proof; no execution, network, or writes | 3 s, 0 LLM by default |
-
-The tracked [v1.13.0 local performance evidence](eval/quick-performance/results/v1.13.0.json)
-retains 30 raw samples per deterministic command on this 253-tracked-file
-repository: Check P95 0.622 s, Scope P95 0.059 s, and Fresh P95 0.037 s. The
-[Harness and limits](eval/quick-performance/README.md) make this a reproducible
-local acceptance check, not a cross-repository or model-service latency claim.
-
-Investigation stops when a dominant explanation and reasonable counter-case
-have been checked, new evidence would not change the action, two calls add no
-decision value, the budget is exhausted, user authority is required, only the
-user can supply a missing fact, or a tool is unavailable.
-
-On exhaustion, AET returns a bounded result and names uninspected surfaces. It
-does not silently escalate into a repository-wide audit.
-
-The machine-readable contracts are documented in
-[command boundaries](docs/command-boundaries.md),
-[the investigation model](docs/investigation-model.md), and
-[the Quick/Lab boundary](docs/quick-vs-lab-boundary.md).
-
-## Language behavior
-
-Language changes only the human narrative, never status tokens, evidence
-references, hashes, or schema fields.
-
-- When the user invokes a slash command and asks in Chinese, the host explains
-  the result in natural Simplified Chinese while keeping code and necessary
-  technical terms in English.
-- Every other request uses English.
-
-English and Chinese narratives must cite the same facts and `result_ref`
-values. Switching language cannot trigger another investigation or strengthen
-a conclusion.
-
-## Minimal proof and freshness
-
-`/aet-proof` records:
-
-- exact redacted argv and its digest;
-- cwd, start/end timestamps, exit code, and log digests;
-- Git/worktree snapshot;
-- declared relevant-file hashes;
-- Python/platform identity and dependency lockfile hashes;
-- declared artifact hashes;
-- a bounded coverage statement.
-
-`/aet-fresh` returns one of:
-
-```text
-EXACT_MATCH
-RELEVANT_FILES_MATCH
-HEAD_CHANGED_RELEVANT_FILES_MATCH
-RELEVANT_FILES_CHANGED
-ARTIFACT_CHANGED
-ENVIRONMENT_CHANGED
-UNKNOWN
-```
-
-Legacy Trace and canonical evidence reports remain readable. When old evidence
-does not contain relevant-file or environment bindings, AET preserves the
-uncertainty instead of inventing precision.
-
-## Real-world Repository Audit Showcase
-
-The Repository Audit Showcase remains a supported **AET Lab** case library,
-not the default Quick workflow. It contains three commit-locked, static-only
-audits of public Agent repositories:
-
-| Case | Bounded audit surface | Evidence result | Reports |
-| --- | --- | --- | --- |
-| SWE-agent | Agent loop, tool interaction, trajectory, completion evidence | 4 `PASS`, 1 `UNKNOWN` | [English](repository-audit-showcase/reports/swe-agent/audit-result/en/audit-report.md) · [简体中文](repository-audit-showcase/reports/swe-agent/audit-result/zh-CN/audit-report.md) |
-| Google ADK | Agent architecture, tool governance, evaluation feedback | 5 `PASS` | [English](repository-audit-showcase/reports/google-adk/audit-result/en/audit-report.md) · [简体中文](repository-audit-showcase/reports/google-adk/audit-result/zh-CN/audit-report.md) |
-| OpenHands | Application orchestration, runtime isolation, external Agent-core boundary | 4 `PASS`, 1 `UNKNOWN` | [English](repository-audit-showcase/reports/openhands/audit-result/en/audit-report.md) · [简体中文](repository-audit-showcase/reports/openhands/audit-result/zh-CN/audit-report.md) |
-
-```bash
-aet audit swe-agent --repo /path/to/SWE-agent
-aet audit google-adk --repo /path/to/adk-python
-aet audit openhands --repo /path/to/OpenHands
-```
-
-Each run scans only the locked local checkout, runs no upstream code or tests,
-installs no upstream dependencies, copies no source text into reports, and
-does not allow an LLM to create or change a Showcase Finding. Each case writes
-two shared machine artifacts and five reviewed human artifacts for each of
-`en/` and `zh-CN/`. See the
-[scope and publication boundary](repository-audit-showcase/docs/scope-and-publication.md).
-These status counts describe the bounded evidence contract, not an overall
-quality grade for the upstream repository.
-
-## AET Quick and AET Lab
-
-| Layer | Audience | Capabilities | Default |
-| --- | --- | --- | --- |
-| AET Quick | Developers using coding Agents day to day | Check, Scope, Proof, Fresh | Installed and invoked individually |
-| Portable review | Humans and Agents reviewing shared evidence | Bundle, Evidence Atlas, human report, bounded Agent prompt | Explicit Bundle input; deterministic and local |
-| Optional extensions | Teams needing project provenance | Context, Decision, Evolve | Explicit request |
-| AET Lab | Agent engineers and Skill/platform authors | Evidence Pack, Showcase, Quality, Learn, Replay, Gate, Tournament, Shadow, Stage, Adopt, statistics | Explicit opt-in only |
-
-Existing Lab commands and the canonical
-[`agent-engineering-toolkit` compatibility Skill](skills/agent-engineering-toolkit)
-remain available. Quick does not preload their references, run real-host
-rollouts, create large HTML/SVG bundles, or perform governance-asset adoption.
-
-## Security and authority
-
-- Local and read-only by default.
-- `/aet-proof` executes only argv explicitly placed after `--`.
-- The explicit proof request authorizes its receipt, not unrelated writes.
-- Credentials are never required for Quick and must not enter persisted evidence.
-- Remote writes, `git push`, release publication, Issue closure, destructive shell actions, automatic repair, and automatic adoption are forbidden.
-- Remote reads and project execution must match the selected Skill's policy and budget.
-- Missing evidence remains `UNKNOWN`; there is no holistic trust score.
-- A model-generated judgment is never the sole release gate.
-
-Read [security and retention](docs/security-and-retention.md) and the
-[stability contract](docs/stability.md) for the detailed boundary.
-
-## Install and develop
-
-Install the current Quick implementation from this source checkout:
-
-```bash
-uv tool install .
-```
-
-Install or copy only the Quick Skill folders supported by your Agent host.
-Hosts without native Skill loading can load the relevant `SKILL.md` as task
-instructions and call the same CLI.
-
-For local development:
-
-```bash
-git clone https://github.com/AdvancingTitans/agent-engineering-toolkit.git
-cd agent-engineering-toolkit
-uv run --no-editable python -m unittest discover -s tests
-```
-
-AET uses Python 3.11+ and keeps the deterministic runtime dependency-light.
-Contributions should add clean and failing fixtures, preserve evidence
-provenance, and avoid broadening a Quick command beyond its question. See
-[CONTRIBUTING.md](CONTRIBUTING.md).
-
-## Advanced documentation
-
-- [Evidence-Guided Planner](docs/evidence-guided-planner.md)
-- [Planner and Helper scenarios](docs/planner-helper-scenarios.md)
-- [Planning v1 Schemas](docs/schemas/planning.md)
-- [Evidence-Grounded Improvement Layer](docs/improvement.md)
-- [Evidence Atlas architecture](docs/architecture/evidence-atlas.md)
-- [Portable Evidence Bundle v1](docs/protocols/portable-evidence-bundle-v1.md)
-- [Portable evidence workflow](docs/architecture/portable-evidence-workflow.md)
-- [Generic Agent consumption](docs/guides/generic-agent-consumption.md)
-- [Portable Review Result v1](docs/protocols/review-result-v1.md)
-- [Evidence Bundle threat model](docs/security/evidence-bundle-threat-model.md)
-- [Rule catalog](docs/rule-catalog.md)
-- [Evidence and delivery workflow](skills/agent-engineering-toolkit/references/delivery-workflow.md)
-- [Repository Audit Showcase](skills/agent-engineering-toolkit/references/repository-audit-showcase.md)
-- [Provenance workflows](skills/agent-engineering-toolkit/references/provenance-workflow.md)
-- [Quality workflow](skills/agent-engineering-toolkit/references/quality-workflow.md)
-- [Lab evolution workflow](skills/agent-engineering-toolkit/references/evolution-workflow.md)
-- [Changelog](CHANGELOG.md)
-
-## License
-
-[MIT](LICENSE)
+## Community and trust
+
+- Read [Security](SECURITY.md) before reporting sensitive evidence.
+- Use [Support](SUPPORT.md) to choose the right channel.
+- Review the [Roadmap](ROADMAP.md) and [Governance](GOVERNANCE.md).
+- Contributions follow [CONTRIBUTING.md](CONTRIBUTING.md) and the
+  [Code of Conduct](CODE_OF_CONDUCT.md).
+
+If stale proof, bounded scope, or portable Agent evidence is a problem you want
+to revisit, Star the repository as a bookmark—and, more importantly, try the
+demo and report what did or did not reproduce.
+
+MIT License.

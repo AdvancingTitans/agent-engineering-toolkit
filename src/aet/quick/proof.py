@@ -24,6 +24,7 @@ def quick_proof(
     artifact_paths: Iterable[str] = (),
     redaction_patterns: Iterable[str] = (),
     environment_names: Iterable[str] = (),
+    timeout_seconds: float | None = None,
 ) -> tuple[dict[str, Any], int]:
     """Execute explicit argv and write one compact, hash-bound proof receipt."""
     if not argv:
@@ -38,6 +39,7 @@ def quick_proof(
             trace_path,
             redaction_patterns,
             artifact_paths=artifact_paths,
+            timeout_seconds=timeout_seconds,
         )
     result = trace["trace"]
     binding_unknown = (
@@ -63,6 +65,7 @@ def quick_proof(
             "started_at": result["started_at"],
             "ended_at": result["finished_at"],
             "exit_code": result["execution"]["exit_code"],
+            "timed_out": result["execution"].get("timed_out", False),
         },
         "authoritative_status": authoritative_status,
         "result": {

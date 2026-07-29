@@ -1,0 +1,50 @@
+{
+  "schema_version": "aet-skill-catalog/v1",
+  "skills": [
+    {
+      "id": "aet-check",
+      "path": "skills/aet-check",
+      "writes": false,
+      "executes_commands": false,
+      "network": "none",
+      "authority": "read_only_finding",
+      "primary_question": "Are these agent instructions usable and verifiable?"
+    },
+    {
+      "id": "aet-scope",
+      "path": "skills/aet-scope",
+      "writes": false,
+      "executes_commands": true,
+      "network": "authorized_bounded_reads",
+      "authority": "investigated_disposition",
+      "primary_question": "Does each change group fit the user's authorized task?"
+    },
+    {
+      "id": "aet-proof",
+      "path": "skills/aet-proof",
+      "writes": true,
+      "executes_commands": true,
+      "network": "none_by_default",
+      "authority": "bounded_proof",
+      "primary_question": "Did this exact verification command run on this workspace?"
+    },
+    {
+      "id": "aet-fresh",
+      "path": "skills/aet-fresh",
+      "writes": false,
+      "executes_commands": false,
+      "network": "none",
+      "authority": "deterministic_freshness",
+      "primary_question": "Does this historical proof still apply to the current workspace?"
+    },
+    {
+      "id": "aet-plan",
+      "path": "skills/aet-plan",
+      "writes": true,
+      "executes_commands": false,
+      "network": "none_by_default",
+      "authority": "PROPOSED",
+      "primary_question": "What should change without editing or executing verification?"
+    }
+  ]
+}

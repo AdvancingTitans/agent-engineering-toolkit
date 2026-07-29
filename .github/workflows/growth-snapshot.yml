@@ -1,0 +1,31 @@
+name: Aggregate growth snapshot
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '23 3 * * *'
+
+permissions:
+  contents: read
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Collect aggregate repository state
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python scripts/growth/snapshot.py \
+            --repo AdvancingTitans/agent-engineering-toolkit \
+            --output .aet/growth/metrics/snapshot.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: aggregate-growth-snapshot-${{ github.run_id }}
+          path: .aet/growth/metrics/snapshot.json
+          include-hidden-files: true
+          if-no-files-found: error

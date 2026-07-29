@@ -1,0 +1,13 @@
+{
+  "after_state": "RELEVANT_FILES_CHANGED",
+  "before_state": "EXACT_MATCH",
+  "demo_id": "stale-proof",
+  "diagnostics": [],
+  "execution_status": "PASS",
+  "llm_calls": 0,
+  "network_calls": 0,
+  "overall_status": "PASS",
+  "proof_path": null,
+  "schema_version": "aet-demo-result/v1",
+  "workspace_path": null
+}

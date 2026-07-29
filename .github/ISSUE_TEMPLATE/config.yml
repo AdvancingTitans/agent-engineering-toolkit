@@ -1,5 +1,11 @@
 blank_issues_enabled: false
 contact_links:
-  - name: AET documentation
-    url: https://github.com/AdvancingTitans/agent-engineering-toolkit#documentation
-    about: Read the contracts, security boundary, and contribution guide before opening a general question.
+  - name: Questions and known limitations
+    url: https://github.com/AdvancingTitans/agent-engineering-toolkit/discussions
+    about: Use Discussions after the maintainer enables it.
+  - name: Security report
+    url: https://github.com/AdvancingTitans/agent-engineering-toolkit/security/advisories/new
+    about: Report vulnerabilities and sensitive evidence privately.
+  - name: Support routing
+    url: https://github.com/AdvancingTitans/agent-engineering-toolkit/blob/main/SUPPORT.md
+    about: Choose the right support channel.

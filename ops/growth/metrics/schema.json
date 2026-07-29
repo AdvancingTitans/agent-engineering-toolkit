@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/AdvancingTitans/agent-engineering-toolkit/schemas/aet-growth-snapshot-v1.json",
+  "title": "AET aggregate growth snapshot",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "repository",
+    "observed_at",
+    "stars",
+    "forks",
+    "watchers",
+    "open_issues",
+    "contributors",
+    "pull_requests",
+    "traffic_views",
+    "traffic_unique_visitors",
+    "clones",
+    "release_downloads",
+    "skills_installs",
+    "referrers"
+  ],
+  "properties": {
+    "schema_version": {"const": "aet-growth-snapshot/v1"},
+    "repository": {"type": "string", "pattern": "^[^/]+/[^/]+$"},
+    "observed_at": {"type": "string"},
+    "stars": {"$ref": "#/$defs/metric"},
+    "forks": {"$ref": "#/$defs/metric"},
+    "watchers": {"$ref": "#/$defs/metric"},
+    "open_issues": {"$ref": "#/$defs/metric"},
+    "contributors": {"$ref": "#/$defs/metric"},
+    "pull_requests": {"$ref": "#/$defs/metric"},
+    "traffic_views": {"$ref": "#/$defs/metric"},
+    "traffic_unique_visitors": {"$ref": "#/$defs/metric"},
+    "clones": {"$ref": "#/$defs/metric"},
+    "release_downloads": {"$ref": "#/$defs/metric"},
+    "skills_installs": {"$ref": "#/$defs/metric"},
+    "referrers": {"type": "array", "items": {"type": "object"}},
+    "repository_state": {"type": "object"},
+    "release_state": {"type": "object"},
+    "pypi_state": {"type": "object"},
+    "skills_state": {"type": "object"},
+    "community_state": {"type": "object"}
+  },
+  "$defs": {
+    "metric": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "value", "source", "observed_at", "diagnostic"],
+      "properties": {
+        "status": {
+          "enum": ["KNOWN", "UNKNOWN", "RATE_LIMITED", "UNAVAILABLE"]
+        },
+        "value": {"type": ["integer", "number", "string", "boolean", "null"]},
+        "source": {"type": "string"},
+        "observed_at": {"type": "string"},
+        "diagnostic": {"type": ["string", "null"]}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"status": {"not": {"const": "KNOWN"}}}},
+          "then": {"properties": {"value": {"type": "null"}}}
+        }
+      ]
+    }
+  },
+  "additionalProperties": false
+}

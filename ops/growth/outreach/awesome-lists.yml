@@ -1,0 +1,22 @@
+schema_version: aet-growth-outreach/v1
+candidates:
+  - category: agent-skills
+    repository: UNKNOWN
+    relevance: five installable bounded AET Skills
+    contribution_rules: MUST_RECHECK
+    status: RESEARCH_REQUIRED
+  - category: agentic-coding
+    repository: UNKNOWN
+    relevance: proof and scope workflows for coding Agents
+    contribution_rules: MUST_RECHECK
+    status: RESEARCH_REQUIRED
+  - category: github-actions
+    repository: UNKNOWN
+    relevance: read-only AET Action after separate publication
+    contribution_rules: MUST_RECHECK
+    status: BLOCKED_ON_ACTION_RELEASE
+
+rules:
+  - one relevant project per pull request
+  - link a runnable demo or integration
+  - never bulk-submit or duplicate-spam one maintainer

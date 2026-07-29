@@ -1,0 +1,15 @@
+title: "Idea: "
+labels: ["ideas"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem worth exploring
+    validations:
+      required: true
+  - type: textarea
+    id: unknowns
+    attributes:
+      label: What is still unknown?
+    validations:
+      required: true

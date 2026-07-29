@@ -5,8 +5,7 @@ labels: [bug]
 body:
   - type: markdown
     attributes:
-      value: |
-        Please remove secrets, private repository paths, and unredacted command output.
+      value: Remove secrets, private paths, and unredacted command output.
   - type: input
     id: version
     attributes:
@@ -14,34 +13,41 @@ body:
       placeholder: "aet --version"
     validations:
       required: true
-  - type: textarea
-    id: command
-    attributes:
-      label: Exact command and safe reproduction steps
-      description: Include a minimal public fixture or sanitized directory shape when possible.
-      placeholder: |
-        aet audit . --strict
-        Expected: ...
-        Actual: ...
-    validations:
-      required: true
   - type: dropdown
     id: surface
     attributes:
       label: AET surface
       options:
-        - audit
-        - review
-        - trace / evidence pack
-        - triage
-        - evolve / Repo Archaeologist
-        - documentation or installation
+        - Quick check
+        - Quick scope
+        - Quick proof
+        - Quick fresh
+        - Demo
+        - Portable Evidence Bundle
+        - Evidence Atlas
+        - Improvement
+        - Plan
+        - Packaging or installation
+        - Documentation
+        - Repository Evolution
     validations:
       required: true
   - type: textarea
-    id: context
+    id: reproduction
     attributes:
-      label: Sanitized context
-      description: What did AET claim, and what evidence boundary should it have observed?
+      label: Exact command and safe reproduction
+      render: shell
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected and actual evidence state
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: OS, Python, Git, and host Agent versions
     validations:
       required: true

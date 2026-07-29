@@ -1,0 +1,44 @@
+schema_version: aet-growth-channel-matrix/v1
+channels:
+  - id: github-release
+    priority: P0
+    audience: current visitors and release watchers
+    content: exact artifact, stale-proof demo, boundaries
+    owner: HUMAN_MAINTAINER
+    status: BLOCKED
+    stop_rule: stop if clean installation fails
+  - id: show-hn
+    priority: P0
+    audience: technical builders
+    content: personal motivation, reproducible demo, limitations
+    owner: HUMAN_MAINTAINER
+    status: MANUAL_NOT_STARTED
+    stop_rule: do not submit if the maintainer cannot personally discuss
+  - id: x
+    priority: P0
+    audience: coding-Agent developers
+    content: short real terminal recording and one question
+    owner: HUMAN_MAINTAINER
+    status: MANUAL_NOT_STARTED
+    stop_rule: pause after two low-quality events
+  - id: linkedin
+    priority: P0
+    audience: reviewers and engineering teams
+    content: delivery and handoff case
+    owner: HUMAN_MAINTAINER
+    status: MANUAL_NOT_STARTED
+    stop_rule: pause if traffic has no demo or technical interaction
+  - id: zhihu
+    priority: P0
+    audience: Chinese Agent engineering users
+    content: why a green log can be stale
+    owner: HUMAN_MAINTAINER
+    status: MANUAL_NOT_STARTED
+    stop_rule: rewrite before a second distribution event
+  - id: skills-sh
+    priority: P1
+    audience: Agent Skill users
+    content: five bounded questions
+    owner: HUMAN_MAINTAINER
+    status: UNAVAILABLE
+    stop_rule: do not add a badge before a real indexed page exists

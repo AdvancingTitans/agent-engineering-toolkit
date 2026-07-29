@@ -1,0 +1,45 @@
+name: Launch readiness
+
+on:
+  pull_request:
+    paths:
+      - 'README.md'
+      - 'PYPI_README.md'
+      - 'src/aet/demo/**'
+      - 'schemas/demo/**'
+      - 'pyproject.toml'
+      - 'site/**'
+      - 'skills/**'
+      - 'scripts/growth/**'
+      - 'scripts/validate_skills.py'
+      - '.github/workflows/launch-readiness.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  readiness:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - uses: astral-sh/setup-uv@v5
+      - run: uv run --with pytest python -m pytest -q
+      - run: uv build
+      - run: python scripts/verify_installed_demo.py
+      - run: python scripts/growth/verify_readme_budget.py --max-lines 250
+      - run: python scripts/growth/check_links.py README.md docs site
+      - run: python scripts/growth/verify_social_preview.py site/assets/social-preview.png
+      - run: python scripts/validate_skills.py --strict
+      - run: python scripts/growth/validate_launch.py --strict
+      - uses: actions/upload-artifact@v4
+        with:
+          name: launch-readiness-${{ github.sha }}
+          path: |
+            dist
+            .aet
+          include-hidden-files: true
+          if-no-files-found: warn

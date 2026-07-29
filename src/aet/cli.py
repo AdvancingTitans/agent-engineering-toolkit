@@ -113,7 +113,7 @@ def _perspective_selection(value: str) -> tuple[str, ...]:
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(prog="aet", description="Evidence-first static audits for agent context and Skills.")
+    parser = argparse.ArgumentParser(prog="aet", description="Proof-carrying workflows for coding agents.")
     parser.add_argument("--version", action="version", version=__version__)
     commands = parser.add_subparsers(dest="command", required=True)
     for command in (commands.add_parser("audit", help="Audit agent context assets and Skills."), commands.add_parser("review", help="Review a Git diff against an intent contract.")):
@@ -635,6 +635,9 @@ def build_parser() -> argparse.ArgumentParser:
     quick_fresh_parser.add_argument("--format", choices=("markdown", "json"), default="markdown")
     quick_fresh_parser.add_argument("--request", default="")
     quick_fresh_parser.add_argument("--slash-command", action="store_true")
+    from .demo.cli import add_demo_parser
+
+    add_demo_parser(commands)
     return parser
 
 
@@ -643,7 +646,16 @@ def main(argv: Sequence[str] | None = None) -> int:
     if raw_argv[:3] == ["audit", "feedback", "record"]:
         return _audit_feedback_record(raw_argv[3:])
     parser = build_parser()
-    args = parser.parse_args(raw_argv)
+    try:
+        args = parser.parse_args(raw_argv)
+    except SystemExit as error:
+        if raw_argv[:1] == ["demo"] and error.code:
+            return 64
+        raise
+    if args.command == "demo":
+        from .demo.cli import handle_demo
+
+        return handle_demo(args)
     if args.command == "investigate":
         try:
             request = _load_portable_json(args.request, "investigation request")

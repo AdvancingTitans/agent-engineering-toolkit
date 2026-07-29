@@ -1,0 +1,8 @@
+AET stale-proof demo
+
+1. Test command executed                    PASS
+2. Proof matches the tested source          EXACT_MATCH
+3. Source changed without rerunning tests   RELEVANT_FILES_CHANGED
+
+The test really passed, but that proof no longer applies to the current code.
+Demo result: PASS

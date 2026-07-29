@@ -51,5 +51,17 @@ or private repository history to an Issue or pull request.
 - Make unsupported facts `UNKNOWN`; do not infer private author intent.
 - Prefer a small, tested rule over a speculative framework.
 
+## Activation contributions
+
+- Demo changes must use the real `quick_proof` and `quick_fresh` core, remain
+  standard-library-only at runtime, and pass `uv run pytest -q tests/demo`.
+- A use case needs a reproducible command, observed environment, expected
+  state, limitations, and safe public artifacts.
+- Integration claims require the host and version actually tested. Do not call
+  an unverified host “fully supported.”
+- Public copy must distinguish one observed case from a general quality claim.
+- Distribution changes remain preparation only unless a maintainer explicitly
+  authorizes the external publish or settings change.
+
 By contributing, you agree that your contributions are available under this
 repository's [MIT License](LICENSE).

@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AET — proof-carrying workflows for coding agents</title>
+  <meta name="description" content="Bind tests to exact code, detect stale evidence, review scope, and hand proof across coding agents.">
+  <meta property="og:title" content="Did the agent test this code, or an older version?">
+  <meta property="og:description" content="Proof-carrying workflows for coding agents.">
+  <meta property="og:image" content="https://advancingtitans.github.io/agent-engineering-toolkit/assets/social-preview.png">
+  <link rel="canonical" href="https://advancingtitans.github.io/agent-engineering-toolkit/">
+  <link rel="stylesheet" href="assets/site.css">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Agent Engineering Toolkit","applicationCategory":"DeveloperApplication","operatingSystem":"Windows, macOS, Linux","url":"https://github.com/AdvancingTitans/agent-engineering-toolkit"}</script>
+</head>
+<body>
+<main>
+  <header>
+    <strong>AET</strong>
+    <nav aria-label="Primary">
+      <a href="#demo">Demo</a>
+      <a href="#uses">Use cases</a>
+      <a href="zh-CN/">中文</a>
+      <a href="https://github.com/AdvancingTitans/agent-engineering-toolkit">GitHub</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <div class="eyebrow">Proof-carrying workflows for coding agents</div>
+    <h1>Did your Agent test this code—or an older version?</h1>
+    <p>AET binds test runs, changed files, artifacts, and Agent claims into portable evidence, then tells you when that proof no longer applies.</p>
+    <div class="actions">
+      <a class="button primary" href="#demo">Run the demo</a>
+      <a class="button" href="https://github.com/AdvancingTitans/agent-engineering-toolkit">View source</a>
+    </div>
+  </section>
+
+  <section id="demo">
+    <h2>One command. One real transition.</h2>
+    <pre><code>uvx --from agent-engineering-toolkit aet demo stale-proof</code></pre>
+    <div class="card">
+      <div>Test command executed — <span class="state pass">PASS</span></div>
+      <div>Proof matches tested source — <span class="state exact">EXACT_MATCH</span></div>
+      <div>Source changed without rerunning — <span class="state stale">RELEVANT_FILES_CHANGED</span></div>
+    </div>
+    <p>PyPI currently serves v1.11.1. This command is the v1.18 target and must not be promoted until the exact release is published.</p>
+  </section>
+
+  <section id="uses">
+    <h2>Carry evidence through the workflow</h2>
+    <div class="grid">
+      <article class="card"><h3>Stale proof</h3><p>Keep the historical pass, but stop applying it after relevant code changes.</p></article>
+      <article class="card"><h3>Scope drift</h3><p>Review change groups against human-approved intent without treating every cross-module edit as drift.</p></article>
+      <article class="card"><h3>Cross-Agent handoff</h3><p>Give another Agent or reviewer portable JSON/JSONL evidence that remains readable without AET.</p></article>
+    </div>
+  </section>
+
+  <section>
+    <h2>Evidence, not authority theater</h2>
+    <p>AET is not another coding Agent and does not replace tests or CI. Missing evidence stays UNKNOWN. Plans stay PROPOSED. AET never auto-edits, commits, pushes, merges, or releases.</p>
+    <div class="actions">
+      <a class="button" href="https://github.com/AdvancingTitans/agent-engineering-toolkit/blob/main/docs/start-here.md">Start here</a>
+      <a class="button" href="https://github.com/AdvancingTitans/agent-engineering-toolkit/blob/main/docs/reference/status-and-authority.md">Status and authority</a>
+    </div>
+  </section>
+</main>
+<footer>No analytics, cookies, accounts, product telemetry, or model calls. MIT License.</footer>
+</body>
+</html>

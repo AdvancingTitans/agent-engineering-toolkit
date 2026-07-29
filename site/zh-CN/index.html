@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AET — 面向 AI 编程 Agent 的可携证工作流</title>
+  <meta name="description" content="把测试绑定到精确代码，识别失效证据，审查范围，并在 Agent 之间移交 proof。">
+  <link rel="canonical" href="https://advancingtitans.github.io/agent-engineering-toolkit/zh-CN/">
+  <link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+<main>
+  <header>
+    <strong>AET</strong>
+    <nav aria-label="主导航">
+      <a href="#demo">演示</a>
+      <a href="#uses">场景</a>
+      <a href="../">English</a>
+      <a href="https://github.com/AdvancingTitans/agent-engineering-toolkit">GitHub</a>
+    </nav>
+  </header>
+  <section class="hero">
+    <div class="eyebrow">面向 AI 编程 Agent 的可携证工作流</div>
+    <h1>Agent 测的是现在这份代码，还是更早的版本？</h1>
+    <p>AET 将测试执行、变更文件、产物与 Agent 声明绑定为可移交证据，并在证据失效时明确报告。</p>
+    <div class="actions"><a class="button primary" href="#demo">运行演示</a><a class="button" href="https://github.com/AdvancingTitans/agent-engineering-toolkit">查看源码</a></div>
+  </section>
+  <section id="demo">
+    <h2>一条命令，一个真实状态变化</h2>
+    <pre><code>uvx --from agent-engineering-toolkit aet demo stale-proof</code></pre>
+    <div class="card">
+      <div>测试真实执行 — <span class="state pass">PASS</span></div>
+      <div>proof 与被测源码一致 — <span class="state exact">EXACT_MATCH</span></div>
+      <div>相关源码变化但未重测 — <span class="state stale">RELEVANT_FILES_CHANGED</span></div>
+    </div>
+    <p>PyPI 当前仍是 v1.11.1；该命令是 v1.18 目标接口，精确版本发布前不得用于对外推广。</p>
+  </section>
+  <section id="uses">
+    <h2>让证据贯穿交付</h2>
+    <div class="grid">
+      <article class="card"><h3>stale proof</h3><p>保留历史通过事实，但不再把它套用到已变化的相关代码。</p></article>
+      <article class="card"><h3>scope drift</h3><p>依据人工授权的 intent 审查变更，不把所有跨模块工作误判为越界。</p></article>
+      <article class="card"><h3>跨 Agent 交接</h3><p>另一个 Agent 或人类无需安装 AET，也能读取 portable JSON/JSONL 证据。</p></article>
+    </div>
+  </section>
+  <section>
+    <h2>证据不是授权</h2>
+    <p>AET 不是另一个编程 Agent，也不替代测试或 CI。缺失证据保持 UNKNOWN，Plan 保持 PROPOSED；AET 不会自动编辑、提交、推送、合并或发布。</p>
+    <div class="actions"><a class="button" href="https://github.com/AdvancingTitans/agent-engineering-toolkit/blob/main/docs/README.zh-CN.md">中文文档</a><a class="button" href="https://github.com/AdvancingTitans/agent-engineering-toolkit/blob/main/docs/reference/status-and-authority.md">状态与 authority</a></div>
+  </section>
+</main>
+<footer>无分析脚本、Cookie、账号、产品遥测或模型调用。MIT License。</footer>
+</body>
+</html>

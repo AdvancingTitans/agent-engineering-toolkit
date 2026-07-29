@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="640" viewBox="0 0 1280 640" role="img" aria-labelledby="title desc">
+  <title id="title">AET stale proof demonstration</title>
+  <desc id="desc">A test passes, proof exactly matches, then a relevant source change makes the proof stale.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#07111f"/>
+      <stop offset="1" stop-color="#10243b"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="18" stdDeviation="24" flood-color="#000" flood-opacity=".35"/>
+    </filter>
+  </defs>
+  <rect width="1280" height="640" rx="32" fill="url(#bg)"/>
+  <circle cx="1120" cy="88" r="190" fill="#1e88ff" opacity=".08"/>
+  <circle cx="170" cy="580" r="220" fill="#2ee59d" opacity=".06"/>
+  <g filter="url(#shadow)">
+    <rect x="105" y="76" width="1070" height="488" rx="24" fill="#0b1728" stroke="#28415f" stroke-width="2"/>
+  </g>
+  <circle cx="142" cy="115" r="7" fill="#ff6b6b"/>
+  <circle cx="166" cy="115" r="7" fill="#ffd166"/>
+  <circle cx="190" cy="115" r="7" fill="#2ee59d"/>
+  <text x="226" y="123" fill="#8ba4c2" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="18">aet demo stale-proof</text>
+  <text x="150" y="190" fill="#f4f8fc" font-family="Inter, system-ui, sans-serif" font-size="34" font-weight="700">A real test passes. Then the code changes.</text>
+  <g font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="24">
+    <text x="150" y="272" fill="#b8c8da">1  Test command executed</text>
+    <rect x="866" y="238" width="158" height="48" rx="24" fill="#123d35"/>
+    <text x="906" y="270" fill="#49e3a4" font-weight="700">PASS</text>
+    <text x="150" y="350" fill="#b8c8da">2  Proof matches tested source</text>
+    <rect x="802" y="316" width="282" height="48" rx="24" fill="#113653"/>
+    <text x="837" y="348" fill="#62b7ff" font-weight="700">EXACT_MATCH</text>
+    <text x="150" y="428" fill="#b8c8da">3  Relevant source changed</text>
+    <rect x="682" y="394" width="432" height="48" rx="24" fill="#4a2a1a"/>
+    <text x="714" y="426" fill="#ffad66" font-weight="700">RELEVANT_FILES_CHANGED</text>
+  </g>
+  <path d="M151 484h962" stroke="#28415f" stroke-width="2"/>
+  <text x="150" y="526" fill="#dbe7f3" font-family="Inter, system-ui, sans-serif" font-size="22">The old green result is real—but it no longer proves the current code.</text>
+</svg>

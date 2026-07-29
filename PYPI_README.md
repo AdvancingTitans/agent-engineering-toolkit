@@ -1,84 +1,61 @@
 # Agent Engineering Toolkit
 
-**Investigate AI coding changes and hand a code Agent a reviewable, read-only
-Plan without letting the model invent evidence.**
+> **Your coding agent says tests passed. AET proves which code was actually tested.**
 
-AET Quick answers three questions: did the change fit the task, did the
-verification really run, and does that proof still apply? Deterministic tools
-produce facts; a host LLM may investigate intent and counter-explanations;
-AET validates references, permissions, strength, and budget.
+AET provides proof-carrying workflows for coding agents. It binds test runs,
+changed files, artifacts, and agent claims into portable evidence, then tells
+you when that proof no longer applies.
 
-```text
-deterministic facts → bounded LLM investigation → grounding validation → human decision
-```
+## Try the stale-proof demo
 
-## Plan before editing
-
-The separate Evidence-Guided Planner compiles a request, validated Bundle,
-optional matching Atlas, and current source hashes into bounded Planning
-Context. A Host Planner returns strict Candidate JSON; AET validates it into a
-portable `PROPOSED` Plan with evidence references, source locators, linked edit
-sites, tests, and explicit unknowns.
+After v1.18.0 is published:
 
 ```bash
-aet plan context --workspace . --request request.md \
-  --bundle evidence-bundle --output planning-context.json
-aet plan validate-candidate --context planning-context.json \
-  --candidate plan-candidate.json --output .aet/plans/PLAN-001
-aet plan show .aet/plans/PLAN-001
+uvx --from agent-engineering-toolkit aet demo stale-proof
 ```
 
-AET does not implement the Plan or run its verification commands. After an
-external code Agent produces a diff, AET can create an
-`UNKNOWN`/`PENDING` verification handoff for explicit Proof.
+Expected result:
+
+```text
+1. Test command executed                    PASS
+2. Proof matches the tested source          EXACT_MATCH
+3. Source changed without rerunning tests   RELEVANT_FILES_CHANGED
+
+Demo result: PASS
+```
+
+The test really passed. Then a relevant source file changed without rerunning
+it, so AET correctly stopped applying the old proof to the current code.
+
+The demo is local and deterministic after package download. It uses Git and
+Python's standard-library `unittest`; it makes zero network or LLM calls.
 
 ## Install
 
 ```bash
-uv tool install .
+uv tool install agent-engineering-toolkit
 aet --version
 ```
 
-## Use one Quick surface
+The PyPI package currently remains at v1.11.1. Do not advertise the v1.18 demo
+command until PyPI or the exact GitHub Release wheel is verified.
 
-```bash
-aet quick check .
-aet quick scope . --base main --intent aet.intent.json
-aet quick proof --output .aet/proofs/unit.json \
-  --relevant-path src/auth/session.py -- python -m pytest -q
-aet quick fresh --proof .aet/proofs/unit.json
-```
-
-Each Quick command answers one question and stops. `/aet-scope` does not treat a
-path mismatch as proof of overreach; the host investigates necessity and a
-reasonable counter-hypothesis. `/aet-proof` writes one bounded JSON receipt.
-`/aet-fresh` distinguishes exact, relevant-file, artifact, environment, and
-unknown freshness.
-
-## Use the smallest surface
+## Choose the smallest surface
 
 | Question | Command |
 | --- | --- |
-| Are Agent instructions and Skills usable and honest about verification? | `aet quick check` |
-| Does this diff fit the user's task? | `aet quick scope` |
-| Did this exact verification run? | `aet quick proof` |
-| Does recorded proof still apply? | `aet quick fresh` |
+| Are Agent instructions usable? | `aet quick check .` |
+| Does a diff fit the task? | `aet quick scope . --base main --intent aet.intent.json` |
+| Did this command run on these files? | `aet quick proof --output proof.json --relevant-path src/app.py -- <argv>` |
+| Does old proof still apply? | `aet quick fresh --proof proof.json` |
+| What should change without editing? | `aet plan context ...` |
 
-AET is opt-in and normally off. It does not replace your Agent, tests or CI, and
-it never auto-chains Quick commands, auto-adopts, commits, pushes, or releases.
-The legacy `audit`, `review`, `trace`, Evidence Pack, and AET Lab surfaces remain
-available for 1.x compatibility.
+AET is not another coding agent. It does not replace tests or CI, turn missing
+evidence into `PASS`, or auto-edit, commit, push, merge, or release.
 
-The repository includes an opt-in, eight-scenario
-[four-mode comparison](https://github.com/AdvancingTitans/agent-engineering-toolkit/tree/main/eval/quick-investigation)
-that reports recall, false discovery proportion, tool calls, time, and Tokens without
-turning them into a trust score. Human-review and understanding fields remain
-`UNKNOWN` until a person explicitly annotates them.
+- [Source and documentation](https://github.com/AdvancingTitans/agent-engineering-toolkit)
+- [Five-minute start](https://github.com/AdvancingTitans/agent-engineering-toolkit/blob/main/docs/start-here.md)
+- [Status and authority](https://github.com/AdvancingTitans/agent-engineering-toolkit/blob/main/docs/reference/status-and-authority.md)
+- [Security](https://github.com/AdvancingTitans/agent-engineering-toolkit/blob/main/SECURITY.md)
 
-- [Source and full documentation](https://github.com/AdvancingTitans/agent-engineering-toolkit)
-- [60-second stale-proof case study](https://github.com/AdvancingTitans/agent-engineering-toolkit/blob/main/docs/case-studies/stale-proof.md)
-- [Stability contract](https://github.com/AdvancingTitans/agent-engineering-toolkit/blob/main/docs/stability.md)
-- [Security and retention boundaries](https://github.com/AdvancingTitans/agent-engineering-toolkit/blob/main/docs/security-and-retention.md)
-- [Contributing](https://github.com/AdvancingTitans/agent-engineering-toolkit/blob/main/CONTRIBUTING.md)
-
-Python 3.11+ · MIT License
+Python 3.11+ · MIT License · no product telemetry

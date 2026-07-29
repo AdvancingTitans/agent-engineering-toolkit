@@ -1,0 +1,23 @@
+{
+  "schema_version": "aet-growth-snapshot/v1",
+  "repository": "example/project",
+  "observed_at": "2026-01-01T00:00:00Z",
+  "stars": {
+    "status": "KNOWN",
+    "value": 10,
+    "source": "https://api.github.com/repos/example/project",
+    "observed_at": "2026-01-01T00:00:00Z",
+    "diagnostic": null
+  },
+  "forks": {"status": "UNKNOWN", "value": null, "source": "example", "observed_at": "2026-01-01T00:00:00Z", "diagnostic": "example missing value"},
+  "watchers": {"status": "UNKNOWN", "value": null, "source": "example", "observed_at": "2026-01-01T00:00:00Z", "diagnostic": "example missing value"},
+  "open_issues": {"status": "UNKNOWN", "value": null, "source": "example", "observed_at": "2026-01-01T00:00:00Z", "diagnostic": "example missing value"},
+  "contributors": {"status": "UNKNOWN", "value": null, "source": "example", "observed_at": "2026-01-01T00:00:00Z", "diagnostic": "example missing value"},
+  "pull_requests": {"status": "UNKNOWN", "value": null, "source": "example", "observed_at": "2026-01-01T00:00:00Z", "diagnostic": "example missing value"},
+  "traffic_views": {"status": "UNKNOWN", "value": null, "source": "example", "observed_at": "2026-01-01T00:00:00Z", "diagnostic": "token unavailable"},
+  "traffic_unique_visitors": {"status": "UNKNOWN", "value": null, "source": "example", "observed_at": "2026-01-01T00:00:00Z", "diagnostic": "token unavailable"},
+  "clones": {"status": "UNKNOWN", "value": null, "source": "example", "observed_at": "2026-01-01T00:00:00Z", "diagnostic": "token unavailable"},
+  "release_downloads": {"status": "UNKNOWN", "value": null, "source": "example", "observed_at": "2026-01-01T00:00:00Z", "diagnostic": "release unavailable"},
+  "skills_installs": {"status": "UNKNOWN", "value": null, "source": "example", "observed_at": "2026-01-01T00:00:00Z", "diagnostic": "skills unavailable"},
+  "referrers": []
+}

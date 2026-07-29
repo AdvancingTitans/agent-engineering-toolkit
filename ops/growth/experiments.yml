@@ -1,0 +1,29 @@
+schema_version: aet-growth-experiments/v1
+experiments:
+  - id: hero-stale-proof
+    hypothesis: >-
+      A one-command stale-proof demo will improve qualified Star conversion
+      compared with a feature-first README.
+    primary_metric: stars_per_unique_visitor
+    secondary_metrics:
+      - release_downloads
+      - skills_installs
+      - genuine_interactions
+    guardrails:
+      - no_product_telemetry
+      - no_incentivized_stars
+      - no_claim_generalization
+    stop_rule: >-
+      Stop or rewrite if two qualified distribution events produce less than
+      1 percent Star conversion and no external use case.
+  - id: installed-wheel-activation
+    hypothesis: >-
+      Removing the clone requirement will reduce first-run friction.
+    primary_metric: successful_installed_demo_runs
+    secondary_metrics:
+      - release_downloads
+      - installation_issues
+    guardrails:
+      - aggregate_repository_metrics_only
+      - exact_release_artifact
+    stop_rule: Stop external distribution on any P0 installation failure.

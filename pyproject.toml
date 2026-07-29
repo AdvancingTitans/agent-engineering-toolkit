@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "agent-engineering-toolkit"
-version = "1.17.0"
-description = "Portable evidence, bounded localization, and read-only planning for AI coding work."
+version = "1.18.0"
+description = "Proof-carrying workflows for coding agents: bind tests to exact code and detect stale evidence."
 readme = "PYPI_README.md"
 requires-python = ">=3.11"
 license = "MIT"
@@ -13,9 +13,15 @@ authors = [{ name = "AdvancingTitans" }]
 keywords = [
   "ai-agents",
   "coding-agents",
+  "agentic-coding",
+  "agent-skills",
   "codex",
   "claude-code",
   "evidence",
+  "provenance",
+  "reproducibility",
+  "software-testing",
+  "github-actions",
   "code-review",
 ]
 classifiers = [
@@ -44,7 +50,13 @@ dev = ["pytest>=9.0"]
 where = ["src"]
 
 [tool.setuptools.package-data]
-aet = ["rulepacks_builtin.json", "atlas/assets/*"]
+aet = [
+  "rulepacks_builtin.json",
+  "atlas/assets/*",
+  "demo/fixtures/stale-proof/manifest.json",
+  "demo/fixtures/stale-proof/repo/src/*.py",
+  "demo/fixtures/stale-proof/repo/tests/*.py",
+]
 
 [tool.setuptools.data-files]
 "share/aet/schemas" = ["schemas/*.json"]
@@ -54,6 +66,7 @@ aet = ["rulepacks_builtin.json", "atlas/assets/*"]
 "share/aet/schemas/evidence-atlas/v1" = ["schemas/evidence-atlas/v1/*.json"]
 "share/aet/schemas/optimization/v1" = ["schemas/optimization/v1/*.json"]
 "share/aet/schemas/planning" = ["schemas/planning/*.json"]
+"share/aet/schemas/demo/v1" = ["schemas/demo/v1/*.json"]
 "share/aet/evolution/audit/core" = ["tests/evolution/audit/core/*.json"]
 "share/aet/evolution/audit/validation" = ["tests/evolution/audit/validation/*.json"]
 "share/aet/evolution/audit/held_out" = ["tests/evolution/audit/held_out/*.json"]

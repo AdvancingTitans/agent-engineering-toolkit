@@ -1,0 +1,30 @@
+name: Integration
+description: Report or propose a verified host or CI integration.
+title: "integration: "
+labels: [integration]
+body:
+  - type: input
+    id: host
+    attributes:
+      label: Host and exact version
+    validations:
+      required: true
+  - type: textarea
+    id: install
+    attributes:
+      label: Installation and invocation
+      render: shell
+    validations:
+      required: true
+  - type: textarea
+    id: permissions
+    attributes:
+      label: Read, write, command, network, and secret permissions
+    validations:
+      required: true
+  - type: textarea
+    id: failure
+    attributes:
+      label: Sanitized failure log or successful smoke evidence
+    validations:
+      required: true

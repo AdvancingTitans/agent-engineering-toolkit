@@ -1,0 +1,66 @@
+name: AET Evidence
+description: Run one read-only AET check, scope, or freshness surface.
+branding:
+  icon: check-circle
+  color: blue
+inputs:
+  mode:
+    description: check, scope, or fresh
+    required: true
+  version:
+    description: Exact AET version
+    required: true
+  path:
+    description: Repository root
+    required: false
+    default: .
+  base:
+    description: Git base for scope
+    required: false
+  intent:
+    description: Intent path for scope
+    required: false
+  proof:
+    description: Proof path for fresh
+    required: false
+  format:
+    description: json or markdown
+    required: false
+    default: json
+  output:
+    description: Report path inside the workspace
+    required: false
+    default: .aet/aet-action-result.json
+outputs:
+  authoritative-status:
+    description: PASS, FAIL, or UNKNOWN
+    value: ${{ steps.run.outputs.authoritative-status }}
+  freshness-state:
+    description: Freshness state when mode is fresh
+    value: ${{ steps.run.outputs.freshness-state }}
+  report-path:
+    description: Written report path
+    value: ${{ steps.run.outputs.report-path }}
+runs:
+  using: composite
+  steps:
+    - uses: astral-sh/setup-uv@v5
+    - shell: bash
+      env:
+        AET_VERSION: ${{ inputs.version }}
+      run: |
+        case "$AET_VERSION" in
+          ''|*[!0-9.]*|.*|*.) echo "version must be an exact numeric release" >&2; exit 64 ;;
+        esac
+        uv tool install "agent-engineering-toolkit==$AET_VERSION"
+    - id: run
+      shell: bash
+      env:
+        MODE: ${{ inputs.mode }}
+        PATH_INPUT: ${{ inputs.path }}
+        BASE: ${{ inputs.base }}
+        INTENT: ${{ inputs.intent }}
+        PROOF: ${{ inputs.proof }}
+        FORMAT: ${{ inputs.format }}
+        OUTPUT: ${{ inputs.output }}
+      run: '"${{ github.action_path }}/run.sh"'

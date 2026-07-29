@@ -1,0 +1,15 @@
+title: "Show and tell: "
+labels: ["show and tell"]
+body:
+  - type: input
+    id: artifact
+    attributes:
+      label: Public repository or Evidence artifact
+    validations:
+      required: true
+  - type: textarea
+    id: case
+    attributes:
+      label: Reproduction, result, and limitations
+    validations:
+      required: true

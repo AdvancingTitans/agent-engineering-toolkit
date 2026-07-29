@@ -1,0 +1,20 @@
+{
+  "schema_version": "aet-demo-manifest/v1",
+  "demo_id": "stale-proof",
+  "title": "Detect proof made stale by a relevant source change",
+  "fixture_path": "fixtures/stale-proof/repo",
+  "command": ["${PYTHON}", "-m", "unittest", "discover", "-s", "tests"],
+  "relevant_paths": ["src/calc.py", "tests/test_calc.py"],
+  "expected_before": "EXACT_MATCH",
+  "expected_after": "RELEVANT_FILES_CHANGED",
+  "mutations": [
+    {
+      "path": "src/calc.py",
+      "operation": "replace_text",
+      "old": "return left + right",
+      "new": "return left - right",
+      "expected_old_sha256": "135eae22f854bb5f678e3d2c30a1dd3f1963897dcb725052c8eaa67b19e4b3fa"
+    }
+  ],
+  "timeout_seconds": 30
+}

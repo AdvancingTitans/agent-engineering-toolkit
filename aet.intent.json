@@ -1,31 +1,43 @@
 {
-  "intent": "Ship AET Repository Audit Showcase v1 with three commit-locked, static, evidence-first repository cases, deterministic findings, offline reports, and no third-party code execution or source redistribution.",
-  "changed_path_budget": 66,
+  "intent": "Prepare the repository-side deliverables for the AET v1.18.0 Activation and Distribution release without publishing, changing remote settings, weakening Evidence authority, or modifying preserved user inputs.",
+  "changed_path_budget": 180,
   "allowed_paths": [
-    "aet.intent.json",
+    ".github/**",
+    ".gitignore",
+    "AGENTS.md",
     "CHANGELOG.md",
-    "README.md",
-    "docs/README.zh-CN.md",
+    "CODE_OF_CONDUCT.md",
+    "CONTRIBUTING.md",
+    "GOVERNANCE.md",
     "PROJECT_MEMORY.md",
-    ".github/ISSUE_TEMPLATE/dogfood-case-study.yml",
-    "docs/assets/aet-architecture-dark-luxury.gif",
-    "docs/assets/aet-architecture-dark-luxury.svg",
-    "docs/assets/aet-architecture-dark-luxury-zh-cn.gif",
-    "docs/assets/aet-architecture-dark-luxury-zh-cn.svg",
+    "PYPI_README.md",
+    "README.md",
+    "ROADMAP.md",
+    "SECURITY.md",
+    "SUPPORT.md",
+    "aet-github-star-growth-delivery-package.md",
+    "aet-evidence-guided-planner-delivery-package.md",
+    "aet.intent.json",
+    "docs/**",
+    "integrations/**",
+    "ops/**",
     "pyproject.toml",
-    "release-classification.json",
-    "uv.lock",
+    "schemas/demo/**",
+    "scripts/**",
+    "site/**",
+    "skills/README.md",
+    "skills/catalog.json",
     "src/aet/__init__.py",
     "src/aet/cli.py",
-    "src/aet/repository_audit.py",
-    "tests/test_business_quality_flows.py",
-    "tests/test_repository_audit.py",
-    "repository-audit-showcase/**",
-    "schemas/repository-audit-profile-v1.schema.json",
-    "schemas/repository-audit-result-v1.schema.json",
-    "skills/agent-engineering-toolkit/SKILL.md",
-    "skills/agent-engineering-toolkit/agents/openai.yaml",
-    "skills/agent-engineering-toolkit/references/repository-audit-showcase.md"
+    "src/aet/demo/**",
+    "src/aet/evidence.py",
+    "src/aet/quick/proof.py",
+    "tests/demo/**",
+    "tests/growth/**",
+    "tests/snapshots/**",
+    "uv.lock",
+    "\"\\346\\211\\247\\350\\241\\214\\346\\212\\245\\345\\221\\212.md\"",
+    "执行报告.md"
   ],
   "required_proofs": [
     {
@@ -36,17 +48,24 @@
       ]
     },
     {
-      "id": "repository-audit",
-      "command": "uv run --no-editable python -m unittest tests.test_repository_audit",
+      "id": "full-regression",
+      "command": "uv run --no-editable python -m unittest discover -s tests",
       "evidence": [
-        ".aet/evidence/v1.12-repository-audit.json"
+        ".aet/release/full-tests.txt"
       ]
     },
     {
-      "id": "regression",
-      "command": "uv run --no-editable python -m unittest discover -s tests",
+      "id": "installed-wheel-demo",
+      "command": "uv run --no-editable python scripts/verify_installed_demo.py",
       "evidence": [
-        ".aet/evidence/v1.12-regression.json"
+        ".aet/release/wheel-demo.txt"
+      ]
+    },
+    {
+      "id": "launch-readiness",
+      "command": "python scripts/growth/validate_launch.py --strict",
+      "evidence": [
+        ".aet/release/readiness.txt"
       ]
     }
   ]

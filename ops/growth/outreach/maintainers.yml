@@ -1,0 +1,8 @@
+schema_version: aet-growth-maintainer-feedback/v1
+maximum_targets: 10
+targets: []
+rules:
+  - request technical feedback, never a Star
+  - contact only maintainers with direct workflow relevance
+  - write each message manually for its context
+  - do not store bulk direct-message copy

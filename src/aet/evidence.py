@@ -7,6 +7,7 @@ import html
 import json
 import os
 import re
+import signal
 import subprocess
 import tempfile
 from datetime import UTC, datetime
@@ -42,6 +43,7 @@ def trace_command(
     redaction_patterns: Iterable[str] = (),
     proof: dict[str, Any] | None = None,
     artifact_paths: Iterable[str] = (),
+    timeout_seconds: float | None = None,
 ) -> tuple[dict[str, Any], int]:
     """Run one explicit argv command and persist only redacted command evidence."""
     if not argv:
@@ -53,13 +55,16 @@ def trace_command(
     artifacts_before = [_capture_artifact(path, cwd, patterns) for path in artifacts_to_capture]
     started_at = _timestamp()
     try:
-        completed = subprocess.run(argv, cwd=cwd, capture_output=True, check=False)
-        exit_code = completed.returncode
-        stdout_bytes, stderr_bytes = completed.stdout, completed.stderr
+        exit_code, stdout_bytes, stderr_bytes, timed_out = _run_trace_process(
+            argv,
+            cwd=cwd,
+            timeout_seconds=timeout_seconds,
+        )
     except FileNotFoundError as error:
         exit_code = 127
         stdout_bytes = b""
         stderr_bytes = str(error).encode("utf-8", errors="replace")
+        timed_out = False
     finished_at = _timestamp()
 
     redacted_argv, argv_status = _redact_argv(argv, patterns)
@@ -112,7 +117,11 @@ def trace_command(
             "argv": redacted_argv,
             "argv_sha256": _argv_digest(argv, redacted_argv),
             "argv_status": argv_status,
-            "execution": {"status": execution_status, "exit_code": exit_code},
+            "execution": {
+                "status": execution_status,
+                "exit_code": exit_code,
+                **({"timed_out": True} if timed_out else {}),
+            },
             "started_at": started_at,
             "finished_at": finished_at,
             "working_directory": str(cwd),
@@ -129,6 +138,44 @@ def trace_command(
     # A missing report must fail a CI invocation without rewriting a successful
     # child exit status as though the command itself failed.
     return data, exit_code if exit_code else (1 if any(item["status"] != Status.PASS.value for item in artifacts) else 0)
+
+
+def _run_trace_process(
+    argv: list[str],
+    *,
+    cwd: Path,
+    timeout_seconds: float | None,
+) -> tuple[int, bytes, bytes, bool]:
+    if timeout_seconds is None:
+        completed = subprocess.run(argv, cwd=cwd, capture_output=True, check=False)
+        return completed.returncode, completed.stdout, completed.stderr, False
+    if (
+        isinstance(timeout_seconds, bool)
+        or not isinstance(timeout_seconds, (int, float))
+        or timeout_seconds <= 0
+    ):
+        raise EvidenceError("trace timeout_seconds must be a positive number")
+    options: dict[str, Any] = {
+        "cwd": cwd,
+        "stdout": subprocess.PIPE,
+        "stderr": subprocess.PIPE,
+    }
+    if os.name == "nt":
+        options["creationflags"] = subprocess.CREATE_NEW_PROCESS_GROUP
+    else:
+        options["start_new_session"] = True
+    process = subprocess.Popen(argv, **options)
+    try:
+        stdout_bytes, stderr_bytes = process.communicate(timeout=timeout_seconds)
+        return process.returncode, stdout_bytes, stderr_bytes, False
+    except subprocess.TimeoutExpired:
+        if os.name == "nt":
+            process.kill()
+        else:
+            os.killpg(process.pid, signal.SIGKILL)
+        stdout_bytes, stderr_bytes = process.communicate()
+        message = f"\naet: command timed out after {timeout_seconds:g} seconds\n".encode()
+        return 124, stdout_bytes, stderr_bytes + message, True
 
 
 def reuse_trace_command(

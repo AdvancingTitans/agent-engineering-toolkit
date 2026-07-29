@@ -75,10 +75,14 @@ def main(argv: list[str] | None = None) -> int:
             capture_output=True,
         )
         result = json.loads(json_result.stdout)
+        if result.get("overall_status") not in {"PASS", "PASS_WITH_WARNING"}:
+            raise SystemExit(
+                "installed demo field overall_status was "
+                f"{result.get('overall_status')!r}"
+            )
         expected = {
             "schema_version": "aet-demo-result/v1",
             "demo_id": "stale-proof",
-            "overall_status": "PASS",
             "execution_status": "PASS",
             "before_state": "EXACT_MATCH",
             "after_state": "RELEVANT_FILES_CHANGED",

@@ -15,3 +15,7 @@ class DemoWheelContractTests(unittest.TestCase):
         self.assertIn('"share/aet/schemas/demo/v1"', pyproject)
         attributes = (ROOT / ".gitattributes").read_text(encoding="utf-8")
         self.assertIn("src/aet/demo/fixtures/** text eol=lf", attributes)
+        verifier = (ROOT / "scripts/verify_installed_demo.py").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn('{"PASS", "PASS_WITH_WARNING"}', verifier)

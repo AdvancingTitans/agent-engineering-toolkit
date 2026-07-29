@@ -3,7 +3,7 @@
   "release_tag": "v1.18.0",
   "base_tag": "v1.17.0",
   "changed_paths_sha256": "d69c94f01ef329999d7dbdcb07691378cc5f9eb428950a1317f5d4f3f0bfc8ef",
-  "changed_content_sha256": "97f4786f69f6a760531c56d6eae80cb69f5abf70acacd525a54fbf54abc4f850",
+  "changed_content_sha256": "494e0a0b35b46039503d5c994e58330dd9d60a40825fb35b070952ddffc550f1",
   "release_class": "deterministic",
   "real_host_gate": "NOT_APPLICABLE",
   "observed_behavior_claims": [],

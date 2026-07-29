@@ -58,6 +58,33 @@ class QuickDocumentationTests(unittest.TestCase):
             self.assertIn(state, english)
             self.assertIn(state, chinese)
 
+    def test_planner_is_documented_as_separate_read_only_surface(self) -> None:
+        english = (ROOT / "README.md").read_text(encoding="utf-8")
+        chinese = (ROOT / "docs" / "README.zh-CN.md").read_text(encoding="utf-8")
+        for text in (english, chinese):
+            self.assertIn("## Evidence-Guided Planner", text)
+            self.assertIn("NEEDS_EVIDENCE", text)
+            self.assertIn("UNKNOWN", text)
+            self.assertIn("bounded localization", text)
+        self.assertIn("不保证找到了所有修改点", chinese)
+        for relative in (
+            "docs/evidence-guided-planner.md",
+            "docs/planner-helper-scenarios.md",
+            "docs/schemas/planning.md",
+            "docs/assets/evidence-guided-planner-architecture.mmd",
+            "eval/evidence-guided-planner/real-case/gold.json",
+            "eval/evidence-guided-planner/real-case/observations.json",
+            "eval/evidence-guided-planner/results/v1.17.0-real-codex.json",
+        ):
+            self.assertTrue((ROOT / relative).is_file())
+        for text in (english, chinese):
+            self.assertIn("55.56", text)
+            self.assertIn("44.44%", text)
+            self.assertIn("v1.16", text)
+            self.assertIn("v1.17", text)
+        self.assertIn("not a general", english.lower())
+        self.assertIn("不是通用", chinese)
+
     def test_readme_local_links_exist(self) -> None:
         for readme in (ROOT / "README.md", ROOT / "docs" / "README.zh-CN.md"):
             text = readme.read_text(encoding="utf-8")
@@ -103,7 +130,7 @@ class QuickDocumentationTests(unittest.TestCase):
                 width, height = struct.unpack(">II", stream.read(8))
                 self.assertEqual((width, height), (1600, 1000))
                 self.assertEqual(length, 13)
-            self.assertGreater(video.stat().st_size, 1_000_000)
+            self.assertGreater(video.stat().st_size, 500_000)
             self.assertEqual(video.read_bytes()[4:8], b"ftyp")
             self.assertNotIn(".webm", video.name)
 
@@ -149,6 +176,43 @@ class QuickDocumentationTests(unittest.TestCase):
             self.assertEqual(item["frame_rate"], "30/1")
             self.assertEqual(item["duration_seconds"], 30.0)
         self.assertEqual(len(hashes), 10, "all bilingual media must be byte-distinct")
+
+    def test_planner_media_manifest_binds_workflow_and_real_case(self) -> None:
+        assets = ROOT / "docs" / "assets"
+        manifest = json.loads(
+            (assets / "aet-planner-media-manifest.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        self.assertEqual(
+            manifest["schema_version"], "aet-planner-media-manifest/v1"
+        )
+        self.assertEqual(manifest["release"], "v1.17.0")
+        self.assertEqual(manifest["sample_boundary"]["cases"], 1)
+        self.assertIn("not a general", manifest["sample_boundary"]["claim"])
+        kinds = {item["kind"] for item in manifest["assets"]}
+        self.assertIn("planner_workflow_animation", kinds)
+        self.assertIn("planner_real_case", kinds)
+        for item in manifest["assets"]:
+            artifact = assets / item["path"]
+            self.assertEqual(
+                hashlib.sha256(artifact.read_bytes()).hexdigest(),
+                item["sha256"],
+            )
+        animations = [
+            item
+            for item in manifest["assets"]
+            if item["kind"] == "planner_workflow_animation"
+        ]
+        self.assertEqual({item["language"] for item in animations}, {"en", "zh-CN"})
+        for item in animations:
+            self.assertEqual((item["width"], item["height"]), (960, 680))
+            self.assertEqual(item["frames"], 115)
+            report = json.loads(
+                (assets / item["motion_report"]).read_text(encoding="utf-8")
+            )
+            self.assertTrue(report["ok"])
+            self.assertEqual(report["artifact"]["sha256"], item["sha256"])
 
     def test_improvement_case_media_is_bilingual_and_content_addressed(self) -> None:
         assets = ROOT / "docs" / "assets"

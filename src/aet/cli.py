@@ -75,6 +75,27 @@ from .improvement.cli.improve import (
     validate_candidate_file,
     verify_issue,
 )
+from .planning.candidate_parser import parse_candidate, strict_json_loads
+from .planning.context_builder import build_planning_context
+from .planning.errors import PlanningError
+from .planning.handoff import build_verification_handoff_from_package
+from .planning.helper import explain_edit as explain_plan_edit
+from .planning.helper import list_gaps as list_plan_gaps
+from .planning.helper import show_plan, trace_path as trace_plan_path
+from .planning.models import (
+    PlanningBudgets,
+    PlanningContext,
+    PlanningRequest,
+    canonical_json_bytes as planning_json_bytes,
+    model_from_mapping,
+)
+from .planning.package_builder import (
+    build_plan_package,
+    validate_plan_package,
+)
+from .planning.request_normalizer import RequestOverrides, normalize_request
+from .planning.skill_exporter import export_plan_skill
+from .planning.validator import validate_plan_candidate
 
 
 def _perspective_selection(value: str) -> tuple[str, ...]:
@@ -498,6 +519,82 @@ def build_parser() -> argparse.ArgumentParser:
         help="Generate deterministic evidence-grounded improvements.",
     )
     improve_parser.add_argument("arguments", nargs="+")
+    plan_parser = commands.add_parser(
+        "plan",
+        help="Build and validate read-only Evidence-Guided Plans.",
+    )
+    plan_commands = plan_parser.add_subparsers(
+        dest="plan_command",
+        required=True,
+    )
+    plan_context = plan_commands.add_parser(
+        "context",
+        help="Build a deterministic Planning Context for a Host Planner.",
+    )
+    plan_context.add_argument("--workspace", type=Path, default=Path("."))
+    request_input = plan_context.add_mutually_exclusive_group(required=True)
+    request_input.add_argument("--request", type=Path)
+    request_input.add_argument("--request-text")
+    plan_context.add_argument("--bundle", type=Path)
+    plan_context.add_argument("--atlas", type=Path)
+    plan_context.add_argument("--output", required=True, type=Path)
+    plan_context.add_argument("--allowed-path", action="append", default=[])
+    plan_context.add_argument("--protected-path", action="append", default=[])
+    plan_context.add_argument("--verification", action="append", default=[])
+    plan_context.add_argument("--max-nodes", type=int, default=10_000)
+    plan_context.add_argument("--max-source-files", type=int, default=200)
+    plan_context.add_argument("--max-source-bytes", type=int, default=2_000_000)
+    plan_context.add_argument("--max-edit-items", type=int, default=100)
+    plan_context.add_argument("--max-depth", type=int, default=4)
+    plan_validate_candidate = plan_commands.add_parser(
+        "validate-candidate",
+        help="Validate strict Host Plan Candidate JSON and write a Plan package.",
+    )
+    plan_validate_candidate.add_argument("--context", required=True, type=Path)
+    plan_validate_candidate.add_argument("--candidate", required=True, type=Path)
+    plan_validate_candidate.add_argument("--output", required=True, type=Path)
+    plan_validate = plan_commands.add_parser(
+        "validate",
+        help="Validate an existing portable Plan package.",
+    )
+    plan_validate.add_argument("plan", type=Path)
+    plan_show = plan_commands.add_parser("show", help="Render one validated Plan.")
+    plan_show.add_argument("plan", type=Path)
+    plan_explain = plan_commands.add_parser(
+        "explain",
+        help="Explain one validated Edit Item without creating facts.",
+    )
+    plan_explain.add_argument("plan", type=Path)
+    plan_explain.add_argument("--edit", required=True)
+    plan_trace = plan_commands.add_parser(
+        "trace",
+        help="Trace one Plan path to its recorded references.",
+    )
+    plan_trace.add_argument("plan", type=Path)
+    plan_trace.add_argument("--path", required=True)
+    plan_gaps = plan_commands.add_parser(
+        "gaps",
+        help="List recorded gaps, conflicts, and unknowns.",
+    )
+    plan_gaps.add_argument("plan", type=Path)
+    plan_export_skill = plan_commands.add_parser(
+        "export-skill",
+        help="Export one validated Plan as a minimal read-only Host Skill.",
+    )
+    plan_export_skill.add_argument("plan", type=Path)
+    plan_export_skill.add_argument(
+        "--target",
+        choices=("codex", "claude-code", "generic"),
+        required=True,
+    )
+    plan_export_skill.add_argument("--output", required=True, type=Path)
+    plan_handoff = plan_commands.add_parser(
+        "verification-handoff",
+        help="Map an external unified diff to pending Proof requests without execution.",
+    )
+    plan_handoff.add_argument("plan", type=Path)
+    plan_handoff.add_argument("--diff", required=True, type=Path)
+    plan_handoff.add_argument("--output", required=True, type=Path)
     mcp_parser = commands.add_parser(
         "mcp",
         help="Serve the optional Portable Evidence Bundle MCP convenience layer.",
@@ -760,6 +857,109 @@ def main(argv: Sequence[str] | None = None) -> int:
             return 0 if report.get("valid", True) else 1
         except (BundleError, OSError, ValueError) as error:
             raise SystemExit(f"aet: improve failed: {error}") from error
+    if args.command == "plan":
+        try:
+            if args.plan_command == "context":
+                request = _planning_request_from_args(args)
+                context = build_planning_context(
+                    request,
+                    workspace=args.workspace,
+                    bundle_path=args.bundle,
+                    atlas_path=args.atlas,
+                    budgets=request.budgets,
+                )
+                _write_new_bytes(
+                    args.output,
+                    planning_json_bytes(context),
+                )
+                report = {
+                    "schema_version": "planning-context-build/1.0",
+                    "status": "PASS",
+                    "request_id": context.request.request_id,
+                    "bundle_identity": context.request.bundle_identity,
+                    "atlas_identity": context.request.atlas_identity,
+                    "source_site_count": len(context.source_sites),
+                    "gap_count": len(context.gaps),
+                    "output": str(args.output),
+                }
+                print(render_json(report), end="")
+                return 0
+            if args.plan_command == "validate-candidate":
+                context = _load_planning_context(args.context)
+                candidate = parse_candidate(args.candidate.read_bytes())
+                result = validate_plan_candidate(context, candidate)
+                output = build_plan_package(context, result, args.output)
+                report = {
+                    "schema_version": "plan-candidate-validation/1.0",
+                    "plan_id": result.plan["plan_id"],
+                    "status": result.status,
+                    "authority": "PROPOSED",
+                    "diagnostic_count": len(result.diagnostics),
+                    "output": str(output),
+                }
+                print(render_json(report), end="")
+                return _planning_status_exit(result.status)
+            if args.plan_command == "validate":
+                print(render_json(validate_plan_package(args.plan)), end="")
+                return 0
+            if args.plan_command == "show":
+                print(show_plan(args.plan), end="")
+                return 0
+            if args.plan_command == "explain":
+                print(render_json(explain_plan_edit(args.plan, args.edit)), end="")
+                return 0
+            if args.plan_command == "trace":
+                print(render_json(trace_plan_path(args.plan, args.path)), end="")
+                return 0
+            if args.plan_command == "export-skill":
+                output = export_plan_skill(
+                    args.plan,
+                    args.output,
+                    target=args.target,
+                )
+                print(
+                    render_json(
+                        {
+                            "schema_version": "plan-skill-export-result/1.0",
+                            "status": "PASS",
+                            "target": args.target,
+                            "output": str(output),
+                        }
+                    ),
+                    end="",
+                )
+                return 0
+            if args.plan_command == "verification-handoff":
+                handoff = build_verification_handoff_from_package(
+                    args.plan,
+                    args.diff.read_bytes(),
+                )
+                _write_new_bytes(
+                    args.output,
+                    planning_json_bytes(handoff),
+                )
+                print(
+                    render_json(
+                        {
+                            "schema_version": "verification-handoff-result/1.0",
+                            "status": handoff["status"],
+                            "plan_id": handoff["plan_id"],
+                            "handoff_id": handoff["handoff_id"],
+                            "verification_status": "UNKNOWN",
+                            "output": str(args.output),
+                        }
+                    ),
+                    end="",
+                )
+                return 0
+            print(render_json(list_plan_gaps(args.plan)), end="")
+            return 0
+        except (PlanningError, OSError, UnicodeError, ValueError) as error:
+            print(
+                f"aet: plan {args.plan_command} failed: {error}",
+                file=sys.stderr,
+            )
+            return 2
     if args.command == "mcp":
         from .mcp_server import serve_stdio
 
@@ -1287,6 +1487,80 @@ def _load_portable_json(path: Path, label: str) -> dict[str, object]:
     if not isinstance(value, dict):
         raise ValueError(f"{label} must be a JSON object")
     return value
+
+
+def _planning_request_from_args(args: argparse.Namespace) -> PlanningRequest:
+    budgets = PlanningBudgets(
+        max_nodes=args.max_nodes,
+        max_source_files=args.max_source_files,
+        max_source_bytes=args.max_source_bytes,
+        max_edit_items=args.max_edit_items,
+        max_depth=args.max_depth,
+    )
+    if args.request is not None and args.request.suffix.casefold() == ".json":
+        value = strict_json_loads(
+            args.request.read_bytes(),
+            label="Planning Request",
+        )
+        if not isinstance(value, dict):
+            raise PlanningError(
+                "INVALID_REQUEST",
+                "Planning Request JSON must contain one object",
+            )
+        if any(
+            (
+                args.allowed_path,
+                args.protected_path,
+                args.verification,
+            )
+        ):
+            raise PlanningError(
+                "INVALID_REQUEST",
+                "JSON Planning Request cannot be combined with path or verification overrides",
+            )
+        request = model_from_mapping(PlanningRequest, value)
+        return request
+    raw_text = (
+        args.request_text
+        if args.request_text is not None
+        else args.request.read_text(encoding="utf-8")
+    )
+    return normalize_request(
+        raw_text,
+        workspace=args.workspace,
+        explicit=RequestOverrides(
+            allowed_paths=list(args.allowed_path),
+            protected_paths=list(args.protected_path),
+            required_verification=list(args.verification),
+            budgets=budgets,
+        ),
+    )
+
+
+def _load_planning_context(path: Path) -> PlanningContext:
+    value = strict_json_loads(path.read_bytes(), label="Planning Context")
+    if not isinstance(value, dict):
+        raise PlanningError(
+            "INVALID_REQUEST",
+            "Planning Context must contain one object",
+        )
+    try:
+        return model_from_mapping(PlanningContext, value)
+    except (KeyError, TypeError, ValueError) as error:
+        raise PlanningError(
+            "INVALID_REQUEST",
+            "Planning Context shape is invalid",
+        ) from error
+
+
+def _planning_status_exit(status: str) -> int:
+    return {
+        "READY_FOR_HUMAN_REVIEW": 0,
+        "NEEDS_EVIDENCE": 3,
+        "PARTIAL": 4,
+        "BLOCKED": 5,
+        "SUPERSEDED": 5,
+    }.get(status, 6)
 
 
 def _portable_unique_object(pairs: list[tuple[str, object]]) -> dict[str, object]:

@@ -1,0 +1,153 @@
+{
+  "categories": {
+    "config_docs": 2,
+    "cross_module_behavior": 5,
+    "implementation_test": 3,
+    "protected_path": 1,
+    "schema_runtime": 3,
+    "single_file_behavior": 4,
+    "stale_evidence": 1,
+    "unresolved_conflict": 1
+  },
+  "fixture_count": 20,
+  "gold_provenance": {
+    "generated_by_planner_under_test": false,
+    "method": "independently authored localization contracts",
+    "status": "FROZEN"
+  },
+  "groups": {
+    "bundle": {
+      "auxiliary": {
+        "median_tokens": 1465.0,
+        "p95_duration_ms": 450
+      },
+      "conflict_preservation_rate": 1.0,
+      "counts": {
+        "protected_paths": 0,
+        "recommended_paths": 34,
+        "references": 34,
+        "required_paths": 32,
+        "required_tests": 24,
+        "resolved_references": 34,
+        "ungrounded_paths": 0
+      },
+      "critical_linkage_omission_rate": 0.0,
+      "plan_explainability_rate": 0.9412,
+      "protected_path_rate": 0.0,
+      "recommended_path_precision": 1.0,
+      "reference_resolution_rate": 1.0,
+      "required_path_recall": 1.0,
+      "required_test_recall": 0.875,
+      "ungrounded_path_rate": 0.0,
+      "unknown_preservation_rate": 1.0
+    },
+    "planner_protocol": {
+      "auxiliary": {
+        "median_tokens": 1215.0,
+        "p95_duration_ms": 195
+      },
+      "conflict_preservation_rate": 1.0,
+      "counts": {
+        "protected_paths": 0,
+        "recommended_paths": 34,
+        "references": 34,
+        "required_paths": 32,
+        "required_tests": 24,
+        "resolved_references": 34,
+        "ungrounded_paths": 1
+      },
+      "critical_linkage_omission_rate": 0.0,
+      "plan_explainability_rate": 1.0,
+      "protected_path_rate": 0.0,
+      "recommended_path_precision": 0.9706,
+      "reference_resolution_rate": 1.0,
+      "required_path_recall": 1.0,
+      "required_test_recall": 1.0,
+      "ungrounded_path_rate": 0.0294,
+      "unknown_preservation_rate": 1.0
+    },
+    "source_only": {
+      "auxiliary": {
+        "median_tokens": 1120.0,
+        "p95_duration_ms": 330
+      },
+      "conflict_preservation_rate": 0.0,
+      "counts": {
+        "protected_paths": 1,
+        "recommended_paths": 24,
+        "references": 24,
+        "required_paths": 32,
+        "required_tests": 24,
+        "resolved_references": 13,
+        "ungrounded_paths": 3
+      },
+      "critical_linkage_omission_rate": 0.625,
+      "plan_explainability_rate": 0.8333,
+      "protected_path_rate": 0.0417,
+      "recommended_path_precision": 0.875,
+      "reference_resolution_rate": 0.5417,
+      "required_path_recall": 0.625,
+      "required_test_recall": 0.375,
+      "ungrounded_path_rate": 0.125,
+      "unknown_preservation_rate": 0.0
+    }
+  },
+  "planner_thresholds": {
+    "conflict_preservation_rate": {
+      "actual": 1.0,
+      "operator": "==",
+      "pass": true,
+      "target": 1.0
+    },
+    "critical_linkage_omission_rate": {
+      "actual": 0.0,
+      "operator": "<=",
+      "pass": true,
+      "target": 0.1
+    },
+    "protected_path_rate": {
+      "actual": 0.0,
+      "operator": "==",
+      "pass": true,
+      "target": 0.0
+    },
+    "recommended_path_precision": {
+      "actual": 0.9706,
+      "operator": ">=",
+      "pass": true,
+      "target": 0.8
+    },
+    "reference_resolution_rate": {
+      "actual": 1.0,
+      "operator": "==",
+      "pass": true,
+      "target": 1.0
+    },
+    "required_path_recall": {
+      "actual": 1.0,
+      "operator": ">=",
+      "pass": true,
+      "target": 0.9
+    },
+    "required_test_recall": {
+      "actual": 1.0,
+      "operator": ">=",
+      "pass": true,
+      "target": 0.85
+    },
+    "ungrounded_path_rate": {
+      "actual": 0.0294,
+      "operator": "<=",
+      "pass": true,
+      "target": 0.05
+    },
+    "unknown_preservation_rate": {
+      "actual": 1.0,
+      "operator": "==",
+      "pass": true,
+      "target": 1.0
+    }
+  },
+  "schema_version": "evidence-guided-planner-benchmark/1.0",
+  "status": "PASS"
+}

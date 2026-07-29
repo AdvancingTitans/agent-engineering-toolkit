@@ -26,6 +26,14 @@ from aet.atlas.validator import (
     validate_evidence_atlas,
     validate_evidence_graph,
 )
+from .planning import (
+    build_verification_handoff,
+    explain_edit,
+    load_plan,
+    query_plan_edits,
+    render_planner_context,
+    validate_plan,
+)
 
 
 def query_claims(
@@ -202,14 +210,19 @@ def _records(bundle: Mapping[str, Any], field: str) -> list[dict[str, Any]]:
 __all__ = [
     "BundleError",
     "build_evidence_graph",
+    "build_verification_handoff",
     "get_node_subgraph",
     "load_bundle",
     "load_evidence_graph",
+    "load_plan",
+    "explain_edit",
     "query_perspective",
+    "query_plan_edits",
     "query_claims",
     "query_evidence",
     "read_blob",
     "render_prompt_context",
+    "render_planner_context",
     "render_mermaid",
     "resolve_source",
     "trace_claim_support",
@@ -218,4 +231,5 @@ __all__ = [
     "validate_evidence_atlas",
     "validate_evidence_graph",
     "validate_review_references",
+    "validate_plan",
 ]

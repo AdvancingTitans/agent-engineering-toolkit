@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "mode": "memory",
+  "template_type": "memory",
+  "style": 1,
+  "motion_scene": "memory-weave",
+  "quality_profile": "showcase",
+  "width": 960,
+  "height": 680,
+  "title": "AET v1.17 Evidence-Guided Planner",
+  "subtitle": "evidence-bound scope localization before a code Agent edits",
+  "containers": [
+    {"id": "input-layer", "x": 40, "y": 110, "width": 880, "height": 110, "label": "Developer request + recorded evidence"},
+    {"id": "planning-core", "x": 40, "y": 260, "width": 880, "height": 140, "label": "Read-only planning boundary"},
+    {"id": "handoff-layer", "x": 40, "y": 440, "width": 880, "height": 140, "label": "Portable plan consumption + pending verification"}
+  ],
+  "nodes": [
+    {"id": "user", "kind": "user_avatar", "x": 60, "y": 145, "width": 120, "height": 54, "label": "Developer", "fill": "#eff6ff", "stroke": "#3b82f6", "flat": true},
+    {"id": "app", "kind": "rect", "x": 280, "y": 145, "width": 160, "height": 54, "label": "Review request", "sublabel": "goal · constraints", "fill": "#ffffff", "stroke": "#cbd5e1", "flat": true},
+    {"id": "llm", "kind": "double_rect", "x": 560, "y": 145, "width": 140, "height": 54, "label": "Bundle + Atlas", "sublabel": "current source hashes", "fill": "#faf5ff", "stroke": "#8b5cf6", "flat": true},
+    {"id": "extractor", "kind": "rect", "x": 100, "y": 320, "width": 170, "height": 60, "label": "Planning Context", "sublabel": "bounded candidates", "fill": "#fff7ed", "stroke": "#f97316", "flat": true},
+    {"id": "manager", "kind": "double_rect", "x": 390, "y": 320, "width": 180, "height": 60, "label": "Host Planner", "sublabel": "strict Candidate JSON", "fill": "#faf5ff", "stroke": "#8b5cf6", "flat": true},
+    {"id": "resolver", "kind": "rect", "x": 700, "y": 320, "width": 160, "height": 60, "label": "AET Validator", "sublabel": "refs · scope · UNKNOWN", "fill": "#fff7ed", "stroke": "#f97316", "flat": true},
+    {"id": "vector", "kind": "cylinder", "x": 100, "y": 500, "width": 160, "height": 60, "label": "PROPOSED Plan", "sublabel": "edits · tests · risks", "fill": "#ecfdf5", "stroke": "#10b981"},
+    {"id": "graph", "kind": "rect", "x": 400, "y": 500, "width": 160, "height": 60, "label": "Code Agent Planner", "sublabel": "read-only handoff", "fill": "#eff6ff", "stroke": "#3b82f6", "flat": true},
+    {"id": "response", "kind": "speech", "x": 700, "y": 500, "width": 160, "height": 60, "label": "Proof Handoff", "sublabel": "UNKNOWN · PENDING", "fill": "#faf5ff", "stroke": "#8b5cf6", "flat": true}
+  ],
+  "arrows": [
+    {"id": "request", "source": "user", "target": "app", "source_port": "right", "target_port": "left", "flow": "control", "motion_role": "ingress", "motion_stage": 1, "motion_order": 0, "label": "review"},
+    {"id": "reason", "source": "app", "target": "llm", "source_port": "right", "target_port": "left", "flow": "control", "motion_role": "reason", "motion_stage": 2, "motion_order": 0, "label": "evidence"},
+    {"id": "extract", "source": "app", "target": "extractor", "source_port": "bottom", "target_port": "top", "flow": "data", "motion_role": "extract", "motion_stage": 3, "motion_order": 0, "label": "bound", "corridor_y": [240]},
+    {"id": "facts", "source": "extractor", "target": "manager", "source_port": "right", "target_port": "left", "flow": "data", "motion_role": "transform", "motion_stage": 4, "motion_order": 0, "label": "context"},
+    {"id": "resolved", "source": "resolver", "target": "manager", "source_port": "left", "target_port": "right", "flow": "feedback", "motion_role": "resolve", "motion_stage": 4, "motion_order": 1, "label": "validate"},
+    {"id": "write", "source": "manager", "target": "vector", "source_port": "bottom", "target_port": "top", "flow": "write", "motion_role": "memory-write", "motion_stage": 5, "motion_order": 0, "label": "package", "corridor_y": [420]},
+    {"id": "relate", "source": "vector", "target": "graph", "source_port": "right", "target_port": "left", "flow": "read", "motion_role": "memory-read", "motion_stage": 6, "motion_order": 0, "label": "consume"},
+    {"id": "context", "source": "graph", "target": "response", "source_port": "right", "target_port": "left", "flow": "control", "motion_role": "response-context", "motion_stage": 7, "motion_order": 0, "label": "handoff"}
+  ],
+  "legend_orientation": "horizontal",
+  "legend_x": 48,
+  "legend_y": 600,
+  "legend_locked": true,
+  "legend": [
+    {"flow": "control", "label": "request / handoff"},
+    {"flow": "write", "label": "validated package"},
+    {"flow": "read", "label": "plan consumption"},
+    {"flow": "data", "label": "evidence context"}
+  ],
+  "footer": "Read-only · Plan authority PROPOSED · Proof remains UNKNOWN until executed",
+  "footer_x": 48,
+  "footer_y": 650
+}

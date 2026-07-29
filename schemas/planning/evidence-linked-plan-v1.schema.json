@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://advancingtitans.github.io/aet/schemas/planning/evidence-linked-plan-v1.schema.json",
+  "title": "AET Evidence-Linked Plan v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "plan_id",
+    "status",
+    "authority",
+    "request",
+    "summary",
+    "edit_items",
+    "investigation_items",
+    "verification_plan",
+    "conflicts",
+    "unknowns",
+    "diagnostics",
+    "source_identity",
+    "bundle_identity",
+    "atlas_identity",
+    "created_by"
+  ],
+  "properties": {
+    "schema_version": {"const": "evidence-linked-plan/1.0"},
+    "plan_id": {"type": "string", "pattern": "^PLAN-[A-Z0-9._-]+$"},
+    "status": {
+      "enum": [
+        "READY_FOR_HUMAN_REVIEW",
+        "NEEDS_EVIDENCE",
+        "PARTIAL",
+        "BLOCKED",
+        "SUPERSEDED"
+      ]
+    },
+    "authority": {"const": "PROPOSED"},
+    "request": {"type": "object"},
+    "summary": {"type": "object"},
+    "edit_items": {"type": "array", "items": {"type": "object"}},
+    "investigation_items": {"type": "array", "items": {"type": "object"}},
+    "verification_plan": {"type": "object"},
+    "conflicts": {"type": "array", "items": {"type": "object"}},
+    "unknowns": {"type": "array", "items": {"type": "object"}},
+    "diagnostics": {"type": "array", "items": {"type": "object"}},
+    "source_identity": {"type": "object"},
+    "bundle_identity": {"type": ["string", "null"]},
+    "atlas_identity": {"type": ["string", "null"]},
+    "created_by": {"type": "object"}
+  }
+}

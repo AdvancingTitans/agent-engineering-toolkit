@@ -1,0 +1,103 @@
+{
+  "schema_version": "plan-candidate/1.0",
+  "request_id": "$REQUEST_ID",
+  "summary": "Propose a bounded cross-module Atlas compatibility change across builder, perspective, viewer, and Bundle Schema surfaces.",
+  "coverage_claim": "BEST_EFFORT",
+  "edit_items": [
+    {
+      "edit_id": "EDIT-001",
+      "disposition": "REQUIRED",
+      "path": "src/aet/atlas/builder.py",
+      "symbol": null,
+      "source_range": null,
+      "intent": "Retain canonical source-backed graph construction.",
+      "expected_change": "Represent the new bounded relationship without changing Evidence authority.",
+      "rationale": "The current Graph Builder evidence binds canonical construction to this module.",
+      "behavior_links": ["graph-build"],
+      "evidence_refs": ["ev-graph-builder"],
+      "atlas_refs": [],
+      "source_refs": ["src-graph"],
+      "dependencies": [],
+      "tests": ["tests/test_evidence_atlas_builder.py"],
+      "risks": ["Canonical IDs must remain stable."],
+      "limitations": []
+    },
+    {
+      "edit_id": "EDIT-002",
+      "disposition": "REQUIRED",
+      "path": "src/aet/atlas/perspectives.py",
+      "symbol": null,
+      "source_range": null,
+      "intent": "Keep fixed Perspective membership deterministic.",
+      "expected_change": "Project the new relationship only through the affected fixed Perspective.",
+      "rationale": "The Perspective evidence identifies the fixed projection surface.",
+      "behavior_links": ["perspective-projection"],
+      "evidence_refs": ["ev-perspectives"],
+      "atlas_refs": [],
+      "source_refs": ["src-perspectives"],
+      "dependencies": ["EDIT-001"],
+      "tests": ["tests/test_evidence_atlas_protocol.py"],
+      "risks": ["A broad projection could inflate unrelated diagrams."],
+      "limitations": []
+    },
+    {
+      "edit_id": "EDIT-003",
+      "disposition": "REQUIRED",
+      "path": "src/aet/atlas/viewer.py",
+      "symbol": null,
+      "source_range": null,
+      "intent": "Expose the relationship through existing recursive navigation.",
+      "expected_change": "Render the new bounded edge without external links or active content.",
+      "rationale": "The Viewer evidence binds recursive navigation to this module.",
+      "behavior_links": ["viewer-navigation"],
+      "evidence_refs": ["ev-viewer"],
+      "atlas_refs": [],
+      "source_refs": ["src-viewer"],
+      "dependencies": ["EDIT-001", "EDIT-002"],
+      "tests": ["tests/test_evidence_atlas_protocol.py"],
+      "risks": ["Untrusted labels must remain offline-safe."],
+      "limitations": []
+    },
+    {
+      "edit_id": "EDIT-004",
+      "disposition": "INVESTIGATE",
+      "path": "schemas/evidence-bundle/v1/evidence.schema.json",
+      "symbol": null,
+      "source_range": null,
+      "intent": "Confirm whether Bundle v1 can represent the relationship without a protocol change.",
+      "expected_change": "Prefer no Schema change; document the compatibility limit if the field is absent.",
+      "rationale": "Counter-evidence records that Bundle v1 has no explicit Change Group field.",
+      "behavior_links": ["bundle-compatibility"],
+      "evidence_refs": ["ev-no-change-groups"],
+      "atlas_refs": [],
+      "source_refs": ["src-bundle-schema"],
+      "dependencies": [],
+      "tests": ["tests/test_evidence_atlas_protocol.py"],
+      "risks": ["Changing Bundle v1 would break the protected authority boundary."],
+      "limitations": ["This item is investigation-only unless a new protocol version is separately authorized."]
+    }
+  ],
+  "investigation_items": [
+    {
+      "investigation_id": "INVESTIGATE-BUNDLE-COMPAT",
+      "question": "Can the relationship remain an Atlas projection without changing Portable Evidence Bundle v1?"
+    }
+  ],
+  "verification_steps": [
+    {
+      "verification_id": "VERIFY-001",
+      "description": "Run Atlas builder and protocol compatibility tests after implementation.",
+      "command": ["python", "-m", "unittest", "tests.test_evidence_atlas_builder", "tests.test_evidence_atlas_protocol"],
+      "edit_refs": ["EDIT-001", "EDIT-002", "EDIT-003", "EDIT-004"],
+      "expected_result": "exit_code=0",
+      "status": "PENDING"
+    }
+  ],
+  "assumptions": [],
+  "unresolved": [
+    {
+      "unknown_id": "UNKNOWN-BUNDLE-COMPAT",
+      "statement": "A Bundle protocol change is not authorized by this Plan."
+    }
+  ]
+}

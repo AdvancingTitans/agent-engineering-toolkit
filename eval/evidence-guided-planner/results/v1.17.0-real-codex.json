@@ -1,0 +1,108 @@
+{
+  "case_id": "aet-atlas-change-scope-review",
+  "deltas_percentage_points": {
+    "v1_17_plan_vs_source_only": {
+      "disposition_accuracy": 25.0,
+      "evidence_reference_coverage": 100.0,
+      "linkage_coverage": 66.67,
+      "production_decision_precision": 55.56,
+      "required_production_path_recall": 0.0,
+      "required_test_recall": 0.0,
+      "source_location_coverage": 0.0,
+      "unknown_preservation_rate": 100.0
+    },
+    "v1_17_plan_vs_v1_16_evidence_only": {
+      "disposition_accuracy": 50.0,
+      "evidence_reference_coverage": 0.0,
+      "linkage_coverage": 0.0,
+      "production_decision_precision": 0.0,
+      "required_production_path_recall": 0.0,
+      "required_test_recall": 100.0,
+      "source_location_coverage": 0.0,
+      "unknown_preservation_rate": 50.0
+    }
+  },
+  "excluded_observations": [
+    {
+      "group": "source_only",
+      "reason": "The first unconstrained search traversed vendored/minified assets and failed before producing a final response. It is reported as a harness badcase and excluded; the scored rerun used the same source-only condition with explicit source roots and generated/vendor exclusions."
+    }
+  ],
+  "groups": {
+    "source_only": {
+      "counts": {
+        "preserved_unknowns": [],
+        "production_decisions": 9,
+        "required_tests_found": 2
+      },
+      "disposition_accuracy": 0.75,
+      "evidence_reference_coverage": 0.0,
+      "linkage_coverage": 0.3333,
+      "production_decision_precision": 0.4444,
+      "required_production_path_recall": 1.0,
+      "required_test_recall": 1.0,
+      "source_location_coverage": 1.0,
+      "unknown_preservation_rate": 0.0,
+      "usage": {
+        "cached_input_tokens": 484096,
+        "input_tokens": 585340,
+        "output_tokens": 4253,
+        "reasoning_output_tokens": 1617
+      }
+    },
+    "v1_16_evidence_only": {
+      "counts": {
+        "preserved_unknowns": [
+          "bundle-v1-change-group-boundary"
+        ],
+        "production_decisions": 4,
+        "required_tests_found": 0
+      },
+      "disposition_accuracy": 0.5,
+      "evidence_reference_coverage": 1.0,
+      "linkage_coverage": 1.0,
+      "production_decision_precision": 1.0,
+      "required_production_path_recall": 1.0,
+      "required_test_recall": 0.0,
+      "source_location_coverage": 1.0,
+      "unknown_preservation_rate": 0.5,
+      "usage": {
+        "cached_input_tokens": 280832,
+        "input_tokens": 365548,
+        "output_tokens": 3147,
+        "reasoning_output_tokens": 1278
+      }
+    },
+    "v1_17_evidence_guided_plan": {
+      "counts": {
+        "preserved_unknowns": [
+          "bundle-v1-change-group-boundary",
+          "verification-pending"
+        ],
+        "production_decisions": 4,
+        "required_tests_found": 2
+      },
+      "disposition_accuracy": 1.0,
+      "evidence_reference_coverage": 1.0,
+      "linkage_coverage": 1.0,
+      "production_decision_precision": 1.0,
+      "required_production_path_recall": 1.0,
+      "required_test_recall": 1.0,
+      "source_location_coverage": 1.0,
+      "unknown_preservation_rate": 1.0,
+      "usage": {
+        "cached_input_tokens": 215808,
+        "input_tokens": 287711,
+        "output_tokens": 3348,
+        "reasoning_output_tokens": 1699
+      }
+    }
+  },
+  "sample": {
+    "model": "gpt-5.6-sol",
+    "repetitions": 1,
+    "scope": "one real AET self-review case; not a general model-quality claim"
+  },
+  "schema_version": "evidence-guided-planner-real-result/1.0",
+  "status": "PASS"
+}

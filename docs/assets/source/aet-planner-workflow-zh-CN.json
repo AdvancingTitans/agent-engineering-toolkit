@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "mode": "memory",
+  "template_type": "memory",
+  "style": 1,
+  "motion_scene": "memory-weave",
+  "quality_profile": "showcase",
+  "width": 960,
+  "height": 680,
+  "title": "AET v1.17 Evidence-Guided Planner",
+  "subtitle": "让 Code Agent 动手前，先用证据收敛修改范围",
+  "containers": [
+    {"id": "input-layer", "x": 40, "y": 110, "width": 880, "height": 110, "label": "开发者需求 + 已记录证据"},
+    {"id": "planning-core", "x": 40, "y": 260, "width": 880, "height": 140, "label": "只读规划边界"},
+    {"id": "handoff-layer", "x": 40, "y": 440, "width": 880, "height": 140, "label": "可移植计划消费 + 待执行验证"}
+  ],
+  "nodes": [
+    {"id": "user", "kind": "user_avatar", "x": 60, "y": 145, "width": 120, "height": 54, "label": "开发者", "fill": "#eff6ff", "stroke": "#3b82f6", "flat": true},
+    {"id": "app", "kind": "rect", "x": 280, "y": 145, "width": 160, "height": 54, "label": "项目审查请求", "sublabel": "目标 · 约束", "fill": "#ffffff", "stroke": "#cbd5e1", "flat": true},
+    {"id": "llm", "kind": "double_rect", "x": 560, "y": 145, "width": 140, "height": 54, "label": "Bundle + Atlas", "sublabel": "当前源码哈希", "fill": "#faf5ff", "stroke": "#8b5cf6", "flat": true},
+    {"id": "extractor", "kind": "rect", "x": 100, "y": 320, "width": 170, "height": 60, "label": "Planning Context", "sublabel": "有预算候选", "fill": "#fff7ed", "stroke": "#f97316", "flat": true},
+    {"id": "manager", "kind": "double_rect", "x": 390, "y": 320, "width": 180, "height": 60, "label": "Host Planner", "sublabel": "严格 Candidate JSON", "fill": "#faf5ff", "stroke": "#8b5cf6", "flat": true},
+    {"id": "resolver", "kind": "rect", "x": 700, "y": 320, "width": 160, "height": 60, "label": "AET Validator", "sublabel": "引用 · 范围 · UNKNOWN", "fill": "#fff7ed", "stroke": "#f97316", "flat": true},
+    {"id": "vector", "kind": "cylinder", "x": 100, "y": 500, "width": 160, "height": 60, "label": "PROPOSED Plan", "sublabel": "修改 · 测试 · 风险", "fill": "#ecfdf5", "stroke": "#10b981"},
+    {"id": "graph", "kind": "rect", "x": 400, "y": 500, "width": 160, "height": 60, "label": "Code Agent Planner", "sublabel": "只读交接", "fill": "#eff6ff", "stroke": "#3b82f6", "flat": true},
+    {"id": "response", "kind": "speech", "x": 700, "y": 500, "width": 160, "height": 60, "label": "Proof Handoff", "sublabel": "UNKNOWN · PENDING", "fill": "#faf5ff", "stroke": "#8b5cf6", "flat": true}
+  ],
+  "arrows": [
+    {"id": "request", "source": "user", "target": "app", "source_port": "right", "target_port": "left", "flow": "control", "motion_role": "ingress", "motion_stage": 1, "motion_order": 0, "label": "审查"},
+    {"id": "reason", "source": "app", "target": "llm", "source_port": "right", "target_port": "left", "flow": "control", "motion_role": "reason", "motion_stage": 2, "motion_order": 0, "label": "证据"},
+    {"id": "extract", "source": "app", "target": "extractor", "source_port": "bottom", "target_port": "top", "flow": "data", "motion_role": "extract", "motion_stage": 3, "motion_order": 0, "label": "收敛", "corridor_y": [240]},
+    {"id": "facts", "source": "extractor", "target": "manager", "source_port": "right", "target_port": "left", "flow": "data", "motion_role": "transform", "motion_stage": 4, "motion_order": 0, "label": "上下文"},
+    {"id": "resolved", "source": "resolver", "target": "manager", "source_port": "left", "target_port": "right", "flow": "feedback", "motion_role": "resolve", "motion_stage": 4, "motion_order": 1, "label": "校验"},
+    {"id": "write", "source": "manager", "target": "vector", "source_port": "bottom", "target_port": "top", "flow": "write", "motion_role": "memory-write", "motion_stage": 5, "motion_order": 0, "label": "封装", "corridor_y": [420]},
+    {"id": "relate", "source": "vector", "target": "graph", "source_port": "right", "target_port": "left", "flow": "read", "motion_role": "memory-read", "motion_stage": 6, "motion_order": 0, "label": "消费"},
+    {"id": "context", "source": "graph", "target": "response", "source_port": "right", "target_port": "left", "flow": "control", "motion_role": "response-context", "motion_stage": 7, "motion_order": 0, "label": "交接"}
+  ],
+  "legend_orientation": "horizontal",
+  "legend_x": 48,
+  "legend_y": 600,
+  "legend_locked": true,
+  "legend": [
+    {"flow": "control", "label": "请求 / 交接"},
+    {"flow": "write", "label": "已校验计划包"},
+    {"flow": "read", "label": "计划消费"},
+    {"flow": "data", "label": "证据上下文"}
+  ],
+  "footer": "只读 · Plan 权限为 PROPOSED · 未显式执行前 Proof 始终为 UNKNOWN",
+  "footer_x": 48,
+  "footer_y": 650
+}

@@ -1,0 +1,113 @@
+{
+  "schema_version": "evidence-guided-planner-real-observations/1.0",
+  "collected_at": "2026-07-29T07:57:58Z",
+  "runner": {
+    "name": "Codex CLI",
+    "version": "0.144.1",
+    "model": "gpt-5.6-sol",
+    "model_reasoning_effort": "medium",
+    "sandbox": "read-only",
+    "repetitions": 1
+  },
+  "excluded_observations": [
+    {
+      "group": "source_only",
+      "reason": "The first unconstrained search traversed vendored/minified assets and failed before producing a final response. It is reported as a harness badcase and excluded; the scored rerun used the same source-only condition with explicit source roots and generated/vendor exclusions."
+    }
+  ],
+  "groups": {
+    "source_only": {
+      "relationship": "No AET evidence or Plan; bounded repository source inspection only.",
+      "usage": {
+        "input_tokens": 585340,
+        "cached_input_tokens": 484096,
+        "output_tokens": 4253,
+        "reasoning_output_tokens": 1617
+      },
+      "response": {
+        "coverage_claim": "BEST_EFFORT",
+        "paths": [
+          {"path": "src/aet/atlas/builder.py", "disposition": "REQUIRED", "source_location": "GraphBuilder; build_evidence_graph; _build_manifest_nodes; _file_node", "linked_with": ["src/aet/atlas/perspectives.py", "src/aet/atlas/validator.py", "tests/test_evidence_atlas_builder.py"], "evidence_refs": []},
+          {"path": "src/aet/atlas/perspectives.py", "disposition": "REQUIRED", "source_location": "_SPECS['change-scope']; apply_perspectives", "linked_with": ["src/aet/atlas/builder.py", "src/aet/atlas/hierarchy.py", "tests/test_evidence_atlas_protocol.py"], "evidence_refs": []},
+          {"path": "src/aet/atlas/viewer.py", "disposition": "REQUIRED", "source_location": "_VIEWER_JS showNode; enterDiagram; drill event handler", "linked_with": ["src/aet/atlas/hierarchy.py", "tests/test_evidence_atlas_protocol.py"], "evidence_refs": []},
+          {"path": "src/aet/atlas/validator.py", "disposition": "REQUIRED", "source_location": "_validate_authority_boundaries; _validate_reference_edge_target; _validate_source_refs", "linked_with": ["src/aet/atlas/builder.py", "tests/test_evidence_atlas_protocol.py"], "evidence_refs": []},
+          {"path": "src/aet/atlas/hierarchy.py", "disposition": "INVESTIGATE", "source_location": "_TYPED_DECOMPOSERS['change_group']; build_hierarchy; _evaluate_complexity", "linked_with": ["src/aet/atlas/perspectives.py", "src/aet/atlas/viewer.py", "tests/test_evidence_atlas_protocol.py"], "evidence_refs": []},
+          {"path": "src/aet/atlas/model.py", "disposition": "DO_NOT_EDIT", "source_location": "NODE_TYPES; EDGE_TYPES; DEFAULT_GENERATION_POLICY; merge_policy", "linked_with": ["src/aet/atlas/builder.py", "src/aet/atlas/hierarchy.py"], "evidence_refs": []},
+          {"path": "schemas/evidence-bundle/v1/manifest.schema.json", "disposition": "DO_NOT_EDIT", "source_location": "properties.extensions; properties.investigation; properties.contents", "linked_with": ["src/aet/atlas/builder.py", "tests/test_evidence_bundle_protocol.py"], "evidence_refs": []},
+          {"path": "schemas/evidence-bundle/v1/index.schema.json", "disposition": "DO_NOT_EDIT", "source_location": "properties.extensions; required", "linked_with": ["schemas/evidence-bundle/v1/manifest.schema.json"], "evidence_refs": []},
+          {"path": "schemas/evidence-bundle/v1/evidence.schema.json", "disposition": "DO_NOT_EDIT", "source_location": "properties.extensions; properties.bindings", "linked_with": ["src/aet/atlas/builder.py"], "evidence_refs": []},
+          {"path": "tests/test_evidence_atlas_builder.py", "disposition": "REQUIRED", "source_location": "EvidenceAtlasBuilderTests.test_unavailable_v1_relationships_are_diagnostics_not_guessed_nodes", "linked_with": ["src/aet/atlas/builder.py", "src/aet/atlas/validator.py"], "evidence_refs": []},
+          {"path": "tests/test_evidence_atlas_protocol.py", "disposition": "REQUIRED", "source_location": "test_bundle_v1_missing_change_groups_remains_explicit_unknown; recursive hierarchy and Viewer tests", "linked_with": ["src/aet/atlas/perspectives.py", "src/aet/atlas/hierarchy.py", "src/aet/atlas/viewer.py", "src/aet/atlas/validator.py"], "evidence_refs": []},
+          {"path": "tests/test_evidence_bundle_protocol.py", "disposition": "REQUIRED", "source_location": "Bundle schema compatibility tests", "linked_with": ["schemas/evidence-bundle/v1/manifest.schema.json", "src/aet/atlas/builder.py"], "evidence_refs": []}
+        ],
+        "tests": [
+          "tests/test_evidence_atlas_builder.py",
+          "tests/test_evidence_atlas_protocol.py",
+          "tests/test_evidence_bundle_protocol.py"
+        ],
+        "unknowns": [
+          "The producer-facing namespaced extension key and exact Change Group record shape are not specified.",
+          "The required semantics and direction of CHANGED versus GROUPED_IN edges are not specified.",
+          "The hard ingestion limits for group count, members per group, nesting depth, and identifier/title length are not specified.",
+          "It is unclear whether malformed or partially unresolved Change Group extensions must reject graph construction or be omitted with explicit diagnostics and UNKNOWN coverage.",
+          "It is unclear whether nested Change Groups, authorization references, and proof references are part of the compatibility change or only file membership is required."
+        ]
+      }
+    },
+    "v1_16_evidence_only": {
+      "relationship": "Portable Evidence Bundle plus matching Evidence Atlas, without Planning Context or /aet-plan.",
+      "usage": {
+        "input_tokens": 365548,
+        "cached_input_tokens": 280832,
+        "output_tokens": 3147,
+        "reasoning_output_tokens": 1278
+      },
+      "response": {
+        "coverage_claim": "BEST_EFFORT",
+        "paths": [
+          {"path": "src/aet/atlas/builder.py", "disposition": "REQUIRED", "source_location": "build_evidence_graph; _build_manifest_nodes; _build_evidence; _compute_complexity", "linked_with": ["src/aet/atlas/perspectives.py", "src/aet/atlas/viewer.py", "schemas/evidence-bundle/v1/evidence.schema.json"], "evidence_refs": ["ev-graph-builder", "ev-path-bindings", "ev-no-change-groups"]},
+          {"path": "src/aet/atlas/perspectives.py", "disposition": "REQUIRED", "source_location": "_SPECS['change-scope']; apply_perspectives; _missing_requirements; _perspective_constraints", "linked_with": ["src/aet/atlas/builder.py", "src/aet/atlas/viewer.py"], "evidence_refs": ["ev-perspectives", "ev-path-bindings", "ev-no-change-groups"]},
+          {"path": "src/aet/atlas/viewer.py", "disposition": "INVESTIGATE", "source_location": "_VIEWER_JS activeProjection, activeReferences, showNode, enterDiagram, renderDiagram", "linked_with": ["src/aet/atlas/builder.py", "src/aet/atlas/perspectives.py"], "evidence_refs": ["ev-viewer", "ev-perspectives"]},
+          {"path": "schemas/evidence-bundle/v1/evidence.schema.json", "disposition": "DO_NOT_EDIT", "source_location": "properties.extensions; properties.bindings", "linked_with": ["src/aet/atlas/builder.py", "src/aet/atlas/perspectives.py"], "evidence_refs": ["ev-path-bindings", "ev-no-change-groups"]}
+        ],
+        "tests": [],
+        "unknowns": [
+          "The validated evidence does not specify a standardized Bundle v1 extension key or record shape for explicit Change Groups.",
+          "No evidence-cited repository test path is provided; the Bundle only recommends running unspecified Atlas protocol tests.",
+          "Whether src/aet/atlas/viewer.py needs modification is UNKNOWN because its existing node-to-diagram and reference navigation is generic and already recursive.",
+          "Behavior for absent, malformed, duplicated, cyclic, or over-budget Change Group extension data is not specified by the cited evidence.",
+          "Complete real diff grouping remains UNKNOWN when only investigation scope or Evidence bindings.paths are present."
+        ]
+      }
+    },
+    "v1_17_evidence_guided_plan": {
+      "relationship": "Validated PROPOSED Plan package consumed by the read-only Codex planning stage.",
+      "usage": {
+        "input_tokens": 287711,
+        "cached_input_tokens": 215808,
+        "output_tokens": 3348,
+        "reasoning_output_tokens": 1699
+      },
+      "response": {
+        "coverage_claim": "BEST_EFFORT",
+        "paths": [
+          {"path": "src/aet/atlas/builder.py", "disposition": "REQUIRED", "source_location": "GraphBuilder.edge (line 122), build_evidence_graph (line 184), _build_manifest_nodes (lines 304-330)", "linked_with": ["src/aet/atlas/perspectives.py", "src/aet/atlas/viewer.py"], "evidence_refs": ["ev-graph-builder"]},
+          {"path": "src/aet/atlas/perspectives.py", "disposition": "REQUIRED", "source_location": "_SPECS[\"change-scope\"] (lines 60-82), apply_perspectives (line 248)", "linked_with": ["src/aet/atlas/builder.py", "src/aet/atlas/viewer.py"], "evidence_refs": ["ev-perspectives"]},
+          {"path": "src/aet/atlas/viewer.py", "disposition": "REQUIRED", "source_location": "_VIEWER_JS: activeProjection, renderTree, showNode, enterDiagram, renderDiagram (lines 262-527)", "linked_with": ["src/aet/atlas/builder.py", "src/aet/atlas/perspectives.py"], "evidence_refs": ["ev-viewer"]},
+          {"path": "schemas/evidence-bundle/v1/evidence.schema.json", "disposition": "INVESTIGATE", "source_location": "properties.bindings.paths (lines 16-27)", "linked_with": ["src/aet/atlas/builder.py", "src/aet/atlas/perspectives.py", "src/aet/atlas/viewer.py"], "evidence_refs": ["ev-no-change-groups", "ev-path-bindings", "conflict-change-scope-v1"]}
+        ],
+        "tests": [
+          "tests/test_evidence_atlas_builder.py",
+          "tests/test_evidence_atlas_protocol.py"
+        ],
+        "unknowns": [
+          "Whether the bounded relationship can remain an Atlas projection without changing Portable Evidence Bundle v1 is UNKNOWN.",
+          "Complete real diff grouping is UNKNOWN: Bundle v1 has no explicit Change Group, and a path binding is not a real diff group; conflict-change-scope-v1 remains unresolved.",
+          "The exact source field or collection for authoritative Change Groups is absent from Bundle v1 and must not be inferred.",
+          "This PROPOSED BEST_EFFORT plan does not prove that every edit site was found or behavior outside the four bounded files.",
+          "Verification is PENDING; the required unittest command was not run and requires explicit AET Proof plus a current Freshness check."
+        ]
+      }
+    }
+  }
+}

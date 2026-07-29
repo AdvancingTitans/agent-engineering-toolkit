@@ -1,0 +1,124 @@
+{
+  "schema_version": "aet-planner-media-manifest/v1",
+  "release": "v1.17.0",
+  "sample_boundary": {
+    "cases": 1,
+    "repetitions_per_group": 1,
+    "claim": "bounded observation, not a general model-quality claim",
+    "result": "eval/evidence-guided-planner/results/v1.17.0-real-codex.json"
+  },
+  "generation": {
+    "workflow": "fireworks-tech-graph memory-weave",
+    "comparison": "docs/assets/source/generate_planner_case_media.py"
+  },
+  "assets": [
+    {
+      "kind": "planner_workflow_animation",
+      "format": "gif",
+      "path": "aet-planner-workflow-en.gif",
+      "language": "en",
+      "width": 960,
+      "height": 680,
+      "frames": 115,
+      "frame_rate": "20/1",
+      "duration_seconds": 5.75,
+      "motion_report": "aet-planner-workflow-en.motion.json",
+      "sha256": "8a063df3587c22f8e24a9ba942b6c2fa9ae645cf5e7d8ca90a9d28ffbebfdc5d"
+    },
+    {
+      "kind": "planner_workflow_animation",
+      "format": "gif",
+      "path": "aet-planner-workflow-zh-CN.gif",
+      "language": "zh-CN",
+      "width": 960,
+      "height": 680,
+      "frames": 115,
+      "frame_rate": "20/1",
+      "duration_seconds": 5.75,
+      "motion_report": "aet-planner-workflow-zh-CN.motion.json",
+      "sha256": "3e73d5a8f230dae431251a6d61a0f0feabb61329fda68a8a9848c86792b698d4"
+    },
+    {
+      "kind": "planner_workflow_source",
+      "format": "svg",
+      "path": "aet-planner-workflow-en.svg",
+      "language": "en",
+      "sha256": "5f919f0075ce98e76797aac83ecbc5abd803a850c253f664968a4747284910d2"
+    },
+    {
+      "kind": "planner_workflow_source",
+      "format": "svg",
+      "path": "aet-planner-workflow-zh-CN.svg",
+      "language": "zh-CN",
+      "sha256": "6858961aa32d842cff299cf5db5930f842e3adbaf71f4599a37d017af28c50a2"
+    },
+    {
+      "kind": "planner_workflow_static",
+      "format": "png",
+      "path": "aet-planner-workflow-en.png",
+      "language": "en",
+      "width": 960,
+      "height": 680,
+      "sha256": "ebaf60a3c4bd7e03722d0b510a9354ec6bd80af9d15856bbcec5ed53b03d0228"
+    },
+    {
+      "kind": "planner_workflow_static",
+      "format": "png",
+      "path": "aet-planner-workflow-zh-CN.png",
+      "language": "zh-CN",
+      "width": 960,
+      "height": 680,
+      "sha256": "6a2a65718a14ae59e99fad991002db2f201e4fbde08fdc190fd3d1228aa69fdf"
+    },
+    {
+      "kind": "planner_workflow_review",
+      "format": "png",
+      "path": "aet-planner-workflow-en-contact-sheet.png",
+      "language": "en",
+      "width": 1440,
+      "height": 680,
+      "sha256": "d1cc2424b864fc37ceae107fd35096a453170731e819bf4a454c9e9d7305a17e"
+    },
+    {
+      "kind": "planner_workflow_review",
+      "format": "png",
+      "path": "aet-planner-workflow-zh-CN-contact-sheet.png",
+      "language": "zh-CN",
+      "width": 1440,
+      "height": 680,
+      "sha256": "424dc146cb87bfdd69d431ddebe4179ee2bea8b147614bf98d5f1cd6c9c8c3aa"
+    },
+    {
+      "kind": "planner_real_case",
+      "format": "png",
+      "path": "aet-planner-real-case-en.png",
+      "language": "en",
+      "width": 1600,
+      "height": 900,
+      "sha256": "a9496b8dcaec5e512795745a1b2a5e522dd0885719444885e26c5cdaaff0f569"
+    },
+    {
+      "kind": "planner_real_case",
+      "format": "png",
+      "path": "aet-planner-real-case-zh-CN.png",
+      "language": "zh-CN",
+      "width": 1600,
+      "height": 900,
+      "sha256": "961b76f41ddf1780898f06d9867c005016c03cda2850cfff05c28b3abafee401"
+    },
+    {
+      "kind": "planner_real_case_source",
+      "format": "svg",
+      "path": "aet-planner-real-case-en.svg",
+      "language": "en",
+      "sha256": "993f6c501620e3e77f3d21aa932b6007abbc8dc8bf969e7f9ca065e497c2255b"
+    },
+    {
+      "kind": "planner_real_case_source",
+      "format": "svg",
+      "path": "aet-planner-real-case-zh-CN.svg",
+      "language": "zh-CN",
+      "sha256": "979e9faf0679faf97a568c0035baf98c034b0653c18e07839ae94d8338f6a7aa"
+    }
+  ]
+}

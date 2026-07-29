@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://advancingtitans.github.io/aet/schemas/planning/plan-manifest-v1.schema.json",
+  "title": "AET Plan Manifest v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "plan_id",
+    "status",
+    "authority",
+    "producer",
+    "source_identity",
+    "bundle_identity",
+    "atlas_identity",
+    "contents",
+    "integrity"
+  ],
+  "properties": {
+    "schema_version": {"const": "plan-manifest/1.0"},
+    "plan_id": {"type": "string", "pattern": "^PLAN-[A-Z0-9._-]+$"},
+    "status": {
+      "enum": [
+        "READY_FOR_HUMAN_REVIEW",
+        "NEEDS_EVIDENCE",
+        "PARTIAL",
+        "BLOCKED",
+        "SUPERSEDED"
+      ]
+    },
+    "authority": {"const": "PROPOSED"},
+    "producer": {"type": "object"},
+    "source_identity": {"type": "object"},
+    "bundle_identity": {"type": ["string", "null"]},
+    "atlas_identity": {"type": ["string", "null"]},
+    "contents": {
+      "type": "object",
+      "additionalProperties": {"type": "string", "minLength": 1}
+    },
+    "integrity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["algorithm", "file_hashes"],
+      "properties": {
+        "algorithm": {"const": "sha256"},
+        "file_hashes": {
+          "type": "object",
+          "additionalProperties": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "schema_version": "plan-candidate/1.0",
+  "request_id": "$REQUEST_ID",
+  "summary": "Propose the smallest bounded adapter correction while preserving the recorded failing regression.",
+  "coverage_claim": "BEST_EFFORT",
+  "edit_items": [
+    {
+      "edit_id": "EDIT-001",
+      "disposition": "REQUIRED",
+      "path": "examples/evidence-grounded-improvement/sample_project/tool_result.py",
+      "symbol": null,
+      "source_range": null,
+      "intent": "Preserve an empty tool result as a structured no-evidence state.",
+      "expected_change": "Return the existing no-evidence representation instead of a factual success sentence.",
+      "rationale": "The reproduced counter-evidence binds the failure to this adapter.",
+      "behavior_links": ["empty-result", "no-evidence"],
+      "evidence_refs": ["ev-empty-result-regression"],
+      "atlas_refs": [],
+      "source_refs": ["src-empty-result-adapter"],
+      "dependencies": [],
+      "tests": ["examples/evidence-grounded-improvement/sample_project/test_tool_result.py"],
+      "risks": ["Changing the return shape could affect callers outside the bounded fixture."],
+      "limitations": ["This proposal covers only the checked-in sample adapter."]
+    }
+  ],
+  "investigation_items": [],
+  "verification_steps": [
+    {
+      "verification_id": "VERIFY-001",
+      "description": "Run the recorded focused regression after implementation.",
+      "command": ["python", "examples/evidence-grounded-improvement/sample_project/test_tool_result.py"],
+      "edit_refs": ["EDIT-001"],
+      "expected_result": "exit_code=0",
+      "status": "PENDING"
+    }
+  ],
+  "assumptions": [],
+  "unresolved": []
+}

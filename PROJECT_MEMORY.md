@@ -34,6 +34,11 @@ deterministic local runtime. The canonical `agent-engineering-toolkit` Skill is
 the compatibility and explicit AET Lab route. Every shipped capability retains
 machine-readable evidence contracts so any Agent Host can invoke it.
 
+`aet-plan` is a separate fifth Host Skill and not part of automatic Quick
+chaining. It compiles existing evidence and current source into a bounded,
+read-only `PROPOSED` Plan for a Host Planner; it grants no implementation or
+verification authority.
+
 Out of scope: an agent runtime, a Skill marketplace, automatic prompt rewrites,
 and model-dependent prompt regression. The only retained later expansion is
 **Repo Archaeologist**, planned as `aet evolve`, not a dependency of the static
@@ -597,3 +602,59 @@ deterministic core.
   counter-evidence/`UNKNOWN` semantics, and the seven pre-existing untracked
   files outside version control. Real Agent and user-comprehension metrics
   remain unmeasured.
+
+## v1.17.0 Evidence-Guided Planner implementation — 2026-07-29
+
+- Implemented the delivery package's Phase 0–6 in order. The new deterministic
+  `src/aet/planning/` subsystem normalizes Requests, consumes validated Bundle
+  and Atlas projections, builds bounded Planning Context, validates strict
+  Host-produced Plan Candidates, writes integrity-bound portable Plan
+  packages, exports read-only per-Plan Skills, and maps external unified diffs
+  to pending verification handoffs.
+- Added six strict Planning Schemas; the `aet plan` context, candidate,
+  package-Helper, Skill-export, and handoff commands; eight read-only MCP
+  tools; Python and TypeScript consumer APIs; the `aet-plan` Host Skill; E2E
+  examples; and a 20-contract frozen localization benchmark. The Planner does
+  not execute commands, edit source, promote evidence, or grant merge/release
+  authority. Plan authority remains `PROPOSED`, and verification remains
+  `UNKNOWN`/`PENDING` until separate Proof execution.
+- The frozen Planner protocol benchmark passes all P1 localization thresholds:
+  required-path recall `1.0`, recommended-path precision `0.9706`,
+  required-test recall `1.0`, critical-linkage omission `0.0`, ungrounded-path
+  rate `0.0294`, protected-path rate `0.0`, and full conflict, unknown, and
+  reference preservation.
+- Added a real Codex `gpt-5.6-sol` AET self-review, with Gold, raw structured
+  observations, and deterministic scoring kept separate. One run per group
+  compared source-only, v1.16 Bundle + Atlas, and the v1.17 validated Plan. The
+  Plan group reached `1.0` on all eight separately reported metrics. Against
+  source-only, production decision precision improved by 55.56 percentage
+  points, reference coverage by 100 points, linkage coverage by 66.67 points,
+  and `UNKNOWN` preservation by 100 points. Required path and test recall did
+  not improve because source-only was already `1.0`. Against v1.16
+  evidence-only, disposition improved by 50 points, test recall by 100 points,
+  and `UNKNOWN` preservation by 50 points.
+- The first unconstrained source-only attempt traversed vendored/minified
+  assets and was rejected as a harness failure. The recorded rerun applies the
+  same source-root and generated/vendor exclusions as the other groups. These
+  observations are a one-case, pass@1-style localization measurement, not a
+  general reliability claim or holistic score.
+- Rebuilt the bilingual README product story, Planner workflow GIF/SVG/PNG,
+  real-case screenshots, project panoramas, and exact 30-second silent H.264
+  product videos. Motion, geometry, composition, frame, SHA-256, and manual
+  visual checks passed.
+- Acceptance evidence in the implementation working tree: 533 unittest tests
+  passed after a non-editable reinstall; Planner line coverage is `90%` and
+  validator branch coverage is `96%`; TypeScript SDK build/test/check passed
+  19 tests; strict repository Skill audit passed; Host Skill validation passed;
+  benchmark and three E2E scenarios reproduced; `git diff --check` passed.
+  Fresh Wheel and sdist built successfully, the isolated Wheel reported
+  `1.17.0`, exposed the Planning Python APIs/CLI, and contained all six
+  Planning Schemas.
+- This is the release-candidate working tree. Commit, tag, exact-tag CI, and
+  GitHub Release are pending. Separate human sign-off of the independently
+  authored frozen Gold set, human comprehension, implementation success after
+  Plan consumption, and computational reference-reuse rate remain `UNKNOWN`.
+- Resume point: review `执行报告.md` and the v1.17.0 working tree. Preserve
+  Bundle v1 compatibility, Graph authority, strict `PROPOSED` planning
+  authority, explicit counter-evidence/`UNKNOWN` semantics, and the
+  pre-existing user-owned untracked files.

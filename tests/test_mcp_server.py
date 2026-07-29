@@ -54,6 +54,14 @@ EXPECTED_TOOLS = {
     "aet_graph_trace_conflict",
     "aet_graph_trace_freshness",
     "aet_graph_render_mermaid",
+    "aet_plan_build_context",
+    "aet_plan_validate_candidate",
+    "aet_plan_get",
+    "aet_plan_explain_edit",
+    "aet_plan_trace_reference",
+    "aet_plan_list_gaps",
+    "aet_plan_export_skill",
+    "aet_plan_build_verification_handoff",
 }
 
 

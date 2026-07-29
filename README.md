@@ -8,12 +8,12 @@
 
 **[English](README.md) · [简体中文](docs/README.zh-CN.md)**
 
-> **AET turns AI coding work into portable, inspectable evidence—then derives
-> a traceable Evidence Atlas and bounded code-improvement prompts without
-> letting a model invent the facts.**
+> **AET turns AI coding work into portable, inspectable evidence, then compiles
+> that evidence into traceable maps, bounded improvement prompts, and a
+> reviewable read-only Plan before a code Agent edits.**
 
 An AI coding Agent says it fixed the task and ran the tests. AET helps answer
-six concrete questions:
+seven concrete questions:
 
 1. Did the change stay relevant to the user's task?
 2. Did the claimed verification actually run on this workspace?
@@ -23,6 +23,8 @@ six concrete questions:
    readable investigation map?
 6. Can the same evidence become an actionable prompt without silently turning
    advice into evidence or granting an Agent permission to edit?
+7. Before an Agent edits, can its Planner name the required source locations,
+   linked change sites, verification requirements, and remaining unknowns?
 
 Tools produce reproducible facts. The host LLM may recover intent, form
 competing hypotheses, call authorized tools, test counter-explanations, and
@@ -35,7 +37,8 @@ self-describing evidence handoff. A human decides what happens next.
 deterministic facts → bounded investigation → grounding validation
                     → Portable Evidence Bundle
                        ├─→ Evidence Atlas
-                       └─→ Human report + bounded Agent prompt
+                       ├─→ Human report + bounded Agent prompt
+                       └─→ read-only Evidence-Guided Plan
                     → independent review → human decision
 ```
 
@@ -67,6 +70,116 @@ aet quick fresh --proof .aet/proofs/auth.json
 The legacy `aet audit`, `review`, `trace`, and `evidence receipt` commands
 remain compatible throughout 1.x. They are advanced native vocabulary, not the
 default Quick product surface.
+
+## Evidence-Guided Planner
+
+> “Review this project and tell me what must change—but do not edit anything
+> yet.”
+
+`/aet-plan` gives a code Agent's Planner a bounded, read-only handoff. AET
+combines the request, validated Bundle, optional matching Atlas, and current
+hash-bound Source into a Planning Context. The Host supplies engineering
+judgment as strict Candidate JSON; AET then validates paths, evidence
+references, source locators, edit linkages, tests, budgets, and unknowns into a
+portable `PROPOSED` Plan. This is **bounded localization**, not implementation.
+
+![Animated Evidence-Guided Planner workflow](docs/assets/aet-planner-workflow-en.gif)
+
+[Simplified Chinese GIF](docs/assets/aet-planner-workflow-zh-CN.gif) ·
+[static PNG](docs/assets/aet-planner-workflow-en.png) ·
+[scalable SVG](docs/assets/aet-planner-workflow-en.svg) ·
+[motion report](docs/assets/aet-planner-workflow-en.motion.json)
+
+```mermaid
+flowchart LR
+    H["Developer review request"] --> C["AET Planning Context"]
+    B["Bundle + Atlas + current Source"] --> C
+    C --> P["Code Agent Planner candidate"]
+    P --> V["AET deterministic validation"]
+    V --> R["PROPOSED Plan package"]
+    R --> A["Human review"]
+    A --> I["External implementation"]
+    I --> Q["Verification handoff<br/>UNKNOWN / PENDING"]
+    Q --> E["Explicit AET Proof"]
+```
+
+### Real AET self-review: with a Plan versus without one
+
+We asked Codex `gpt-5.6-sol` to localize a real AET change spanning Graph
+Builder, a fixed Perspective, recursive Viewer behavior, Bundle compatibility,
+and focused tests. The same task ran once in each group: source-only, v1.16
+Bundle + Atlas, and a v1.17 validated Plan consumed by the code Agent's planning
+stage.
+
+![Real Planner scope-localization comparison](docs/assets/aet-planner-real-case-en.png)
+
+[Simplified Chinese screenshot](docs/assets/aet-planner-real-case-zh-CN.png) ·
+[gold contract](eval/evidence-guided-planner/real-case/gold.json) ·
+[raw structured observations](eval/evidence-guided-planner/real-case/observations.json) ·
+[scorer](eval/evidence-guided-planner/run_real_case.py) ·
+[result](eval/evidence-guided-planner/results/v1.17.0-real-codex.json)
+
+| Separately reported metric | Source only | v1.16 evidence only | v1.17 validated Plan |
+| --- | ---: | ---: | ---: |
+| Required production-path recall | 100% | 100% | 100% |
+| Production decision precision | 44.44% | 100% | 100% |
+| Path disposition accuracy | 75% | 50% | 100% |
+| Required-test recall | 100% | 0% | 100% |
+| Evidence-reference coverage | 0% | 100% | 100% |
+| Source-location coverage | 100% | 100% | 100% |
+| Cross-edit linkage coverage | 33.33% | 100% | 100% |
+| `UNKNOWN` preservation | 0% | 50% | 100% |
+
+Against source-only, the validated Plan improved production decision precision
+by **55.56 percentage points**, evidence-reference coverage by **100 points**,
+cross-edit linkage coverage by **66.67 points**, and `UNKNOWN` preservation by
+**100 points**. Required path and test recall did **not** improve because the
+source-only run already found them; the gain was rejecting five unrelated
+production paths and making the edit relationships reviewable. Against v1.16
+evidence-only, v1.17 improved disposition accuracy by **50 points**,
+required-test recall by **100 points**, and `UNKNOWN` preservation by **50
+points**.
+
+This is one real repository case with one run per group, not a general
+model-quality or trust claim. An initial unconstrained source search traversed
+vendored/minified assets and was rejected as a harness failure; the recorded
+source-only rerun used the same source-root and generated/vendor exclusions as
+the other groups. No aggregate “trust score” is produced.
+
+### Relationship to v1.16 and daily use
+
+v1.16's Bundle, Atlas, and Improvement artifacts remain authoritative upstream
+siblings. v1.17 does not rewrite them or promote advice into Evidence; it adds
+Planning Context, Candidate validation, Plan packaging, and a post-diff
+verification handoff. Plan authority stays `PROPOSED`, and Proof stays
+`UNKNOWN`/`PENDING` until explicitly executed.
+
+```bash
+aet plan context --workspace . --request request.md \
+  --bundle evidence-bundle --output planning-context.json
+aet plan validate-candidate --context planning-context.json \
+  --candidate plan-candidate.json --output .aet/plans/PLAN-001
+aet plan explain .aet/plans/PLAN-001 --edit EDIT-001
+aet plan export-skill .aet/plans/PLAN-001 \
+  --target codex --output .aet/skills/PLAN-001
+aet plan verification-handoff .aet/plans/PLAN-001 \
+  --diff agent.diff --output verification-request.json
+```
+
+Planner never edits source, executes verification argv, writes into Bundle Core
+Evidence, or guarantees every modification point was found. Missing support
+stays `NEEDS_EVIDENCE`; omissions stay `PARTIAL`; Proof stays `UNKNOWN` until
+explicitly run. See the [complete guide](docs/evidence-guided-planner.md),
+[surface comparison](docs/planner-helper-scenarios.md), and
+[three reproducible examples](examples/evidence-guided-planner). Reproduce the
+real comparison with:
+
+```bash
+uv run --no-editable python eval/evidence-guided-planner/run_real_case.py \
+  --output /tmp/aet-planner-real.json >/dev/null
+cmp /tmp/aet-planner-real.json \
+  eval/evidence-guided-planner/results/v1.17.0-real-codex.json
+```
 
 ## Cross-Agent portable evidence handoff
 
@@ -591,23 +704,27 @@ normalized Runs are published; private Codex JSONL is not.
 
 ## Architecture: one workflow, separate authority
 
-![AET animated portable evidence handoff](docs/assets/aet-quick-workflow-en.gif)
+![AET animated Evidence-Guided Planner architecture](docs/assets/aet-planner-workflow-en.gif)
 
-[Simplified Chinese GIF](docs/assets/aet-quick-workflow-zh-CN.gif) ·
-[scalable SVG](docs/assets/aet-quick-workflow-en.svg) ·
-[motion validation report](docs/assets/aet-quick-workflow-en.motion.json)
+[Simplified Chinese GIF](docs/assets/aet-planner-workflow-zh-CN.gif) ·
+[static PNG](docs/assets/aet-planner-workflow-en.png) ·
+[scalable SVG](docs/assets/aet-planner-workflow-en.svg) ·
+[motion validation report](docs/assets/aet-planner-workflow-en.motion.json)
 
-The animated workflow shows the current evidence-to-improvement handoff:
+The animated workflow shows the current evidence-to-plan handoff:
 
 1. A human review request is compiled into a Portable Evidence Bundle with
    stable Claim, Evidence, counter-evidence, Proof, and Freshness references.
-2. Evidence IDs remain the common grounding layer.
-3. The Improvement Analyzer derives Issue, Constraint, scope, verification,
-   and stop conditions for a human report and `PROPOSED` Agent task.
-4. Evidence Atlas independently derives a canonical Graph and ten fixed
-   Perspectives from the same Bundle.
-5. Both paths return to human review; neither writes advice back as Evidence.
-6. Fix, merge, push, and release authority remains human-owned.
+2. Bundle, Atlas, source hashes, human scope, protected paths, and budgets
+   compile into a bounded Planning Context.
+3. A Host Planner proposes paths, dispositions, source locators, linkages,
+   tests, risks, and unknowns; it does not gain edit authority.
+4. AET validates that Candidate deterministically and emits a sealed,
+   portable `PROPOSED` Plan package.
+5. A code Agent may consume the Plan only after human review. Its implementation
+   remains external to AET.
+6. The external diff returns as an `UNKNOWN`/`PENDING` verification handoff;
+   only explicit Proof can establish execution.
 
 ### The current repository as a system
 
@@ -621,9 +738,10 @@ The static panorama answers how that workflow maps to this repository:
 - **Solid arrows are the evidence-production path.** Native runs flow through
   normalization, Observation/Candidate extraction, bounded investigation,
   deterministic verification, and Bundle compilation.
-- **Atlas and improvement prompts are sibling review artifacts.** They reuse
-  the same IDs after Bundle compilation but do not become evidence producers.
-- **Dashed arrows are product and consumption surfaces.** Four Quick Skills,
+- **Atlas, improvement prompts, and Plans are sibling review artifacts.** They
+  reuse the same IDs after Bundle compilation but do not become evidence
+  producers.
+- **Dashed arrows are product and consumption surfaces.** Five Host Skills,
   CLI/MCP/SDK conveniences, measured consumers, and the human/Lab boundary use
   the same contracts without becoming evidence authorities.
 - **Run records, observations, and verified evidence are different types.**
@@ -632,9 +750,10 @@ The static panorama answers how that workflow maps to this repository:
 - **The exchange format is implementation-independent.**
   `schemas/evidence-bundle/v1/*` defines Index/Core/Archive records, integrity,
   Freshness, conflicts, diagnostics, and review references; an SDK is optional.
-- **Quick remains the small daily surface.** `skills/aet-*` and
-  `src/aet/quick/*` continue to expose Check, Scope, Proof, and Fresh. The
-  portable path adds handoff, not an automatic transition into Lab.
+- **Quick remains the small daily surface.** `src/aet/quick/*` continues to
+  expose Check, Scope, Proof, and Fresh. `/aet-plan` is deliberately separate:
+  a read-only planning bridge, not an automatic transition into implementation
+  or Lab.
 - **Tests and measured consumers prove different things.** `tests/*` covers
   deterministic rejection paths; `eval/bundle-consumption/*` checks sampled
   interoperability. Neither becomes a trust score or action authority.
@@ -644,16 +763,17 @@ The static panorama answers how that workflow maps to this repository:
 [Watch the English MP4](docs/assets/aet-product-intro-en.mp4) ·
 [观看中文 MP4](docs/assets/aet-product-intro-zh-CN.mp4)
 
-The silent six-scene video starts from a real developer asking an Agent to
-review a project, keeps the four Quick Skills visible, separates Observation
-from Evidence, shows the Portable Bundle, then follows the sibling human
-report, bounded Agent prompt, and Evidence Atlas into the reproducible empty
-tool-result case. The
-[portable workflow](docs/architecture/portable-evidence-workflow.md) provides
-the detailed contract. The
+The silent six-scene v1.17 video starts from a developer asking an Agent to
+review a project without drifting scope. It explains the v1.16-to-v1.17
+relationship, Planning Context, the Host/AET validation boundary, the code
+Agent handoff, and the real Atlas Change Group comparison. The
+[Planner guide](docs/evidence-guided-planner.md) provides the detailed
+contract. The
 [media manifest](docs/assets/aet-quick-media-manifest.json) binds the bilingual
 GIFs, panoramas, and silent H.264 MP4 videos by SHA-256 and records their generated
-dimensions, frame counts, frame rates, and durations.
+dimensions, frame counts, frame rates, and durations. The separate
+[Planner media manifest](docs/assets/aet-planner-media-manifest.json) binds the
+workflow and real-case screenshots.
 
 ## Why the LLM is constrained, not disabled
 
@@ -839,6 +959,9 @@ provenance, and avoid broadening a Quick command beyond its question. See
 
 ## Advanced documentation
 
+- [Evidence-Guided Planner](docs/evidence-guided-planner.md)
+- [Planner and Helper scenarios](docs/planner-helper-scenarios.md)
+- [Planning v1 Schemas](docs/schemas/planning.md)
 - [Evidence-Grounded Improvement Layer](docs/improvement.md)
 - [Evidence Atlas architecture](docs/architecture/evidence-atlas.md)
 - [Portable Evidence Bundle v1](docs/protocols/portable-evidence-bundle-v1.md)

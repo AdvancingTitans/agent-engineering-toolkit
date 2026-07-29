@@ -1,0 +1,21 @@
+flowchart LR
+    U["User Request"] --> R["Planning Request<br/>scope · identity · budgets"]
+    B["Portable Evidence Bundle"] --> C
+    A["Matching Evidence Atlas"] --> C
+    S["Current Source<br/>read-only · hash-bound"] --> C
+    R --> C["AET Context Builder<br/>deterministic · bounded"]
+    C --> H["Host Planner<br/>reasoning only"]
+    H --> K["Strict Plan Candidate JSON"]
+    K --> V["AET Validator<br/>policy · references · coverage"]
+    V --> P["Evidence-Linked Plan Package<br/>PROPOSED"]
+    P --> Q["Helper Queries"]
+    P --> X["Single-Plan Skill Export"]
+    P --> D["External Diff Handoff"]
+    D --> F["Pending Proof Candidates<br/>UNKNOWN"]
+
+    classDef authority fill:#122033,stroke:#64d2ff,color:#f5f7fa;
+    classDef host fill:#2a2038,stroke:#c792ea,color:#f5f7fa;
+    classDef pending fill:#332819,stroke:#ffcb6b,color:#f5f7fa;
+    class C,V,P,Q,X authority;
+    class H,K host;
+    class D,F pending;

@@ -1,0 +1,90 @@
+{
+  "case_id": "aet-atlas-change-scope-review",
+  "request": "Plan a bounded Graph Builder, fixed Perspective, recursive Viewer, and Bundle v1 Change Group compatibility change.",
+  "source": {
+    "repository": "https://github.com/AdvancingTitans/agent-engineering-toolkit",
+    "base_release": "v1.16.0",
+    "workspace_head": "4e2193e15b937bd1aa158c04c4bb406e6355b741",
+    "files": {
+      "schemas/evidence-bundle/v1/evidence.schema.json": "7d66503c71a462d7d5f1baebc340402c9d6ec6720d8b37ea55476485294a4601",
+      "src/aet/atlas/builder.py": "d27f98a70490afee6c9427559e6e4d1d8b754ed96ae898032f711d279c89fb5f",
+      "src/aet/atlas/perspectives.py": "d9fc6f3051fe3dd33e0466f43be87894b1b0066ed0294246ec1beaa31aa06264",
+      "src/aet/atlas/viewer.py": "48c769d8f928df5971f130e583a99963210fc038b18a38c8a08f4260aff13c7b"
+    }
+  },
+  "decisions": {
+    "schemas/evidence-bundle/v1/evidence.schema.json": {
+      "disposition": "INVESTIGATE",
+      "evidence_refs": [
+        "ev-no-change-groups",
+        "ev-path-bindings",
+        "conflict-change-scope-v1"
+      ]
+    },
+    "src/aet/atlas/builder.py": {
+      "disposition": "REQUIRED",
+      "evidence_refs": [
+        "ev-graph-builder"
+      ]
+    },
+    "src/aet/atlas/perspectives.py": {
+      "disposition": "REQUIRED",
+      "evidence_refs": [
+        "ev-perspectives"
+      ]
+    },
+    "src/aet/atlas/viewer.py": {
+      "disposition": "REQUIRED",
+      "evidence_refs": [
+        "ev-viewer"
+      ]
+    }
+  },
+  "required_tests": [
+    "tests/test_evidence_atlas_builder.py",
+    "tests/test_evidence_atlas_protocol.py"
+  ],
+  "required_linkages": [
+    [
+      "src/aet/atlas/builder.py",
+      "src/aet/atlas/perspectives.py"
+    ],
+    [
+      "src/aet/atlas/builder.py",
+      "src/aet/atlas/viewer.py"
+    ],
+    [
+      "src/aet/atlas/perspectives.py",
+      "src/aet/atlas/viewer.py"
+    ]
+  ],
+  "required_unknowns": [
+    {
+      "id": "bundle-v1-change-group-boundary",
+      "term_groups": [
+        [
+          "Bundle v1"
+        ],
+        [
+          "Change Group"
+        ],
+        [
+          "path binding",
+          "bindings.paths"
+        ]
+      ]
+    },
+    {
+      "id": "verification-pending",
+      "term_groups": [
+        [
+          "Verification"
+        ],
+        [
+          "PENDING",
+          "not run"
+        ]
+      ]
+    }
+  ]
+}

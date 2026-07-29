@@ -273,6 +273,61 @@ export interface MermaidRenderOptions extends EvidenceGraphQueryOptions {
   perspectiveId?: EvidenceAtlasPerspectiveId;
 }
 
+export interface ValidatedPlanEditItem {
+  edit_id: string;
+  disposition: "REQUIRED" | "OPTIONAL" | "INVESTIGATE" | "DO_NOT_EDIT";
+  path: string;
+  symbol: string | null;
+  intent: string;
+  expected_change: string;
+  rationale: string;
+  evidence_refs: string[];
+  atlas_refs: string[];
+  source_refs: string[];
+  dependencies: string[];
+  tests: string[];
+  risks: string[];
+  limitations: string[];
+}
+
+export interface EvidenceLinkedPlan {
+  schema_version: "evidence-linked-plan/1.0";
+  plan_id: string;
+  status:
+    | "READY_FOR_HUMAN_REVIEW"
+    | "NEEDS_EVIDENCE"
+    | "PARTIAL"
+    | "BLOCKED"
+    | "SUPERSEDED";
+  authority: "PROPOSED";
+  edit_items: ValidatedPlanEditItem[];
+  verification_steps: Record<string, unknown>[];
+  diagnostics: Record<string, unknown>[];
+  conflicts: Record<string, unknown>[];
+  unknowns: Record<string, unknown>[];
+  [key: string]: unknown;
+}
+
+export interface PlanEditFilter {
+  path?: string;
+  disposition?: ValidatedPlanEditItem["disposition"];
+}
+
+export interface PlanReference {
+  schema_version: "plan-reference/1.0";
+  reference_id: string;
+  kind: string;
+  [key: string]: unknown;
+}
+
+export interface PlanReferenceValidationReport {
+  schema_version: "plan-reference-validation/1.0";
+  status: "PASS";
+  plan_id: string;
+  reference_count: number;
+  resolved_reference_count: number;
+}
+
 export class EvidenceBundleError extends Error {
   readonly code: string;
 }
@@ -340,3 +395,12 @@ export function renderMermaid(
   graph: EvidenceGraph,
   options?: MermaidRenderOptions,
 ): string;
+export function loadPlan(path: string | URL): Promise<EvidenceLinkedPlan>;
+export function queryPlanEdits(
+  plan: EvidenceLinkedPlan,
+  filter?: PlanEditFilter,
+): ValidatedPlanEditItem[];
+export function validatePlanReferences(
+  plan: EvidenceLinkedPlan,
+  refs: PlanReference[] | Record<string, PlanReference>,
+): PlanReferenceValidationReport;

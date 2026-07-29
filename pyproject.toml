@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "agent-engineering-toolkit"
-version = "1.16.0"
-description = "Portable evidence, visual investigation, and bounded code-improvement prompts for AI coding work."
+version = "1.17.0"
+description = "Portable evidence, bounded localization, and read-only planning for AI coding work."
 readme = "PYPI_README.md"
 requires-python = ">=3.11"
 license = "MIT"
@@ -53,6 +53,7 @@ aet = ["rulepacks_builtin.json", "atlas/assets/*"]
 "share/aet/schemas/investigation/v1" = ["schemas/investigation/v1/*.json"]
 "share/aet/schemas/evidence-atlas/v1" = ["schemas/evidence-atlas/v1/*.json"]
 "share/aet/schemas/optimization/v1" = ["schemas/optimization/v1/*.json"]
+"share/aet/schemas/planning" = ["schemas/planning/*.json"]
 "share/aet/evolution/audit/core" = ["tests/evolution/audit/core/*.json"]
 "share/aet/evolution/audit/validation" = ["tests/evolution/audit/validation/*.json"]
 "share/aet/evolution/audit/held_out" = ["tests/evolution/audit/held_out/*.json"]

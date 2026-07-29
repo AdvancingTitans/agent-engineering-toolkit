@@ -3,8 +3,8 @@
   "verified_with": "ffprobe 7.0",
   "generation": {
     "workflow_animation": "fireworks-tech-graph style 5 / agent-orchestration",
-    "panorama_and_slides": "docs/assets/source/generate_readme_media.py",
-    "video": "AVFoundation H.264 (silent)"
+    "panorama_and_slides": "docs/assets/source/generate_readme_media.py (v1.17 planner narrative)",
+    "video": "ffmpeg libx264 H.264 (silent)"
   },
   "assets": [
     {
@@ -56,7 +56,7 @@
       "language": "en",
       "width": 1600,
       "height": 1000,
-      "sha256": "fb5f9c5d1915155474feda1e78b9917a3e16da1946fc60f45c50f23374319344"
+      "sha256": "38ba981331c36782361b5da078d9503b07132f845493c26792256c425798ed48"
     },
     {
       "kind": "project_panorama",
@@ -65,21 +65,21 @@
       "language": "zh-CN",
       "width": 1600,
       "height": 1000,
-      "sha256": "4d755ac7ec733026b55cbeca41fccd7832abb4482618069990ac4b98677a8c0e"
+      "sha256": "79ff15dd8de5201ebc6066d8785a48660f9a44d732caecb697476a43b90a7cf5"
     },
     {
       "kind": "project_panorama",
       "format": "svg",
       "path": "aet-project-panorama-en.svg",
       "language": "en",
-      "sha256": "6682d640f9d1791cadd5c6f7e6c567b52ffad05e4d78376f5b034be6136830db"
+      "sha256": "d7c22f71ee4b30482ac939c4ef8f580c0e80d4add9227c1724c947fa06760916"
     },
     {
       "kind": "project_panorama",
       "format": "svg",
       "path": "aet-project-panorama-zh-CN.svg",
       "language": "zh-CN",
-      "sha256": "559533698a7350666821f4be7c44b4060e4a631b54f9027e369fd4243f86506d"
+      "sha256": "07b2e00590ce2d2fa9f14ecf1d9248ba9b32ba7396924885c7a4bd963494a45f"
     },
     {
       "kind": "product_video",
@@ -93,7 +93,7 @@
       "frames": 900,
       "frame_rate": "30/1",
       "duration_seconds": 30.0,
-      "sha256": "df8a530bf1e430f5e53ae71946d3719c739544e26b56f79014924a5211eede25"
+      "sha256": "41e71accbd45c7bee26218a5ffe646e87e2db88c8f9eca7c2ea44df04cafdd82"
     },
     {
       "kind": "product_video",
@@ -107,7 +107,7 @@
       "frames": 900,
       "frame_rate": "30/1",
       "duration_seconds": 30.0,
-      "sha256": "9ac0a8f569bc30a95be121f28dfe061a540443c81e4bc2c6d80b487f8aa9fdc8"
+      "sha256": "bd108a81e4c515e8a2662d07c22e2ee2b85ba94eafc64fcce64c25c9630fc332"
     }
   ]
 }

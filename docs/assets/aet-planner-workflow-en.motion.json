@@ -1,0 +1,2352 @@
+{
+  "animation_contract": {
+    "connectors_visible_at_opening": false,
+    "draw_easing": "linear",
+    "draw_schedule": [
+      {
+        "frames": [
+          1,
+          8
+        ],
+        "role": "ingress"
+      },
+      {
+        "frames": [
+          5,
+          12
+        ],
+        "role": "reason"
+      },
+      {
+        "frames": [
+          9,
+          16
+        ],
+        "role": "extract"
+      },
+      {
+        "frames": [
+          13,
+          20
+        ],
+        "role": "transform"
+      },
+      {
+        "frames": [
+          17,
+          24
+        ],
+        "role": "resolve"
+      },
+      {
+        "frames": [
+          21,
+          28
+        ],
+        "role": "memory-write"
+      },
+      {
+        "frames": [
+          25,
+          32
+        ],
+        "role": "memory-read"
+      },
+      {
+        "frames": [
+          29,
+          36
+        ],
+        "role": "response-context"
+      }
+    ],
+    "empty_opening_frame": 0,
+    "forbidden": [
+      "node-motion",
+      "text-motion",
+      "halo",
+      "ripple",
+      "zoom",
+      "breathing"
+    ],
+    "maximum_concurrent_draws": 2,
+    "nodes_visible_every_frame": true,
+    "persistent_data_flow": {
+      "body": {
+        "color": "#06b6d4",
+        "dash_pattern": [
+          16,
+          25
+        ],
+        "filter_free": true,
+        "linecap": "round",
+        "linejoin": "round",
+        "marker_free": true,
+        "opacity": 0.9,
+        "primitive": "persistent-data-flow-stream",
+        "resolved_style_1_source_stroke_width": 2.4,
+        "resolved_style_1_stroke_width": 3.84,
+        "stroke_width": "min(4.0, max(3.0, source_stroke * 1.60))"
+      },
+      "dash_offset_per_rendered_frame": -6.0,
+      "dash_period": 41,
+      "direction": "source-to-target",
+      "direction_sentinels": {
+        "ingress": [
+          "right"
+        ],
+        "memory-write": [
+          "down",
+          "left",
+          "down"
+        ],
+        "resolve": [
+          "left"
+        ]
+      },
+      "expected_initial_phases": [
+        7,
+        14,
+        21,
+        28,
+        31,
+        35,
+        1,
+        8
+      ],
+      "fade_in_factors": [
+        0.3,
+        0.65,
+        1.0
+      ],
+      "fade_in_frames": [
+        36,
+        38
+      ],
+      "full_opacity_frames": [
+        38,
+        109
+      ],
+      "minimum_review_scale": "50%",
+      "packet_head": {
+        "appended_immediately_after_body": true,
+        "color": "#e0f2fe",
+        "dash_offset_from_body": -10,
+        "dash_pattern": [
+          6,
+          35
+        ],
+        "filter_free": true,
+        "linecap": "round",
+        "linejoin": "round",
+        "marker_free": true,
+        "opacity": 0.98,
+        "primitive": "persistent-data-flow-head",
+        "stroke_width": 2.2
+      },
+      "packet_head_count": 8,
+      "packet_head_primitive": "persistent-data-flow-head",
+      "period_step_coprime": true,
+      "phase_policy": "(motionStage * 7 + motionOrder * 3) mod 41",
+      "phase_repeat_within_stream_interval": true,
+      "primitive": "persistent-data-flow-stream",
+      "rendered_frames": [
+        36,
+        114
+      ],
+      "reset_behavior": "all eight body/head pairs keep advancing while topology, labels, and both flow layers fade together",
+      "reset_opacity_samples": [
+        1.0,
+        0.7575,
+        0.515,
+        0.2725,
+        0.03
+      ],
+      "reset_range": [
+        110,
+        114
+      ],
+      "roles": [
+        "ingress",
+        "reason",
+        "extract",
+        "transform",
+        "resolve",
+        "memory-write",
+        "memory-read",
+        "response-context"
+      ],
+      "stream_count": 8,
+      "stream_interval_frame_count": 79,
+      "travel_easing": "linear",
+      "travel_pixels_per_frame_at_50_percent": 3,
+      "travel_pixels_per_frame_at_960px": 6,
+      "travel_pixels_per_second_at_50_percent_20fps": 60,
+      "travel_pixels_per_second_at_960px_20fps": 120,
+      "travel_user_units_per_rendered_frame": 6
+    },
+    "primitive": "connector-draw-on-with-persistent-data-flow",
+    "reset_opacity_samples": [
+      1.0,
+      0.7575,
+      0.515,
+      0.2725,
+      0.03
+    ],
+    "reset_range": [
+      110,
+      114
+    ],
+    "route_label_opacity_states": 8,
+    "settled_markers": "original marker appears only after route arrival",
+    "settled_topology_dynamic": true,
+    "source_edges_hidden_by_transient_css": true,
+    "text_geometry_motion": 0,
+    "topology_draw_on": true
+  },
+  "artifact": {
+    "bytes": 297613,
+    "encoder": "ffmpeg/gif-palette",
+    "format": "gif",
+    "mime_type": "image/gif",
+    "path": "docs/assets/aet-planner-workflow-en.gif",
+    "probe": {
+      "codec_name": "gif",
+      "container": {
+        "duration": "5.750000",
+        "format_name": "gif"
+      },
+      "duration": "5.750000",
+      "height": 680,
+      "nb_frames": "115",
+      "nb_read_frames": "115",
+      "pix_fmt": "bgra",
+      "r_frame_rate": "20/1",
+      "width": 960
+    },
+    "sha256": "8a063df3587c22f8e24a9ba942b6c2fa9ae645cf5e7d8ca90a9d28ffbebfdc5d",
+    "source_frame_count": 115
+  },
+  "dry_run": false,
+  "duration_seconds": 5.75,
+  "encoded_dimensions": {
+    "height": 680,
+    "width": 960
+  },
+  "fixture_sha256": null,
+  "fps": 20,
+  "frame_count": 115,
+  "frame_uniqueness_contract": {
+    "adjacent_duplicates_allowed": false,
+    "intentional_reset_boundary_opacity": 1.0,
+    "intentional_reset_boundary_repeat_frame": 110,
+    "long_timeline_repeat_scope": [
+      38,
+      109
+    ],
+    "minimum_unique_rasters_for_long_timeline": 75,
+    "opening_construction_and_reset_tail_globally_distinct": true,
+    "strict_all_unique_through_frame_count": 75
+  },
+  "height": 680,
+  "input_kind": "svg",
+  "loop": {
+    "adjacent_duplicate_count": 0,
+    "all_frames_unique": false,
+    "delta_quality": {
+      "adjacent_max": 0.0014531372549019608,
+      "adjacent_median": 0.0007618117647058823,
+      "adjacent_min": 8.770666666666667e-06,
+      "adjacent_p95": 0.000778956862745098,
+      "changed_area_method": "accumulated adjacent luma delta greater than 2 percent",
+      "changed_area_ratio": 0.01395835294117647,
+      "metric": "normalized-luma-mean-absolute-difference",
+      "seam": 0.00018006313725490197,
+      "seam_within_adjacent_p95": true
+    },
+    "embedded_loop_count": 0,
+    "encoded_frames": {
+      "adjacent_duplicate_count": 0,
+      "adjacent_duplicate_pairs": [],
+      "algorithm": "framemd5",
+      "all_frames_unique": false,
+      "first_frame_hash": "5d764d76d6256440692cb03da0f93800",
+      "frame_count": 115,
+      "intentional_reset_boundary_opacity": 1.0,
+      "intentional_reset_boundary_repeat_count": 1,
+      "intentional_reset_boundary_repeat_evidence": [
+        {
+          "classification": "intentional_reset_boundary_repeat",
+          "frame_indices": [
+            69,
+            110
+          ],
+          "hash": "2114d8446c9cd2423205abcad3530854"
+        }
+      ],
+      "intentional_reset_boundary_repeat_frame": 110,
+      "last_frame_hash": "8682268c277e74683fa4ea4d91733369",
+      "minimum_unique_frame_count": 75,
+      "opening_construction_and_reset_tail_globally_distinct": true,
+      "repeat_scope": [
+        38,
+        109
+      ],
+      "repeat_scope_policy": "non-adjacent-repeats-inside-full-opacity-plus-reset-start-boundary",
+      "repeated_frame_group_count": 32,
+      "repeated_frame_index_evidence": [
+        {
+          "classification": "steady_state_periodic_repeat",
+          "frame_indices": [
+            38,
+            79
+          ],
+          "hash": "7051065e21e0c495bd3f00e24a174364"
+        },
+        {
+          "classification": "steady_state_periodic_repeat",
+          "frame_indices": [
+            39,
+            80
+          ],
+          "hash": "9af6724c17a4a989eeb2806b2bde43eb"
+        },
+        {
+          "classification": "steady_state_periodic_repeat",
+          "frame_indices": [
+            40,
+            81
+          ],
+          "hash": "bed01a2393f1381913a8b1475e929a5b"
+        },
+        {
+          "classification": "steady_state_periodic_repeat",
+          "frame_indices": [
+            41,
+            82
+          ],
+          "hash": "92ca643c10fba400f85e023e1f20c67b"
+        },
+        {
+          "classification": "steady_state_periodic_repeat",
+          "frame_indices": [
+            42,
+            83
+          ],
+          "hash": "6440e24cfece96732fcb53ffec5328a5"
+        },
+        {
+          "classification": "steady_state_periodic_repeat",
+          "frame_indices": [
+            43,
+            84
+          ],
+          "hash": "7bdf4bd45aef04cd54fc4ae2f6aaec37"
+        },
+        {
+          "classification": "steady_state_periodic_repeat",
+          "frame_indices": [
+            44,
+            85
+          ],
+          "hash": "fd7705e971655186305d31d344423c9d"
+        },
+        {
+          "classification": "steady_state_periodic_repeat",
+          "frame_indices": [
+            45,
+            86
+          ],
+          "hash": "bfd14cdee57fceda992b4728df2c7b64"
+        },
+        {
+          "classification": "steady_state_periodic_repeat",
+          "frame_indices": [
+            46,
+            87
+          ],
+          "hash": "4cdf91e7c9e00babee8336efe16296dd"
+        },
+        {
+          "classification": "steady_state_periodic_repeat",
+          "frame_indices": [
+            47,
+            88
+          ],
+          "hash": "cb12f3466462334ce97629b3a343d4af"
+        },
+        {
+          "classification": "steady_state_periodic_repeat",
+          "frame_indices": [
+            48,
+            89
+          ],
+          "hash": "768a9347f6e9afbc7799ce1c75bd9c8d"
+        },
+        {
+          "classification": "steady_state_periodic_repeat",
+          "frame_indices": [
+            49,
+            90
+          ],
+          "hash": "9a138723891b01d2ec1b6fc98b3ebf6e"
+        },
+        {
+          "classification": "steady_state_periodic_repeat",
+          "frame_indices": [
+            50,
+            91
+          ],
+          "hash": "4ee75ef0b70b48c071a5caabca8c57c0"
+        },
+        {
+          "classification": "steady_state_periodic_repeat",
+          "frame_indices": [
+            51,
+            92
+          ],
+          "hash": "c805b211bcc16036d511d493b4a6d602"
+        },
+        {
+          "classification": "steady_state_periodic_repeat",
+          "frame_indices": [
+            52,
+            93
+          ],
+          "hash": "a8f37d3d0efd299aadb36794ab57a8be"
+        },
+        {
+          "classification": "steady_state_periodic_repeat",
+          "frame_indices": [
+            53,
+            94
+          ],
+          "hash": "d319a941563e20f033eb5ee2f26dfb73"
+        },
+        {
+          "classification": "steady_state_periodic_repeat",
+          "frame_indices": [
+            54,
+            95
+          ],
+          "hash": "f29ed2d8e84e96e3e6b3dfa83d78ce68"
+        },
+        {
+          "classification": "steady_state_periodic_repeat",
+          "frame_indices": [
+            55,
+            96
+          ],
+          "hash": "da264a9fc1250af6e14845c66a172694"
+        },
+        {
+          "classification": "steady_state_periodic_repeat",
+          "frame_indices": [
+            56,
+            97
+          ],
+          "hash": "b0ff895a9df01f366f26666a271cfd65"
+        },
+        {
+          "classification": "steady_state_periodic_repeat",
+          "frame_indices": [
+            57,
+            98
+          ],
+          "hash": "6e38e89ace3a7afe0a10d78b6d0119d0"
+        },
+        {
+          "classification": "steady_state_periodic_repeat",
+          "frame_indices": [
+            58,
+            99
+          ],
+          "hash": "795aae1f307f62b93d9365b836366542"
+        },
+        {
+          "classification": "steady_state_periodic_repeat",
+          "frame_indices": [
+            59,
+            100
+          ],
+          "hash": "1d9f6838275eada18336d613e6c0ae2e"
+        },
+        {
+          "classification": "steady_state_periodic_repeat",
+          "frame_indices": [
+            60,
+            101
+          ],
+          "hash": "7036009743d270ba86c693b6b7fd6725"
+        },
+        {
+          "classification": "steady_state_periodic_repeat",
+          "frame_indices": [
+            61,
+            102
+          ],
+          "hash": "4fc12bcbff0764310e0622dfadc71400"
+        },
+        {
+          "classification": "steady_state_periodic_repeat",
+          "frame_indices": [
+            62,
+            103
+          ],
+          "hash": "7c4a2b6b2bdb832c05270dbc7cbc4c38"
+        },
+        {
+          "classification": "steady_state_periodic_repeat",
+          "frame_indices": [
+            63,
+            104
+          ],
+          "hash": "4a200616066e6fb7ff4d8659a6bc9791"
+        },
+        {
+          "classification": "steady_state_periodic_repeat",
+          "frame_indices": [
+            64,
+            105
+          ],
+          "hash": "ea6522a3a779223ee7e529e983c3e1da"
+        },
+        {
+          "classification": "steady_state_periodic_repeat",
+          "frame_indices": [
+            65,
+            106
+          ],
+          "hash": "d8f92008489165e64bdf9c564cb54386"
+        },
+        {
+          "classification": "steady_state_periodic_repeat",
+          "frame_indices": [
+            66,
+            107
+          ],
+          "hash": "2708e7a0a4d8034eb5aa0d40851524f0"
+        },
+        {
+          "classification": "steady_state_periodic_repeat",
+          "frame_indices": [
+            67,
+            108
+          ],
+          "hash": "4ed68940c23c6a1283dbd735ca0d6771"
+        },
+        {
+          "classification": "steady_state_periodic_repeat",
+          "frame_indices": [
+            68,
+            109
+          ],
+          "hash": "a55556c7e93820d52bfc1ea37520439f"
+        },
+        {
+          "classification": "intentional_reset_boundary_repeat",
+          "frame_indices": [
+            69,
+            110
+          ],
+          "hash": "2114d8446c9cd2423205abcad3530854"
+        }
+      ],
+      "repeats_confined_to_full_opacity": false,
+      "repeats_confined_to_permitted_scope": true,
+      "unique_frame_count": 83
+    },
+    "first_frame_sha256": "7bd07f0637f4a6cc5eb039ecb7aa96c4e839ccb867061e3dfc00d66a98ac7484",
+    "intentional_reset_boundary_repeat_count": 1,
+    "intentional_reset_boundary_repeat_evidence": [
+      {
+        "classification": "intentional_reset_boundary_repeat",
+        "frame_indices": [
+          69,
+          110
+        ],
+        "hash": "e0dae7bda7c66b3cb3ef46d58ad940dcebeb8828322990e3e1b80c5d236fe238"
+      }
+    ],
+    "last_frame_sha256": "18044615d8c5f4d23a8436d04e288aa0dc237a804ab4bd7068beb5e938152b3a",
+    "minimum_unique_frame_count": 75,
+    "opening_construction_and_reset_tail_globally_distinct": true,
+    "playback": "embedded-infinite",
+    "raw_frames": {
+      "adjacent_duplicate_count": 0,
+      "adjacent_duplicate_pairs": [],
+      "algorithm": "sha256",
+      "all_frames_unique": false,
+      "first_frame_hash": "7bd07f0637f4a6cc5eb039ecb7aa96c4e839ccb867061e3dfc00d66a98ac7484",
+      "frame_count": 115,
+      "intentional_reset_boundary_opacity": 1.0,
+      "intentional_reset_boundary_repeat_count": 1,
+      "intentional_reset_boundary_repeat_evidence": [
+        {
+          "classification": "intentional_reset_boundary_repeat",
+          "frame_indices": [
+            69,
+            110
+          ],
+          "hash": "e0dae7bda7c66b3cb3ef46d58ad940dcebeb8828322990e3e1b80c5d236fe238"
+        }
+      ],
+      "intentional_reset_boundary_repeat_frame": 110,
+      "last_frame_hash": "18044615d8c5f4d23a8436d04e288aa0dc237a804ab4bd7068beb5e938152b3a",
+      "minimum_unique_frame_count": 75,
+      "opening_construction_and_reset_tail_globally_distinct": true,
+      "repeat_scope": [
+        38,
+        109
+      ],
+      "repeat_scope_policy": "non-adjacent-repeats-inside-full-opacity-plus-reset-start-boundary",
+      "repeated_frame_group_count": 32,
+      "repeated_frame_index_evidence": [
+        {
+          "classification": "steady_state_periodic_repeat",
+          "frame_indices": [
+            38,
+            79
+          ],
+          "hash": "93353bd9cd0f392b5b2a22e288578275da2e4fcf70c7540c44366e747a720316"
+        },
+        {
+          "classification": "steady_state_periodic_repeat",
+          "frame_indices": [
+            39,
+            80
+          ],
+          "hash": "736a8275975d99409d56ed17827bdab91088f999e7b2916447a6377298b9b9c5"
+        },
+        {
+          "classification": "steady_state_periodic_repeat",
+          "frame_indices": [
+            40,
+            81
+          ],
+          "hash": "370b3da07d945cff2bcac7ec5d562336fe7289d61151061125937c7cd9bd8e8d"
+        },
+        {
+          "classification": "steady_state_periodic_repeat",
+          "frame_indices": [
+            41,
+            82
+          ],
+          "hash": "16e9abea39c419e09985f9b3b363f0137487fc2c0278f296a1538ba282cb2503"
+        },
+        {
+          "classification": "steady_state_periodic_repeat",
+          "frame_indices": [
+            42,
+            83
+          ],
+          "hash": "0e71c7d5de67954eefc2b6b9df4ef3aeb7effdfb6a3bc864f6a93d190ce5ed1d"
+        },
+        {
+          "classification": "steady_state_periodic_repeat",
+          "frame_indices": [
+            43,
+            84
+          ],
+          "hash": "250138d8f6c2231e6e9c70f2970063e169dbc2e994bbab00b4b068c26d359f0f"
+        },
+        {
+          "classification": "steady_state_periodic_repeat",
+          "frame_indices": [
+            44,
+            85
+          ],
+          "hash": "8a65ef5f76f178ba1b74b1510db82206c3a9365883c02c6f238bf21267fa30b8"
+        },
+        {
+          "classification": "steady_state_periodic_repeat",
+          "frame_indices": [
+            45,
+            86
+          ],
+          "hash": "de30995c8b6c3f95cff2dba2d7246d7f045a3a4d3b35592c9b0d2cfdca6ee824"
+        },
+        {
+          "classification": "steady_state_periodic_repeat",
+          "frame_indices": [
+            46,
+            87
+          ],
+          "hash": "f205c60d30cf7a35e4fa0e4712736b5c90a141a43aac3296ae0ae64808e83a87"
+        },
+        {
+          "classification": "steady_state_periodic_repeat",
+          "frame_indices": [
+            47,
+            88
+          ],
+          "hash": "a90d0196e44204c7f5b36e16628f590db73722b6a9597e9aca4ec81a7be30c3c"
+        },
+        {
+          "classification": "steady_state_periodic_repeat",
+          "frame_indices": [
+            48,
+            89
+          ],
+          "hash": "5f2b42e6a2827c122e173ec7ca6b7828e5b4a1ce917e3a565f628fa152ad530f"
+        },
+        {
+          "classification": "steady_state_periodic_repeat",
+          "frame_indices": [
+            49,
+            90
+          ],
+          "hash": "89a302265f2ad8c259101ca4d9c22b6763343199ac09f27ab29143929959adfb"
+        },
+        {
+          "classification": "steady_state_periodic_repeat",
+          "frame_indices": [
+            50,
+            91
+          ],
+          "hash": "530c99491672466bf148953f8cd4221d79f2d31268c2c5a76a76516cfba21b94"
+        },
+        {
+          "classification": "steady_state_periodic_repeat",
+          "frame_indices": [
+            51,
+            92
+          ],
+          "hash": "1a0043ff7d22ca4e8d1ef098518a05a10ea305f4bc8cdbba2ef1d404d60c58bd"
+        },
+        {
+          "classification": "steady_state_periodic_repeat",
+          "frame_indices": [
+            52,
+            93
+          ],
+          "hash": "699f891176b4764527d408b4f9a344505e747f3afe31482821c30b15f175a1d8"
+        },
+        {
+          "classification": "steady_state_periodic_repeat",
+          "frame_indices": [
+            53,
+            94
+          ],
+          "hash": "5d916a2bf80e10c4df4a1a12e0b76c4540b65276096f29fe7a465970c7dae264"
+        },
+        {
+          "classification": "steady_state_periodic_repeat",
+          "frame_indices": [
+            54,
+            95
+          ],
+          "hash": "7c49c04a08bbcb53fb849cd20b430bdead8a0bf4d9408765eb13bf585ea18658"
+        },
+        {
+          "classification": "steady_state_periodic_repeat",
+          "frame_indices": [
+            55,
+            96
+          ],
+          "hash": "4a235ba459b2445bf2966ead17bf0c8c842d0f9dfb6957980d42d33aa6383a68"
+        },
+        {
+          "classification": "steady_state_periodic_repeat",
+          "frame_indices": [
+            56,
+            97
+          ],
+          "hash": "5e176f5f2f2808703bf02b3af3dc62f6e4af47f7d3f7e6c1bf822f84a779a1c9"
+        },
+        {
+          "classification": "steady_state_periodic_repeat",
+          "frame_indices": [
+            57,
+            98
+          ],
+          "hash": "71a8f0db573aee7910bdb944aaaf9108d90b0cf53fe649d1842f796ca75790dc"
+        },
+        {
+          "classification": "steady_state_periodic_repeat",
+          "frame_indices": [
+            58,
+            99
+          ],
+          "hash": "19433084a0dfff0ff6618f5f46bf48979b9b1504ae7b73f584c637f74e5f275f"
+        },
+        {
+          "classification": "steady_state_periodic_repeat",
+          "frame_indices": [
+            59,
+            100
+          ],
+          "hash": "f9fed2f6b7c16e99c89c7de89a219f0dff2491022c5c30dc0c30c30e4f567914"
+        },
+        {
+          "classification": "steady_state_periodic_repeat",
+          "frame_indices": [
+            60,
+            101
+          ],
+          "hash": "4d6a6e953d70eadf58fb33ec432de9d734a7efc382c5d5c3cfc2b213e4f6ad91"
+        },
+        {
+          "classification": "steady_state_periodic_repeat",
+          "frame_indices": [
+            61,
+            102
+          ],
+          "hash": "16aee058843d0c0fc9d70fac244bb348a513a1695a6888208b6e3d345d8257ff"
+        },
+        {
+          "classification": "steady_state_periodic_repeat",
+          "frame_indices": [
+            62,
+            103
+          ],
+          "hash": "b9a1f9c4c1a6b5346d0cbdbf4600de00a089e6a6dff27f064d9b4fc27010b131"
+        },
+        {
+          "classification": "steady_state_periodic_repeat",
+          "frame_indices": [
+            63,
+            104
+          ],
+          "hash": "7bab0e9c9a0aef1b456cf8178f78627565d500c112a03c15118b1910a7fb6ddc"
+        },
+        {
+          "classification": "steady_state_periodic_repeat",
+          "frame_indices": [
+            64,
+            105
+          ],
+          "hash": "30e16c73f0a7e2d9c3e4fb61994733bf17d40c16981e13ccd3302eea395e2dcb"
+        },
+        {
+          "classification": "steady_state_periodic_repeat",
+          "frame_indices": [
+            65,
+            106
+          ],
+          "hash": "ba7b5be2f02c16a9db7511f97f97e9ca7718ce4c352d1df5428093e83dd56a4f"
+        },
+        {
+          "classification": "steady_state_periodic_repeat",
+          "frame_indices": [
+            66,
+            107
+          ],
+          "hash": "3bc3cc64e537af258617fb2031eac516662d83cf21eaa1538a2204a6b34bd46f"
+        },
+        {
+          "classification": "steady_state_periodic_repeat",
+          "frame_indices": [
+            67,
+            108
+          ],
+          "hash": "66a57737880af3039e8d6c60c3da7da89542686642de53fd64fa7939333a29bc"
+        },
+        {
+          "classification": "steady_state_periodic_repeat",
+          "frame_indices": [
+            68,
+            109
+          ],
+          "hash": "68938348dc3beeab0cf45474034b80ec5b33b39f8f59e5ab8c6bc5e49055d03a"
+        },
+        {
+          "classification": "intentional_reset_boundary_repeat",
+          "frame_indices": [
+            69,
+            110
+          ],
+          "hash": "e0dae7bda7c66b3cb3ef46d58ad940dcebeb8828322990e3e1b80c5d236fe238"
+        }
+      ],
+      "repeats_confined_to_full_opacity": false,
+      "repeats_confined_to_permitted_scope": true,
+      "unique_frame_count": 83
+    },
+    "repeat_scope": [
+      38,
+      109
+    ],
+    "repeat_scope_policy": "non-adjacent-repeats-inside-full-opacity-plus-reset-start-boundary",
+    "repeated_frame_index_evidence": [
+      {
+        "classification": "steady_state_periodic_repeat",
+        "frame_indices": [
+          38,
+          79
+        ],
+        "hash": "93353bd9cd0f392b5b2a22e288578275da2e4fcf70c7540c44366e747a720316"
+      },
+      {
+        "classification": "steady_state_periodic_repeat",
+        "frame_indices": [
+          39,
+          80
+        ],
+        "hash": "736a8275975d99409d56ed17827bdab91088f999e7b2916447a6377298b9b9c5"
+      },
+      {
+        "classification": "steady_state_periodic_repeat",
+        "frame_indices": [
+          40,
+          81
+        ],
+        "hash": "370b3da07d945cff2bcac7ec5d562336fe7289d61151061125937c7cd9bd8e8d"
+      },
+      {
+        "classification": "steady_state_periodic_repeat",
+        "frame_indices": [
+          41,
+          82
+        ],
+        "hash": "16e9abea39c419e09985f9b3b363f0137487fc2c0278f296a1538ba282cb2503"
+      },
+      {
+        "classification": "steady_state_periodic_repeat",
+        "frame_indices": [
+          42,
+          83
+        ],
+        "hash": "0e71c7d5de67954eefc2b6b9df4ef3aeb7effdfb6a3bc864f6a93d190ce5ed1d"
+      },
+      {
+        "classification": "steady_state_periodic_repeat",
+        "frame_indices": [
+          43,
+          84
+        ],
+        "hash": "250138d8f6c2231e6e9c70f2970063e169dbc2e994bbab00b4b068c26d359f0f"
+      },
+      {
+        "classification": "steady_state_periodic_repeat",
+        "frame_indices": [
+          44,
+          85
+        ],
+        "hash": "8a65ef5f76f178ba1b74b1510db82206c3a9365883c02c6f238bf21267fa30b8"
+      },
+      {
+        "classification": "steady_state_periodic_repeat",
+        "frame_indices": [
+          45,
+          86
+        ],
+        "hash": "de30995c8b6c3f95cff2dba2d7246d7f045a3a4d3b35592c9b0d2cfdca6ee824"
+      },
+      {
+        "classification": "steady_state_periodic_repeat",
+        "frame_indices": [
+          46,
+          87
+        ],
+        "hash": "f205c60d30cf7a35e4fa0e4712736b5c90a141a43aac3296ae0ae64808e83a87"
+      },
+      {
+        "classification": "steady_state_periodic_repeat",
+        "frame_indices": [
+          47,
+          88
+        ],
+        "hash": "a90d0196e44204c7f5b36e16628f590db73722b6a9597e9aca4ec81a7be30c3c"
+      },
+      {
+        "classification": "steady_state_periodic_repeat",
+        "frame_indices": [
+          48,
+          89
+        ],
+        "hash": "5f2b42e6a2827c122e173ec7ca6b7828e5b4a1ce917e3a565f628fa152ad530f"
+      },
+      {
+        "classification": "steady_state_periodic_repeat",
+        "frame_indices": [
+          49,
+          90
+        ],
+        "hash": "89a302265f2ad8c259101ca4d9c22b6763343199ac09f27ab29143929959adfb"
+      },
+      {
+        "classification": "steady_state_periodic_repeat",
+        "frame_indices": [
+          50,
+          91
+        ],
+        "hash": "530c99491672466bf148953f8cd4221d79f2d31268c2c5a76a76516cfba21b94"
+      },
+      {
+        "classification": "steady_state_periodic_repeat",
+        "frame_indices": [
+          51,
+          92
+        ],
+        "hash": "1a0043ff7d22ca4e8d1ef098518a05a10ea305f4bc8cdbba2ef1d404d60c58bd"
+      },
+      {
+        "classification": "steady_state_periodic_repeat",
+        "frame_indices": [
+          52,
+          93
+        ],
+        "hash": "699f891176b4764527d408b4f9a344505e747f3afe31482821c30b15f175a1d8"
+      },
+      {
+        "classification": "steady_state_periodic_repeat",
+        "frame_indices": [
+          53,
+          94
+        ],
+        "hash": "5d916a2bf80e10c4df4a1a12e0b76c4540b65276096f29fe7a465970c7dae264"
+      },
+      {
+        "classification": "steady_state_periodic_repeat",
+        "frame_indices": [
+          54,
+          95
+        ],
+        "hash": "7c49c04a08bbcb53fb849cd20b430bdead8a0bf4d9408765eb13bf585ea18658"
+      },
+      {
+        "classification": "steady_state_periodic_repeat",
+        "frame_indices": [
+          55,
+          96
+        ],
+        "hash": "4a235ba459b2445bf2966ead17bf0c8c842d0f9dfb6957980d42d33aa6383a68"
+      },
+      {
+        "classification": "steady_state_periodic_repeat",
+        "frame_indices": [
+          56,
+          97
+        ],
+        "hash": "5e176f5f2f2808703bf02b3af3dc62f6e4af47f7d3f7e6c1bf822f84a779a1c9"
+      },
+      {
+        "classification": "steady_state_periodic_repeat",
+        "frame_indices": [
+          57,
+          98
+        ],
+        "hash": "71a8f0db573aee7910bdb944aaaf9108d90b0cf53fe649d1842f796ca75790dc"
+      },
+      {
+        "classification": "steady_state_periodic_repeat",
+        "frame_indices": [
+          58,
+          99
+        ],
+        "hash": "19433084a0dfff0ff6618f5f46bf48979b9b1504ae7b73f584c637f74e5f275f"
+      },
+      {
+        "classification": "steady_state_periodic_repeat",
+        "frame_indices": [
+          59,
+          100
+        ],
+        "hash": "f9fed2f6b7c16e99c89c7de89a219f0dff2491022c5c30dc0c30c30e4f567914"
+      },
+      {
+        "classification": "steady_state_periodic_repeat",
+        "frame_indices": [
+          60,
+          101
+        ],
+        "hash": "4d6a6e953d70eadf58fb33ec432de9d734a7efc382c5d5c3cfc2b213e4f6ad91"
+      },
+      {
+        "classification": "steady_state_periodic_repeat",
+        "frame_indices": [
+          61,
+          102
+        ],
+        "hash": "16aee058843d0c0fc9d70fac244bb348a513a1695a6888208b6e3d345d8257ff"
+      },
+      {
+        "classification": "steady_state_periodic_repeat",
+        "frame_indices": [
+          62,
+          103
+        ],
+        "hash": "b9a1f9c4c1a6b5346d0cbdbf4600de00a089e6a6dff27f064d9b4fc27010b131"
+      },
+      {
+        "classification": "steady_state_periodic_repeat",
+        "frame_indices": [
+          63,
+          104
+        ],
+        "hash": "7bab0e9c9a0aef1b456cf8178f78627565d500c112a03c15118b1910a7fb6ddc"
+      },
+      {
+        "classification": "steady_state_periodic_repeat",
+        "frame_indices": [
+          64,
+          105
+        ],
+        "hash": "30e16c73f0a7e2d9c3e4fb61994733bf17d40c16981e13ccd3302eea395e2dcb"
+      },
+      {
+        "classification": "steady_state_periodic_repeat",
+        "frame_indices": [
+          65,
+          106
+        ],
+        "hash": "ba7b5be2f02c16a9db7511f97f97e9ca7718ce4c352d1df5428093e83dd56a4f"
+      },
+      {
+        "classification": "steady_state_periodic_repeat",
+        "frame_indices": [
+          66,
+          107
+        ],
+        "hash": "3bc3cc64e537af258617fb2031eac516662d83cf21eaa1538a2204a6b34bd46f"
+      },
+      {
+        "classification": "steady_state_periodic_repeat",
+        "frame_indices": [
+          67,
+          108
+        ],
+        "hash": "66a57737880af3039e8d6c60c3da7da89542686642de53fd64fa7939333a29bc"
+      },
+      {
+        "classification": "steady_state_periodic_repeat",
+        "frame_indices": [
+          68,
+          109
+        ],
+        "hash": "68938348dc3beeab0cf45474034b80ec5b33b39f8f59e5ab8c6bc5e49055d03a"
+      },
+      {
+        "classification": "intentional_reset_boundary_repeat",
+        "frame_indices": [
+          69,
+          110
+        ],
+        "hash": "e0dae7bda7c66b3cb3ef46d58ad940dcebeb8828322990e3e1b80c5d236fe238"
+      }
+    ],
+    "repeats_confined_to_full_opacity": false,
+    "repeats_confined_to_permitted_scope": true,
+    "sampling": "uniform-frame-centers",
+    "unique_frame_count": 83
+  },
+  "loop_playback": "embedded-infinite",
+  "mime_type": "image/gif",
+  "motion_class": "semantic",
+  "motion_grammar": {
+    "curves": {
+      "draw": "linear",
+      "persistent-data-flow": "linear",
+      "reset": "linear"
+    },
+    "draw_on": {
+      "connectors_visible_at_opening": false,
+      "draw_easing": "linear",
+      "draw_schedule": [
+        {
+          "frames": [
+            1,
+            8
+          ],
+          "role": "ingress"
+        },
+        {
+          "frames": [
+            5,
+            12
+          ],
+          "role": "reason"
+        },
+        {
+          "frames": [
+            9,
+            16
+          ],
+          "role": "extract"
+        },
+        {
+          "frames": [
+            13,
+            20
+          ],
+          "role": "transform"
+        },
+        {
+          "frames": [
+            17,
+            24
+          ],
+          "role": "resolve"
+        },
+        {
+          "frames": [
+            21,
+            28
+          ],
+          "role": "memory-write"
+        },
+        {
+          "frames": [
+            25,
+            32
+          ],
+          "role": "memory-read"
+        },
+        {
+          "frames": [
+            29,
+            36
+          ],
+          "role": "response-context"
+        }
+      ],
+      "empty_opening_frame": 0,
+      "forbidden": [
+        "node-motion",
+        "text-motion",
+        "halo",
+        "ripple",
+        "zoom",
+        "breathing"
+      ],
+      "maximum_concurrent_draws": 2,
+      "nodes_visible_every_frame": true,
+      "persistent_data_flow": {
+        "body": {
+          "color": "#06b6d4",
+          "dash_pattern": [
+            16,
+            25
+          ],
+          "filter_free": true,
+          "linecap": "round",
+          "linejoin": "round",
+          "marker_free": true,
+          "opacity": 0.9,
+          "primitive": "persistent-data-flow-stream",
+          "resolved_style_1_source_stroke_width": 2.4,
+          "resolved_style_1_stroke_width": 3.84,
+          "stroke_width": "min(4.0, max(3.0, source_stroke * 1.60))"
+        },
+        "dash_offset_per_rendered_frame": -6.0,
+        "dash_period": 41,
+        "direction": "source-to-target",
+        "direction_sentinels": {
+          "ingress": [
+            "right"
+          ],
+          "memory-write": [
+            "down",
+            "left",
+            "down"
+          ],
+          "resolve": [
+            "left"
+          ]
+        },
+        "expected_initial_phases": [
+          7,
+          14,
+          21,
+          28,
+          31,
+          35,
+          1,
+          8
+        ],
+        "fade_in_factors": [
+          0.3,
+          0.65,
+          1.0
+        ],
+        "fade_in_frames": [
+          36,
+          38
+        ],
+        "full_opacity_frames": [
+          38,
+          109
+        ],
+        "minimum_review_scale": "50%",
+        "packet_head": {
+          "appended_immediately_after_body": true,
+          "color": "#e0f2fe",
+          "dash_offset_from_body": -10,
+          "dash_pattern": [
+            6,
+            35
+          ],
+          "filter_free": true,
+          "linecap": "round",
+          "linejoin": "round",
+          "marker_free": true,
+          "opacity": 0.98,
+          "primitive": "persistent-data-flow-head",
+          "stroke_width": 2.2
+        },
+        "packet_head_count": 8,
+        "packet_head_primitive": "persistent-data-flow-head",
+        "period_step_coprime": true,
+        "phase_policy": "(motionStage * 7 + motionOrder * 3) mod 41",
+        "phase_repeat_within_stream_interval": true,
+        "primitive": "persistent-data-flow-stream",
+        "rendered_frames": [
+          36,
+          114
+        ],
+        "reset_behavior": "all eight body/head pairs keep advancing while topology, labels, and both flow layers fade together",
+        "reset_opacity_samples": [
+          1.0,
+          0.7575,
+          0.515,
+          0.2725,
+          0.03
+        ],
+        "reset_range": [
+          110,
+          114
+        ],
+        "roles": [
+          "ingress",
+          "reason",
+          "extract",
+          "transform",
+          "resolve",
+          "memory-write",
+          "memory-read",
+          "response-context"
+        ],
+        "stream_count": 8,
+        "stream_interval_frame_count": 79,
+        "travel_easing": "linear",
+        "travel_pixels_per_frame_at_50_percent": 3,
+        "travel_pixels_per_frame_at_960px": 6,
+        "travel_pixels_per_second_at_50_percent_20fps": 60,
+        "travel_pixels_per_second_at_960px_20fps": 120,
+        "travel_user_units_per_rendered_frame": 6
+      },
+      "primitive": "connector-draw-on-with-persistent-data-flow",
+      "reset_opacity_samples": [
+        1.0,
+        0.7575,
+        0.515,
+        0.2725,
+        0.03
+      ],
+      "reset_range": [
+        110,
+        114
+      ],
+      "route_label_opacity_states": 8,
+      "settled_markers": "original marker appears only after route arrival",
+      "settled_topology_dynamic": true,
+      "source_edges_hidden_by_transient_css": true,
+      "text_geometry_motion": 0,
+      "topology_draw_on": true
+    },
+    "duration_seconds": 5.75,
+    "frame_duration_ms": 50.0,
+    "phases": {
+      "draw": {
+        "frames": [
+          1,
+          36
+        ],
+        "seconds": [
+          0.075,
+          1.825
+        ]
+      },
+      "empty": {
+        "frames": [
+          0,
+          0
+        ],
+        "seconds": [
+          0.025,
+          0.025
+        ]
+      },
+      "full_opacity": {
+        "frames": [
+          38,
+          109
+        ],
+        "seconds": [
+          1.925,
+          5.475
+        ]
+      },
+      "reset": {
+        "frames": [
+          110,
+          114
+        ],
+        "seconds": [
+          5.525,
+          5.725
+        ]
+      },
+      "stream": {
+        "frames": [
+          36,
+          114
+        ],
+        "seconds": [
+          1.825,
+          5.725
+        ]
+      }
+    },
+    "sample_index_expression": "time * fps - 0.5",
+    "sampling": "uniform-frame-centers",
+    "version": "3.4"
+  },
+  "motion_grammar_version": "3.4",
+  "motion_scene": "memory-weave",
+  "ok": true,
+  "output": "docs/assets/aet-planner-workflow-en.gif",
+  "output_format": "gif",
+  "preset": "memory-weave",
+  "rendered_pixels": 75072000,
+  "renderer": {
+    "chrome": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+    "duration_seconds": 5.75,
+    "effects": 24,
+    "engine": "chromium-svg-draw-on-persistent-data-flow",
+    "fps": 20,
+    "frame_count": 115,
+    "height": 680,
+    "input_kind": "svg",
+    "loop_frame_policy": "integer-frame-index-centers-with-steady-state-plus-reset-boundary-repeat-scope",
+    "module": "puppeteer-core",
+    "module_version": "25.3.0",
+    "ok": true,
+    "paint_barrier": "fonts-ready-plus-two-animation-frames-before-capture",
+    "preset": "memory-weave",
+    "resolved_module": "/Users/yjw/.codex/skills/fireworks-tech-graph/node_modules/puppeteer-core/lib/puppeteer/puppeteer-core.js",
+    "sandbox": "enabled",
+    "scene_report": {
+      "connectors_visible_at_opening": false,
+      "direction_sentinels": [
+        {
+          "actual": [
+            "right"
+          ],
+          "dash_offset_per_rendered_frame": -6,
+          "expected": [
+            "right"
+          ],
+          "passed": true,
+          "role": "ingress"
+        },
+        {
+          "actual": [
+            "left"
+          ],
+          "dash_offset_per_rendered_frame": -6,
+          "expected": [
+            "left"
+          ],
+          "passed": true,
+          "role": "resolve"
+        },
+        {
+          "actual": [
+            "down",
+            "left",
+            "down"
+          ],
+          "dash_offset_per_rendered_frame": -6,
+          "expected": [
+            "down",
+            "left",
+            "down"
+          ],
+          "passed": true,
+          "role": "memory-write"
+        }
+      ],
+      "draw_clones": 8,
+      "draw_contract": {
+        "easing": "linear",
+        "marker_after_arrival": true,
+        "marker_during_draw": false,
+        "source_geometry": "exact immutable edge clone"
+      },
+      "draw_schedule": [
+        {
+          "easing": "linear",
+          "edge_id": "request",
+          "marker_after_arrival": true,
+          "marker_during_draw": false,
+          "rendered_frames": [
+            1,
+            8
+          ],
+          "role": "ingress"
+        },
+        {
+          "easing": "linear",
+          "edge_id": "reason",
+          "marker_after_arrival": true,
+          "marker_during_draw": false,
+          "rendered_frames": [
+            5,
+            12
+          ],
+          "role": "reason"
+        },
+        {
+          "easing": "linear",
+          "edge_id": "extract",
+          "marker_after_arrival": true,
+          "marker_during_draw": false,
+          "rendered_frames": [
+            9,
+            16
+          ],
+          "role": "extract"
+        },
+        {
+          "easing": "linear",
+          "edge_id": "facts",
+          "marker_after_arrival": true,
+          "marker_during_draw": false,
+          "rendered_frames": [
+            13,
+            20
+          ],
+          "role": "transform"
+        },
+        {
+          "easing": "linear",
+          "edge_id": "resolved",
+          "marker_after_arrival": true,
+          "marker_during_draw": false,
+          "rendered_frames": [
+            17,
+            24
+          ],
+          "role": "resolve"
+        },
+        {
+          "easing": "linear",
+          "edge_id": "write",
+          "marker_after_arrival": true,
+          "marker_during_draw": false,
+          "rendered_frames": [
+            21,
+            28
+          ],
+          "role": "memory-write"
+        },
+        {
+          "easing": "linear",
+          "edge_id": "relate",
+          "marker_after_arrival": true,
+          "marker_during_draw": false,
+          "rendered_frames": [
+            25,
+            32
+          ],
+          "role": "memory-read"
+        },
+        {
+          "easing": "linear",
+          "edge_id": "context",
+          "marker_after_arrival": true,
+          "marker_during_draw": false,
+          "rendered_frames": [
+            29,
+            36
+          ],
+          "role": "response-context"
+        }
+      ],
+      "empty_opening_frame": 0,
+      "grammar_version": "3.4",
+      "halo_count": 0,
+      "maximum_concurrent_draws": 2,
+      "node_motion": 0,
+      "nodes_visible_every_frame": true,
+      "packet_head_count": 8,
+      "persistent_packet_heads": [
+        {
+          "body_initial_phase": 7,
+          "color": "#e0f2fe",
+          "dash_offset_from_body": -10,
+          "dash_offset_per_rendered_frame": -6,
+          "dash_pattern": [
+            6,
+            35
+          ],
+          "dash_period": 41,
+          "direction": "source-to-target",
+          "edge_id": "request",
+          "fade_in_frames": [
+            36,
+            38
+          ],
+          "filter_free": true,
+          "full_opacity_frames": [
+            38,
+            109
+          ],
+          "initial_dash_offset": -3,
+          "marker_free": true,
+          "opacity": 0.98,
+          "primitive": "persistent-data-flow-head",
+          "rendered_frames": [
+            36,
+            114
+          ],
+          "role": "ingress",
+          "stroke_width": 2.2,
+          "travel_easing": "linear"
+        },
+        {
+          "body_initial_phase": 14,
+          "color": "#e0f2fe",
+          "dash_offset_from_body": -10,
+          "dash_offset_per_rendered_frame": -6,
+          "dash_pattern": [
+            6,
+            35
+          ],
+          "dash_period": 41,
+          "direction": "source-to-target",
+          "edge_id": "reason",
+          "fade_in_frames": [
+            36,
+            38
+          ],
+          "filter_free": true,
+          "full_opacity_frames": [
+            38,
+            109
+          ],
+          "initial_dash_offset": 4,
+          "marker_free": true,
+          "opacity": 0.98,
+          "primitive": "persistent-data-flow-head",
+          "rendered_frames": [
+            36,
+            114
+          ],
+          "role": "reason",
+          "stroke_width": 2.2,
+          "travel_easing": "linear"
+        },
+        {
+          "body_initial_phase": 21,
+          "color": "#e0f2fe",
+          "dash_offset_from_body": -10,
+          "dash_offset_per_rendered_frame": -6,
+          "dash_pattern": [
+            6,
+            35
+          ],
+          "dash_period": 41,
+          "direction": "source-to-target",
+          "edge_id": "extract",
+          "fade_in_frames": [
+            36,
+            38
+          ],
+          "filter_free": true,
+          "full_opacity_frames": [
+            38,
+            109
+          ],
+          "initial_dash_offset": 11,
+          "marker_free": true,
+          "opacity": 0.98,
+          "primitive": "persistent-data-flow-head",
+          "rendered_frames": [
+            36,
+            114
+          ],
+          "role": "extract",
+          "stroke_width": 2.2,
+          "travel_easing": "linear"
+        },
+        {
+          "body_initial_phase": 28,
+          "color": "#e0f2fe",
+          "dash_offset_from_body": -10,
+          "dash_offset_per_rendered_frame": -6,
+          "dash_pattern": [
+            6,
+            35
+          ],
+          "dash_period": 41,
+          "direction": "source-to-target",
+          "edge_id": "facts",
+          "fade_in_frames": [
+            36,
+            38
+          ],
+          "filter_free": true,
+          "full_opacity_frames": [
+            38,
+            109
+          ],
+          "initial_dash_offset": 18,
+          "marker_free": true,
+          "opacity": 0.98,
+          "primitive": "persistent-data-flow-head",
+          "rendered_frames": [
+            36,
+            114
+          ],
+          "role": "transform",
+          "stroke_width": 2.2,
+          "travel_easing": "linear"
+        },
+        {
+          "body_initial_phase": 31,
+          "color": "#e0f2fe",
+          "dash_offset_from_body": -10,
+          "dash_offset_per_rendered_frame": -6,
+          "dash_pattern": [
+            6,
+            35
+          ],
+          "dash_period": 41,
+          "direction": "source-to-target",
+          "edge_id": "resolved",
+          "fade_in_frames": [
+            36,
+            38
+          ],
+          "filter_free": true,
+          "full_opacity_frames": [
+            38,
+            109
+          ],
+          "initial_dash_offset": 21,
+          "marker_free": true,
+          "opacity": 0.98,
+          "primitive": "persistent-data-flow-head",
+          "rendered_frames": [
+            36,
+            114
+          ],
+          "role": "resolve",
+          "stroke_width": 2.2,
+          "travel_easing": "linear"
+        },
+        {
+          "body_initial_phase": 35,
+          "color": "#e0f2fe",
+          "dash_offset_from_body": -10,
+          "dash_offset_per_rendered_frame": -6,
+          "dash_pattern": [
+            6,
+            35
+          ],
+          "dash_period": 41,
+          "direction": "source-to-target",
+          "edge_id": "write",
+          "fade_in_frames": [
+            36,
+            38
+          ],
+          "filter_free": true,
+          "full_opacity_frames": [
+            38,
+            109
+          ],
+          "initial_dash_offset": 25,
+          "marker_free": true,
+          "opacity": 0.98,
+          "primitive": "persistent-data-flow-head",
+          "rendered_frames": [
+            36,
+            114
+          ],
+          "role": "memory-write",
+          "stroke_width": 2.2,
+          "travel_easing": "linear"
+        },
+        {
+          "body_initial_phase": 1,
+          "color": "#e0f2fe",
+          "dash_offset_from_body": -10,
+          "dash_offset_per_rendered_frame": -6,
+          "dash_pattern": [
+            6,
+            35
+          ],
+          "dash_period": 41,
+          "direction": "source-to-target",
+          "edge_id": "relate",
+          "fade_in_frames": [
+            36,
+            38
+          ],
+          "filter_free": true,
+          "full_opacity_frames": [
+            38,
+            109
+          ],
+          "initial_dash_offset": -9,
+          "marker_free": true,
+          "opacity": 0.98,
+          "primitive": "persistent-data-flow-head",
+          "rendered_frames": [
+            36,
+            114
+          ],
+          "role": "memory-read",
+          "stroke_width": 2.2,
+          "travel_easing": "linear"
+        },
+        {
+          "body_initial_phase": 8,
+          "color": "#e0f2fe",
+          "dash_offset_from_body": -10,
+          "dash_offset_per_rendered_frame": -6,
+          "dash_pattern": [
+            6,
+            35
+          ],
+          "dash_period": 41,
+          "direction": "source-to-target",
+          "edge_id": "context",
+          "fade_in_frames": [
+            36,
+            38
+          ],
+          "filter_free": true,
+          "full_opacity_frames": [
+            38,
+            109
+          ],
+          "initial_dash_offset": -2,
+          "marker_free": true,
+          "opacity": 0.98,
+          "primitive": "persistent-data-flow-head",
+          "rendered_frames": [
+            36,
+            114
+          ],
+          "role": "response-context",
+          "stroke_width": 2.2,
+          "travel_easing": "linear"
+        }
+      ],
+      "persistent_stream_contract": {
+        "body": {
+          "color": "#06b6d4",
+          "dash_pattern": [
+            16,
+            25
+          ],
+          "filter_free": true,
+          "linecap": "round",
+          "linejoin": "round",
+          "marker_free": true,
+          "opacity": 0.9,
+          "primitive": "persistent-data-flow-stream",
+          "resolved_style_1_source_stroke_width": 2.4,
+          "resolved_style_1_stroke_width": 3.84,
+          "stroke_width": "min(4.0, max(3.0, source_stroke * 1.60))"
+        },
+        "dash_offset_per_rendered_frame": -6,
+        "dash_period": 41,
+        "direction": "source-to-target",
+        "expected_initial_phases": [
+          7,
+          14,
+          21,
+          28,
+          31,
+          35,
+          1,
+          8
+        ],
+        "fade_in_factors": [
+          0.3,
+          0.65,
+          1
+        ],
+        "fade_in_frames": [
+          36,
+          38
+        ],
+        "full_opacity_frames": [
+          38,
+          109
+        ],
+        "minimum_review_scale": "50%",
+        "packet_head": {
+          "appended_immediately_after_body": true,
+          "color": "#e0f2fe",
+          "dash_offset_from_body": -10,
+          "dash_pattern": [
+            6,
+            35
+          ],
+          "filter_free": true,
+          "linecap": "round",
+          "linejoin": "round",
+          "marker_free": true,
+          "opacity": 0.98,
+          "primitive": "persistent-data-flow-head",
+          "stroke_width": 2.2
+        },
+        "packet_head_count": 8,
+        "packet_head_primitive": "persistent-data-flow-head",
+        "period_step_coprime": true,
+        "phase_policy": "(motionStage * 7 + motionOrder * 3) mod 41",
+        "phase_repeat_within_stream_interval": true,
+        "primitive": "persistent-data-flow-stream",
+        "rendered_frames": [
+          36,
+          114
+        ],
+        "reset_behavior": "all eight body/head pairs keep advancing while topology, labels, and both flow layers fade together",
+        "reset_opacity_samples": [
+          1,
+          0.7575,
+          0.515,
+          0.2725,
+          0.03
+        ],
+        "reset_range": [
+          110,
+          114
+        ],
+        "stream_count": 8,
+        "stream_interval_frame_count": 79,
+        "travel_easing": "linear",
+        "travel_pixels_per_frame_at_50_percent": 3,
+        "travel_pixels_per_frame_at_960px": 6,
+        "travel_pixels_per_second_at_50_percent_20fps": 60,
+        "travel_pixels_per_second_at_960px_20fps": 120,
+        "travel_user_units_per_rendered_frame": 6
+      },
+      "persistent_streams": [
+        {
+          "color": "#06b6d4",
+          "dash_offset_per_rendered_frame": -6,
+          "dash_pattern": [
+            16,
+            25
+          ],
+          "dash_period": 41,
+          "direction": "source-to-target",
+          "edge_id": "request",
+          "fade_in_frames": [
+            36,
+            38
+          ],
+          "filter_free": true,
+          "full_opacity_frames": [
+            38,
+            109
+          ],
+          "initial_phase": 7,
+          "marker_free": true,
+          "motion_order": 0,
+          "motion_stage": 1,
+          "opacity": 0.9,
+          "phase_policy": "(motionStage * 7 + motionOrder * 3) mod 41",
+          "primitive": "persistent-data-flow-stream",
+          "rendered_frames": [
+            36,
+            114
+          ],
+          "role": "ingress",
+          "stroke_width": 3.84,
+          "travel_easing": "linear"
+        },
+        {
+          "color": "#06b6d4",
+          "dash_offset_per_rendered_frame": -6,
+          "dash_pattern": [
+            16,
+            25
+          ],
+          "dash_period": 41,
+          "direction": "source-to-target",
+          "edge_id": "reason",
+          "fade_in_frames": [
+            36,
+            38
+          ],
+          "filter_free": true,
+          "full_opacity_frames": [
+            38,
+            109
+          ],
+          "initial_phase": 14,
+          "marker_free": true,
+          "motion_order": 0,
+          "motion_stage": 2,
+          "opacity": 0.9,
+          "phase_policy": "(motionStage * 7 + motionOrder * 3) mod 41",
+          "primitive": "persistent-data-flow-stream",
+          "rendered_frames": [
+            36,
+            114
+          ],
+          "role": "reason",
+          "stroke_width": 3.84,
+          "travel_easing": "linear"
+        },
+        {
+          "color": "#06b6d4",
+          "dash_offset_per_rendered_frame": -6,
+          "dash_pattern": [
+            16,
+            25
+          ],
+          "dash_period": 41,
+          "direction": "source-to-target",
+          "edge_id": "extract",
+          "fade_in_frames": [
+            36,
+            38
+          ],
+          "filter_free": true,
+          "full_opacity_frames": [
+            38,
+            109
+          ],
+          "initial_phase": 21,
+          "marker_free": true,
+          "motion_order": 0,
+          "motion_stage": 3,
+          "opacity": 0.9,
+          "phase_policy": "(motionStage * 7 + motionOrder * 3) mod 41",
+          "primitive": "persistent-data-flow-stream",
+          "rendered_frames": [
+            36,
+            114
+          ],
+          "role": "extract",
+          "stroke_width": 3.84,
+          "travel_easing": "linear"
+        },
+        {
+          "color": "#06b6d4",
+          "dash_offset_per_rendered_frame": -6,
+          "dash_pattern": [
+            16,
+            25
+          ],
+          "dash_period": 41,
+          "direction": "source-to-target",
+          "edge_id": "facts",
+          "fade_in_frames": [
+            36,
+            38
+          ],
+          "filter_free": true,
+          "full_opacity_frames": [
+            38,
+            109
+          ],
+          "initial_phase": 28,
+          "marker_free": true,
+          "motion_order": 0,
+          "motion_stage": 4,
+          "opacity": 0.9,
+          "phase_policy": "(motionStage * 7 + motionOrder * 3) mod 41",
+          "primitive": "persistent-data-flow-stream",
+          "rendered_frames": [
+            36,
+            114
+          ],
+          "role": "transform",
+          "stroke_width": 3.84,
+          "travel_easing": "linear"
+        },
+        {
+          "color": "#06b6d4",
+          "dash_offset_per_rendered_frame": -6,
+          "dash_pattern": [
+            16,
+            25
+          ],
+          "dash_period": 41,
+          "direction": "source-to-target",
+          "edge_id": "resolved",
+          "fade_in_frames": [
+            36,
+            38
+          ],
+          "filter_free": true,
+          "full_opacity_frames": [
+            38,
+            109
+          ],
+          "initial_phase": 31,
+          "marker_free": true,
+          "motion_order": 1,
+          "motion_stage": 4,
+          "opacity": 0.9,
+          "phase_policy": "(motionStage * 7 + motionOrder * 3) mod 41",
+          "primitive": "persistent-data-flow-stream",
+          "rendered_frames": [
+            36,
+            114
+          ],
+          "role": "resolve",
+          "stroke_width": 3.84,
+          "travel_easing": "linear"
+        },
+        {
+          "color": "#06b6d4",
+          "dash_offset_per_rendered_frame": -6,
+          "dash_pattern": [
+            16,
+            25
+          ],
+          "dash_period": 41,
+          "direction": "source-to-target",
+          "edge_id": "write",
+          "fade_in_frames": [
+            36,
+            38
+          ],
+          "filter_free": true,
+          "full_opacity_frames": [
+            38,
+            109
+          ],
+          "initial_phase": 35,
+          "marker_free": true,
+          "motion_order": 0,
+          "motion_stage": 5,
+          "opacity": 0.9,
+          "phase_policy": "(motionStage * 7 + motionOrder * 3) mod 41",
+          "primitive": "persistent-data-flow-stream",
+          "rendered_frames": [
+            36,
+            114
+          ],
+          "role": "memory-write",
+          "stroke_width": 3.84,
+          "travel_easing": "linear"
+        },
+        {
+          "color": "#06b6d4",
+          "dash_offset_per_rendered_frame": -6,
+          "dash_pattern": [
+            16,
+            25
+          ],
+          "dash_period": 41,
+          "direction": "source-to-target",
+          "edge_id": "relate",
+          "fade_in_frames": [
+            36,
+            38
+          ],
+          "filter_free": true,
+          "full_opacity_frames": [
+            38,
+            109
+          ],
+          "initial_phase": 1,
+          "marker_free": true,
+          "motion_order": 0,
+          "motion_stage": 6,
+          "opacity": 0.9,
+          "phase_policy": "(motionStage * 7 + motionOrder * 3) mod 41",
+          "primitive": "persistent-data-flow-stream",
+          "rendered_frames": [
+            36,
+            114
+          ],
+          "role": "memory-read",
+          "stroke_width": 3.84,
+          "travel_easing": "linear"
+        },
+        {
+          "color": "#06b6d4",
+          "dash_offset_per_rendered_frame": -6,
+          "dash_pattern": [
+            16,
+            25
+          ],
+          "dash_period": 41,
+          "direction": "source-to-target",
+          "edge_id": "context",
+          "fade_in_frames": [
+            36,
+            38
+          ],
+          "filter_free": true,
+          "full_opacity_frames": [
+            38,
+            109
+          ],
+          "initial_phase": 8,
+          "marker_free": true,
+          "motion_order": 0,
+          "motion_stage": 7,
+          "opacity": 0.9,
+          "phase_policy": "(motionStage * 7 + motionOrder * 3) mod 41",
+          "primitive": "persistent-data-flow-stream",
+          "rendered_frames": [
+            36,
+            114
+          ],
+          "role": "response-context",
+          "stroke_width": 3.84,
+          "travel_easing": "linear"
+        }
+      ],
+      "preset": "memory-weave",
+      "primitive": "connector-draw-on-with-persistent-data-flow",
+      "reset_opacity_samples": [
+        1,
+        0.7575,
+        0.515,
+        0.2725,
+        0.03
+      ],
+      "reset_range": [
+        110,
+        114
+      ],
+      "ripple_count": 0,
+      "route_label_clones": 8,
+      "route_label_opacity_states": 8,
+      "settled_marker_clones": 8,
+      "settled_topology_dynamic": true,
+      "source_edges": 8,
+      "source_edges_hidden_by_transient_css": true,
+      "source_route_labels": 8,
+      "static_dom_guard": true,
+      "stream_count": 8,
+      "text_geometry_motion": 0,
+      "text_motion": 0,
+      "topology_draw_on": true
+    },
+    "width": 960
+  },
+  "report": "docs/assets/aet-planner-workflow-en.motion.json",
+  "required_encoder": "ffmpeg/gif",
+  "review_reference_source_sha256": null,
+  "review_status": "user-approved",
+  "runtime": {
+    "encoders": [
+      "gif"
+    ],
+    "ffmpeg": "/tmp/fireworks-media-tools/bin/ffmpeg",
+    "ffprobe": "/tmp/fireworks-media-tools/bin/ffprobe",
+    "format": {
+      "gif": true
+    },
+    "node": "/opt/homebrew/opt/node@24/bin/node",
+    "ok": true,
+    "renderer": {
+      "chrome": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+      "deterministic_timeline": true,
+      "input": "semantic-svg",
+      "module": "puppeteer-core",
+      "module_version": "25.3.0",
+      "motion_model": "connector-draw-on-with-persistent-data-flow",
+      "ok": true,
+      "presets": [
+        "memory-weave",
+        "tool-grounding",
+        "service-blueprint",
+        "memory-lifecycle",
+        "agent-orchestration",
+        "governed-runtime",
+        "token-stream",
+        "golden-circuit",
+        "review-trace",
+        "cloud-flow",
+        "event-transit",
+        "ops-pulse"
+      ],
+      "resolved_module": "/Users/yjw/.codex/skills/fireworks-tech-graph/node_modules/puppeteer-core/lib/puppeteer/puppeteer-core.js",
+      "sandbox_default": "enabled"
+    },
+    "worker": "/Users/yjw/.codex/skills/fireworks-tech-graph/scripts/svg2gif.js"
+  },
+  "scene_signature": {
+    "distinctive_primitives": [
+      "semantic-route-build",
+      "settled-marker-arrival",
+      "eight-route-persistent-data-flow"
+    ],
+    "name": "memory-weave-draw-on-persistent-data-flow"
+  },
+  "seamless_loop_contract": "75 frames or fewer: every raster is unique; more than 75 frames: non-adjacent repeats are allowed within the full-opacity interval, plus the sole intentional reset-boundary exception at reset_start with opacity 1.00, with at least 75 unique rasters; seam MAD must not exceed p95 adjacent-frame MAD",
+  "semantic_profile": "generic",
+  "semantics": {
+    "edges": 8,
+    "edges_without_flow": 0,
+    "motion_metadata": "explicit",
+    "nodes": 9,
+    "staged_edges": 8
+  },
+  "size_guidance": {
+    "artifact_target_bytes": 500000,
+    "artifact_within_target": true,
+    "warnings": []
+  },
+  "source": "docs/assets/aet-planner-workflow-en.svg",
+  "source_checks": {
+    "composition": {
+      "details": [],
+      "ok": true
+    },
+    "geometry": {
+      "details": [],
+      "ok": true
+    },
+    "markers": {
+      "details": [],
+      "ok": true
+    },
+    "xml": {
+      "details": [],
+      "ok": true
+    }
+  },
+  "source_integrity": {
+    "sha256": "5f919f0075ce98e76797aac83ecbc5abd803a850c253f664968a4747284910d2",
+    "sha256_after": "5f919f0075ce98e76797aac83ecbc5abd803a850c253f664968a4747284910d2",
+    "sha256_before": "5f919f0075ce98e76797aac83ecbc5abd803a850c253f664968a4747284910d2",
+    "unchanged": true
+  },
+  "source_sha256": "5f919f0075ce98e76797aac83ecbc5abd803a850c253f664968a4747284910d2",
+  "style_contract": {
+    "scope": "signature-speed-path-geometry-and-construction-schedule",
+    "source_policy": "semantic-schedule-and-geometry-not-exact-byte-hash",
+    "status": "user-approved"
+  },
+  "style_contract_status": "user-approved",
+  "style_id": 1,
+  "timing_revision": {
+    "approved_at": "2026-07-17",
+    "baseline": {
+      "duration_seconds": 3.75,
+      "frame_count": 75
+    },
+    "candidate": {
+      "added_full_opacity_frames": [
+        70,
+        109
+      ],
+      "duration_seconds": 5.75,
+      "frame_count": 115
+    },
+    "id": "+2s-settled-flow",
+    "only_pending_item": false,
+    "status": "user-approved"
+  },
+  "visual_theme": "Flat Icon",
+  "width": 960
+}

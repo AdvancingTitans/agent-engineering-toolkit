@@ -1,0 +1,422 @@
+[
+  {
+    "fixture_id": "planner-single-001",
+    "category": "single_file_behavior",
+    "request": "Preserve parser failure details.",
+    "workspace_commit": "fixture-single-001",
+    "bundle_identity": "bundle-single-001",
+    "gold_status": "FROZEN",
+    "gold": {
+      "required_paths": ["src/aet/parser.py"],
+      "optional_paths": [],
+      "forbidden_paths": [".env"],
+      "required_tests": ["tests/test_parser.py"],
+      "known_conflicts": [],
+      "known_unknowns": []
+    },
+    "predictions": {
+      "source_only": {"paths": ["src/aet/parser.py"], "tests": [], "linked_paths": [], "explained_paths": ["src/aet/parser.py"], "preserved_conflicts": [], "preserved_unknowns": [], "references": [0, 1], "tokens": 860, "duration_ms": 190, "generated_by_planner_under_test": false},
+      "bundle": {"paths": ["src/aet/parser.py"], "tests": ["tests/test_parser.py"], "linked_paths": ["src/aet/parser.py"], "explained_paths": ["src/aet/parser.py"], "preserved_conflicts": [], "preserved_unknowns": [], "references": [1, 1], "tokens": 1120, "duration_ms": 260, "generated_by_planner_under_test": false},
+      "planner_protocol": {"paths": ["src/aet/parser.py"], "tests": ["tests/test_parser.py"], "linked_paths": ["src/aet/parser.py"], "explained_paths": ["src/aet/parser.py"], "preserved_conflicts": [], "preserved_unknowns": [], "references": [1, 1], "tokens": 980, "duration_ms": 130, "generated_by_planner_under_test": false}
+    }
+  },
+  {
+    "fixture_id": "planner-single-002",
+    "category": "single_file_behavior",
+    "request": "Retain a redacted stderr summary.",
+    "workspace_commit": "fixture-single-002",
+    "bundle_identity": "bundle-single-002",
+    "gold_status": "FROZEN",
+    "gold": {
+      "required_paths": ["src/aet/proof/executor.py"],
+      "optional_paths": [],
+      "forbidden_paths": ["secrets/**"],
+      "required_tests": ["tests/test_proof_executor.py"],
+      "known_conflicts": [],
+      "known_unknowns": []
+    },
+    "predictions": {
+      "source_only": {"paths": ["src/aet/proof/executor.py", "src/aet/proof.py"], "tests": ["tests/test_proof.py"], "linked_paths": ["src/aet/proof/executor.py"], "explained_paths": ["src/aet/proof/executor.py"], "preserved_conflicts": [], "preserved_unknowns": [], "references": [1, 2], "tokens": 1300, "duration_ms": 240, "generated_by_planner_under_test": false},
+      "bundle": {"paths": ["src/aet/proof/executor.py"], "tests": ["tests/test_proof_executor.py"], "linked_paths": ["src/aet/proof/executor.py"], "explained_paths": ["src/aet/proof/executor.py"], "preserved_conflicts": [], "preserved_unknowns": [], "references": [1, 1], "tokens": 1460, "duration_ms": 300, "generated_by_planner_under_test": false},
+      "planner_protocol": {"paths": ["src/aet/proof/executor.py"], "tests": ["tests/test_proof_executor.py"], "linked_paths": ["src/aet/proof/executor.py"], "explained_paths": ["src/aet/proof/executor.py"], "preserved_conflicts": [], "preserved_unknowns": [], "references": [1, 1], "tokens": 1050, "duration_ms": 145, "generated_by_planner_under_test": false}
+    }
+  },
+  {
+    "fixture_id": "planner-single-003",
+    "category": "single_file_behavior",
+    "request": "Correct freshness comparison.",
+    "workspace_commit": "fixture-single-003",
+    "bundle_identity": "bundle-single-003",
+    "gold_status": "FROZEN",
+    "gold": {
+      "required_paths": ["src/aet/freshness.py"],
+      "optional_paths": [],
+      "forbidden_paths": ["vendor/**"],
+      "required_tests": ["tests/test_freshness.py"],
+      "known_conflicts": [],
+      "known_unknowns": []
+    },
+    "predictions": {
+      "source_only": {"paths": ["src/aet/freshness.py"], "tests": ["tests/test_freshness.py"], "linked_paths": ["src/aet/freshness.py"], "explained_paths": ["src/aet/freshness.py"], "preserved_conflicts": [], "preserved_unknowns": [], "references": [1, 1], "tokens": 740, "duration_ms": 175, "generated_by_planner_under_test": false},
+      "bundle": {"paths": ["src/aet/freshness.py"], "tests": ["tests/test_freshness.py"], "linked_paths": ["src/aet/freshness.py"], "explained_paths": ["src/aet/freshness.py"], "preserved_conflicts": [], "preserved_unknowns": [], "references": [1, 1], "tokens": 990, "duration_ms": 235, "generated_by_planner_under_test": false},
+      "planner_protocol": {"paths": ["src/aet/freshness.py"], "tests": ["tests/test_freshness.py"], "linked_paths": ["src/aet/freshness.py"], "explained_paths": ["src/aet/freshness.py"], "preserved_conflicts": [], "preserved_unknowns": [], "references": [1, 1], "tokens": 910, "duration_ms": 125, "generated_by_planner_under_test": false}
+    }
+  },
+  {
+    "fixture_id": "planner-single-004",
+    "category": "single_file_behavior",
+    "request": "Escape untrusted Markdown labels.",
+    "workspace_commit": "fixture-single-004",
+    "bundle_identity": "bundle-single-004",
+    "gold_status": "FROZEN",
+    "gold": {
+      "required_paths": ["src/aet/renderer.py"],
+      "optional_paths": [],
+      "forbidden_paths": ["docs/assets/**"],
+      "required_tests": ["tests/test_renderer.py"],
+      "known_conflicts": [],
+      "known_unknowns": []
+    },
+    "predictions": {
+      "source_only": {"paths": ["src/aet/renderer.py", "docs/style.md"], "tests": [], "linked_paths": [], "explained_paths": ["src/aet/renderer.py"], "preserved_conflicts": [], "preserved_unknowns": [], "references": [1, 2], "tokens": 910, "duration_ms": 205, "generated_by_planner_under_test": false},
+      "bundle": {"paths": ["src/aet/renderer.py"], "tests": ["tests/test_renderer.py"], "linked_paths": ["src/aet/renderer.py"], "explained_paths": ["src/aet/renderer.py"], "preserved_conflicts": [], "preserved_unknowns": [], "references": [1, 1], "tokens": 1090, "duration_ms": 270, "generated_by_planner_under_test": false},
+      "planner_protocol": {"paths": ["src/aet/renderer.py"], "tests": ["tests/test_renderer.py"], "linked_paths": ["src/aet/renderer.py"], "explained_paths": ["src/aet/renderer.py"], "preserved_conflicts": [], "preserved_unknowns": [], "references": [1, 1], "tokens": 970, "duration_ms": 135, "generated_by_planner_under_test": false}
+    }
+  },
+  {
+    "fixture_id": "planner-cross-001",
+    "category": "cross_module_behavior",
+    "request": "Route CLI failures through the shared service.",
+    "workspace_commit": "fixture-cross-001",
+    "bundle_identity": "bundle-cross-001",
+    "gold_status": "FROZEN",
+    "gold": {
+      "required_paths": ["src/aet/cli.py", "src/aet/service.py"],
+      "optional_paths": [],
+      "forbidden_paths": [".github/**"],
+      "required_tests": ["tests/test_cli.py", "tests/test_service.py"],
+      "known_conflicts": [],
+      "known_unknowns": []
+    },
+    "predictions": {
+      "source_only": {"paths": ["src/aet/cli.py"], "tests": ["tests/test_cli.py"], "linked_paths": ["src/aet/cli.py"], "explained_paths": ["src/aet/cli.py"], "preserved_conflicts": [], "preserved_unknowns": [], "references": [1, 1], "tokens": 1280, "duration_ms": 310, "generated_by_planner_under_test": false},
+      "bundle": {"paths": ["src/aet/cli.py", "src/aet/service.py"], "tests": ["tests/test_cli.py"], "linked_paths": ["src/aet/cli.py", "src/aet/service.py"], "explained_paths": ["src/aet/cli.py", "src/aet/service.py"], "preserved_conflicts": [], "preserved_unknowns": [], "references": [2, 2], "tokens": 1720, "duration_ms": 410, "generated_by_planner_under_test": false},
+      "planner_protocol": {"paths": ["src/aet/cli.py", "src/aet/service.py"], "tests": ["tests/test_cli.py", "tests/test_service.py"], "linked_paths": ["src/aet/cli.py", "src/aet/service.py"], "explained_paths": ["src/aet/cli.py", "src/aet/service.py"], "preserved_conflicts": [], "preserved_unknowns": [], "references": [2, 2], "tokens": 1410, "duration_ms": 180, "generated_by_planner_under_test": false}
+    }
+  },
+  {
+    "fixture_id": "planner-cross-002",
+    "category": "cross_module_behavior",
+    "request": "Share stderr redaction between executor and redactor.",
+    "workspace_commit": "fixture-cross-002",
+    "bundle_identity": "bundle-cross-002",
+    "gold_status": "FROZEN",
+    "gold": {
+      "required_paths": ["src/aet/proof/executor.py", "src/aet/bundle/redaction.py"],
+      "optional_paths": ["src/aet/evidence.py"],
+      "forbidden_paths": ["secrets/**"],
+      "required_tests": ["tests/test_proof_executor.py", "tests/test_bundle_redaction.py"],
+      "known_conflicts": [],
+      "known_unknowns": []
+    },
+    "predictions": {
+      "source_only": {"paths": ["src/aet/proof/executor.py", "src/aet/evidence.py"], "tests": ["tests/test_proof_executor.py"], "linked_paths": ["src/aet/proof/executor.py"], "explained_paths": ["src/aet/proof/executor.py"], "preserved_conflicts": [], "preserved_unknowns": [], "references": [1, 2], "tokens": 1640, "duration_ms": 355, "generated_by_planner_under_test": false},
+      "bundle": {"paths": ["src/aet/proof/executor.py", "src/aet/bundle/redaction.py", "src/aet/evidence.py"], "tests": ["tests/test_proof_executor.py", "tests/test_bundle_redaction.py"], "linked_paths": ["src/aet/proof/executor.py", "src/aet/bundle/redaction.py"], "explained_paths": ["src/aet/proof/executor.py", "src/aet/bundle/redaction.py"], "preserved_conflicts": [], "preserved_unknowns": [], "references": [3, 3], "tokens": 2020, "duration_ms": 480, "generated_by_planner_under_test": false},
+      "planner_protocol": {"paths": ["src/aet/proof/executor.py", "src/aet/bundle/redaction.py"], "tests": ["tests/test_proof_executor.py", "tests/test_bundle_redaction.py"], "linked_paths": ["src/aet/proof/executor.py", "src/aet/bundle/redaction.py"], "explained_paths": ["src/aet/proof/executor.py", "src/aet/bundle/redaction.py"], "preserved_conflicts": [], "preserved_unknowns": [], "references": [2, 2], "tokens": 1540, "duration_ms": 205, "generated_by_planner_under_test": false}
+    }
+  },
+  {
+    "fixture_id": "planner-cross-003",
+    "category": "cross_module_behavior",
+    "request": "Apply Bundle policy while loading planning evidence.",
+    "workspace_commit": "fixture-cross-003",
+    "bundle_identity": "bundle-cross-003",
+    "gold_status": "FROZEN",
+    "gold": {
+      "required_paths": ["src/aet/planning/bundle_loader.py", "src/aet/planning/policy.py"],
+      "optional_paths": [],
+      "forbidden_paths": ["vendor/**"],
+      "required_tests": ["tests/planning/test_bundle_loader.py", "tests/planning/test_policy.py"],
+      "known_conflicts": [],
+      "known_unknowns": []
+    },
+    "predictions": {
+      "source_only": {"paths": ["src/aet/planning/bundle_loader.py"], "tests": ["tests/planning/test_bundle_loader.py"], "linked_paths": ["src/aet/planning/bundle_loader.py"], "explained_paths": ["src/aet/planning/bundle_loader.py"], "preserved_conflicts": [], "preserved_unknowns": [], "references": [1, 1], "tokens": 1180, "duration_ms": 285, "generated_by_planner_under_test": false},
+      "bundle": {"paths": ["src/aet/planning/bundle_loader.py", "src/aet/planning/policy.py"], "tests": ["tests/planning/test_bundle_loader.py", "tests/planning/test_policy.py"], "linked_paths": ["src/aet/planning/bundle_loader.py", "src/aet/planning/policy.py"], "explained_paths": ["src/aet/planning/bundle_loader.py", "src/aet/planning/policy.py"], "preserved_conflicts": [], "preserved_unknowns": [], "references": [2, 2], "tokens": 1580, "duration_ms": 390, "generated_by_planner_under_test": false},
+      "planner_protocol": {"paths": ["src/aet/planning/bundle_loader.py", "src/aet/planning/policy.py", "src/aet/legacy_adapter.py"], "tests": ["tests/planning/test_bundle_loader.py", "tests/planning/test_policy.py"], "linked_paths": ["src/aet/planning/bundle_loader.py", "src/aet/planning/policy.py"], "explained_paths": ["src/aet/planning/bundle_loader.py", "src/aet/planning/policy.py", "src/aet/legacy_adapter.py"], "preserved_conflicts": [], "preserved_unknowns": [], "references": [3, 3], "tokens": 1320, "duration_ms": 175, "generated_by_planner_under_test": false}
+    }
+  },
+  {
+    "fixture_id": "planner-cross-004",
+    "category": "cross_module_behavior",
+    "request": "Keep Atlas build and query identities aligned.",
+    "workspace_commit": "fixture-cross-004",
+    "bundle_identity": "bundle-cross-004",
+    "gold_status": "FROZEN",
+    "gold": {
+      "required_paths": ["src/aet/atlas/builder.py", "src/aet/atlas/queries.py"],
+      "optional_paths": [],
+      "forbidden_paths": ["src/aet/atlas/assets/**"],
+      "required_tests": ["tests/test_atlas_builder.py", "tests/test_atlas_queries.py"],
+      "known_conflicts": [],
+      "known_unknowns": []
+    },
+    "predictions": {
+      "source_only": {"paths": ["src/aet/atlas/builder.py"], "tests": [], "linked_paths": [], "explained_paths": ["src/aet/atlas/builder.py"], "preserved_conflicts": [], "preserved_unknowns": [], "references": [0, 1], "tokens": 1420, "duration_ms": 330, "generated_by_planner_under_test": false},
+      "bundle": {"paths": ["src/aet/atlas/builder.py", "src/aet/atlas/queries.py"], "tests": ["tests/test_atlas_builder.py"], "linked_paths": ["src/aet/atlas/builder.py", "src/aet/atlas/queries.py"], "explained_paths": ["src/aet/atlas/builder.py", "src/aet/atlas/queries.py"], "preserved_conflicts": [], "preserved_unknowns": [], "references": [2, 2], "tokens": 1840, "duration_ms": 450, "generated_by_planner_under_test": false},
+      "planner_protocol": {"paths": ["src/aet/atlas/builder.py", "src/aet/atlas/queries.py"], "tests": ["tests/test_atlas_builder.py", "tests/test_atlas_queries.py"], "linked_paths": ["src/aet/atlas/builder.py", "src/aet/atlas/queries.py"], "explained_paths": ["src/aet/atlas/builder.py", "src/aet/atlas/queries.py"], "preserved_conflicts": [], "preserved_unknowns": [], "references": [2, 2], "tokens": 1490, "duration_ms": 195, "generated_by_planner_under_test": false}
+    }
+  },
+  {
+    "fixture_id": "planner-cross-005",
+    "category": "cross_module_behavior",
+    "request": "Keep Plan package JSON and Markdown aligned.",
+    "workspace_commit": "fixture-cross-005",
+    "bundle_identity": "bundle-cross-005",
+    "gold_status": "FROZEN",
+    "gold": {
+      "required_paths": ["src/aet/planning/package_builder.py", "src/aet/planning/renderer.py"],
+      "optional_paths": ["docs/evidence-guided-planner.md"],
+      "forbidden_paths": [".aet/**"],
+      "required_tests": ["tests/planning/test_package_builder.py", "tests/planning/test_renderer.py"],
+      "known_conflicts": [],
+      "known_unknowns": []
+    },
+    "predictions": {
+      "source_only": {"paths": ["src/aet/planning/package_builder.py"], "tests": ["tests/planning/test_package_builder.py"], "linked_paths": ["src/aet/planning/package_builder.py"], "explained_paths": ["src/aet/planning/package_builder.py"], "preserved_conflicts": [], "preserved_unknowns": [], "references": [1, 1], "tokens": 1340, "duration_ms": 305, "generated_by_planner_under_test": false},
+      "bundle": {"paths": ["src/aet/planning/package_builder.py", "src/aet/planning/renderer.py"], "tests": ["tests/planning/test_package_builder.py"], "linked_paths": ["src/aet/planning/package_builder.py", "src/aet/planning/renderer.py"], "explained_paths": ["src/aet/planning/package_builder.py", "src/aet/planning/renderer.py"], "preserved_conflicts": [], "preserved_unknowns": [], "references": [2, 2], "tokens": 1760, "duration_ms": 420, "generated_by_planner_under_test": false},
+      "planner_protocol": {"paths": ["src/aet/planning/package_builder.py", "src/aet/planning/renderer.py"], "tests": ["tests/planning/test_package_builder.py", "tests/planning/test_renderer.py"], "linked_paths": ["src/aet/planning/package_builder.py", "src/aet/planning/renderer.py"], "explained_paths": ["src/aet/planning/package_builder.py", "src/aet/planning/renderer.py"], "preserved_conflicts": [], "preserved_unknowns": [], "references": [2, 2], "tokens": 1380, "duration_ms": 185, "generated_by_planner_under_test": false}
+    }
+  },
+  {
+    "fixture_id": "planner-schema-001",
+    "category": "schema_runtime",
+    "request": "Keep Planning Request Schema and runtime model compatible.",
+    "workspace_commit": "fixture-schema-001",
+    "bundle_identity": "bundle-schema-001",
+    "gold_status": "FROZEN",
+    "gold": {
+      "required_paths": ["schemas/planning/planning-request-v1.schema.json", "src/aet/planning/models.py"],
+      "optional_paths": [],
+      "forbidden_paths": ["schemas/bundle/**"],
+      "required_tests": ["tests/planning/test_models.py"],
+      "known_conflicts": [],
+      "known_unknowns": []
+    },
+    "predictions": {
+      "source_only": {"paths": ["src/aet/planning/models.py"], "tests": ["tests/planning/test_models.py"], "linked_paths": ["src/aet/planning/models.py"], "explained_paths": ["src/aet/planning/models.py"], "preserved_conflicts": [], "preserved_unknowns": [], "references": [1, 1], "tokens": 1240, "duration_ms": 290, "generated_by_planner_under_test": false},
+      "bundle": {"paths": ["schemas/planning/planning-request-v1.schema.json", "src/aet/planning/models.py"], "tests": ["tests/planning/test_models.py"], "linked_paths": ["schemas/planning/planning-request-v1.schema.json", "src/aet/planning/models.py"], "explained_paths": ["schemas/planning/planning-request-v1.schema.json", "src/aet/planning/models.py"], "preserved_conflicts": [], "preserved_unknowns": [], "references": [2, 2], "tokens": 1630, "duration_ms": 405, "generated_by_planner_under_test": false},
+      "planner_protocol": {"paths": ["schemas/planning/planning-request-v1.schema.json", "src/aet/planning/models.py"], "tests": ["tests/planning/test_models.py"], "linked_paths": ["schemas/planning/planning-request-v1.schema.json", "src/aet/planning/models.py"], "explained_paths": ["schemas/planning/planning-request-v1.schema.json", "src/aet/planning/models.py"], "preserved_conflicts": [], "preserved_unknowns": [], "references": [2, 2], "tokens": 1360, "duration_ms": 170, "generated_by_planner_under_test": false}
+    }
+  },
+  {
+    "fixture_id": "planner-schema-002",
+    "category": "schema_runtime",
+    "request": "Reject free text against the Candidate Schema.",
+    "workspace_commit": "fixture-schema-002",
+    "bundle_identity": "bundle-schema-002",
+    "gold_status": "FROZEN",
+    "gold": {
+      "required_paths": ["schemas/planning/plan-candidate-v1.schema.json", "src/aet/planning/candidate_parser.py"],
+      "optional_paths": [],
+      "forbidden_paths": ["schemas/bundle/**"],
+      "required_tests": ["tests/planning/test_models.py"],
+      "known_conflicts": [],
+      "known_unknowns": []
+    },
+    "predictions": {
+      "source_only": {"paths": ["src/aet/planning/candidate_parser.py"], "tests": [], "linked_paths": [], "explained_paths": ["src/aet/planning/candidate_parser.py"], "preserved_conflicts": [], "preserved_unknowns": [], "references": [0, 1], "tokens": 1080, "duration_ms": 265, "generated_by_planner_under_test": false},
+      "bundle": {"paths": ["schemas/planning/plan-candidate-v1.schema.json", "src/aet/planning/candidate_parser.py"], "tests": ["tests/planning/test_models.py"], "linked_paths": ["schemas/planning/plan-candidate-v1.schema.json", "src/aet/planning/candidate_parser.py"], "explained_paths": ["schemas/planning/plan-candidate-v1.schema.json", "src/aet/planning/candidate_parser.py"], "preserved_conflicts": [], "preserved_unknowns": [], "references": [2, 2], "tokens": 1470, "duration_ms": 370, "generated_by_planner_under_test": false},
+      "planner_protocol": {"paths": ["schemas/planning/plan-candidate-v1.schema.json", "src/aet/planning/candidate_parser.py"], "tests": ["tests/planning/test_models.py"], "linked_paths": ["schemas/planning/plan-candidate-v1.schema.json", "src/aet/planning/candidate_parser.py"], "explained_paths": ["schemas/planning/plan-candidate-v1.schema.json", "src/aet/planning/candidate_parser.py"], "preserved_conflicts": [], "preserved_unknowns": [], "references": [2, 2], "tokens": 1290, "duration_ms": 160, "generated_by_planner_under_test": false}
+    }
+  },
+  {
+    "fixture_id": "planner-schema-003",
+    "category": "schema_runtime",
+    "request": "Bind Plan Manifest contents to the package writer.",
+    "workspace_commit": "fixture-schema-003",
+    "bundle_identity": "bundle-schema-003",
+    "gold_status": "FROZEN",
+    "gold": {
+      "required_paths": ["schemas/planning/plan-manifest-v1.schema.json", "src/aet/planning/package_builder.py"],
+      "optional_paths": [],
+      "forbidden_paths": ["schemas/bundle/**"],
+      "required_tests": ["tests/planning/test_package_builder.py"],
+      "known_conflicts": [],
+      "known_unknowns": []
+    },
+    "predictions": {
+      "source_only": {"paths": ["src/aet/planning/package_builder.py"], "tests": ["tests/planning/test_package_builder.py"], "linked_paths": ["src/aet/planning/package_builder.py"], "explained_paths": ["src/aet/planning/package_builder.py"], "preserved_conflicts": [], "preserved_unknowns": [], "references": [1, 1], "tokens": 1160, "duration_ms": 275, "generated_by_planner_under_test": false},
+      "bundle": {"paths": ["schemas/planning/plan-manifest-v1.schema.json", "src/aet/planning/package_builder.py"], "tests": ["tests/planning/test_package_builder.py"], "linked_paths": ["schemas/planning/plan-manifest-v1.schema.json", "src/aet/planning/package_builder.py"], "explained_paths": ["schemas/planning/plan-manifest-v1.schema.json", "src/aet/planning/package_builder.py"], "preserved_conflicts": [], "preserved_unknowns": [], "references": [2, 2], "tokens": 1520, "duration_ms": 380, "generated_by_planner_under_test": false},
+      "planner_protocol": {"paths": ["schemas/planning/plan-manifest-v1.schema.json", "src/aet/planning/package_builder.py"], "tests": ["tests/planning/test_package_builder.py"], "linked_paths": ["schemas/planning/plan-manifest-v1.schema.json", "src/aet/planning/package_builder.py"], "explained_paths": ["schemas/planning/plan-manifest-v1.schema.json", "src/aet/planning/package_builder.py"], "preserved_conflicts": [], "preserved_unknowns": [], "references": [2, 2], "tokens": 1310, "duration_ms": 165, "generated_by_planner_under_test": false}
+    }
+  },
+  {
+    "fixture_id": "planner-impl-test-001",
+    "category": "implementation_test",
+    "request": "Harden source navigation escapes.",
+    "workspace_commit": "fixture-impl-test-001",
+    "bundle_identity": "bundle-impl-test-001",
+    "gold_status": "FROZEN",
+    "gold": {
+      "required_paths": ["src/aet/planning/source_navigator.py"],
+      "optional_paths": [],
+      "forbidden_paths": ["/etc/passwd", "tests/fixtures/**"],
+      "required_tests": ["tests/planning/test_source_navigator.py"],
+      "known_conflicts": [],
+      "known_unknowns": []
+    },
+    "predictions": {
+      "source_only": {"paths": ["src/aet/planning/source_navigator.py"], "tests": [], "linked_paths": [], "explained_paths": ["src/aet/planning/source_navigator.py"], "preserved_conflicts": [], "preserved_unknowns": [], "references": [0, 1], "tokens": 970, "duration_ms": 230, "generated_by_planner_under_test": false},
+      "bundle": {"paths": ["src/aet/planning/source_navigator.py"], "tests": ["tests/planning/test_source_navigator.py"], "linked_paths": ["src/aet/planning/source_navigator.py"], "explained_paths": ["src/aet/planning/source_navigator.py"], "preserved_conflicts": [], "preserved_unknowns": [], "references": [1, 1], "tokens": 1260, "duration_ms": 315, "generated_by_planner_under_test": false},
+      "planner_protocol": {"paths": ["src/aet/planning/source_navigator.py"], "tests": ["tests/planning/test_source_navigator.py"], "linked_paths": ["src/aet/planning/source_navigator.py"], "explained_paths": ["src/aet/planning/source_navigator.py"], "preserved_conflicts": [], "preserved_unknowns": [], "references": [1, 1], "tokens": 1080, "duration_ms": 140, "generated_by_planner_under_test": false}
+    }
+  },
+  {
+    "fixture_id": "planner-impl-test-002",
+    "category": "implementation_test",
+    "request": "Block overclaimed bounded completeness.",
+    "workspace_commit": "fixture-impl-test-002",
+    "bundle_identity": "bundle-impl-test-002",
+    "gold_status": "FROZEN",
+    "gold": {
+      "required_paths": ["src/aet/planning/validator.py"],
+      "optional_paths": [],
+      "forbidden_paths": [".aet/**"],
+      "required_tests": ["tests/planning/test_validator.py"],
+      "known_conflicts": [],
+      "known_unknowns": []
+    },
+    "predictions": {
+      "source_only": {"paths": ["src/aet/planning/validator.py"], "tests": ["tests/planning/test_models.py"], "linked_paths": ["src/aet/planning/validator.py"], "explained_paths": ["src/aet/planning/validator.py"], "preserved_conflicts": [], "preserved_unknowns": [], "references": [1, 1], "tokens": 1030, "duration_ms": 250, "generated_by_planner_under_test": false},
+      "bundle": {"paths": ["src/aet/planning/validator.py"], "tests": ["tests/planning/test_validator.py"], "linked_paths": ["src/aet/planning/validator.py"], "explained_paths": ["src/aet/planning/validator.py"], "preserved_conflicts": [], "preserved_unknowns": [], "references": [1, 1], "tokens": 1320, "duration_ms": 325, "generated_by_planner_under_test": false},
+      "planner_protocol": {"paths": ["src/aet/planning/validator.py"], "tests": ["tests/planning/test_validator.py"], "linked_paths": ["src/aet/planning/validator.py"], "explained_paths": ["src/aet/planning/validator.py"], "preserved_conflicts": [], "preserved_unknowns": [], "references": [1, 1], "tokens": 1140, "duration_ms": 150, "generated_by_planner_under_test": false}
+    }
+  },
+  {
+    "fixture_id": "planner-impl-test-003",
+    "category": "implementation_test",
+    "request": "Map external renames into verification handoff.",
+    "workspace_commit": "fixture-impl-test-003",
+    "bundle_identity": "bundle-impl-test-003",
+    "gold_status": "FROZEN",
+    "gold": {
+      "required_paths": ["src/aet/planning/handoff.py"],
+      "optional_paths": [],
+      "forbidden_paths": [".git/**"],
+      "required_tests": ["tests/planning/test_handoff.py"],
+      "known_conflicts": [],
+      "known_unknowns": []
+    },
+    "predictions": {
+      "source_only": {"paths": ["src/aet/planning/handoff.py"], "tests": [], "linked_paths": [], "explained_paths": ["src/aet/planning/handoff.py"], "preserved_conflicts": [], "preserved_unknowns": [], "references": [0, 1], "tokens": 980, "duration_ms": 235, "generated_by_planner_under_test": false},
+      "bundle": {"paths": ["src/aet/planning/handoff.py"], "tests": ["tests/planning/test_handoff.py"], "linked_paths": ["src/aet/planning/handoff.py"], "explained_paths": ["src/aet/planning/handoff.py"], "preserved_conflicts": [], "preserved_unknowns": [], "references": [1, 1], "tokens": 1290, "duration_ms": 320, "generated_by_planner_under_test": false},
+      "planner_protocol": {"paths": ["src/aet/planning/handoff.py"], "tests": ["tests/planning/test_handoff.py"], "linked_paths": ["src/aet/planning/handoff.py"], "explained_paths": ["src/aet/planning/handoff.py"], "preserved_conflicts": [], "preserved_unknowns": [], "references": [1, 1], "tokens": 1110, "duration_ms": 145, "generated_by_planner_under_test": false}
+    }
+  },
+  {
+    "fixture_id": "planner-config-docs-001",
+    "category": "config_docs",
+    "request": "Package Planning schemas and document their install path.",
+    "workspace_commit": "fixture-config-docs-001",
+    "bundle_identity": "bundle-config-docs-001",
+    "gold_status": "FROZEN",
+    "gold": {
+      "required_paths": ["pyproject.toml", "docs/schemas/planning.md"],
+      "optional_paths": [],
+      "forbidden_paths": [".github/workflows/**"],
+      "required_tests": ["tests/planning/test_models.py"],
+      "known_conflicts": [],
+      "known_unknowns": []
+    },
+    "predictions": {
+      "source_only": {"paths": ["pyproject.toml"], "tests": [], "linked_paths": [], "explained_paths": ["pyproject.toml"], "preserved_conflicts": [], "preserved_unknowns": [], "references": [0, 1], "tokens": 870, "duration_ms": 200, "generated_by_planner_under_test": false},
+      "bundle": {"paths": ["pyproject.toml", "docs/schemas/planning.md"], "tests": ["tests/planning/test_models.py"], "linked_paths": ["pyproject.toml", "docs/schemas/planning.md"], "explained_paths": ["pyproject.toml", "docs/schemas/planning.md"], "preserved_conflicts": [], "preserved_unknowns": [], "references": [2, 2], "tokens": 1170, "duration_ms": 285, "generated_by_planner_under_test": false},
+      "planner_protocol": {"paths": ["pyproject.toml", "docs/schemas/planning.md"], "tests": ["tests/planning/test_models.py"], "linked_paths": ["pyproject.toml", "docs/schemas/planning.md"], "explained_paths": ["pyproject.toml", "docs/schemas/planning.md"], "preserved_conflicts": [], "preserved_unknowns": [], "references": [2, 2], "tokens": 1010, "duration_ms": 120, "generated_by_planner_under_test": false}
+    }
+  },
+  {
+    "fixture_id": "planner-config-docs-002",
+    "category": "config_docs",
+    "request": "Add bilingual Planner navigation.",
+    "workspace_commit": "fixture-config-docs-002",
+    "bundle_identity": "bundle-config-docs-002",
+    "gold_status": "FROZEN",
+    "gold": {
+      "required_paths": ["README.md", "docs/README.zh-CN.md"],
+      "optional_paths": ["docs/evidence-guided-planner.md"],
+      "forbidden_paths": ["docs/assets/*.png"],
+      "required_tests": [],
+      "known_conflicts": [],
+      "known_unknowns": []
+    },
+    "predictions": {
+      "source_only": {"paths": ["README.md"], "tests": [], "linked_paths": ["README.md"], "explained_paths": ["README.md"], "preserved_conflicts": [], "preserved_unknowns": [], "references": [1, 1], "tokens": 620, "duration_ms": 155, "generated_by_planner_under_test": false},
+      "bundle": {"paths": ["README.md", "docs/README.zh-CN.md", "docs/evidence-guided-planner.md"], "tests": [], "linked_paths": ["README.md", "docs/README.zh-CN.md"], "explained_paths": ["README.md", "docs/README.zh-CN.md"], "preserved_conflicts": [], "preserved_unknowns": [], "references": [3, 3], "tokens": 940, "duration_ms": 225, "generated_by_planner_under_test": false},
+      "planner_protocol": {"paths": ["README.md", "docs/README.zh-CN.md", "docs/evidence-guided-planner.md"], "tests": [], "linked_paths": ["README.md", "docs/README.zh-CN.md"], "explained_paths": ["README.md", "docs/README.zh-CN.md", "docs/evidence-guided-planner.md"], "preserved_conflicts": [], "preserved_unknowns": [], "references": [3, 3], "tokens": 820, "duration_ms": 105, "generated_by_planner_under_test": false}
+    }
+  },
+  {
+    "fixture_id": "planner-protected-001",
+    "category": "protected_path",
+    "request": "Adjust policy without touching frozen fixtures.",
+    "workspace_commit": "fixture-protected-001",
+    "bundle_identity": "bundle-protected-001",
+    "gold_status": "FROZEN",
+    "gold": {
+      "required_paths": ["src/aet/planning/policy.py"],
+      "optional_paths": [],
+      "forbidden_paths": ["tests/fixtures/planning/locked.json"],
+      "required_tests": ["tests/planning/test_policy.py"],
+      "known_conflicts": [],
+      "known_unknowns": []
+    },
+    "predictions": {
+      "source_only": {"paths": ["src/aet/planning/policy.py", "tests/fixtures/planning/locked.json"], "tests": ["tests/planning/test_policy.py"], "linked_paths": ["src/aet/planning/policy.py"], "explained_paths": ["src/aet/planning/policy.py"], "preserved_conflicts": [], "preserved_unknowns": [], "references": [1, 2], "tokens": 990, "duration_ms": 245, "generated_by_planner_under_test": false},
+      "bundle": {"paths": ["src/aet/planning/policy.py"], "tests": ["tests/planning/test_policy.py"], "linked_paths": ["src/aet/planning/policy.py"], "explained_paths": ["src/aet/planning/policy.py"], "preserved_conflicts": [], "preserved_unknowns": [], "references": [1, 1], "tokens": 1250, "duration_ms": 315, "generated_by_planner_under_test": false},
+      "planner_protocol": {"paths": ["src/aet/planning/policy.py"], "tests": ["tests/planning/test_policy.py"], "linked_paths": ["src/aet/planning/policy.py"], "explained_paths": ["src/aet/planning/policy.py"], "preserved_conflicts": [], "preserved_unknowns": [], "references": [1, 1], "tokens": 1060, "duration_ms": 135, "generated_by_planner_under_test": false}
+    }
+  },
+  {
+    "fixture_id": "planner-stale-001",
+    "category": "stale_evidence",
+    "request": "Refresh stale Proof before changing freshness behavior.",
+    "workspace_commit": "fixture-stale-001",
+    "bundle_identity": "bundle-stale-001",
+    "gold_status": "FROZEN",
+    "gold": {
+      "required_paths": ["src/aet/freshness.py", "src/aet/proof.py"],
+      "optional_paths": [],
+      "forbidden_paths": [".aet/evidence/**"],
+      "required_tests": ["tests/test_freshness.py"],
+      "known_conflicts": [],
+      "known_unknowns": ["UNKNOWN-STALE-PROOF"]
+    },
+    "predictions": {
+      "source_only": {"paths": ["src/aet/freshness.py"], "tests": ["tests/test_freshness.py"], "linked_paths": ["src/aet/freshness.py"], "explained_paths": ["src/aet/freshness.py"], "preserved_conflicts": [], "preserved_unknowns": [], "references": [1, 1], "tokens": 1210, "duration_ms": 280, "generated_by_planner_under_test": false},
+      "bundle": {"paths": ["src/aet/freshness.py", "src/aet/proof.py"], "tests": ["tests/test_freshness.py"], "linked_paths": ["src/aet/freshness.py", "src/aet/proof.py"], "explained_paths": ["src/aet/freshness.py", "src/aet/proof.py"], "preserved_conflicts": [], "preserved_unknowns": ["UNKNOWN-STALE-PROOF"], "references": [2, 2], "tokens": 1660, "duration_ms": 395, "generated_by_planner_under_test": false},
+      "planner_protocol": {"paths": ["src/aet/freshness.py", "src/aet/proof.py"], "tests": ["tests/test_freshness.py"], "linked_paths": ["src/aet/freshness.py", "src/aet/proof.py"], "explained_paths": ["src/aet/freshness.py", "src/aet/proof.py"], "preserved_conflicts": [], "preserved_unknowns": ["UNKNOWN-STALE-PROOF"], "references": [2, 2], "tokens": 1370, "duration_ms": 170, "generated_by_planner_under_test": false}
+    }
+  },
+  {
+    "fixture_id": "planner-conflict-001",
+    "category": "unresolved_conflict",
+    "request": "Preserve the unresolved Bundle scope conflict.",
+    "workspace_commit": "fixture-conflict-001",
+    "bundle_identity": "bundle-conflict-001",
+    "gold_status": "FROZEN",
+    "gold": {
+      "required_paths": ["src/aet/planning/bundle_loader.py", "src/aet/planning/gap_detector.py"],
+      "optional_paths": [],
+      "forbidden_paths": [".aet/**"],
+      "required_tests": ["tests/planning/test_context_builder.py"],
+      "known_conflicts": ["CONFLICT-SCOPE-001"],
+      "known_unknowns": ["UNKNOWN-SCOPE-001"]
+    },
+    "predictions": {
+      "source_only": {"paths": ["src/aet/planning/gap_detector.py"], "tests": [], "linked_paths": [], "explained_paths": ["src/aet/planning/gap_detector.py"], "preserved_conflicts": [], "preserved_unknowns": [], "references": [0, 1], "tokens": 1280, "duration_ms": 295, "generated_by_planner_under_test": false},
+      "bundle": {"paths": ["src/aet/planning/bundle_loader.py", "src/aet/planning/gap_detector.py"], "tests": ["tests/planning/test_context_builder.py"], "linked_paths": ["src/aet/planning/bundle_loader.py", "src/aet/planning/gap_detector.py"], "explained_paths": ["src/aet/planning/bundle_loader.py", "src/aet/planning/gap_detector.py"], "preserved_conflicts": ["CONFLICT-SCOPE-001"], "preserved_unknowns": ["UNKNOWN-SCOPE-001"], "references": [2, 2], "tokens": 1780, "duration_ms": 430, "generated_by_planner_under_test": false},
+      "planner_protocol": {"paths": ["src/aet/planning/bundle_loader.py", "src/aet/planning/gap_detector.py"], "tests": ["tests/planning/test_context_builder.py"], "linked_paths": ["src/aet/planning/bundle_loader.py", "src/aet/planning/gap_detector.py"], "explained_paths": ["src/aet/planning/bundle_loader.py", "src/aet/planning/gap_detector.py"], "preserved_conflicts": ["CONFLICT-SCOPE-001"], "preserved_unknowns": ["UNKNOWN-SCOPE-001"], "references": [2, 2], "tokens": 1450, "duration_ms": 180, "generated_by_planner_under_test": false}
+    }
+  }
+]

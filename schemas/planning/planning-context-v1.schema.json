@@ -1,0 +1,149 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://advancingtitans.github.io/aet/schemas/planning/planning-context-v1.schema.json",
+  "title": "AET Planning Context v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "request",
+    "workspace",
+    "relevant_claims",
+    "relevant_evidence",
+    "counter_evidence",
+    "conflicts",
+    "unknowns",
+    "atlas_nodes",
+    "source_sites",
+    "candidate_relations",
+    "constraints",
+    "gaps",
+    "omitted",
+    "diagnostics"
+  ],
+  "properties": {
+    "schema_version": {"const": "planning-context/1.0"},
+    "request": {"type": "object"},
+    "workspace": {"$ref": "#/$defs/workspace"},
+    "relevant_claims": {"$ref": "#/$defs/objects"},
+    "relevant_evidence": {"$ref": "#/$defs/objects"},
+    "counter_evidence": {"$ref": "#/$defs/objects"},
+    "conflicts": {"$ref": "#/$defs/objects"},
+    "unknowns": {"$ref": "#/$defs/objects"},
+    "atlas_nodes": {"$ref": "#/$defs/objects"},
+    "source_sites": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/source_site"}
+    },
+    "candidate_relations": {"$ref": "#/$defs/objects"},
+    "constraints": {"$ref": "#/$defs/constraints"},
+    "gaps": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/gap"}
+    },
+    "omitted": {"$ref": "#/$defs/omitted"},
+    "diagnostics": {"$ref": "#/$defs/objects"}
+  },
+  "$defs": {
+    "objects": {"type": "array", "items": {"type": "object"}},
+    "workspace": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "workspace_id", "head_sha", "worktree_digest"],
+      "properties": {
+        "status": {"enum": ["PASS", "UNKNOWN"]},
+        "workspace_id": {"type": "string", "minLength": 1},
+        "head_sha": {"type": ["string", "null"]},
+        "worktree_digest": {"type": ["string", "null"]}
+      }
+    },
+    "source_site": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_id",
+        "path",
+        "symbol",
+        "start_line",
+        "end_line",
+        "content_hash",
+        "language",
+        "role",
+        "read_status",
+        "reference_ids"
+      ],
+      "properties": {
+        "source_id": {"type": "string", "pattern": "^SRC-[A-Z0-9._-]+$"},
+        "path": {"type": "string", "minLength": 1},
+        "symbol": {"type": ["string", "null"]},
+        "start_line": {"type": ["integer", "null"], "minimum": 1},
+        "end_line": {"type": ["integer", "null"], "minimum": 1},
+        "content_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "language": {"type": "string", "minLength": 1},
+        "role": {
+          "enum": [
+            "ENTRYPOINT",
+            "IMPLEMENTATION",
+            "CALLER",
+            "CALLEE",
+            "SCHEMA",
+            "CONFIG",
+            "TEST",
+            "DOC",
+            "GENERATED",
+            "UNKNOWN"
+          ]
+        },
+        "read_status": {"enum": ["CONFIRMED", "STALE", "MISSING", "UNSUPPORTED"]},
+        "reference_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"type": "string"}
+        }
+      }
+    },
+    "constraints": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "allowed_paths",
+        "protected_paths",
+        "read_only",
+        "execution_allowed",
+        "write_allowed",
+        "scope_status"
+      ],
+      "properties": {
+        "allowed_paths": {"type": "array", "items": {"type": "string"}},
+        "protected_paths": {"type": "array", "items": {"type": "string"}},
+        "read_only": {"const": true},
+        "execution_allowed": {"const": false},
+        "write_allowed": {"const": false},
+        "scope_status": {"enum": ["RESOLVED", "UNRESOLVED"]}
+      }
+    },
+    "gap": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["gap_id", "code", "severity", "message", "critical", "reference_ids"],
+      "properties": {
+        "gap_id": {"type": "string", "minLength": 1},
+        "code": {"type": "string", "minLength": 1},
+        "severity": {"enum": ["INFO", "WARNING", "ERROR", "BLOCKER"]},
+        "message": {"type": "string", "minLength": 1},
+        "critical": {"type": "boolean"},
+        "reference_ids": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "omitted": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["nodes", "source_ranges", "source_bytes"],
+      "properties": {
+        "nodes": {"type": "integer", "minimum": 0},
+        "source_ranges": {"type": "integer", "minimum": 0},
+        "source_bytes": {"type": "integer", "minimum": 0}
+      }
+    }
+  }
+}

@@ -5,6 +5,8 @@ from __future__ import annotations
 import base64
 import json
 import sys
+import tempfile
+from dataclasses import asdict
 from pathlib import Path
 from typing import Any, Mapping, TextIO
 
@@ -36,6 +38,24 @@ from .atlas.queries import (
 from .atlas.render import render_projection
 from .atlas.storage import load_evidence_atlas
 from .atlas.validator import validate_evidence_atlas
+from .planning.candidate_parser import parse_candidate
+from .planning.context_builder import build_planning_context
+from .planning.helper import (
+    explain_edit as explain_plan_edit,
+    list_gaps as list_plan_gaps,
+    load_plan as load_evidence_plan,
+    trace_reference as trace_plan_reference,
+)
+from .planning.handoff import build_verification_handoff_from_package
+from .planning.models import (
+    PlanningBudgets,
+    PlanningContext,
+    canonical_json_bytes,
+    model_from_mapping,
+)
+from .planning.request_normalizer import RequestOverrides, normalize_request
+from .planning.skill_exporter import export_plan_skill
+from .planning.validator import validate_plan_candidate
 
 
 MCP_PROTOCOL_VERSION = "2025-06-18"
@@ -67,6 +87,21 @@ def _graph_trace_schema(identifier: str) -> dict[str, Any]:
                 "type": "integer",
                 "minimum": 1,
                 "maximum": 1_000_000,
+            },
+        },
+    }
+
+
+def _planning_package_schema(*required: str) -> dict[str, Any]:
+    return {
+        "type": "object",
+        "additionalProperties": False,
+        "required": ["workspace", *required],
+        "properties": {
+            "workspace": {"type": "string", "minLength": 1},
+            **{
+                name: {"type": "string", "minLength": 1}
+                for name in required
             },
         },
     }
@@ -218,6 +253,106 @@ _TOOLS = [
                 "bundle": {"type": "string", "minLength": 1},
                 "perspective": {"type": "string", "minLength": 1},
                 "max_nodes": {"type": "integer", "minimum": 1, "maximum": 200},
+            },
+        },
+    },
+    {
+        "name": "aet_plan_build_context",
+        "description": "Build bounded read-only Planning Context data without writing files or executing commands.",
+        "inputSchema": {
+            "type": "object",
+            "additionalProperties": False,
+            "required": ["workspace", "request_text"],
+            "properties": {
+                "workspace": {"type": "string", "minLength": 1},
+                "request_text": {"type": "string", "minLength": 1, "maxLength": 200_000},
+                "bundle": {"type": "string", "minLength": 1},
+                "atlas": {"type": "string", "minLength": 1},
+                "allowed_paths": {
+                    "type": "array",
+                    "maxItems": 500,
+                    "items": {"type": "string", "minLength": 1},
+                },
+                "protected_paths": {
+                    "type": "array",
+                    "maxItems": 500,
+                    "items": {"type": "string", "minLength": 1},
+                },
+                "verification": {
+                    "type": "array",
+                    "maxItems": 100,
+                    "items": {"type": "string", "minLength": 1},
+                },
+                "max_nodes": {"type": "integer", "minimum": 1, "maximum": 10_000},
+                "max_source_files": {"type": "integer", "minimum": 1, "maximum": 200},
+                "max_source_bytes": {"type": "integer", "minimum": 1, "maximum": 2_000_000},
+                "max_edit_items": {"type": "integer", "minimum": 1, "maximum": 100},
+                "max_depth": {"type": "integer", "minimum": 1, "maximum": 8},
+            },
+        },
+    },
+    {
+        "name": "aet_plan_validate_candidate",
+        "description": "Validate strict Planning Context and Plan Candidate objects without writing a Plan package.",
+        "inputSchema": {
+            "type": "object",
+            "additionalProperties": False,
+            "required": ["context", "candidate"],
+            "properties": {
+                "context": {"type": "object"},
+                "candidate": {"type": "object"},
+            },
+        },
+    },
+    {
+        "name": "aet_plan_get",
+        "description": "Read one validated Plan package contained by the declared workspace.",
+        "inputSchema": _planning_package_schema("plan"),
+    },
+    {
+        "name": "aet_plan_explain_edit",
+        "description": "Explain one validated Edit Item without adding facts.",
+        "inputSchema": {
+            **_planning_package_schema("plan", "edit_id"),
+        },
+    },
+    {
+        "name": "aet_plan_trace_reference",
+        "description": "Trace one recorded Plan reference without reading undeclared source.",
+        "inputSchema": {
+            **_planning_package_schema("plan", "reference_id"),
+        },
+    },
+    {
+        "name": "aet_plan_list_gaps",
+        "description": "List recorded Plan gaps, conflicts, and unknowns.",
+        "inputSchema": _planning_package_schema("plan"),
+    },
+    {
+        "name": "aet_plan_export_skill",
+        "description": "Return a minimal single-Plan Skill payload without writing workspace files.",
+        "inputSchema": {
+            "type": "object",
+            "additionalProperties": False,
+            "required": ["workspace", "plan", "target"],
+            "properties": {
+                "workspace": {"type": "string", "minLength": 1},
+                "plan": {"type": "string", "minLength": 1},
+                "target": {"enum": ["codex", "claude-code", "generic"]},
+            },
+        },
+    },
+    {
+        "name": "aet_plan_build_verification_handoff",
+        "description": "Build a read-only pending verification handoff from a validated Plan and external unified diff.",
+        "inputSchema": {
+            "type": "object",
+            "additionalProperties": False,
+            "required": ["workspace", "plan", "diff"],
+            "properties": {
+                "workspace": {"type": "string", "minLength": 1},
+                "plan": {"type": "string", "minLength": 1},
+                "diff": {"type": "string", "maxLength": 2_000_000},
             },
         },
     },
@@ -485,6 +620,184 @@ def call_tool(name: str, arguments: Mapping[str, Any]) -> dict[str, Any]:
             "mermaid": projection.get("diagram") or "",
             "diagnostics": projection["diagnostics"],
         }
+    if name == "aet_plan_build_context":
+        _exact_arguments(
+            arguments,
+            {"workspace", "request_text"},
+            {
+                "bundle",
+                "atlas",
+                "allowed_paths",
+                "protected_paths",
+                "verification",
+                "max_nodes",
+                "max_source_files",
+                "max_source_bytes",
+                "max_edit_items",
+                "max_depth",
+            },
+        )
+        workspace = _planning_workspace(arguments)
+        budgets = PlanningBudgets(
+            max_nodes=_bounded_int(arguments, "max_nodes", 10_000, 10_000),
+            max_source_files=_bounded_int(
+                arguments,
+                "max_source_files",
+                200,
+                200,
+            ),
+            max_source_bytes=_bounded_int(
+                arguments,
+                "max_source_bytes",
+                2_000_000,
+                2_000_000,
+            ),
+            max_edit_items=_bounded_int(
+                arguments,
+                "max_edit_items",
+                100,
+                100,
+            ),
+            max_depth=_bounded_int(arguments, "max_depth", 4, 8),
+        )
+        request = normalize_request(
+            _string(arguments, "request_text"),
+            workspace=workspace,
+            explicit=RequestOverrides(
+                allowed_paths=_string_list(arguments, "allowed_paths", 500),
+                protected_paths=_string_list(
+                    arguments,
+                    "protected_paths",
+                    500,
+                ),
+                required_verification=_string_list(
+                    arguments,
+                    "verification",
+                    100,
+                ),
+                budgets=budgets,
+            ),
+        )
+        context = build_planning_context(
+            request,
+            workspace=workspace,
+            bundle_path=_optional_workspace_path(arguments, workspace, "bundle"),
+            atlas_path=_optional_workspace_path(arguments, workspace, "atlas"),
+            budgets=budgets,
+        )
+        return {
+            "schema_version": "planning-context-mcp/1.0",
+            "status": "PASS",
+            "context": asdict(context),
+            "omitted": asdict(context.omitted) | {"total": context.omitted.total},
+        }
+    if name == "aet_plan_validate_candidate":
+        _exact_arguments(arguments, {"context", "candidate"})
+        context_value = arguments.get("context")
+        candidate_value = arguments.get("candidate")
+        if not isinstance(context_value, Mapping) or not isinstance(
+            candidate_value,
+            Mapping,
+        ):
+            raise ValueError("context and candidate must be objects")
+        context = model_from_mapping(PlanningContext, context_value)
+        candidate = parse_candidate(canonical_json_bytes(candidate_value))
+        result = validate_plan_candidate(context, candidate)
+        return {
+            "schema_version": "plan-candidate-validation-mcp/1.0",
+            "status": result.status,
+            "authority": "PROPOSED",
+            "plan": result.plan,
+            "diagnostics": [asdict(item) for item in result.diagnostics],
+            "omitted": asdict(context.omitted) | {"total": context.omitted.total},
+        }
+    if name == "aet_plan_get":
+        _exact_arguments(arguments, {"workspace", "plan"})
+        plan = load_evidence_plan(_planning_package_path(arguments))
+        return {
+            "schema_version": "evidence-linked-plan-mcp/1.0",
+            "plan": plan,
+            "omitted": {"nodes": 0, "source_ranges": 0, "source_bytes": 0, "total": 0},
+        }
+    if name == "aet_plan_explain_edit":
+        _exact_arguments(arguments, {"workspace", "plan", "edit_id"})
+        result = explain_plan_edit(
+            _planning_package_path(arguments),
+            _string(arguments, "edit_id"),
+        )
+        result["omitted"] = {
+            "nodes": 0,
+            "source_ranges": 0,
+            "source_bytes": 0,
+            "total": 0,
+        }
+        return result
+    if name == "aet_plan_trace_reference":
+        _exact_arguments(arguments, {"workspace", "plan", "reference_id"})
+        result = trace_plan_reference(
+            _planning_package_path(arguments),
+            _string(arguments, "reference_id"),
+        )
+        result["omitted"] = {
+            "nodes": 0,
+            "source_ranges": 0,
+            "source_bytes": 0,
+            "total": 0,
+        }
+        return result
+    if name == "aet_plan_list_gaps":
+        _exact_arguments(arguments, {"workspace", "plan"})
+        result = list_plan_gaps(_planning_package_path(arguments))
+        result["omitted"] = {
+            "nodes": 0,
+            "source_ranges": 0,
+            "source_bytes": 0,
+            "total": 0,
+        }
+        return result
+    if name == "aet_plan_export_skill":
+        _exact_arguments(arguments, {"workspace", "plan", "target"})
+        target = _string(arguments, "target")
+        plan_path = _planning_package_path(arguments)
+        with tempfile.TemporaryDirectory() as temporary:
+            exported = export_plan_skill(
+                plan_path,
+                Path(temporary) / "skill",
+                target=target,
+            )
+            files = {
+                item.relative_to(exported).as_posix(): item.read_text(
+                    encoding="utf-8"
+                )
+                for item in sorted(exported.rglob("*"))
+                if item.is_file()
+            }
+        total_bytes = sum(len(value.encode("utf-8")) for value in files.values())
+        if total_bytes > 1_000_000:
+            raise ValueError("exported Skill exceeds the MCP response budget")
+        return {
+            "schema_version": "plan-skill-export-mcp/1.0",
+            "status": "PASS",
+            "target": target,
+            "files": files,
+            "omitted": {"nodes": 0, "source_ranges": 0, "source_bytes": 0, "total": 0},
+        }
+    if name == "aet_plan_build_verification_handoff":
+        _exact_arguments(arguments, {"workspace", "plan", "diff"})
+        diff = arguments.get("diff")
+        if not isinstance(diff, str):
+            raise ValueError("diff must be a string")
+        result = build_verification_handoff_from_package(
+            _planning_package_path(arguments),
+            diff,
+        )
+        result["omitted"] = {
+            "nodes": 0,
+            "source_ranges": 0,
+            "source_bytes": 0,
+            "total": 0,
+        }
+        return result
     raise ValueError(f"unsupported MCP tool: {name}")
 
 
@@ -549,6 +862,70 @@ def _optional_string(arguments: Mapping[str, Any], name: str) -> str | None:
     if name not in arguments:
         return None
     return _string(arguments, name)
+
+
+def _string_list(
+    arguments: Mapping[str, Any],
+    name: str,
+    maximum: int,
+) -> list[str]:
+    value = arguments.get(name, [])
+    if (
+        not isinstance(value, list)
+        or len(value) > maximum
+        or any(not isinstance(item, str) or not item for item in value)
+    ):
+        raise ValueError(f"{name} must contain at most {maximum} non-empty strings")
+    return list(value)
+
+
+def _planning_workspace(arguments: Mapping[str, Any]) -> Path:
+    raw = Path(_string(arguments, "workspace")).expanduser()
+    if raw.is_symlink():
+        raise ValueError("planning workspace must not be a symlink")
+    workspace = raw.resolve(strict=True)
+    if not workspace.is_dir():
+        raise ValueError("planning workspace must be a directory")
+    return workspace
+
+
+def _optional_workspace_path(
+    arguments: Mapping[str, Any],
+    workspace: Path,
+    name: str,
+) -> Path | None:
+    if name not in arguments:
+        return None
+    return _contained_workspace_path(
+        workspace,
+        Path(_string(arguments, name)),
+    )
+
+
+def _planning_package_path(arguments: Mapping[str, Any]) -> Path:
+    workspace = _planning_workspace(arguments)
+    return _contained_workspace_path(
+        workspace,
+        Path(_string(arguments, "plan")),
+    )
+
+
+def _contained_workspace_path(workspace: Path, value: Path) -> Path:
+    unresolved = (
+        value
+        if value.is_absolute()
+        else workspace / value
+    ).resolve(strict=False)
+    try:
+        unresolved.relative_to(workspace)
+    except ValueError as error:
+        raise ValueError("planning path escapes the declared workspace") from error
+    candidate = unresolved.resolve(strict=True)
+    try:
+        candidate.relative_to(workspace)
+    except ValueError as error:
+        raise ValueError("planning path escapes the declared workspace") from error
+    return candidate
 
 
 def _bounded_int(

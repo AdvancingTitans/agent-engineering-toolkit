@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://advancingtitans.github.io/aet/schemas/planning/plan-reference-v1.schema.json",
+  "title": "AET Plan Reference v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "reference_id",
+    "kind",
+    "source_identity",
+    "target_id",
+    "path",
+    "content_hash",
+    "status",
+    "strength",
+    "limitations"
+  ],
+  "properties": {
+    "schema_version": {"const": "plan-reference/1.0"},
+    "reference_id": {"type": "string", "minLength": 1},
+    "kind": {"enum": ["CLAIM", "EVIDENCE", "ATLAS", "SOURCE", "POLICY", "VERIFICATION"]},
+    "source_identity": {"type": ["string", "null"]},
+    "target_id": {"type": "string", "minLength": 1},
+    "path": {"type": ["string", "null"]},
+    "content_hash": {"type": ["string", "null"]},
+    "status": {"enum": ["PASS", "FAIL", "UNKNOWN", "NOT_APPLICABLE", "CONFIRMED", "STALE"]},
+    "strength": {
+      "enum": [
+        "EVIDENCE_BACKED",
+        "SOURCE_CONFIRMED",
+        "INFERRED_WITH_LIMITS",
+        "NEEDS_EVIDENCE",
+        "UNKNOWN"
+      ]
+    },
+    "limitations": {"type": "array", "items": {"type": "string"}}
+  }
+}

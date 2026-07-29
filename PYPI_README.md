@@ -1,6 +1,7 @@
 # Agent Engineering Toolkit
 
-**Investigate AI coding changes without letting the model invent evidence.**
+**Investigate AI coding changes and hand a code Agent a reviewable, read-only
+Plan without letting the model invent evidence.**
 
 AET Quick answers three questions: did the change fit the task, did the
 verification really run, and does that proof still apply? Deterministic tools
@@ -10,6 +11,26 @@ AET validates references, permissions, strength, and budget.
 ```text
 deterministic facts → bounded LLM investigation → grounding validation → human decision
 ```
+
+## Plan before editing
+
+The separate Evidence-Guided Planner compiles a request, validated Bundle,
+optional matching Atlas, and current source hashes into bounded Planning
+Context. A Host Planner returns strict Candidate JSON; AET validates it into a
+portable `PROPOSED` Plan with evidence references, source locators, linked edit
+sites, tests, and explicit unknowns.
+
+```bash
+aet plan context --workspace . --request request.md \
+  --bundle evidence-bundle --output planning-context.json
+aet plan validate-candidate --context planning-context.json \
+  --candidate plan-candidate.json --output .aet/plans/PLAN-001
+aet plan show .aet/plans/PLAN-001
+```
+
+AET does not implement the Plan or run its verification commands. After an
+external code Agent produces a diff, AET can create an
+`UNKNOWN`/`PENDING` verification handoff for explicit Proof.
 
 ## Install
 

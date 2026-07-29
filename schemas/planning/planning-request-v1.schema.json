@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://advancingtitans.github.io/aet/schemas/planning/planning-request-v1.schema.json",
+  "title": "AET Planning Request v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "request_id",
+    "user_goal",
+    "acceptance_criteria",
+    "non_goals",
+    "allowed_paths",
+    "protected_paths",
+    "required_verification",
+    "bundle_identity",
+    "atlas_identity",
+    "workspace_identity",
+    "budgets",
+    "requested_output",
+    "high_risk_claims",
+    "allowed_scope_status"
+  ],
+  "properties": {
+    "schema_version": {"const": "planning-request/1.0"},
+    "request_id": {"type": "string", "pattern": "^REQ-[A-Z0-9._-]+$"},
+    "user_goal": {"type": "string", "minLength": 1, "maxLength": 100000},
+    "acceptance_criteria": {"$ref": "#/$defs/strings"},
+    "non_goals": {"$ref": "#/$defs/strings"},
+    "allowed_paths": {"$ref": "#/$defs/paths"},
+    "protected_paths": {"$ref": "#/$defs/paths"},
+    "required_verification": {"$ref": "#/$defs/strings"},
+    "bundle_identity": {"type": ["string", "null"]},
+    "atlas_identity": {"type": ["string", "null"]},
+    "workspace_identity": {"$ref": "#/$defs/workspace"},
+    "budgets": {"$ref": "#/$defs/budgets"},
+    "requested_output": {"enum": ["plan", "explain", "gaps", "skill"]},
+    "high_risk_claims": {"$ref": "#/$defs/strings"},
+    "allowed_scope_status": {"enum": ["RESOLVED", "UNRESOLVED"]}
+  },
+  "$defs": {
+    "strings": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "string"}
+    },
+    "paths": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*\\\\).+$"
+      }
+    },
+    "workspace": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "workspace_id", "head_sha", "worktree_digest"],
+      "properties": {
+        "status": {"enum": ["PASS", "UNKNOWN"]},
+        "workspace_id": {"type": "string", "minLength": 1},
+        "head_sha": {"type": ["string", "null"]},
+        "worktree_digest": {"type": ["string", "null"]}
+      }
+    },
+    "budgets": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "max_nodes",
+        "max_source_files",
+        "max_source_bytes",
+        "max_edit_items",
+        "max_depth"
+      ],
+      "properties": {
+        "max_nodes": {"type": "integer", "minimum": 0},
+        "max_source_files": {"type": "integer", "minimum": 0},
+        "max_source_bytes": {"type": "integer", "minimum": 0},
+        "max_edit_items": {"type": "integer", "minimum": 0},
+        "max_depth": {"type": "integer", "minimum": 0}
+      }
+    }
+  }
+}

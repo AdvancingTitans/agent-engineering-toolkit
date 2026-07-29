@@ -1,0 +1,25 @@
+{
+  "schema_version": "plan-candidate/1.0",
+  "request_id": "$REQUEST_ID",
+  "summary": "The supplied Bundle covers one sample adapter and cannot ground a repository-wide permission refactor.",
+  "coverage_claim": "UNKNOWN",
+  "edit_items": [],
+  "investigation_items": [
+    {
+      "investigation_id": "INVESTIGATE-PERMISSION-ENTRYPOINTS",
+      "question": "Which current modules define permission decisions and their callers?"
+    },
+    {
+      "investigation_id": "INVESTIGATE-PERMISSION-TESTS",
+      "question": "Which focused tests bind allow, deny, and protected-path behavior?"
+    }
+  ],
+  "verification_steps": [],
+  "assumptions": [],
+  "unresolved": [
+    {
+      "unknown_id": "UNKNOWN-PERMISSION-SCOPE",
+      "statement": "The current Bundle does not establish repository-wide permission entrypoints."
+    }
+  ]
+}

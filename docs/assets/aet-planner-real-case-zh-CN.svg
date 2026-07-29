@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-label="真实 AET 项目：有计划与没计划，修改范围判断差多少？" data-generator="fireworks-tech-graph" data-schema-version="1" data-style-id="1" data-visual-theme="Flat Icon" data-diagram-type="comparison" data-semantic-profile="generic" data-semantic-valid="true" data-quality-profile="showcase">
+<defs>
+<filter id="shadow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#0f172a" flood-opacity=".08"/></filter>
+<style>text{font-family:"Helvetica Neue",Helvetica,Arial,"PingFang SC","Microsoft YaHei",sans-serif}.mono{font-family:"SFMono-Regular",Consolas,monospace}</style>
+</defs>
+<rect width="1600" height="900" fill="#ffffff"/>
+<rect width="1600" height="98" fill="#f8fafc"/>
+<text x="58" y="45" text-anchor="start" font-size="30" font-weight="850" fill="#111827">真实 AET 项目：有计划与没计划，修改范围判断差多少？</text>
+<text x="58" y="75" text-anchor="start" font-size="15" font-weight="400" fill="#6b7280">同一 gpt-5.6-sol / medium / 只读任务；逐维评分，不生成单一 Trust Score</text>
+<rect x="1278" y="34" width="264" height="30" rx="15" fill="#059669" fill-opacity=".10" stroke="#059669" stroke-opacity=".45"/>
+<text x="1410" y="54" text-anchor="middle" class="mono" font-size="12" font-weight="750" fill="#059669">ONE REAL CASE · PASS@1</text>
+<rect x="58" y="125" width="1484" height="82" rx="14" fill="#eff6ff" stroke="#93c5fd"/>
+<text x="86" y="156" text-anchor="start" class="mono" font-size="13" font-weight="800" fill="#2563eb">开发者</text>
+<text x="86" y="187" text-anchor="start" font-size="18" font-weight="650" fill="#111827">“规划 Graph Builder、固定 Perspective、递归 Viewer 与 Bundle v1 Change Group 兼容改动。”</text>
+<g filter="url(#shadow)">
+<rect x="58" y="250" width="450" height="535" rx="18" fill="#ffffff" stroke="#2563eb" stroke-width="2"/>
+<rect x="58" y="250" width="450" height="86" rx="18" fill="#2563eb" fill-opacity=".08"/>
+</g>
+<text x="86" y="285" text-anchor="start" font-size="24" font-weight="800" fill="#2563eb">只看源码</text>
+<text x="86" y="316" text-anchor="start" font-size="14" font-weight="400" fill="#6b7280">9 个生产决策 · 无证据引用</text>
+<text x="88" y="376" text-anchor="start" font-size="14" font-weight="400" fill="#6b7280">生产决策精确率</text>
+<text x="474" y="376" text-anchor="end" class="mono" font-size="17" font-weight="800" fill="#dc2626">44.4%</text>
+<rect x="78" y="397" width="410" height="39" rx="7" fill="#f8fafc"/>
+<text x="88" y="424" text-anchor="start" font-size="14" font-weight="400" fill="#6b7280">Disposition 正确率</text>
+<text x="474" y="424" text-anchor="end" class="mono" font-size="17" font-weight="800" fill="#d97706">75%</text>
+<text x="88" y="472" text-anchor="start" font-size="14" font-weight="400" fill="#6b7280">必需测试召回</text>
+<text x="474" y="472" text-anchor="end" class="mono" font-size="17" font-weight="800" fill="#059669">100%</text>
+<rect x="78" y="493" width="410" height="39" rx="7" fill="#f8fafc"/>
+<text x="88" y="520" text-anchor="start" font-size="14" font-weight="400" fill="#6b7280">证据引用覆盖</text>
+<text x="474" y="520" text-anchor="end" class="mono" font-size="17" font-weight="800" fill="#dc2626">0%</text>
+<text x="88" y="568" text-anchor="start" font-size="14" font-weight="400" fill="#6b7280">联动覆盖</text>
+<text x="474" y="568" text-anchor="end" class="mono" font-size="17" font-weight="800" fill="#dc2626">33.3%</text>
+<rect x="78" y="589" width="410" height="39" rx="7" fill="#f8fafc"/>
+<text x="88" y="616" text-anchor="start" font-size="14" font-weight="400" fill="#6b7280">UNKNOWN 保留</text>
+<text x="474" y="616" text-anchor="end" class="mono" font-size="17" font-weight="800" fill="#dc2626">0%</text>
+<line x1="82" y1="625" x2="484" y2="625" stroke="#d1d5db"/>
+<text x="86" y="655" text-anchor="start" font-size="13" font-weight="750" fill="#2563eb">Scope decisions</text>
+<text x="88" y="685" text-anchor="start" class="mono" font-size="13" font-weight="400" fill="#111827">builder.py           REQUIRED</text>
+<text x="88" y="712" text-anchor="start" class="mono" font-size="13" font-weight="400" fill="#111827">viewer.py            REQUIRED</text>
+<text x="88" y="739" text-anchor="start" class="mono" font-size="13" font-weight="400" fill="#111827">+ validator / hierarchy / model / schemas</text>
+<g filter="url(#shadow)">
+<rect x="575" y="250" width="450" height="535" rx="18" fill="#ffffff" stroke="#7c3aed" stroke-width="2"/>
+<rect x="575" y="250" width="450" height="86" rx="18" fill="#7c3aed" fill-opacity=".08"/>
+</g>
+<text x="603" y="285" text-anchor="start" font-size="24" font-weight="800" fill="#7c3aed">v1.16 evidence-only</text>
+<text x="603" y="316" text-anchor="start" font-size="14" font-weight="400" fill="#6b7280">Bundle + Atlas · 没有 Planning Context</text>
+<text x="605" y="376" text-anchor="start" font-size="14" font-weight="400" fill="#6b7280">生产决策精确率</text>
+<text x="991" y="376" text-anchor="end" class="mono" font-size="17" font-weight="800" fill="#059669">100%</text>
+<rect x="595" y="397" width="410" height="39" rx="7" fill="#f8fafc"/>
+<text x="605" y="424" text-anchor="start" font-size="14" font-weight="400" fill="#6b7280">Disposition 正确率</text>
+<text x="991" y="424" text-anchor="end" class="mono" font-size="17" font-weight="800" fill="#dc2626">50%</text>
+<text x="605" y="472" text-anchor="start" font-size="14" font-weight="400" fill="#6b7280">必需测试召回</text>
+<text x="991" y="472" text-anchor="end" class="mono" font-size="17" font-weight="800" fill="#dc2626">0%</text>
+<rect x="595" y="493" width="410" height="39" rx="7" fill="#f8fafc"/>
+<text x="605" y="520" text-anchor="start" font-size="14" font-weight="400" fill="#6b7280">证据引用覆盖</text>
+<text x="991" y="520" text-anchor="end" class="mono" font-size="17" font-weight="800" fill="#059669">100%</text>
+<text x="605" y="568" text-anchor="start" font-size="14" font-weight="400" fill="#6b7280">联动覆盖</text>
+<text x="991" y="568" text-anchor="end" class="mono" font-size="17" font-weight="800" fill="#059669">100%</text>
+<rect x="595" y="589" width="410" height="39" rx="7" fill="#f8fafc"/>
+<text x="605" y="616" text-anchor="start" font-size="14" font-weight="400" fill="#6b7280">UNKNOWN 保留</text>
+<text x="991" y="616" text-anchor="end" class="mono" font-size="17" font-weight="800" fill="#d97706">50%</text>
+<line x1="599" y1="625" x2="1001" y2="625" stroke="#d1d5db"/>
+<text x="603" y="655" text-anchor="start" font-size="13" font-weight="750" fill="#7c3aed">Scope decisions</text>
+<text x="605" y="685" text-anchor="start" class="mono" font-size="13" font-weight="400" fill="#111827">builder.py           REQUIRED</text>
+<text x="605" y="712" text-anchor="start" class="mono" font-size="13" font-weight="400" fill="#111827">viewer.py            INVESTIGATE</text>
+<text x="605" y="739" text-anchor="start" class="mono" font-size="13" font-weight="400" fill="#111827">evidence.schema.json DO_NOT_EDIT · tests missing</text>
+<g filter="url(#shadow)">
+<rect x="1092" y="250" width="450" height="535" rx="18" fill="#ffffff" stroke="#059669" stroke-width="2"/>
+<rect x="1092" y="250" width="450" height="86" rx="18" fill="#059669" fill-opacity=".08"/>
+</g>
+<text x="1120" y="285" text-anchor="start" font-size="24" font-weight="800" fill="#059669">v1.17 validated Plan</text>
+<text x="1120" y="316" text-anchor="start" font-size="14" font-weight="400" fill="#6b7280">PROPOSED Plan → Code Agent Planner</text>
+<text x="1122" y="376" text-anchor="start" font-size="14" font-weight="400" fill="#6b7280">生产决策精确率</text>
+<text x="1508" y="376" text-anchor="end" class="mono" font-size="17" font-weight="800" fill="#059669">100%</text>
+<rect x="1112" y="397" width="410" height="39" rx="7" fill="#f8fafc"/>
+<text x="1122" y="424" text-anchor="start" font-size="14" font-weight="400" fill="#6b7280">Disposition 正确率</text>
+<text x="1508" y="424" text-anchor="end" class="mono" font-size="17" font-weight="800" fill="#059669">100%</text>
+<text x="1122" y="472" text-anchor="start" font-size="14" font-weight="400" fill="#6b7280">必需测试召回</text>
+<text x="1508" y="472" text-anchor="end" class="mono" font-size="17" font-weight="800" fill="#059669">100%</text>
+<rect x="1112" y="493" width="410" height="39" rx="7" fill="#f8fafc"/>
+<text x="1122" y="520" text-anchor="start" font-size="14" font-weight="400" fill="#6b7280">证据引用覆盖</text>
+<text x="1508" y="520" text-anchor="end" class="mono" font-size="17" font-weight="800" fill="#059669">100%</text>
+<text x="1122" y="568" text-anchor="start" font-size="14" font-weight="400" fill="#6b7280">联动覆盖</text>
+<text x="1508" y="568" text-anchor="end" class="mono" font-size="17" font-weight="800" fill="#059669">100%</text>
+<rect x="1112" y="589" width="410" height="39" rx="7" fill="#f8fafc"/>
+<text x="1122" y="616" text-anchor="start" font-size="14" font-weight="400" fill="#6b7280">UNKNOWN 保留</text>
+<text x="1508" y="616" text-anchor="end" class="mono" font-size="17" font-weight="800" fill="#059669">100%</text>
+<line x1="1116" y1="625" x2="1518" y2="625" stroke="#d1d5db"/>
+<text x="1120" y="655" text-anchor="start" font-size="13" font-weight="750" fill="#059669">Scope decisions</text>
+<text x="1122" y="685" text-anchor="start" class="mono" font-size="13" font-weight="400" fill="#111827">builder.py           REQUIRED · ev-graph-builder</text>
+<text x="1122" y="712" text-anchor="start" class="mono" font-size="13" font-weight="400" fill="#111827">viewer.py            REQUIRED · ev-viewer</text>
+<text x="1122" y="739" text-anchor="start" class="mono" font-size="13" font-weight="400" fill="#111827">evidence.schema.json INVESTIGATE · conflict + UNKNOWN</text>
+<rect x="58" y="824" width="1484" height="48" rx="12" fill="#111827"/>
+<text x="800" y="854" text-anchor="middle" font-size="14" font-weight="650" fill="#ffffff">结论边界：1 个真实仓库 case、每组 1 次；召回没有提升，提升发生在精确率、类型、联动、验证与 UNKNOWN 保留。</text>
+</svg>

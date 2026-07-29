@@ -8,10 +8,10 @@
 
 **[English](../README.md) · [简体中文](README.zh-CN.md)**
 
-> **AET 把 AI 编码工作转成可移植、可检查的证据，再从同一证据派生可追溯的
-> Evidence Atlas 与有边界的代码改进提示词，同时不允许模型编造事实。**
+> **AET 把 AI 编码工作转成可移植、可检查的证据，再把证据编译成可追溯地图、
+> 有边界的改进提示词，以及 Code Agent 动手前可审查的只读 Plan。**
 
-AI 编码 Agent 说任务已经修好、测试已经通过。AET 帮你回答六个具体问题：
+AI 编码 Agent 说任务已经修好、测试已经通过。AET 帮你回答七个具体问题：
 
 1. 本次改动是否与用户任务相关？
 2. 声称的验证是否真的在当前工作区执行？
@@ -19,6 +19,7 @@ AI 编码 Agent 说任务已经修好、测试已经通过。AET 帮你回答六
 4. 另一个没有安装 AET 的 Agent 能否审查同一份证据？
 5. 人类能否沿一张可读调查地图追踪结论、反证与 `UNKNOWN`？
 6. 同一份证据能否形成可执行提示词，同时不把建议偷偷升级成 Evidence，也不自动授权 Agent 改代码？
+7. Agent 动手前，Planner 能否明确必改源码位置、联动位置、验证要求和仍未知的事项？
 
 工具产生可复现事实；宿主 LLM 可以理解任务意图、提出竞争假设、调用授权工具、检查反方解释，
 并形成有条件的工程判断。AET 再用确定性代码检查引用、权限、结论强度和预算，并把结果导出为
@@ -28,7 +29,8 @@ AI 编码 Agent 说任务已经修好、测试已经通过。AET 帮你回答六
 确定性事实 → 有边界的调查 → 依据校验
           → Portable Evidence Bundle
              ├─→ Evidence Atlas
-             └─→ 人类报告 + 有边界的 Agent 提示词
+             ├─→ 人类报告 + 有边界的 Agent 提示词
+             └─→ 只读 Evidence-Guided Plan
           → 独立审查 → 人工决定
 ```
 
@@ -59,6 +61,104 @@ aet quick fresh --proof .aet/proofs/auth.json
 
 旧版 `aet audit`、`review`、`trace` 和 `evidence receipt` 在整个 1.x 周期保持兼容；
 它们属于高级原生命令，不再是 Quick 默认产品入口。
+
+## Evidence-Guided Planner
+
+> “帮我审查这个项目，告诉我哪些地方必须改——但先不要动代码。”
+
+`/aet-plan` 给 Code Agent 的 Planner 一份有边界、只读的交接材料。AET 把需求、
+已校验 Bundle、可选且身份匹配的 Atlas 和当前哈希绑定源码编译成 Planning Context；
+Host 用严格 Candidate JSON 给出工程判断；AET 再确定性校验路径、证据引用、源码定位、
+联动关系、测试、预算与未知项，生成权限仍为 `PROPOSED` 的可移植 Plan。这是
+**bounded localization**，不是实现。
+
+![Evidence-Guided Planner 动态流程](assets/aet-planner-workflow-zh-CN.gif)
+
+[English GIF](assets/aet-planner-workflow-en.gif) ·
+[静态 PNG](assets/aet-planner-workflow-zh-CN.png) ·
+[可缩放 SVG](assets/aet-planner-workflow-zh-CN.svg) ·
+[动效校验报告](assets/aet-planner-workflow-zh-CN.motion.json)
+
+```mermaid
+flowchart LR
+    H["开发者审查请求"] --> C["AET Planning Context"]
+    B["Bundle + Atlas + 当前 Source"] --> C
+    C --> P["Code Agent Planner Candidate"]
+    P --> V["AET 确定性校验"]
+    V --> R["PROPOSED Plan Package"]
+    R --> A["人工审查"]
+    A --> I["外部实现"]
+    I --> Q["验证交接<br/>UNKNOWN / PENDING"]
+    Q --> E["显式 AET Proof"]
+```
+
+### 真实 AET 自审：有 Plan 与没有 Plan
+
+我们让 Codex `gpt-5.6-sol` 定位一个真实 AET 改动：它横跨 Graph Builder、固定
+Perspective、递归 Viewer、Bundle 兼容层与聚焦测试。同一任务分三组各运行一次：
+只读源码、v1.16 Bundle + Atlas，以及由 Code Agent 规划阶段消费的 v1.17 已校验 Plan。
+
+![真实 Planner 改动范围判断对比](assets/aet-planner-real-case-zh-CN.png)
+
+[English screenshot](assets/aet-planner-real-case-en.png) ·
+[Gold 合约](../eval/evidence-guided-planner/real-case/gold.json) ·
+[原始结构化观察](../eval/evidence-guided-planner/real-case/observations.json) ·
+[评分器](../eval/evidence-guided-planner/run_real_case.py) ·
+[结果](../eval/evidence-guided-planner/results/v1.17.0-real-codex.json)
+
+| 分项指标（不合成总分） | 只读源码 | v1.16 仅证据 | v1.17 已校验 Plan |
+| --- | ---: | ---: | ---: |
+| 必要生产路径召回率 | 100% | 100% | 100% |
+| 生产路径判断精确率 | 44.44% | 100% | 100% |
+| 路径 disposition 准确率 | 75% | 50% | 100% |
+| 必要测试召回率 | 100% | 0% | 100% |
+| 证据引用覆盖率 | 0% | 100% | 100% |
+| 源码定位覆盖率 | 100% | 100% | 100% |
+| 跨 Edit 联动覆盖率 | 33.33% | 100% | 100% |
+| `UNKNOWN` 保留率 | 0% | 50% | 100% |
+
+与只读源码相比，已校验 Plan 让生产路径判断精确率提升 **55.56 个百分点**、证据引用
+覆盖率提升 **100 个百分点**、跨 Edit 联动覆盖率提升 **66.67 个百分点**、`UNKNOWN`
+保留率提升 **100 个百分点**。必要路径和必要测试召回率**没有提升**，因为只读源码组已经
+找全；实际收益是排除了 5 个无关生产路径，并把修改关系变得可审查。与 v1.16 仅证据相比，
+v1.17 的 disposition 准确率提升 **50 个百分点**、必要测试召回率提升 **100 个百分点**、
+`UNKNOWN` 保留率提升 **50 个百分点**。
+
+这只是一个真实仓库案例、每组一次运行，不是通用模型质量或可信度声明。第一次无约束源码
+搜索误入 vendored/minified 资产，被判定为 harness 失败并排除；记录中的只读源码重跑与
+其他组使用相同的源码根目录及 generated/vendor 排除规则。AET 不生成综合“可信度分数”。
+
+### 与 v1.16 的关系及日常用法
+
+v1.16 的 Bundle、Atlas、Improvement 仍是上游同级权威产物。v1.17 不改写它们，也不把
+建议提升为 Evidence；它新增 Planning Context、Candidate 校验、Plan 打包与外部 diff 后的
+验证交接。Plan 权限始终是 `PROPOSED`；显式执行前 Proof 始终是
+`UNKNOWN`/`PENDING`。
+
+```bash
+aet plan context --workspace . --request request.md \
+  --bundle evidence-bundle --output planning-context.json
+aet plan validate-candidate --context planning-context.json \
+  --candidate plan-candidate.json --output .aet/plans/PLAN-001
+aet plan explain .aet/plans/PLAN-001 --edit EDIT-001
+aet plan export-skill .aet/plans/PLAN-001 \
+  --target codex --output .aet/skills/PLAN-001
+aet plan verification-handoff .aet/plans/PLAN-001 \
+  --diff agent.diff --output verification-request.json
+```
+
+Planner 不修改源码、不执行验证 argv、不写入 Bundle Core Evidence，也不保证找到了所有修改点。
+证据不足保持 `NEEDS_EVIDENCE`，预算遗漏保持 `PARTIAL`；只有显式执行 Proof 后，验证才可能
+离开 `UNKNOWN`。参见[完整指南](evidence-guided-planner.md)、
+[Planner/Helper 场景对照](planner-helper-scenarios.md)和
+[三个可复现示例](../examples/evidence-guided-planner)。复现真实对比：
+
+```bash
+uv run --no-editable python eval/evidence-guided-planner/run_real_case.py \
+  --output /tmp/aet-planner-real.json >/dev/null
+cmp /tmp/aet-planner-real.json \
+  eval/evidence-guided-planner/results/v1.17.0-real-codex.json
+```
 
 ## 跨 Agent 可移植证据交接
 
@@ -525,20 +625,21 @@ tests/auth/test_session.py   IN_SCOPE
 
 ## 架构：一条工作流，两种权力
 
-![AET 可移植证据交接动态架构](assets/aet-quick-workflow-zh-CN.gif)
+![AET Evidence-Guided Planner 动态架构](assets/aet-planner-workflow-zh-CN.gif)
 
-[查看 English GIF](assets/aet-quick-workflow-en.gif) ·
-[查看可缩放 SVG](assets/aet-quick-workflow-zh-CN.svg) ·
-[查看动画校验报告](assets/aet-quick-workflow-zh-CN.motion.json)
+[查看 English GIF](assets/aet-planner-workflow-en.gif) ·
+[查看静态 PNG](assets/aet-planner-workflow-zh-CN.png) ·
+[查看可缩放 SVG](assets/aet-planner-workflow-zh-CN.svg) ·
+[查看动画校验报告](assets/aet-planner-workflow-zh-CN.motion.json)
 
-这张动态图展示当前从证据到改进的交接主链：
+这张动态图展示当前从证据到 Plan 的交接主链：
 
 1. 人类审查请求被编译成 Portable Evidence Bundle，保留稳定的 Claim、Evidence、反证、Proof 与 Freshness 引用；
-2. Evidence ID 是两条派生链共享的依据层；
-3. Improvement Analyzer 派生 Issue、Constraint、范围、验证和停止条件，形成报告与 `PROPOSED` Agent 任务；
-4. Evidence Atlas 从同一 Bundle 独立派生规范 Graph 和十个固定 Perspective；
-5. 两条链都回到人工审查，建议不会回写成 Evidence；
-6. Fix、Merge、Push 与 Release 权限仍由人掌握。
+2. Bundle、Atlas、源码哈希、人类 Scope、Protected Path 和预算被编译成有界 Planning Context；
+3. Host Planner 提议路径、disposition、源码定位、联动、测试、风险和未知项，但不会获得修改权限；
+4. AET 确定性校验 Candidate，生成密封、可移植、权限为 `PROPOSED` 的 Plan Package；
+5. 人工审查后，Code Agent 才能只读消费 Plan；实现过程仍在 AET 外部；
+6. 外部 diff 以 `UNKNOWN`/`PENDING` 验证交接返回；只有显式 Proof 能证明执行。
 
 ### 从当前代码库看，组件怎样组合
 
@@ -551,16 +652,16 @@ tests/auth/test_session.py   IN_SCOPE
 
 - **实线表示证据生产主链。** 原生记录依次经过标准化、Observation/Candidate 提取、有界调查、
   确定性验证和 Bundle 编译。
-- **Atlas 与改进提示词是同级审查产物。** 它们在 Bundle 编译后复用同一组 ID，但都不会成为证据生产者。
-- **虚线表示产品入口与消费层。** 四个 Quick Skill、CLI/MCP/SDK 便利层、实测消费者和
+- **Atlas、改进提示词与 Plan 是同级审查产物。** 它们在 Bundle 编译后复用同一组 ID，但都不会成为证据生产者。
+- **虚线表示产品入口与消费层。** 五个 Host Skill、CLI/MCP/SDK 便利层、实测消费者和
   Human/Lab 边界复用相同契约，但不会因此获得证据权威。
 - **Run Record、Observation 与 Verified Evidence 是不同类型。**
   `src/aet/run_normalization/*`、`src/aet/observations/*` 和
   `src/aet/evidence_core/*` 在编译前强制维持边界。
 - **交换格式不依赖实现。** `schemas/evidence-bundle/v1/*` 定义 Index/Core/Archive、
   完整性、Freshness、冲突、Diagnostic 和 Review 引用；SDK 始终可选。
-- **Quick 继续保持轻量日常入口。** `skills/aet-*` 与 `src/aet/quick/*` 仍只暴露 Check、
-  Scope、Proof、Fresh；可移植路径增加的是交接能力，不是自动进入 Lab 的通道。
+- **Quick 继续保持轻量日常入口。** `src/aet/quick/*` 仍只暴露 Check、Scope、Proof、Fresh；
+  `/aet-plan` 有意保持独立：它是只读规划桥梁，不会自动进入实现或 Lab。
 - **测试与真实消费者实测证明不同事项。** `tests/*` 覆盖确定性拒绝路径，
   `eval/bundle-consumption/*` 检查采样互操作性；二者都不生成 Trust Score 或行动权限。
 
@@ -569,12 +670,12 @@ tests/auth/test_session.py   IN_SCOPE
 [观看中文 MP4](assets/aet-product-intro-zh-CN.mp4) ·
 [Watch the English MP4](assets/aet-product-intro-en.mp4)
 
-无声六幕视频从“人类请 Agent 审查项目”这一现实请求开始，保留四个 Quick Skill，解释
-Observation 与 Evidence 的边界和 Portable Bundle，再展示同源的人类报告、有边界 Agent
-提示词与 Evidence Atlas，最后落到可复现的空工具结果案例。详细契约见
-[可移植工作流](architecture/portable-evidence-workflow.md)。
+无声六幕 v1.17 视频从“请 Agent 审查项目但不要漂移范围”这一现实请求开始，依次解释
+v1.16 到 v1.17 的关系、Planning Context、Host/AET 校验边界、Code Agent 交接，以及真实
+Atlas Change Group 对比。详细契约见 [Planner 指南](evidence-guided-planner.md)。
 [媒体清单](assets/aet-quick-media-manifest.json)用 SHA-256 绑定双语 GIF、静态全景图和 MP4，
 并记录生成时测得的尺寸、帧数、帧率与时长；MP4 为无声 H.264。
+[Planner 媒体清单](assets/aet-planner-media-manifest.json)另行绑定动态流程与真实案例截图。
 
 只有 `/aet-proof` 会由 AET 自身执行命令并生成验证记录。其他本地或 MCP 工具结果由 Agent
 Host 写入调查记录：规范化 Payload 的哈希可以发现后续篡改，但不能独立证明外部 Host 确实
@@ -741,6 +842,9 @@ AET 使用 Python 3.11+，确定性运行时保持轻依赖。贡献新规则时
 
 ## 高级文档
 
+- [Evidence-Guided Planner](evidence-guided-planner.md)
+- [Planner 与 Helper 场景](planner-helper-scenarios.md)
+- [Planning v1 Schema](schemas/planning.md)
 - [Evidence-Grounded Improvement Layer](improvement.md)
 - [Evidence Atlas 架构](architecture/evidence-atlas.md)
 - [Portable Evidence Bundle v1](protocols/portable-evidence-bundle-v1.md)

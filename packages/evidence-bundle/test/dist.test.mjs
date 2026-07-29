@@ -5,6 +5,7 @@ import { fileURLToPath } from "node:url";
 import {
   buildEvidenceGraph,
   loadBundle,
+  loadPlan,
   queryClaims,
   renderMermaid,
   traceClaimSupport,
@@ -30,4 +31,8 @@ test("checked JavaScript distribution is directly consumable", async () => {
   assert.equal((await validateEvidenceGraph(graph)).perspective_count, 10);
   assert.equal(traceClaimSupport(graph, "claim-001").claim_status, "supported");
   assert.match(renderMermaid(graph), /^flowchart LR\n/u);
+});
+
+test("checked JavaScript distribution exports Planning helpers", () => {
+  assert.equal(typeof loadPlan, "function");
 });

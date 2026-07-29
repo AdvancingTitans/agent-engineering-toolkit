@@ -1,5 +1,44 @@
 # Changelog
 
+## 1.17.0 — 2026-07-29
+
+- Added Evidence-Guided Planner as a read-only Host boundary:
+  deterministic Planning Request and Context construction from validated
+  Bundle, optional matching Atlas, current hash-bound Source, existing scope,
+  and explicit budgets; Host reasoning returns strict Candidate JSON, and AET
+  alone validates the portable `PROPOSED` Plan.
+- Added six strict Planning v1 Schemas, fail-closed identity/reference/path and
+  protected-scope validation, explicit `READY_FOR_HUMAN_REVIEW`,
+  `NEEDS_EVIDENCE`, `PARTIAL`, `BLOCKED`, and `SUPERSEDED` status, four Edit
+  dispositions, counter-evidence/conflict/UNKNOWN preservation, and guarded
+  `BOUNDED_COMPLETE` coverage.
+- Added `aet plan context|validate-candidate|validate|show|explain|trace|gaps|
+  export-skill|verification-handoff`, deterministic Markdown and portable
+  Plan packages, single-Plan Host Skill export, and external-diff handoff that
+  leaves Proof `UNKNOWN` and `PENDING` instead of executing it.
+- Added the thin `/aet-plan` Host Skill, eight bounded Planning MCP tools,
+  Python SDK helpers, and `loadPlan`, `queryPlanEdits`, and
+  `validatePlanReferences` in the existing TypeScript Bundle SDK. No model
+  client, Agent loop, source editor, or Executor was added.
+- Added three reproducible end-to-end examples and a separately frozen,
+  20-case, three-group localization benchmark. Release language is deliberately
+  “bounded localization”; it does not claim to find every modification point.
+- Added English and Simplified Chinese product navigation, complete Planner,
+  Helper, Schema, architecture, security, SDK, MCP, example, and verification
+  handoff documentation.
+- Added a reproducible real Codex `gpt-5.6-sol` AET self-review with separate
+  source-only, v1.16 evidence-only, and v1.17 validated-Plan observations. The
+  checked-in Gold, raw structured outputs, deterministic scorer, and result
+  report eight independent scope-localization metrics without a holistic
+  score. In this one-run-per-group case, v1.17 raised production-path decision
+  precision from 44.44% to 100%, linkage coverage from 33.33% to 100%, and
+  `UNKNOWN` preservation from 0% to 100%; path/test recall was already 100% in
+  source-only and did not improve.
+- Rebuilt the bilingual README Planner story, dynamic/static architecture,
+  real-case screenshots, project panoramas, and exact 30-second silent H.264
+  introductions. SHA-256 manifests bind the generated workflow, review contact
+  sheets, screenshots, panoramas, and videos.
+
 ## 1.16.0 — 2026-07-29
 
 - Added the deterministic Evidence-Grounded Improvement Layer: validated

@@ -2,7 +2,10 @@
 
 Owner: `HUMAN_MAINTAINER`
 
-Status: `MANUAL_REWRITE_REQUIRED`
+Status: `COMPLETE`
+
+公开证据：
+`https://zhuanlan.zhihu.com/p/2065952961482715666`
 
 Stop Rule: 如果文章无法给出精确 release、真实命令、环境和限制，就不发布；
 如果只有泛流量而没有 demo 使用或技术讨论，暂停同主题投放。

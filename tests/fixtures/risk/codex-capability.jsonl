@@ -1,0 +1,4 @@
+{"type":"session_meta","session_id":"risk-capability","timestamp":"2026-08-01T00:02:00Z","payload":{"id":"risk-capability","cwd":"/repo","model":"fixture"}}
+{"type":"user","session_id":"risk-capability","timestamp":"2026-08-01T00:02:01Z","content":"Apply the approved fix to src/app.py."}
+{"type":"response_item","session_id":"risk-capability","timestamp":"2026-08-01T00:02:02Z","payload":{"type":"function_call","id":"cap-call","call_id":"cap","name":"apply_patch","arguments":{"path":"src/app.py","patch":"approved"}}}
+{"type":"response_item","session_id":"risk-capability","timestamp":"2026-08-01T00:02:03Z","payload":{"type":"function_call_output","id":"cap-result","call_id":"cap","output":{"status":"success","changed_paths":["src/app.py"]}}}

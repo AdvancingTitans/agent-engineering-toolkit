@@ -1,9 +1,11 @@
 {
-  "schema_version": "aet-quick-media-manifest/v2",
+  "schema_version": "aet-quick-media-manifest/v3",
+  "release": "v1.19.0",
   "verified_with": "ffprobe 7.0",
   "generation": {
     "workflow_animation": "fireworks-tech-graph style 5 / agent-orchestration",
-    "panorama_and_slides": "docs/assets/source/generate_readme_media.py (v1.17 planner narrative)",
+    "architecture_animation": "fireworks-tech-graph style 8 / golden-circuit",
+    "panorama_and_slides": "docs/assets/source/generate_readme_media.py (v1.19 Evidence Plane narrative)",
     "video": "ffmpeg libx264 H.264 (silent)"
   },
   "assets": [
@@ -56,7 +58,7 @@
       "language": "en",
       "width": 1600,
       "height": 1000,
-      "sha256": "38ba981331c36782361b5da078d9503b07132f845493c26792256c425798ed48"
+      "sha256": "d6c258e4787c0a066ecd321cc0c1223ab505eec3fb172286dcd70d568547f89c"
     },
     {
       "kind": "project_panorama",
@@ -65,21 +67,21 @@
       "language": "zh-CN",
       "width": 1600,
       "height": 1000,
-      "sha256": "79ff15dd8de5201ebc6066d8785a48660f9a44d732caecb697476a43b90a7cf5"
+      "sha256": "8a95042ecb6f72b48efe5f8eba736bec6adbd5c4ffe7485f78f43727f343c168"
     },
     {
       "kind": "project_panorama",
       "format": "svg",
       "path": "aet-project-panorama-en.svg",
       "language": "en",
-      "sha256": "d7c22f71ee4b30482ac939c4ef8f580c0e80d4add9227c1724c947fa06760916"
+      "sha256": "4bcf8628a9bad46376e20b14d60b24625b7cc5a150568231d01bf9b82d8af15f"
     },
     {
       "kind": "project_panorama",
       "format": "svg",
       "path": "aet-project-panorama-zh-CN.svg",
       "language": "zh-CN",
-      "sha256": "07b2e00590ce2d2fa9f14ecf1d9248ba9b32ba7396924885c7a4bd963494a45f"
+      "sha256": "c01cb72cf0a01059237ecc1fc0f62e515d859ab8014019b6dc3d37b488dc4382"
     },
     {
       "kind": "product_video",
@@ -93,7 +95,7 @@
       "frames": 900,
       "frame_rate": "30/1",
       "duration_seconds": 30.0,
-      "sha256": "41e71accbd45c7bee26218a5ffe646e87e2db88c8f9eca7c2ea44df04cafdd82"
+      "sha256": "43278e8014a1b68f9c2ab6f944161c82d5fb8ffc4d7398915d12d3ab2d6c5bea"
     },
     {
       "kind": "product_video",
@@ -107,7 +109,67 @@
       "frames": 900,
       "frame_rate": "30/1",
       "duration_seconds": 30.0,
-      "sha256": "bd108a81e4c515e8a2662d07c22e2ee2b85ba94eafc64fcce64c25c9630fc332"
+      "sha256": "ac2ece3ba2f1a767025e5c2565bb351167c310c2008f91aab025a407527fcdc7"
+    },
+    {
+      "kind": "architecture_animation",
+      "format": "gif",
+      "path": "aet-architecture-dark-luxury.gif",
+      "language": "en",
+      "codec": "gif",
+      "width": 960,
+      "height": 600,
+      "frames": 115,
+      "frame_rate": "20/1",
+      "duration_seconds": 5.75,
+      "motion_report": "aet-architecture-dark-luxury.motion.json",
+      "sha256": "85c2ee146d95f28ee26d761005b35791a4edfd6f9c656eb3d8c763e0c0471d09"
+    },
+    {
+      "kind": "architecture_animation",
+      "format": "gif",
+      "path": "aet-architecture-dark-luxury-zh-cn.gif",
+      "language": "zh-CN",
+      "codec": "gif",
+      "width": 960,
+      "height": 600,
+      "frames": 115,
+      "frame_rate": "20/1",
+      "duration_seconds": 5.75,
+      "motion_report": "aet-architecture-dark-luxury-zh-cn.motion.json",
+      "sha256": "de8fc38fbe1666c2cbcf8d39510ff0fb149a60b2ed180fbbef54e925d0417653"
+    },
+    {
+      "kind": "architecture_source",
+      "format": "svg",
+      "path": "aet-architecture-dark-luxury.svg",
+      "language": "en",
+      "sha256": "7be9c6525431e97aa510237d3be752a04a51f3403d9cdefcff26004d9a4f5f64"
+    },
+    {
+      "kind": "architecture_source",
+      "format": "svg",
+      "path": "aet-architecture-dark-luxury-zh-cn.svg",
+      "language": "zh-CN",
+      "sha256": "7ec6bb6aa58173df1eb77ab03712cf42e506b4a2c16e211c500a3df8b6471f99"
+    },
+    {
+      "kind": "architecture_static",
+      "format": "png",
+      "path": "aet-architecture-dark-luxury.png",
+      "language": "en",
+      "width": 1920,
+      "height": 1200,
+      "sha256": "f886ab0218a1380d7c1109e6111f11f0ecfcdb8f4f0e4eb15a25f1641b8ce36d"
+    },
+    {
+      "kind": "architecture_static",
+      "format": "png",
+      "path": "aet-architecture-dark-luxury-zh-cn.png",
+      "language": "zh-CN",
+      "width": 1920,
+      "height": 1200,
+      "sha256": "8eee03e2ec8e0b26ca0b1db21b66ef0dbe8521e0a670b013b66b3ccd5ae9dbc7"
     }
   ]
 }

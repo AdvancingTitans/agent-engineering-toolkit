@@ -13,7 +13,7 @@ steps:
   - uses: AdvancingTitans/aet-evidence-action@v1
     with:
       mode: check
-      version: 1.18.0
+      version: 1.19.0
       path: .
 ```
 

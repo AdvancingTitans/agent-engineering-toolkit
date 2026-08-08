@@ -37,6 +37,7 @@ NATIVE_RUN = (
 )
 
 EXPECTED_TOOLS = {
+    "aet_risk_diagnose",
     "aet_run_normalize",
     "aet_investigation_create",
     "aet_investigation_get",
@@ -54,6 +55,8 @@ EXPECTED_TOOLS = {
     "aet_graph_trace_conflict",
     "aet_graph_trace_freshness",
     "aet_graph_render_mermaid",
+    "aet_review_open",
+    "aet_review_expand",
     "aet_plan_build_context",
     "aet_plan_validate_candidate",
     "aet_plan_get",
@@ -232,7 +235,7 @@ class McpServerTests(unittest.TestCase):
                 "aet_graph_list_perspectives",
                 common,
             )
-            self.assertEqual(10, len(perspectives["perspectives"]))
+            self.assertEqual(11, len(perspectives["perspectives"]))
 
             roots = call_tool(
                 "aet_graph_get_root",

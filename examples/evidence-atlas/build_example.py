@@ -12,7 +12,7 @@ from aet.bundle import compile_bundle
 
 ROOT = Path(__file__).resolve().parents[2]
 CREATED_AT = "2026-07-26T12:00:00Z"
-CONFIGURATION_HASH = hashlib.sha256(b"aet-atlas-self-review/v1").hexdigest()
+CONFIGURATION_HASH = hashlib.sha256(b"aet-atlas-self-review/v1.19").hexdigest()
 
 SOURCE_PATHS = {
     "src-graph": "src/aet/atlas/builder.py",
@@ -40,7 +40,7 @@ def _source(identifier: str, relative: str) -> dict[str, Any]:
         },
         "provenance": {
             "source_type": "deterministic_file_read",
-            "schema_version": "1.16.0",
+            "schema_version": "1.19.0",
             "configuration_hash": CONFIGURATION_HASH,
         },
         "integrity": {"content_hash": digest},
@@ -117,7 +117,7 @@ def payload() -> dict[str, Any]:
         {
             "id": "claim-recursive-perspectives",
             "statement": (
-                "AET projects ten fixed evidence perspectives and exposes "
+                "AET projects eleven fixed evidence perspectives and exposes "
                 "complex nodes as recursive Viewer subgraphs."
             ),
             "status": "supported",
@@ -170,7 +170,7 @@ def payload() -> dict[str, Any]:
         ),
         _evidence(
             "ev-perspectives",
-            "The Perspective module defines ten fixed deterministic projections.",
+            "The Perspective module defines eleven fixed deterministic projections.",
             "src-perspectives",
             SOURCE_PATHS["src-perspectives"],
             supports=["claim-recursive-perspectives"],
@@ -204,7 +204,7 @@ def payload() -> dict[str, Any]:
     return {
         "bundle_id": "bundle-aet-atlas-self-review-v1",
         "created_at": CREATED_AT,
-        "producer_version": "1.16.0",
+        "producer_version": "1.19.0",
         "task": {
             "task_id": "task-aet-atlas-self-review",
             "request": (
@@ -215,9 +215,9 @@ def payload() -> dict[str, Any]:
                 "https://github.com/AdvancingTitans/"
                 "agent-engineering-toolkit"
             ),
-            "workspace_id": "aet-v1.16.0-source-tree",
+            "workspace_id": "aet-v1.19.0-source-tree",
             "base_ref": "v1.14.0",
-            "head_ref": "v1.16.0",
+            "head_ref": "v1.19.0",
         },
         "investigation": {
             "investigation_id": "investigation-aet-atlas-self-review",

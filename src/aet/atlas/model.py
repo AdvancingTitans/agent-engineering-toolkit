@@ -107,6 +107,7 @@ PERSPECTIVES = (
     "freshness",
     "improvement-chain",
     "regression-lineage",
+    "behavioural-risk",
 )
 
 DEFAULT_GENERATION_POLICY = {

@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://advancingtitans.github.io/agent-engineering-toolkit/schemas/review-graph/v1/review-manifest.schema.json",
+  "title": "AET Review Package Manifest v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "package_id", "snapshot", "inputs", "contents", "integrity"],
+  "properties": {
+    "schema_version": {"const": "aet-review-manifest/1.0"},
+    "package_id": {"type": "string", "minLength": 1},
+    "snapshot": {"type": "object"},
+    "inputs": {"type": "object"},
+    "contents": {"type": "object"},
+    "integrity": {"type": "object"}
+  }
+}

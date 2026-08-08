@@ -13,17 +13,20 @@ active workspace; the prior Codex-generated directory is archival.
 
 At the start of any new task, read this file, then run `git status --short`,
 `git tag --sort=-creatordate | head`, and
-`uv run --no-editable python -m unittest discover -s tests`. Do not start a
+`PYTHONPATH=src uv run --no-editable python -m unittest discover -s tests`.
+The explicit source path avoids loading a stale non-editable environment copy.
+Do not start a
 later phase until the current phase's acceptance checks pass and this file is
 updated.
 
 ## Product decision
 
-`aet` is an Evidence First toolkit for lightweight investigation of AI coding
-scope, real command execution, and proof freshness. Quick is read-only by
+`aet` is a local Evidence Plane for coding Agents. It binds human intent, Git
+state, command execution, artifacts, normalized Agent runs, review context,
+and limitations into portable, hash-bound evidence. Quick is read-only by
 default; only an explicit `/aet-proof` argv executes project code and writes
 the requested compact Receipt. AET reports unknowns and never invents a
-holistic trust score.
+holistic trust score or promotes `PROPOSED` advice into authority.
 
 Primary users are individual developers and small teams using Codex, Claude
 Code, Cursor, Copilot, or compatible agent Skills across multiple repositories.
@@ -79,9 +82,13 @@ target root.
 
 ## Current implementation status
 
-v0.3 complete. The deterministic static core now includes host-neutral
-Evidence Packs and explicit command Trace. Repo Archaeologist remains a
-separate future `aet evolve` capability.
+v1.19.0 release candidate. The deterministic core includes Quick, Intent Gate,
+Run Normalization, Portable Investigation and Evidence Bundle, eleven-view
+Evidence Atlas, Improvement, Evidence-Guided Planner, graph-first Review Graph,
+diagnosis-only Behavioural Risk, Learn, and Repo Archaeologist. Review Graph
+defaults to a bounded root slice; Risk forecast remains hard-disabled as
+research-only `UNKNOWN`. GitHub Release is authorized for this task; PyPI
+publication is out of scope.
 
 ### Phase 0 result — 2026-07-11
 
@@ -722,3 +729,151 @@ deterministic core.
   confirmed and accepted GitHub Marketplace Developer Agreement v2.4 at
   action time. Never convert unavailable or deferred state into a success
   claim.
+- Manual outreach progress on 2026-07-29/30: X, Reddit, Zhihu, Juejin, and
+  LinkedIn are public; `sdras/awesome-actions#874` is open. Product Hunt is
+  fully configured and scheduled for 2026-07-30 Pacific Time. Show HN rejected
+  the authenticated submission under its temporary Show HN restriction for
+  newer/unfamiliar accounts; no bypass was attempted, and comments remain
+  human-only under the platform's current AI-comment rule. The owner cancelled
+  V2EX publication. Exact evidence and URLs are recorded in
+  `ops/growth/launch/manual-actions.md`.
+- The reusable Codex Skill `promote-github-repo` is installed at
+  `/Users/yjw/.codex/skills/promote-github-repo`. It generalizes the complete
+  baseline, activation, README/conversion, Release/ecosystem, multi-channel
+  publication, measurement, and reporting workflow while explicitly excluding
+  V2EX. Its network-free audit script, promotion-pack templates, YAML, UI
+  metadata, quick validation, credential-redaction smoke, real-repository
+  smoke, and isolated forward tests pass.
+
+## Behavioural Risk Diagnosis implementation — 2026-08-01
+
+- Implemented Phase 1–5 from
+  `aet-behavioural-risk-diagnosis-delivery-package.md` as an AET Lab surface.
+  The new `src/aet/risk/` core is deterministic, local, standard-library only,
+  and consumes existing normalized Run, explicit Intent v2, Risk Policy, and
+  optional validated Bundle evidence. It preserves `PASS` / `FAIL` /
+  `UNKNOWN` / `NOT_APPLICABLE`, emits no aggregate risk rating or internal
+  motive claim, and keeps every intervention at `PROPOSED` authority.
+- Added strict Policy, Diagnosis, and Forecast v1 schemas; `aet risk diagnose`;
+  gated experimental `aet risk forecast`; same-context pathways; fixed
+  intervention mapping; read-only MCP; an optional eleventh Evidence Atlas
+  `behavioural-risk` Perspective; TypeScript protocol types and local
+  validators; offline evaluation fixtures; and bilingual Lab documentation.
+- Frozen evaluation report `.aet/risk-eval-report.json` passes with precision
+  `1.0`, recall `1.0`, FPR `0.0`, 21 labels, and 3 explicitly preserved
+  `UNKNOWN` labels. Codex/Claude Code semantic parity is covered by E2E tests.
+- Controlled shadow code-review experiment
+  `.aet/risk-business-experiment.json` covers 24 episodes / 72 factor labels
+  across AET, ControlArena, and AgentRx source snapshots and two hosts. AET
+  Risk reached exact-label accuracy `1.0`, positive recall `1.0`, FPR `0.0`,
+  UNKNOWN preservation `1.0`, and cited-failure coverage `1.0`, exceeding the
+  declared AET v1.18 and peer-inspired fixture baselines. This is reviewer
+  decision-support evidence, not upstream peer execution or a production
+  model-safety result.
+- Phase 4 prediction eligibility remains `FAIL`: 24 controlled episodes are
+  below the 200 independent-episode / 30 positive-outcome gate and do not
+  provide independent production outcomes. Forecast therefore remains
+  experimental `UNKNOWN`, and the conditional `skills/aet-risk` surface was
+  not created.
+- Acceptance evidence: 50 Risk tests and the Risk E2E pass; full non-editable
+  Python regression passes 632 tests; TypeScript package build/check and 20
+  runtime tests pass; wheel/sdist build, isolated wheel install, all three
+  installed Risk schemas, and installed CLI smoke pass; `git diff --check`
+  passes. No commit, tag, remote release, or package publication was performed.
+- Independent two-human annotation/kappa and the five-minute human tabletop
+  usability threshold remain `UNKNOWN`; do not infer them from automated
+  fixtures. Resume by collecting independent adjudicated labels and at least
+  the preregistered calibration volume before reconsidering forecast or Skill
+  promotion. Preserve the user-owned dirty worktree and all existing Evidence
+  First authority boundaries.
+
+## Behavioural Risk public-data release scope — 2026-08-01
+
+- This section supersedes the human-labelling resume point above. The user chose
+  “release diagnosis first, keep prediction in research” and explicitly removed
+  new manual annotation/usability work from the release scope.
+- The synthetic 7-case suite is now explicitly contract regression only
+  (`release_gate=false`, `label_authority=synthetic_contract_fixture`). The
+  diagnosis release gate is `eval/behavioural-risk/public-corpus.json`: nine
+  minimal action/outcome summaries from the official AgentDojo repository at
+  commit `089ed468cf3ed0322acc66b0211f26d9d90dbf60`, with upstream programmatic
+  utility/security labels and source/argument/effect hashes. No prompts,
+  content, or benchmark solutions are redistributed.
+- `.aet/risk-public-benchmark-report.json` passes 9 cases / 27 factor labels
+  with exact-case accuracy, precision, recall, and cited-failure coverage 1.0
+  and FPR 0.0. It declares `human_validation_claimed=false`,
+  `forecast_eligible=false`, and scope `diagnosis_only`. AgentDojo has no
+  monitoring-evasion label, so that factor is deliberately `NOT_APPLICABLE`.
+- Forecast has a code-level `FORECAST_RELEASE_STATE = "research_only"` lock.
+  Even otherwise valid calibration data returns gate FAIL and forecast
+  UNKNOWN with `forecast_research_only`; public diagnosis cases must not be
+  reused to bypass this lock.
+- Current-source acceptance: Risk 53 tests pass; full regression 635 tests
+  passes with `PYTHONPATH=src`; protocol-types and evidence-bundle build/check,
+  20 runtime tests, and 2 dist smoke tests pass. Wheel/sdist build, clean-venv
+  wheel install, installed Risk CLI diagnosis, and all 3 installed Risk schemas
+  pass.
+- `执行报告.md` contains the final scope delta, evidence, and remaining risks.
+  Resume by awaiting user acceptance. Do not commit, tag, push, create a GitHub
+  release, or publish packages until the user explicitly authorizes release.
+
+## Review Graph graph-first review handoff — 2026-08-08
+
+- Implemented Phase 0–5 of the graph-first review package without changing the
+  Evidence First authority boundary. `src/aet/review_graph/` now builds a
+  Git-bound Python Code Graph, composes it with Bundle Claim/Evidence and
+  Improvement control nodes, validates strict graph/slice/manifest contracts,
+  and returns bounded root, one-hop expansion, or stale `UNKNOWN` stop slices.
+- Added four Review Graph v1 Schemas, a non-overwriting hash-bound Review
+  Package, `aet review-graph build/validate/open/expand/export-compat`, and two
+  read-only MCP tools (`aet_review_open`, `aet_review_expand`). The default
+  Agent input is canonical `review/root.slice.json`; full JSON/JSONL supports
+  expansion, Mermaid remains a human projection, and legacy
+  `agent-context.json`/`agent-task.md` requires explicit compatibility export.
+- Fail-closed checks cover missing references, incomplete controls, changed or
+  protected scope, dynamic/ambiguous Python relations, budgets, extra/missing
+  or tampered package files, symlinks, output overwrite, and snapshot drift.
+  No aggregate score, model call, command execution, source edit, or Repo
+  Archaeologist dependency was added.
+- The AET empty-tool-result business case produces a 12-node/13-edge root at
+  6,505 stored bytes versus 6,522 bytes for the legacy Agent Task plus two
+  Mermaid files, and 8,468 bytes for the legacy minimum raw materials. A
+  single-run, isolated read-only Codex comparison scored the final root 8/8,
+  legacy input 7/8, and code-only graph 1/8 on the preregistered intervention
+  fields. This is a one-case preliminary observation, not a general model or
+  peer-superiority claim.
+- Acceptance: Review Graph `21 tests / OK`; MCP, portable CLI, and original
+  Improvement integration `22 tests / OK`; README/growth gate `4 tests / OK`;
+  full current-source regression `656 tests / OK` in 72.790 seconds.
+  `执行报告.md` and `docs/review-graph.md` contain the detailed results and
+  limitations.
+- Resume by awaiting user acceptance. Preserve the user-owned dirty worktree.
+  Do not commit, tag, push, publish, or create a GitHub Release until the user
+  explicitly authorizes it.
+
+## v1.19.0 Evidence Plane release candidate — 2026-08-08
+
+- The user explicitly authorized a direct `main` publication and GitHub
+  Release. PyPI publication remains out of scope because the public package is
+  still v1.11.1 and no PyPI action was requested.
+- Combined the previously unreleased Behavioural Risk Diagnosis and Review
+  Graph implementations without weakening four-state authority. Forecast stays
+  hard-locked to research-only `UNKNOWN`; Review Graph snapshot drift and
+  package tampering remain fail-closed stop conditions.
+- Rebuilt the 213-line English README and 201-line Chinese README around AET's
+  current definition as a local Evidence Plane. Corrected public PyPI status,
+  exact GitHub wheel installation, current CLI/MCP surfaces, static and dynamic
+  flows, case library, context-byte measurement, and explicit comparison
+  limits. Added a commit-pinned factual comparison with `code-review-graph`
+  and a production-shaped refresh-token race case that separates the human
+  Mermaid view from the bounded Agent slice and explicit stop rules.
+- Rebuilt and visually reviewed the bilingual v1.19 architecture SVG/PNG/GIF,
+  1600×1000 panoramas, and exact 30-second silent 1600×900 H.264 introductions.
+  Fireworks geometry/composition and 115-frame semantic motion reports pass;
+  the v3 media manifest binds 16 distinct artifacts by SHA-256.
+- Version sources and lock are 1.19.0. The 657-test current-source regression,
+  strict self-audit, focused README/media/Atlas checks, all six README Mermaid
+  parses, the 9-case AgentDojo diagnosis gate, TypeScript gates, package build,
+  package-content checks, and isolated-wheel Demo/CLI smoke pass. Diff-bound
+  release classification, exact-commit CI, and GitHub Release evidence are the
+  remaining gates at this resume point.

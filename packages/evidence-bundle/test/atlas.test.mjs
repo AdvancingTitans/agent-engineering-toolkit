@@ -28,7 +28,7 @@ const fixture = fileURLToPath(
 );
 const repositoryRoot = fileURLToPath(new URL("../../..", import.meta.url));
 
-test("builds, validates, and queries the ten deterministic Atlas perspectives", async () => {
+test("builds, validates, and queries the eleven deterministic Atlas perspectives", async () => {
   const bundle = await loadBundle(fixture);
   const graph = buildEvidenceGraph(bundle);
   assert.equal(Object.isFrozen(graph), true);
@@ -46,6 +46,7 @@ test("builds, validates, and queries the ten deterministic Atlas perspectives", 
       "freshness",
       "improvement-chain",
       "regression-lineage",
+      "behavioural-risk",
     ],
   );
   assert.equal(
@@ -60,6 +61,11 @@ test("builds, validates, and queries the ten deterministic Atlas perspectives", 
   );
   assert.equal(
     graph.perspectives.find((item) => item.id === "regression-lineage")
+      .coverage_status,
+    "UNKNOWN",
+  );
+  assert.equal(
+    graph.perspectives.find((item) => item.id === "behavioural-risk")
       .coverage_status,
     "UNKNOWN",
   );

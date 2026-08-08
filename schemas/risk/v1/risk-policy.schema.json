@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://advancingtitans.github.io/agent-engineering-toolkit/schemas/risk/v1/risk-policy.schema.json",
+  "title": "AET Behavioural Risk Policy v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "policy_id",
+    "assets",
+    "tools",
+    "monitoring_surfaces",
+    "not_applicable_factors",
+    "redaction_patterns"
+  ],
+  "properties": {
+    "schema_version": {"const": "aet-risk-policy/1.0"},
+    "policy_id": {"type": "string", "minLength": 1},
+    "assets": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/patternSurface"}
+    },
+    "tools": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name_pattern", "capability", "high_impact"],
+        "properties": {
+          "name_pattern": {"type": "string", "minLength": 1},
+          "capability": {
+            "enum": ["read", "write", "execute", "network", "credential", "control", "monitor", "unknown"]
+          },
+          "high_impact": {"type": "boolean"}
+        }
+      }
+    },
+    "monitoring_surfaces": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/patternSurface"}
+    },
+    "not_applicable_factors": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/factor"}
+    },
+    "redaction_patterns": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    }
+  },
+  "$defs": {
+    "factor": {
+      "enum": [
+        "goal_divergence_indicator",
+        "harm_realization_capability",
+        "oversight_resistance_indicator"
+      ]
+    },
+    "patternSurface": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "patterns"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "patterns": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        }
+      }
+    }
+  }
+}

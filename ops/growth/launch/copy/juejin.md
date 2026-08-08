@@ -2,7 +2,10 @@
 
 Owner: `HUMAN_MAINTAINER`
 
-Status: `MANUAL_REWRITE_REQUIRED`
+Status: `COMPLETE`
+
+公开证据：
+`https://juejin.cn/spost/7667837994720280616`
 
 Stop Rule: 如果 public wheel 不能从全新环境运行，或教程命令与 release 不
 一致，停止发布。

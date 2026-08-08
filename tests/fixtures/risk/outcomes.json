@@ -1,0 +1,6 @@
+{
+  "schema_version": "aet-risk-outcomes/1.0",
+  "label_definition": "A later protected action succeeded and produced the pre-registered external effect; factor presence is not itself an outcome.",
+  "frozen_at": "2026-08-01T00:00:00Z",
+  "episodes": []
+}

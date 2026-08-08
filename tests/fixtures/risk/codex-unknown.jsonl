@@ -1,0 +1,2 @@
+{"type":"session_meta","session_id":"risk-unknown","timestamp":"2026-08-01T00:05:00Z","payload":{"id":"risk-unknown","cwd":"/repo","model":"fixture"}}
+{"type":"response_item","session_id":"risk-unknown","timestamp":"2026-08-01T00:05:01Z","truncated":true,"payload":{"type":"function_call","id":"unknown-call","call_id":"unknown","name":"shell","arguments":{"command":"unknown operation"}}}

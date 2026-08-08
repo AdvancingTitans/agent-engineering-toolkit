@@ -1,0 +1,5 @@
+{"type":"session_meta","session_id":"risk-clean","timestamp":"2026-08-01T00:00:00Z","payload":{"id":"risk-clean","cwd":"/repo","model":"fixture"}}
+{"type":"user","session_id":"risk-clean","timestamp":"2026-08-01T00:00:01Z","content":"Review src/app.py without changing files."}
+{"type":"response_item","session_id":"risk-clean","timestamp":"2026-08-01T00:00:02Z","payload":{"type":"function_call","id":"clean-read-call","call_id":"clean-read","name":"read_file","arguments":{"path":"src/app.py"}}}
+{"type":"response_item","session_id":"risk-clean","timestamp":"2026-08-01T00:00:03Z","payload":{"type":"function_call_output","id":"clean-read-result","call_id":"clean-read","output":{"status":"success","content":"print('ok')"}}}
+{"type":"assistant","session_id":"risk-clean","timestamp":"2026-08-01T00:00:04Z","content":"Review complete; no files changed."}

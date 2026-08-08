@@ -95,6 +95,30 @@ class QuickDocumentationTests(unittest.TestCase):
                 with self.subTest(readme=readme.name, target=target):
                     self.assertTrue((readme.parent / path).exists())
 
+    def test_production_case_explains_pain_human_view_and_agent_slice(self) -> None:
+        english = (ROOT / "README.md").read_text(encoding="utf-8")
+        chinese = (ROOT / "docs" / "README.zh-CN.md").read_text(encoding="utf-8")
+        case_en = (
+            ROOT / "docs" / "use-cases" / "production-auth-refresh-review.md"
+        ).read_text(encoding="utf-8")
+        case_zh = (
+            ROOT
+            / "docs"
+            / "use-cases"
+            / "production-auth-refresh-review.zh-CN.md"
+        ).read_text(encoding="utf-8")
+        for text in (english, chinese, case_en, case_zh):
+            self.assertIn("sequenceDiagram", text)
+            self.assertIn("UNKNOWN", text)
+        self.assertIn("production pain", case_en.lower())
+        self.assertIn("AET implements", english)
+        self.assertIn("AET 解决的生产痛点", case_zh)
+        self.assertIn("AET 实现", chinese)
+        self.assertIn("2 files", english)
+        self.assertIn("2 个文件", chinese)
+        self.assertIn("stop", case_en.lower())
+        self.assertIn("停止", case_zh)
+
     def test_bilingual_workflow_panorama_and_intro_media_are_real_files(self) -> None:
         assets = ROOT / "docs" / "assets"
         expected_workflow_titles = {
@@ -139,16 +163,27 @@ class QuickDocumentationTests(unittest.TestCase):
         manifest = json.loads(
             (assets / "aet-quick-media-manifest.json").read_text(encoding="utf-8")
         )
-        self.assertEqual(manifest["schema_version"], "aet-quick-media-manifest/v2")
+        self.assertEqual(manifest["schema_version"], "aet-quick-media-manifest/v3")
+        self.assertEqual(manifest["release"], "v1.19.0")
         videos = [item for item in manifest["assets"] if item["kind"] == "product_video"]
         animations = [
-            item for item in manifest["assets"] if item["kind"] == "workflow_animation"
+            item
+            for item in manifest["assets"]
+            if item["kind"] in {"workflow_animation", "architecture_animation"}
         ]
         panoramas = [
             item for item in manifest["assets"] if item["kind"] == "project_panorama"
         ]
         self.assertEqual({item["language"] for item in videos}, {"en", "zh-CN"})
-        self.assertEqual({item["language"] for item in animations}, {"en", "zh-CN"})
+        self.assertEqual(
+            {(item["kind"], item["language"]) for item in animations},
+            {
+                ("workflow_animation", "en"),
+                ("workflow_animation", "zh-CN"),
+                ("architecture_animation", "en"),
+                ("architecture_animation", "zh-CN"),
+            },
+        )
         self.assertEqual(
             {(item["language"], item["format"]) for item in panoramas},
             {("en", "png"), ("en", "svg"), ("zh-CN", "png"), ("zh-CN", "svg")},
@@ -161,7 +196,8 @@ class QuickDocumentationTests(unittest.TestCase):
             hashes.add(digest)
         for item in animations:
             self.assertEqual(item["codec"], "gif")
-            self.assertEqual((item["width"], item["height"]), (960, 700))
+            expected_height = 700 if item["kind"] == "workflow_animation" else 600
+            self.assertEqual((item["width"], item["height"]), (960, expected_height))
             self.assertEqual(item["frames"], 115)
             self.assertEqual(item["frame_rate"], "20/1")
             self.assertEqual(item["duration_seconds"], 5.75)
@@ -175,7 +211,7 @@ class QuickDocumentationTests(unittest.TestCase):
             self.assertEqual(item["frames"], 900)
             self.assertEqual(item["frame_rate"], "30/1")
             self.assertEqual(item["duration_seconds"], 30.0)
-        self.assertEqual(len(hashes), 10, "all bilingual media must be byte-distinct")
+        self.assertEqual(len(hashes), 16, "all bilingual media must be byte-distinct")
 
     def test_planner_media_manifest_binds_workflow_and_real_case(self) -> None:
         assets = ROOT / "docs" / "assets"

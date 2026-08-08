@@ -499,7 +499,10 @@ def workspace_snapshot(cwd: Path, exclude_paths: Iterable[str] = ()) -> dict[str
     worktree = hashlib.sha256()
     worktree.update(b"tracked\\0" + diff.encode("utf-8"))
     untracked_manifest = hashlib.sha256()
-    for relative in sorted(line for line in untracked.splitlines() if line and line not in excluded):
+    def is_excluded(relative: str) -> bool:
+        return any(relative == item or relative.startswith(item.rstrip("/") + "/") for item in excluded)
+
+    for relative in sorted(line for line in untracked.splitlines() if line and not is_excluded(line)):
         candidate = root / relative
         untracked_manifest.update(relative.encode("utf-8") + b"\\0")
         if candidate.is_file():

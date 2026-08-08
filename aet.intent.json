@@ -1,6 +1,6 @@
 {
-  "intent": "Prepare the repository-side deliverables for the AET v1.18.0 Activation and Distribution release without publishing, changing remote settings, weakening Evidence authority, or modifying preserved user inputs.",
-  "changed_path_budget": 180,
+  "intent": "Release the complete current AET implementation as v1.19.0 on GitHub main, including Review Graph, diagnosis-only Behavioural Risk, corrected bilingual product documentation, reproducible static/dynamic media, exact package artifacts, and a GitHub Release, without weakening Evidence authority, enabling forecast, publishing PyPI, or modifying unrelated preserved user inputs.",
+  "changed_path_budget": 300,
   "allowed_paths": [
     ".github/**",
     ".gitignore",
@@ -17,12 +17,21 @@
     "SUPPORT.md",
     "aet-github-star-growth-delivery-package.md",
     "aet-evidence-guided-planner-delivery-package.md",
+    "aet-behavioural-risk-diagnosis-delivery-package.md",
     "aet.intent.json",
     "docs/**",
+    "eval/behavioural-risk/**",
+    "examples/evidence-atlas/**",
+    "examples/risk/**",
     "integrations/**",
     "ops/**",
+    "packages/evidence-bundle/**",
+    "packages/protocol-types/**",
     "pyproject.toml",
     "schemas/demo/**",
+    "schemas/evidence-atlas/**",
+    "schemas/review-graph/**",
+    "schemas/risk/**",
     "scripts/**",
     "site/**",
     "skills/README.md",
@@ -32,8 +41,18 @@
     "src/aet/demo/**",
     "src/aet/evidence.py",
     "src/aet/quick/proof.py",
+    "src/aet/atlas/**",
+    "src/aet/review_graph/**",
+    "src/aet/risk/**",
     "tests/demo/**",
     "tests/growth/**",
+    "tests/fixtures/risk/**",
+    "tests/integration/test_risk_e2e.py",
+    "tests/review_graph/**",
+    "tests/risk/**",
+    "tests/test_evidence_atlas_protocol.py",
+    "tests/test_mcp_server.py",
+    "tests/improvement/unit/test_atlas_integration.py",
     "tests/snapshots/**",
     "uv.lock",
     "\"\\346\\211\\247\\350\\241\\214\\346\\212\\245\\345\\221\\212.md\"",
@@ -42,14 +61,14 @@
   "required_proofs": [
     {
       "id": "business-flow",
-      "command": "uv run --no-editable python -m pytest tests/test_business_quality_flows.py tests/test_quality_loop.py tests/test_learn_observed.py -q",
+      "command": "PYTHONPATH=src uv run --no-editable python -m pytest tests/test_business_quality_flows.py tests/test_quality_loop.py tests/test_learn_observed.py -q",
       "evidence": [
         ".aet/evidence/v1.12-business.json"
       ]
     },
     {
       "id": "full-regression",
-      "command": "uv run --no-editable python -m unittest discover -s tests",
+      "command": "PYTHONPATH=src uv run --no-editable python -m unittest discover -s tests",
       "evidence": [
         ".aet/release/full-tests.txt"
       ]
@@ -66,6 +85,13 @@
       "command": "python scripts/growth/validate_launch.py --strict",
       "evidence": [
         ".aet/release/readiness.txt"
+      ]
+    },
+    {
+      "id": "typescript-contracts",
+      "command": "npm --prefix packages/protocol-types run check && npm --prefix packages/evidence-bundle run check",
+      "evidence": [
+        ".aet/release/typescript-contracts.txt"
       ]
     }
   ]

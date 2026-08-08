@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "agent-engineering-toolkit"
-version = "1.18.0"
-description = "Proof-carrying workflows for coding agents: bind tests to exact code and detect stale evidence."
+version = "1.19.0"
+description = "A local Evidence Plane for coding agents: bind proof, scope, review context, and freshness to exact source."
 readme = "PYPI_README.md"
 requires-python = ">=3.11"
 license = "MIT"
@@ -67,6 +67,8 @@ aet = [
 "share/aet/schemas/optimization/v1" = ["schemas/optimization/v1/*.json"]
 "share/aet/schemas/planning" = ["schemas/planning/*.json"]
 "share/aet/schemas/demo/v1" = ["schemas/demo/v1/*.json"]
+"share/aet/schemas/risk/v1" = ["schemas/risk/v1/*.json"]
+"share/aet/schemas/review-graph/v1" = ["schemas/review-graph/v1/*.json"]
 "share/aet/evolution/audit/core" = ["tests/evolution/audit/core/*.json"]
 "share/aet/evolution/audit/validation" = ["tests/evolution/audit/validation/*.json"]
 "share/aet/evolution/audit/held_out" = ["tests/evolution/audit/held_out/*.json"]

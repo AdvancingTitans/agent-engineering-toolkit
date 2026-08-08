@@ -1,0 +1,19 @@
+{
+  "schema_version": "aet-risk-policy/1.0",
+  "policy_id": "agentdojo-programmatic-v1",
+  "assets": [
+    {"id": "agentdojo-user-task", "patterns": ["*agentdojo/user/*"]},
+    {"id": "agentdojo-injection-task", "patterns": ["*agentdojo/injection/*"]}
+  ],
+  "tools": [
+    {"name_pattern": "reserve_hotel", "capability": "control", "high_impact": true},
+    {"name_pattern": "send_email", "capability": "network", "high_impact": true},
+    {"name_pattern": "send_direct_message", "capability": "network", "high_impact": true},
+    {"name_pattern": "*", "capability": "unknown", "high_impact": false}
+  ],
+  "monitoring_surfaces": [
+    {"id": "not-observed-by-agentdojo", "patterns": ["*agentdojo/monitoring-not-observed/*"]}
+  ],
+  "not_applicable_factors": ["oversight_resistance_indicator"],
+  "redaction_patterns": ["token", "secret", "password", "credential"]
+}

@@ -1,223 +1,213 @@
 # Agent Engineering Toolkit
 
-[简体中文](docs/README.zh-CN.md) · [Start here](docs/start-here.md) · [Full product reference](docs/reference/full-product-overview.md)
+[简体中文](docs/README.zh-CN.md) · [Five-minute start](docs/start-here.md) · [Full reference](docs/reference/full-product-overview.md) · [v1.19.0 Release](https://github.com/AdvancingTitans/agent-engineering-toolkit/releases/tag/v1.19.0)
 
-> **Your coding agent says tests passed. AET proves which code was actually tested.**
+> **A coding Agent can say “done.” AET shows what happened, what was proved, what changed, and what must remain `UNKNOWN`.**
 
-**Proof-carrying workflows for coding agents.** AET binds test runs, changed
-files, artifacts, and agent claims into portable evidence, then tells you when
-that proof no longer applies.
+**AET is a local Evidence Plane for coding Agents.** It turns instructions,
+Git state, command execution, artifacts, Agent runs, and review constraints into
+hash-bound evidence that can be checked, sliced, and handed to another Agent.
+
+It is not another coding Agent. AET does not replace tests or CI, infer missing
+facts, or auto-edit, commit, push, merge, release, revoke access, or execute an
+intervention.
 
 ```bash
-uvx --from agent-engineering-toolkit aet demo stale-proof
+uvx --from https://github.com/AdvancingTitans/agent-engineering-toolkit/releases/download/v1.19.0/agent_engineering_toolkit-1.19.0-py3-none-any.whl aet demo stale-proof
 ```
 
-> Released in [AET v1.18.0](https://github.com/AdvancingTitans/agent-engineering-toolkit/releases/tag/v1.18.0)
-> and verified from the public PyPI package.
-
 ```text
-AET stale-proof demo
-
 1. Test command executed                    PASS
 2. Proof matches the tested source          EXACT_MATCH
 3. Source changed without rerunning tests   RELEVANT_FILES_CHANGED
 
-The test really passed, but that proof no longer applies to the current code.
+The test passed, but that proof no longer applies to the current code.
 Demo result: PASS
 ```
 
-![AET detects stale test proof](docs/assets/hero-stale-proof.png)
+## See AET before installing it
 
-AET is not another coding agent. AET does not replace tests or CI. It does not
-turn missing evidence into `PASS`, and it does not auto-edit, auto-commit,
-push, merge, or release.
+![AET v1.19 Evidence Plane](docs/assets/aet-architecture-dark-luxury.gif)
 
-## What the demo proves
+[Static SVG](docs/assets/aet-architecture-dark-luxury.svg) ·
+[High-resolution PNG](docs/assets/aet-architecture-dark-luxury.png) ·
+[30-second English introduction](docs/assets/aet-product-intro-en.mp4) ·
+[中文介绍视频](docs/assets/aet-product-intro-zh-CN.mp4)
 
-The installed demo runs a real standard-library test in a temporary Git
-repository, records a Quick Proof against the exact fixture source, verifies
-`EXACT_MATCH`, changes a declared relevant file without rerunning the test, and
-then reports `RELEVANT_FILES_CHANGED`.
+The animation is a product map, not runtime telemetry. All diagrams and videos
+are local repository assets with no tracking or external script.
 
-That means:
+## What AET now means
 
-- the test really executed and passed;
-- the historical result remains a real fact;
-- the old proof no longer applies to the changed source;
-- the expected stale detection makes the demo itself pass.
+```mermaid
+flowchart LR
+    U["Human intent · Agent Host"]
+    Q["Quick checks · scope · proof · freshness"]
+    E["Evidence Core · records · hashes · status"]
+    B["Portable Bundle · content-addressed handoff"]
+    S["Bounded surfaces · Atlas · Review Graph · Risk · Plan"]
+    H["Human decision · inspect · approve · stop"]
+    U --> Q
+    Q --> E
+    E --> B
+    B --> S
+    S --> H
+    H -.-> U
+```
 
-It does **not** prove that every test passed, that an Agent's implementation is
-correct, or that a change should be merged. Git is required. Missing
-dependencies, unreadable fixtures, timeouts, and broken proof data fail closed
-as `UNAVAILABLE`, `UNKNOWN`, or a nonzero exit.
+The authoritative states remain `PASS`, `FAIL`, `UNKNOWN`, and
+`NOT_APPLICABLE`; advice stays `PROPOSED`. Freshness is reported separately as
+`EXACT_MATCH`, `RELEVANT_FILES_MATCH`,
+`HEAD_CHANGED_RELEVANT_FILES_MATCH`, `RELEVANT_FILES_CHANGED`,
+`ARTIFACT_CHANGED`, `ENVIRONMENT_CHANGED`, or `UNKNOWN`.
 
 ## Four Quick Skills
 
 | Question | Skill | CLI |
 | --- | --- | --- |
-| Are Agent instructions usable and verifiable? | `/aet-check` | `aet quick check .` |
-| Does this diff stay inside the approved task? | `/aet-scope` | `aet quick scope . --base main --intent aet.intent.json` |
-| Did this exact command run on these files? | `/aet-proof` | `aet quick proof --output proof.json --relevant-path src/app.py -- python -m unittest` |
-| Does an older proof still apply? | `/aet-fresh` | `aet quick fresh --proof proof.json` |
-| What should change, without editing yet? | `/aet-plan` | `aet plan context ...` |
+| Are instructions and Skills usable? | `/aet-check` | `aet quick check .` |
+| Is the diff inside approved intent? | `/aet-scope` | `aet quick scope . --base main --intent aet.intent.json` |
+| Did this exact argv run on these files? | `/aet-proof` | `aet quick proof --output proof.json --relevant-path src/app.py -- python -m unittest` |
+| Does recorded proof still apply? | `/aet-fresh` | `aet quick fresh --proof proof.json` |
 
-The first four are bounded daily Quick surfaces. `/aet-plan` is a separate,
-read-only `PROPOSED` planning handoff; it never grants implementation or
-verification authority.
+Use one surface for one question. `/aet-plan` is a fifth, separate read-only
+planning Skill; it never grants edit or verification authority.
 
-## Real workflows
+## From evidence to action—without collapsing authority
 
-### Stale proof
-
-A green log can be historically true and currently inapplicable. See the
-[reproducible stale-proof case](docs/use-cases/stale-proof.md).
-
-### Scope drift
-
-AET distinguishes task-relevant cross-module work from unrelated expansion;
-it does not treat every multi-file change as scope drift. See
-[scope drift](docs/use-cases/scope-drift.md).
-
-### Cross-Agent handoff
-
-A reviewer without AET installed can consume the JSON/JSONL records and
-Markdown projection in a Portable Evidence Bundle. See
-[cross-Agent handoff](docs/use-cases/cross-agent-handoff.md).
-
-## Install
-
-| Path | Command | Status |
+| Surface | What it produces | What it refuses to claim |
 | --- | --- | --- |
-| Public package | `uv tool install agent-engineering-toolkit` | PyPI v1.18.0 |
-| One-shot demo | `uvx --from agent-engineering-toolkit aet demo stale-proof` | Publicly verified |
-| Exact Release wheel | `uv tool install https://github.com/AdvancingTitans/agent-engineering-toolkit/releases/download/v1.18.0/agent_engineering_toolkit-1.18.0-py3-none-any.whl` | GitHub Release asset |
-| Agent Skills | `npx skills add AdvancingTitans/agent-engineering-toolkit` | External CLI; see telemetry note |
+| Quick + Intent Gate | preflight, scope facts, Proof, Freshness | full correctness from exit code |
+| Portable Evidence Bundle | cross-Agent JSON/JSONL + Markdown handoff | new facts during rendering |
+| Evidence Atlas | canonical graph and 11 deterministic perspectives | a holistic trust score |
+| Improvement + Planner | bounded issues and `PROPOSED` edit plan | implementation or completed verification |
+| Review Graph | minimal root slice with code, evidence, scope, tests, and stop rules | fresh context after snapshot drift |
+| Behavioural Risk Diagnosis | three observable factors and `PROPOSED` interventions | internal motive, overall risk score, or validated prediction |
+| Learn + Repo Archaeologist | gated local evolution and cited repository history | automatic adoption or model training |
 
-To opt out of the skills.sh CLI's anonymous installation telemetry:
+## v1.19.0: graph-first review and behavioural diagnosis
 
-```bash
-DISABLE_TELEMETRY=1 npx skills add AdvancingTitans/agent-engineering-toolkit
-```
+Review Graph applies the useful graph-first idea from
+[`code-review-graph`](https://github.com/tirth8205/code-review-graph) to AET's
+different problem: not only *which code is connected*, but also *which evidence,
+scope, protected paths, verification commands, limitations, and stop conditions
+must travel with the review*.
 
-AET itself adds no telemetry, account, API key, model call, or cloud service.
-Python 3.11+ is required.
+| Frozen AET review case | Bytes read first | Boundary |
+| --- | ---: | --- |
+| Minimum raw Bundle + Improvement + source material | 8,468 | complete but unbounded input shape |
+| Legacy Agent Task + two Mermaid projections | 6,522 | readable, weaker snapshot binding |
+| v1.19 Review Graph root slice | 6,505 | 12 nodes, 13 edges, hash-bound, one-hop expansion |
 
-## Use it with your Agent
+The root slice is **23.2% smaller than the equivalent raw minimum** and 17
+bytes smaller than the legacy projection while adding code relations and a
+freshness stop. This is one frozen Python case, not a universal token-savings or
+model-quality claim. `code-review-graph` remains broader for multi-language,
+incremental structural indexing; AET Review Graph is evidence- and
+authority-first and currently indexes Python ASTs. See the
+[method and limits](docs/review-graph.md) and the
+[factual comparison](docs/comparisons/aet-vs-code-review-graph.md).
 
-- [Codex](docs/integrations/codex.md)
-- [Claude Code](docs/integrations/claude-code.md)
-- [Cursor](docs/integrations/cursor.md)
-- [GitHub Actions](docs/integrations/github-actions.md)
-- [skills.sh](docs/integrations/skills-sh.md)
-- [MCP](docs/integrations/mcp.md)
-
-Start with the [five-minute guide](docs/start-here.md), then use the smallest
-surface that answers your question. For precise state and authority semantics,
-read [status and authority](docs/reference/status-and-authority.md).
-
-## How AET relates to existing tools
-
-- [AET vs Plan Mode](docs/comparisons/aet-vs-plan-mode.md)
-- [AET vs CI](docs/comparisons/aet-vs-ci.md)
-- [AET vs observability](docs/comparisons/aet-vs-observability.md)
-
-CI verifies checks. AET records what ran, what it was bound to, and whether that
-evidence still applies. Plan Mode proposes work. AET can ground a bounded plan
-without executing it. Observability explains broad system behavior. AET
-focuses on local engineering evidence and authority.
-
-## Advanced product surfaces
-
-Portable Evidence Bundles, Evidence Atlas, grounded Improvements,
-Evidence-Guided Planner, evaluation suites, schemas, release gates, and
-Repository Evolution remain supported. They are intentionally not all first-
-screen concepts. See the [complete technical overview](docs/reference/full-product-overview.md).
-
-Freshness remains explicit: `EXACT_MATCH`, `RELEVANT_FILES_MATCH`,
-`HEAD_CHANGED_RELEVANT_FILES_MATCH`, `RELEVANT_FILES_CHANGED`,
-`ARTIFACT_CHANGED`, `ENVIRONMENT_CHANGED`, or `UNKNOWN`.
+`aet risk diagnose` adds a local, deterministic Lab surface for observable goal
+divergence, demonstrated harm-realization capability, and observed resistance
+to a declared monitoring surface. It cites source records, keeps missing
+coverage `UNKNOWN`, and never acts on its `PROPOSED` interventions. Forecast is
+hard-disabled as research-only in this Release. See
+[Behavioural Risk Diagnosis](docs/behavioural-risk-diagnosis.md).
 
 ## Evidence-Guided Planner
 
-The v1.17 Planner is a separate read-only `PROPOSED` surface built on v1.16
-evidence. It performs bounded localization, preserves `NEEDS_EVIDENCE` and
-`UNKNOWN`, and never implements edits. In one bounded real case—not a general
-model-quality claim—production decision precision moved from 44.44% to 100%
-(+55.56 points). See the [full product reference](docs/reference/full-product-overview.md).
+The v1.17 Planner remains a separate read-only `PROPOSED` surface built on
+v1.16 evidence. It performs bounded localization, preserves `NEEDS_EVIDENCE`
+and `UNKNOWN`, and does not guarantee every modification point. In one bounded
+real case—not a general model-quality claim—production decision precision moved
+from 44.44% to 100% (+55.56 points). See the
+[Planner contract](docs/evidence-guided-planner.md).
+
+## Case library
+
+### Production-shaped auth release review
+
+The production pain is simple: the incident ticket, logs, diff, and test result
+are scattered. A human gets a confident Agent summary but cannot see the
+failure window; the Agent rereads broad repository context and may touch
+signing or config. AET implements one snapshot-bound review package, then
+projects it differently for each consumer:
+
+| Human asks | AET implements | Practical result |
+| --- | --- | --- |
+| “Why can refresh still return 401, what may change, and can we roll out?” | Bind Intent + incident Evidence + code relations + protected scope + Proof freshness | Human sees why rollout is `UNKNOWN`; Agent gets only 2 files, 1 test, Evidence IDs, and stop rules |
+
+```mermaid
+sequenceDiagram
+    actor H as Release owner
+    participant A as AET
+    participant R as Refresh API
+    participant C as Revocation cache
+    participant D as Session database
+    participant G as Code Agent
+    H->>A: Question + Intent + incident evidence
+    R->>C: Revoke old session
+    C-->>R: PASS
+    R->>D: Commit replacement family
+    D--xR: Timeout - commit state UNKNOWN
+    A-->>H: Human view: failure window + limits
+    A-->>G: Agent slice: 2 files + 1 test + stop rules
+    G-->>H: PROPOSED plan - Proof still required
+```
+
+This is what AET solves: the human no longer has to approve opaque prose, and
+the Agent no longer needs a second full-context dump. Both outputs stay bound
+to the same evidence and Git snapshot; drift stops the review. This is a frozen
+representative production case, not a claimed customer incident. See the
+[complete human/Agent output](docs/use-cases/production-auth-refresh-review.md).
+
+| Case | Reproduce or inspect | Proven boundary |
+| --- | --- | --- |
+| Stale test proof | [60-second walkthrough](docs/use-cases/stale-proof.md) | historical PASS can become inapplicable |
+| Scope drift | [Intent-bound case](docs/use-cases/scope-drift.md) | related multi-file work is not automatically drift |
+| Cross-Agent handoff | [Portable Bundle](docs/use-cases/cross-agent-handoff.md) | consumer needs no AET installation |
+| Evidence-grounded improvement | [Executable example](examples/evidence-grounded-improvement/README.md) | advice cannot promote its own evidence |
+| Review Graph | [Root slice and fail-closed guide](docs/review-graph.md) | stale/tampered packages stop |
+| Behavioural diagnosis | [Fixtures and policy](examples/risk/README.md) | diagnosis is not prediction |
+| Planner | [Three bounded scenarios](examples/evidence-guided-planner/README.md) | plan remains `PROPOSED` |
+| Auth refresh release | [Human view and Agent slice](docs/use-cases/production-auth-refresh-review.md) | dynamic explanation is not edit or rollout authority |
 
 ## Real-world Repository Audit Showcase
 
-The commit-locked static cases remain in the [full product reference](docs/reference/full-product-overview.md).
+Commit-locked, static reports are available for
+[SWE-agent](repository-audit-showcase/reports/swe-agent/audit-result/en/audit-report.md),
+[OpenHands](repository-audit-showcase/reports/openhands/audit-result/en/audit-report.md),
+and [Google ADK](repository-audit-showcase/reports/google-adk/audit-result/en/audit-report.md).
+They are cited repository archaeology, not endorsements or live health claims.
 
-<!-- atlas-self-review-mermaid:start -->
-```mermaid
-flowchart LR
-    %% Evidence Atlas
-    N_0b51dce8fe915eda{"[CONFLICT] The Bundle v1 change-scope view alone proves complete real diff grouping."}
-    N_6f91af1641ed1424{{"[SUPPORTED] AET projects ten fixed evidence perspectives and exposes complex nodes as recursive Viewer subg..."}}
-    N_8575658723b5d49d{{"[SUPPORTED] AET builds a canonical Evidence Graph from source-backed Bundle records without letting Mermaid..."}}
-    N_5522d8dace1cb6e7{"[CONFLICT] Path binding is useful for scope context but insufficient to prove complete real diff grouping."}
-    N_ac65699e766edc85["[UNKNOWN] Unresolved conflict conflict-change-scope-v1"]
-    N_ef4722a060cacfda["[VERIFIED] Bundle Evidence records can bind facts to repository paths."]
-    N_1ded0fae46344828["[VERIFIED] The Portable Evidence v1 Evidence record schema does not define an explicit Change Group field."]
-    N_c075a66077dd6940["[VERIFIED] The Graph Builder creates canonical nodes and source-backed edges."]
-    N_e824b2ad012b224e["[VERIFIED] The Perspective module defines ten fixed deterministic projections."]
-    N_a42d56cfe9dff13d["[VERIFIED] The offline Viewer contains recursive subgraph navigation."]
-    N_f797fb20a8448aa0["[RECORDED] Review AET's own Evidence Atlas implementation and retain support, counter-evidence, limitation..."]
-    N_a17fb3165e6b0db5["[RECORDED] The view must display UNKNOWN rather than infer real diff groups."]
-    N_6630b028247f1a08["[RECORDED] Rendering success still requires the packaged Mermaid runtime."]
-    N_2eb930959384d64c["[OMITTED] 17 lower-priority nodes"]
-    N_0b51dce8fe915eda -.->|"contradicted by"| N_1ded0fae46344828
-    N_0b51dce8fe915eda -->|"limited by"| N_a17fb3165e6b0db5
-    N_0b51dce8fe915eda ==>|"supported by"| N_ef4722a060cacfda
-    N_5522d8dace1cb6e7 -.->|"contradicted by"| N_1ded0fae46344828
-    N_5522d8dace1cb6e7 -->|"leaves unknown"| N_ac65699e766edc85
-    N_5522d8dace1cb6e7 -.->|"contradicted by"| N_ef4722a060cacfda
-    N_6f91af1641ed1424 -->|"limited by"| N_6630b028247f1a08
-    N_6f91af1641ed1424 ==>|"supported by"| N_a42d56cfe9dff13d
-    N_6f91af1641ed1424 ==>|"supported by"| N_e824b2ad012b224e
-    N_8575658723b5d49d ==>|"supported by"| N_c075a66077dd6940
-    N_0b51dce8fe915eda -->|"answers"| N_f797fb20a8448aa0
-    N_6f91af1641ed1424 -->|"answers"| N_f797fb20a8448aa0
-    N_8575658723b5d49d -->|"answers"| N_f797fb20a8448aa0
-    classDef verified fill:#dcfce7,stroke:#166534,color:#052e16,stroke-width:2px
-    classDef observation fill:#e0f2fe,stroke:#0369a1,color:#082f49
-    classDef candidate fill:#fef3c7,stroke:#92400e,color:#451a03,stroke-dasharray:5 3
-    classDef supported fill:#ede9fe,stroke:#6d28d9,color:#2e1065,stroke-width:2px
-    classDef unsupported fill:#fee2e2,stroke:#b91c1c,color:#450a0a,stroke-width:2px,stroke-dasharray:5 3
-    classDef conflict fill:#fee2e2,stroke:#b91c1c,color:#450a0a,stroke-width:2px
-    classDef unknown fill:#f3f4f6,stroke:#4b5563,color:#111827,stroke-dasharray:5 3
-    classDef stale fill:#ffedd5,stroke:#c2410c,color:#431407,stroke-dasharray:3 3
-    classDef authorization fill:#ecfccb,stroke:#3f6212,color:#1a2e05
-    classDef omitted fill:#f3f4f6,stroke:#6b7280,color:#111827,stroke-dasharray:2 3
-    classDef evidenceDefault fill:#ffffff,stroke:#475569,color:#0f172a
-    class N_0b51dce8fe915eda conflict
-    class N_6f91af1641ed1424 supported
-    class N_8575658723b5d49d supported
-    class N_5522d8dace1cb6e7 conflict
-    class N_ac65699e766edc85 unknown
-    class N_ef4722a060cacfda verified
-    class N_1ded0fae46344828 verified
-    class N_c075a66077dd6940 verified
-    class N_e824b2ad012b224e verified
-    class N_a42d56cfe9dff13d verified
-    class N_f797fb20a8448aa0 evidenceDefault
-    class N_a17fb3165e6b0db5 evidenceDefault
-    class N_6630b028247f1a08 evidenceDefault
-    class N_2eb930959384d64c omitted
-```
-<!-- atlas-self-review-mermaid:end -->
+## Install and integrate
 
-## Community and trust
+| Path | Command | Current status |
+| --- | --- | --- |
+| Exact GitHub Release | `uv tool install https://github.com/AdvancingTitans/agent-engineering-toolkit/releases/download/v1.19.0/agent_engineering_toolkit-1.19.0-py3-none-any.whl` | v1.19.0 |
+| Public PyPI | `uv tool install agent-engineering-toolkit` | v1.11.1; older feature set |
+| Agent Skills | `DISABLE_TELEMETRY=1 npx skills add AdvancingTitans/agent-engineering-toolkit` | external skills.sh CLI |
 
-- Read [Security](SECURITY.md) before reporting sensitive evidence.
-- Use [Support](SUPPORT.md) to choose the right channel.
-- Review the [Roadmap](ROADMAP.md) and [Governance](GOVERNANCE.md).
-- Contributions follow [CONTRIBUTING.md](CONTRIBUTING.md) and the
-  [Code of Conduct](CODE_OF_CONDUCT.md).
+AET itself has no product telemetry, account, API key, model call, or cloud
+service. Python 3.11+ and Git are required for Git-bound workflows.
 
-If stale proof, bounded scope, or portable Agent evidence is a problem you want
-to revisit, Star the repository as a bookmark—and, more importantly, try the
-demo and report what did or did not reproduce.
+Integrations: [Codex](docs/integrations/codex.md) ·
+[Claude Code](docs/integrations/claude-code.md) ·
+[Cursor](docs/integrations/cursor.md) ·
+[GitHub Actions](docs/integrations/github-actions.md) ·
+[MCP](docs/integrations/mcp.md) ·
+[Python/TypeScript consumption](docs/protocols/portable-evidence-bundle-v1.md)
+
+## Security, limits, and trust
+
+- Read [status and authority](docs/reference/status-and-authority.md),
+  [command boundaries](docs/command-boundaries.md), and [Security](SECURITY.md).
+- AET is local and read-only by default; `trace`, Quick Proof, and explicit
+  observed gates are the named execution boundaries.
+- Secret redaction is defense in depth, not permission to retain raw private
+  transcripts. Tampered, missing, stale, or ambiguous evidence fails closed.
+- Use [Support](SUPPORT.md), [Contributing](CONTRIBUTING.md),
+  [Roadmap](ROADMAP.md), and [Governance](GOVERNANCE.md) for project work.
 
 MIT License.

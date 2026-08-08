@@ -1,20 +1,22 @@
 schema_version: aet-growth-outreach/v1
 candidates:
   - category: agent-skills
-    repository: UNKNOWN
+    repository: VoltAgent/awesome-agent-skills
     relevance: five installable bounded AET Skills
-    contribution_rules: MUST_RECHECK
-    status: RESEARCH_REQUIRED
+    contribution_rules: requires prior real community adoption
+    status: DEFERRED_WITH_REASON
+    reason: v1.18.0 is newly released and has no verified adoption evidence yet
   - category: agentic-coding
     repository: UNKNOWN
     relevance: proof and scope workflows for coding Agents
     contribution_rules: MUST_RECHECK
     status: RESEARCH_REQUIRED
   - category: github-actions
-    repository: UNKNOWN
+    repository: sdras/awesome-actions
     relevance: read-only AET Action after separate publication
-    contribution_rules: MUST_RECHECK
-    status: BLOCKED_ON_ACTION_RELEASE
+    contribution_rules: rechecked before one individually relevant submission
+    status: PR_SUBMITTED
+    pull_request: https://github.com/sdras/awesome-actions/pull/874
 
 rules:
   - one relevant project per pull request

@@ -128,7 +128,8 @@
         "conflicts",
         "freshness",
         "improvement-chain",
-        "regression-lineage"
+        "regression-lineage",
+        "behavioural-risk"
       ]
     },
     "hashMap": {

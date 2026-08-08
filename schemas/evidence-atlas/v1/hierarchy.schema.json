@@ -38,7 +38,8 @@
               "conflicts",
               "freshness",
               "improvement-chain",
-              "regression-lineage"
+              "regression-lineage",
+              "behavioural-risk"
             ]
           },
           "root_node_id": {"type": "string", "pattern": "^node:"},

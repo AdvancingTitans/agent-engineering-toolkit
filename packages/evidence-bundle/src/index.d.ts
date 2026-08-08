@@ -170,7 +170,8 @@ export type EvidenceAtlasPerspectiveId =
   | "conflicts"
   | "freshness"
   | "improvement-chain"
-  | "regression-lineage";
+  | "regression-lineage"
+  | "behavioural-risk";
 
 export interface EvidenceAtlasPerspective {
   schema_version: "aet-evidence-perspective/1.0";
@@ -237,7 +238,7 @@ export interface EvidenceGraphValidationReport {
   bundle_id: string;
   node_count: number;
   edge_count: number;
-  perspective_count: 10;
+  perspective_count: 11;
 }
 
 export interface EvidenceGraphQueryOptions {
@@ -404,3 +405,88 @@ export function validatePlanReferences(
   plan: EvidenceLinkedPlan,
   refs: PlanReference[] | Record<string, PlanReference>,
 ): PlanReferenceValidationReport;
+
+export type RiskStatus = "PASS" | "FAIL" | "UNKNOWN" | "NOT_APPLICABLE";
+export type RiskFactor =
+  | "goal_divergence_indicator"
+  | "harm_realization_capability"
+  | "oversight_resistance_indicator";
+export type RiskEvidenceStrength = "DIRECT" | "CORROBORATED" | "INDIRECT" | "NONE";
+
+export interface RiskSourceRef {
+  ref: string;
+  record_id: string | null;
+  source_order_id: string | null;
+  source_type: string | null;
+}
+
+export interface RiskCoverage {
+  complete: boolean;
+  checked_surfaces: string[];
+  gaps: string[];
+  observability_gap: boolean;
+}
+
+export interface RiskFactorFinding {
+  factor: RiskFactor;
+  observable: string;
+  status: RiskStatus;
+  strength: RiskEvidenceStrength;
+  evidence_refs: RiskSourceRef[];
+  counter_evidence_refs: RiskSourceRef[];
+  coverage: RiskCoverage;
+  limitations: string[];
+  does_not_prove: string[];
+  context_key: string;
+  asset_ids: string[];
+  monitoring_surface_ids: string[];
+  signal_codes: string[];
+  order_keys: string[];
+}
+
+export interface RiskDiagnosis {
+  schema_version: "aet-risk-diagnosis/1.0";
+  evaluator_version: string;
+  created_at: string;
+  policy_id: string;
+  policy_sha256: string;
+  findings: RiskFactorFinding[];
+  pathways: Record<string, unknown>[];
+  interventions: Array<Record<string, unknown> & { authority: "PROPOSED" }>;
+  diagnostics: Record<string, unknown>[];
+  provenance: Record<string, unknown>;
+}
+
+export interface RiskForecast {
+  schema_version: "aet-risk-forecast/1.0";
+  created_at: string;
+  diagnosis_sha256: string;
+  calibration_sha256: string;
+  dataset_sha256: string;
+  forecasts: Array<{
+    pathway_id: string;
+    signature: string;
+    status: "ELEVATED" | "NOT_ELEVATED" | "UNKNOWN";
+    support: number;
+    interval: { low: number | null; high: number | null };
+    baseline: { low: number | null; high: number | null };
+    reason: string;
+  }>;
+  gate_status: "PASS" | "FAIL";
+  limitations: string[];
+  provenance: Record<string, unknown>;
+}
+
+export function validateRiskDiagnosis(value: unknown): {
+  schema_version: "risk-diagnosis-validation/1.0";
+  status: "PASS";
+  factor_count: number;
+  pathway_count: number;
+  intervention_count: number;
+};
+export function validateRiskForecast(value: unknown): {
+  schema_version: "risk-forecast-validation/1.0";
+  status: "PASS";
+  gate_status: "PASS" | "FAIL";
+  forecast_count: number;
+};

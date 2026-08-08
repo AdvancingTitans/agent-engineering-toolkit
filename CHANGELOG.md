@@ -1,5 +1,46 @@
 # Changelog
 
+## Unreleased
+
+## 1.19.0 — 2026-08-08
+
+- Reframed AET as a local Evidence Plane for coding Agents and rebuilt the
+  bilingual README, static/dynamic architecture, exact install paths, case
+  library, and 30-second introductions around the complete current product.
+- Added Review Graph: a Git-bound Python Code Graph composed with Bundle
+  evidence and Improvement controls. The default Agent input is a 6,505-byte,
+  hash-bound root slice with bounded one-hop expansion; stale or tampered
+  packages return an `UNKNOWN` stop condition. In one frozen case this reduced
+  the minimum raw review material by 23.2%; it is not a universal token or
+  model-quality claim.
+- Added `aet review-graph build|validate|open|expand|export-compat`, four strict
+  Schemas, a non-overwriting Review Package, human Mermaid projections, two
+  read-only MCP tools, fail-closed scope and snapshot checks, and explicit
+  compatibility export for legacy Agent context files.
+
+- Added the AET Lab `aet risk diagnose` surface with strict Risk Policy and
+  Diagnosis v1 schemas, deterministic three-factor findings, same-context
+  pathways, evidence citations, four-state semantics, and `PROPOSED`-only
+  interventions. It performs no model training, model calls, or automated
+  action and produces no single aggregate risk rating or internal-motive claim.
+- Added the gated experimental `aet risk forecast` surface. Unsupported,
+  out-of-domain, leaking, or insufficiently calibrated pathways remain
+  `UNKNOWN`. Forecast promotion is hard-disabled as research-only in this
+  release, so self-declared calibration metrics cannot enable a prediction.
+- Added a read-only MCP diagnosis tool, an optional Evidence Atlas behavioural
+  risk projection, Python/TypeScript protocol contracts and local validators,
+  offline evaluation fixtures, and Codex/Claude Code parity coverage. Evidence
+  Atlas now exposes eleven fixed Perspectives; an absent risk diagnosis is an
+  explicit `UNKNOWN` view.
+- Added a diagnosis-only public release gate derived from nine programmatically
+  scored AgentDojo runs at a pinned MIT-licensed upstream commit. Minimal
+  action/outcome summaries retain source and event hashes without redistributing
+  prompts or benchmark solutions; human validation and forecast eligibility are
+  explicitly not claimed.
+- Corrected distribution documentation: the exact current package is published
+  through GitHub Releases, while public PyPI remains on the older v1.11.1
+  feature set.
+
 ## 1.18.0 — 2026-07-29
 
 - Added an installed-wheel `aet demo stale-proof` path that runs a real

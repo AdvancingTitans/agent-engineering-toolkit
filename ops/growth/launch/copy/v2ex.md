@@ -2,7 +2,11 @@
 
 Owner: `HUMAN_MAINTAINER`
 
-Status: `RULE_CHECK_AND_MANUAL_REWRITE_REQUIRED`
+Status: `CANCELLED_BY_OWNER`
+
+执行状态：用户于 2026-07-30 明确要求不在 V2EX 发布，因此停止该渠道，
+未发帖。先前通过 Google OAuth 获得的用户名 `sheng6984` 仍处于未激活状态；
+没有绕过邀请机制。
 
 Stop Rule: 当前节点规则、账号历史或社区语境不适合自我发布时不发；出现硬广
 反馈时停止跨节点重复。

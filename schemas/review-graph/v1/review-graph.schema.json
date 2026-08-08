@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://advancingtitans.github.io/agent-engineering-toolkit/schemas/review-graph/v1/review-graph.schema.json",
+  "title": "AET Review Graph v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "snapshot", "task", "code_index", "evidence_binding", "nodes", "edges", "diagnostics"],
+  "properties": {
+    "schema_version": {"const": "aet-review-graph/1.0"},
+    "snapshot": {"type": "object"},
+    "task": {"type": "object"},
+    "code_index": {"type": "object"},
+    "evidence_binding": {"type": "object"},
+    "nodes": {"type": "array"},
+    "edges": {"type": "array"},
+    "diagnostics": {"type": "array"}
+  }
+}

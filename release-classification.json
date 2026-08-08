@@ -1,197 +1,321 @@
 {
   "schema_version": "release-classification/v1",
-  "release_tag": "v1.18.0",
-  "base_tag": "v1.17.0",
-  "changed_paths_sha256": "d69c94f01ef329999d7dbdcb07691378cc5f9eb428950a1317f5d4f3f0bfc8ef",
-  "changed_content_sha256": "494e0a0b35b46039503d5c994e58330dd9d60a40825fb35b070952ddffc550f1",
+  "release_tag": "v1.19.0",
+  "base_tag": "v1.18.0",
+  "changed_paths_sha256": "19d564d3168425388b4eb8e1e7b6721591ae6113500fbd8461c2246e18070bdb",
+  "changed_content_sha256": "c8dd1ddb5ae6cbb95c1b054384ebd5afc020b7f30d6c4977b26f262bfdd087a2",
   "release_class": "deterministic",
   "real_host_gate": "NOT_APPLICABLE",
   "observed_behavior_claims": [],
   "governance_asset_adoptions": [],
   "not_applicable_exceptions": [
     {
-      "path": ".github/workflows/ci.yml",
-      "reason": "The v1.18.0 CI change adds deterministic installed-wheel demo coverage and adopts no learned governance behavior.",
-      "deterministic_proofs": [
-        "tests/test_business_quality_flows.py",
-        "tests/demo/test_wheel.py"
-      ]
-    },
-    {
       "path": "aet.intent.json",
-      "reason": "The v1.18.0 intent records the approved deterministic delivery scope and grants no Agent adoption or release authority.",
+      "reason": "This release Intent records the approved deterministic delivery scope and grants no Agent adoption or release authority.",
       "deterministic_proofs": [
         "tests/test_business_quality_flows.py"
       ]
     },
     {
       "path": "release-classification.json",
-      "reason": "This contract classifies the v1.18.0 repository diff as deterministic and declares no learned governance adoption.",
+      "reason": "This contract classifies the v1.19.0 repository diff as deterministic and declares no learned governance adoption.",
       "deterministic_proofs": [
         "tests/test_business_quality_flows.py"
       ]
     },
     {
-      "path": "schemas/demo/v1/demo-manifest.schema.json",
-      "reason": "The Demo manifest Schema is a deterministic validation contract covered by the Demo model and registry tests.",
+      "path": "schemas/evidence-atlas/v1/atlas-manifest.schema.json",
+      "reason": "This v1.19.0 Schema is a deterministic validation contract covered by local tests and adopts no learned governance behavior.",
       "deterministic_proofs": [
-        "tests/demo/test_models.py",
-        "tests/demo/test_registry.py"
+        "tests/test_evidence_atlas_protocol.py"
       ]
     },
     {
-      "path": "schemas/demo/v1/demo-result.schema.json",
-      "reason": "The Demo result Schema is a deterministic validation contract covered by the Demo model and renderer tests.",
+      "path": "schemas/evidence-atlas/v1/graph.schema.json",
+      "reason": "This v1.19.0 Schema is a deterministic validation contract covered by local tests and adopts no learned governance behavior.",
       "deterministic_proofs": [
-        "tests/demo/test_models.py",
-        "tests/demo/test_renderer.py"
+        "tests/test_evidence_atlas_protocol.py"
       ]
     },
     {
-      "path": "skills/README.md",
-      "reason": "The Skill installation guide documents existing bounded read-only surfaces and adopts no governance asset.",
+      "path": "schemas/evidence-atlas/v1/hierarchy.schema.json",
+      "reason": "This v1.19.0 Schema is a deterministic validation contract covered by local tests and adopts no learned governance behavior.",
       "deterministic_proofs": [
-        "tests/growth/test_validate_launch.py",
-        "tests/test_quick_docs.py"
+        "tests/test_evidence_atlas_protocol.py"
       ]
     },
     {
-      "path": "skills/catalog.json",
-      "reason": "The Skill catalog deterministically enumerates existing bounded surfaces and is covered by strict launch validation.",
+      "path": "schemas/evidence-atlas/v1/perspective.schema.json",
+      "reason": "This v1.19.0 Schema is a deterministic validation contract covered by local tests and adopts no learned governance behavior.",
       "deterministic_proofs": [
-        "tests/growth/test_validate_launch.py",
-        "tests/test_quick_docs.py"
+        "tests/test_evidence_atlas_protocol.py"
+      ]
+    },
+    {
+      "path": "schemas/review-graph/v1/code-graph.schema.json",
+      "reason": "This v1.19.0 Schema is a deterministic validation contract covered by local tests and adopts no learned governance behavior.",
+      "deterministic_proofs": [
+        "tests/review_graph/test_contracts.py"
+      ]
+    },
+    {
+      "path": "schemas/review-graph/v1/review-graph.schema.json",
+      "reason": "This v1.19.0 Schema is a deterministic validation contract covered by local tests and adopts no learned governance behavior.",
+      "deterministic_proofs": [
+        "tests/review_graph/test_contracts.py"
+      ]
+    },
+    {
+      "path": "schemas/review-graph/v1/review-manifest.schema.json",
+      "reason": "This v1.19.0 Schema is a deterministic validation contract covered by local tests and adopts no learned governance behavior.",
+      "deterministic_proofs": [
+        "tests/review_graph/test_contracts.py"
+      ]
+    },
+    {
+      "path": "schemas/review-graph/v1/review-slice.schema.json",
+      "reason": "This v1.19.0 Schema is a deterministic validation contract covered by local tests and adopts no learned governance behavior.",
+      "deterministic_proofs": [
+        "tests/review_graph/test_contracts.py"
+      ]
+    },
+    {
+      "path": "schemas/risk/v1/risk-diagnosis.schema.json",
+      "reason": "This v1.19.0 Schema is a deterministic validation contract covered by local tests and adopts no learned governance behavior.",
+      "deterministic_proofs": [
+        "tests/risk/test_models.py"
+      ]
+    },
+    {
+      "path": "schemas/risk/v1/risk-forecast.schema.json",
+      "reason": "This v1.19.0 Schema is a deterministic validation contract covered by local tests and adopts no learned governance behavior.",
+      "deterministic_proofs": [
+        "tests/risk/test_forecast.py"
+      ]
+    },
+    {
+      "path": "schemas/risk/v1/risk-policy.schema.json",
+      "reason": "This v1.19.0 Schema is a deterministic validation contract covered by local tests and adopts no learned governance behavior.",
+      "deterministic_proofs": [
+        "tests/risk/test_models.py"
       ]
     },
     {
       "path": "src/aet/__init__.py",
-      "reason": "The runtime version update is deterministic package metadata and carries no learned Agent behavior claim.",
+      "reason": "This v1.19.0 runtime change is deterministic, covered by local tests, and adopts no learned governance behavior.",
       "deterministic_proofs": [
-        "tests/demo/test_cli.py",
         "tests/demo/test_wheel.py"
+      ]
+    },
+    {
+      "path": "src/aet/atlas/assets/mermaid.min.js",
+      "reason": "This Evidence Atlas implementation is a deterministic derived view covered by local tests and adopts no governance asset.",
+      "deterministic_proofs": [
+        "tests/test_evidence_atlas_protocol.py"
+      ]
+    },
+    {
+      "path": "src/aet/atlas/builder.py",
+      "reason": "This Evidence Atlas implementation is a deterministic derived view covered by local tests and adopts no governance asset.",
+      "deterministic_proofs": [
+        "tests/test_evidence_atlas_protocol.py"
+      ]
+    },
+    {
+      "path": "src/aet/atlas/model.py",
+      "reason": "This Evidence Atlas implementation is a deterministic derived view covered by local tests and adopts no governance asset.",
+      "deterministic_proofs": [
+        "tests/test_evidence_atlas_protocol.py"
+      ]
+    },
+    {
+      "path": "src/aet/atlas/perspectives.py",
+      "reason": "This Evidence Atlas implementation is a deterministic derived view covered by local tests and adopts no governance asset.",
+      "deterministic_proofs": [
+        "tests/test_evidence_atlas_protocol.py"
+      ]
+    },
+    {
+      "path": "src/aet/atlas/storage.py",
+      "reason": "This Evidence Atlas implementation is a deterministic derived view covered by local tests and adopts no governance asset.",
+      "deterministic_proofs": [
+        "tests/test_evidence_atlas_protocol.py"
       ]
     },
     {
       "path": "src/aet/cli.py",
-      "reason": "The CLI change exposes the deterministic Demo commands and preserves all existing authority boundaries.",
+      "reason": "This v1.19.0 runtime change is deterministic, covered by local tests, and adopts no learned governance behavior.",
       "deterministic_proofs": [
-        "tests/demo/test_cli.py",
-        "tests/test_business_quality_flows.py"
-      ]
-    },
-    {
-      "path": "src/aet/demo/__init__.py",
-      "reason": "The Demo package export is deterministic and covered by the installed fixture and runner tests.",
-      "deterministic_proofs": [
-        "tests/demo/test_runner.py",
-        "tests/demo/test_wheel.py"
-      ]
-    },
-    {
-      "path": "src/aet/demo/cli.py",
-      "reason": "The Demo CLI performs bounded local orchestration with stable failures and no governance adoption.",
-      "deterministic_proofs": [
-        "tests/demo/test_cli.py"
-      ]
-    },
-    {
-      "path": "src/aet/demo/errors.py",
-      "reason": "The Demo error taxonomy is deterministic and covered by CLI, registry, runner, and sandbox failure tests.",
-      "deterministic_proofs": [
-        "tests/demo/test_cli.py",
-        "tests/demo/test_runner.py",
-        "tests/demo/test_sandbox.py"
-      ]
-    },
-    {
-      "path": "src/aet/demo/fixtures/stale-proof/manifest.json",
-      "reason": "The packaged manifest binds exact fixture bytes and mutation preconditions under deterministic registry validation.",
-      "deterministic_proofs": [
-        "tests/demo/test_registry.py",
-        "tests/demo/test_wheel.py"
-      ]
-    },
-    {
-      "path": "src/aet/demo/fixtures/stale-proof/repo/src/__init__.py",
-      "reason": "This standard-library fixture file is static deterministic input covered by the installed-wheel demo tests.",
-      "deterministic_proofs": [
-        "tests/demo/test_runner.py",
-        "tests/demo/test_wheel.py"
-      ]
-    },
-    {
-      "path": "src/aet/demo/fixtures/stale-proof/repo/src/calc.py",
-      "reason": "This exact source fixture is hash-bound by the manifest and covered by the real stale-proof transition test.",
-      "deterministic_proofs": [
-        "tests/demo/test_registry.py",
-        "tests/demo/test_runner.py"
-      ]
-    },
-    {
-      "path": "src/aet/demo/fixtures/stale-proof/repo/tests/__init__.py",
-      "reason": "This standard-library test fixture package marker is deterministic and covered by installed-wheel execution.",
-      "deterministic_proofs": [
-        "tests/demo/test_runner.py",
-        "tests/demo/test_wheel.py"
-      ]
-    },
-    {
-      "path": "src/aet/demo/fixtures/stale-proof/repo/tests/test_calc.py",
-      "reason": "This standard-library fixture test is executed by the real Demo and covered by installed-wheel validation.",
-      "deterministic_proofs": [
-        "tests/demo/test_runner.py",
-        "tests/demo/test_wheel.py"
-      ]
-    },
-    {
-      "path": "src/aet/demo/models.py",
-      "reason": "The immutable Demo models and serialization contract are deterministic and directly covered by model tests.",
-      "deterministic_proofs": [
-        "tests/demo/test_models.py"
-      ]
-    },
-    {
-      "path": "src/aet/demo/registry.py",
-      "reason": "The Demo registry validates packaged manifests and file hashes deterministically and fails closed.",
-      "deterministic_proofs": [
-        "tests/demo/test_registry.py"
-      ]
-    },
-    {
-      "path": "src/aet/demo/renderer.py",
-      "reason": "The Demo renderer creates deterministic text, JSON, and Markdown projections without changing evidence.",
-      "deterministic_proofs": [
-        "tests/demo/test_renderer.py"
-      ]
-    },
-    {
-      "path": "src/aet/demo/runner.py",
-      "reason": "The Demo runner invokes existing Quick Proof and Fresh logic and deterministically checks the expected transition.",
-      "deterministic_proofs": [
-        "tests/demo/test_runner.py"
-      ]
-    },
-    {
-      "path": "src/aet/demo/sandbox.py",
-      "reason": "The Demo sandbox performs bounded local fixture copying and Git setup with fail-closed path validation.",
-      "deterministic_proofs": [
-        "tests/demo/test_sandbox.py"
+        "tests/review_graph/test_contracts.py",
+        "tests/risk/test_cli.py"
       ]
     },
     {
       "path": "src/aet/evidence.py",
-      "reason": "The timeout addition preserves existing Trace output for non-timeouts and deterministically terminates timed-out commands.",
+      "reason": "This v1.19.0 runtime change is deterministic, covered by local tests, and adopts no learned governance behavior.",
       "deterministic_proofs": [
-        "tests/test_audit.py",
-        "tests/demo/test_runner.py"
+        "tests/test_audit.py"
       ]
     },
     {
-      "path": "src/aet/quick/proof.py",
-      "reason": "Quick Proof forwards an explicit timeout while preserving source-bound evidence and existing authority semantics.",
+      "path": "src/aet/mcp_server.py",
+      "reason": "This v1.19.0 runtime change is deterministic, covered by local tests, and adopts no learned governance behavior.",
       "deterministic_proofs": [
-        "tests/test_quick.py",
-        "tests/demo/test_runner.py"
+        "tests/test_mcp_server.py"
+      ]
+    },
+    {
+      "path": "src/aet/review_graph/__init__.py",
+      "reason": "This Review Graph implementation is deterministic, snapshot-bound, fail-closed, and adopts no learned governance behavior.",
+      "deterministic_proofs": [
+        "tests/review_graph/test_contracts.py"
+      ]
+    },
+    {
+      "path": "src/aet/review_graph/builder.py",
+      "reason": "This Review Graph implementation is deterministic, snapshot-bound, fail-closed, and adopts no learned governance behavior.",
+      "deterministic_proofs": [
+        "tests/review_graph/test_contracts.py"
+      ]
+    },
+    {
+      "path": "src/aet/review_graph/errors.py",
+      "reason": "This Review Graph implementation is deterministic, snapshot-bound, fail-closed, and adopts no learned governance behavior.",
+      "deterministic_proofs": [
+        "tests/review_graph/test_contracts.py"
+      ]
+    },
+    {
+      "path": "src/aet/review_graph/indexer.py",
+      "reason": "This Review Graph implementation is deterministic, snapshot-bound, fail-closed, and adopts no learned governance behavior.",
+      "deterministic_proofs": [
+        "tests/review_graph/test_contracts.py"
+      ]
+    },
+    {
+      "path": "src/aet/review_graph/model.py",
+      "reason": "This Review Graph implementation is deterministic, snapshot-bound, fail-closed, and adopts no learned governance behavior.",
+      "deterministic_proofs": [
+        "tests/review_graph/test_contracts.py"
+      ]
+    },
+    {
+      "path": "src/aet/review_graph/render.py",
+      "reason": "This Review Graph implementation is deterministic, snapshot-bound, fail-closed, and adopts no learned governance behavior.",
+      "deterministic_proofs": [
+        "tests/review_graph/test_contracts.py"
+      ]
+    },
+    {
+      "path": "src/aet/review_graph/slicer.py",
+      "reason": "This Review Graph implementation is deterministic, snapshot-bound, fail-closed, and adopts no learned governance behavior.",
+      "deterministic_proofs": [
+        "tests/review_graph/test_contracts.py"
+      ]
+    },
+    {
+      "path": "src/aet/review_graph/storage.py",
+      "reason": "This Review Graph implementation is deterministic, snapshot-bound, fail-closed, and adopts no learned governance behavior.",
+      "deterministic_proofs": [
+        "tests/review_graph/test_contracts.py"
+      ]
+    },
+    {
+      "path": "src/aet/review_graph/validator.py",
+      "reason": "This Review Graph implementation is deterministic, snapshot-bound, fail-closed, and adopts no learned governance behavior.",
+      "deterministic_proofs": [
+        "tests/review_graph/test_contracts.py"
+      ]
+    },
+    {
+      "path": "src/aet/risk/__init__.py",
+      "reason": "This Risk implementation is deterministic diagnosis logic with PROPOSED authority and adopts no learned governance behavior.",
+      "deterministic_proofs": [
+        "tests/risk/test_diagnose.py"
+      ]
+    },
+    {
+      "path": "src/aet/risk/adapters.py",
+      "reason": "This Risk implementation is deterministic diagnosis logic with PROPOSED authority and adopts no learned governance behavior.",
+      "deterministic_proofs": [
+        "tests/risk/test_adapters.py"
+      ]
+    },
+    {
+      "path": "src/aet/risk/coverage.py",
+      "reason": "This Risk implementation is deterministic diagnosis logic with PROPOSED authority and adopts no learned governance behavior.",
+      "deterministic_proofs": [
+        "tests/risk/test_coverage.py"
+      ]
+    },
+    {
+      "path": "src/aet/risk/diagnose.py",
+      "reason": "This Risk implementation is deterministic diagnosis logic with PROPOSED authority and adopts no learned governance behavior.",
+      "deterministic_proofs": [
+        "tests/risk/test_diagnose.py"
+      ]
+    },
+    {
+      "path": "src/aet/risk/errors.py",
+      "reason": "This Risk implementation is deterministic diagnosis logic with PROPOSED authority and adopts no learned governance behavior.",
+      "deterministic_proofs": [
+        "tests/risk/test_diagnose.py"
+      ]
+    },
+    {
+      "path": "src/aet/risk/forecast.py",
+      "reason": "This Risk implementation is deterministic diagnosis logic with PROPOSED authority and adopts no learned governance behavior.",
+      "deterministic_proofs": [
+        "tests/risk/test_forecast.py"
+      ]
+    },
+    {
+      "path": "src/aet/risk/interventions.py",
+      "reason": "This Risk implementation is deterministic diagnosis logic with PROPOSED authority and adopts no learned governance behavior.",
+      "deterministic_proofs": [
+        "tests/risk/test_interventions.py"
+      ]
+    },
+    {
+      "path": "src/aet/risk/models.py",
+      "reason": "This Risk implementation is deterministic diagnosis logic with PROPOSED authority and adopts no learned governance behavior.",
+      "deterministic_proofs": [
+        "tests/risk/test_models.py"
+      ]
+    },
+    {
+      "path": "src/aet/risk/pathways.py",
+      "reason": "This Risk implementation is deterministic diagnosis logic with PROPOSED authority and adopts no learned governance behavior.",
+      "deterministic_proofs": [
+        "tests/risk/test_pathways.py"
+      ]
+    },
+    {
+      "path": "src/aet/risk/policy.py",
+      "reason": "This Risk implementation is deterministic diagnosis logic with PROPOSED authority and adopts no learned governance behavior.",
+      "deterministic_proofs": [
+        "tests/risk/test_policy.py"
+      ]
+    },
+    {
+      "path": "src/aet/risk/renderer.py",
+      "reason": "This Risk implementation is deterministic diagnosis logic with PROPOSED authority and adopts no learned governance behavior.",
+      "deterministic_proofs": [
+        "tests/risk/test_renderer.py"
+      ]
+    },
+    {
+      "path": "src/aet/risk/schemas.py",
+      "reason": "This Risk implementation is deterministic diagnosis logic with PROPOSED authority and adopts no learned governance behavior.",
+      "deterministic_proofs": [
+        "tests/risk/test_diagnose.py"
+      ]
+    },
+    {
+      "path": "src/aet/risk/signals.py",
+      "reason": "This Risk implementation is deterministic diagnosis logic with PROPOSED authority and adopts no learned governance behavior.",
+      "deterministic_proofs": [
+        "tests/risk/test_signals.py"
       ]
     }
   ]

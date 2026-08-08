@@ -8,6 +8,8 @@ import type {
   OptimizationCandidate,
   PortableClaim,
   PortableSource,
+  RiskDiagnosis,
+  RiskForecast,
   RunDiagnostics,
   RunManifest,
   RunMeta,
@@ -306,7 +308,69 @@ const optimizationCandidate = {
   evaluationRequired: true,
 } satisfies OptimizationCandidate;
 
+const riskRef = {
+  ref: "tool-result-001",
+  record_id: "tool-result-001",
+  source_order_id: "0002",
+  source_type: "codex",
+};
+
+const riskDiagnosis = {
+  schema_version: "aet-risk-diagnosis/1.0",
+  evaluator_version: "1.0.0",
+  created_at: "2026-08-01T00:00:00Z",
+  policy_id: "policy-001",
+  policy_sha256: digest,
+  findings: [{
+    factor: "harm_realization_capability",
+    observable: "A protected action produced a verified effect.",
+    status: "FAIL",
+    strength: "DIRECT",
+    evidence_refs: [riskRef],
+    counter_evidence_refs: [],
+    coverage: {
+      complete: true,
+      checked_surfaces: ["deploy"],
+      gaps: [],
+      observability_gap: false,
+    },
+    limitations: ["Deployment-scoped evidence only."],
+    does_not_prove: ["Internal motive or general capability."],
+    context_key: "run:generation:task",
+    asset_ids: ["deployment"],
+    monitoring_surface_ids: [],
+    signal_codes: ["PROTECTED_ACTION_SUCCEEDED"],
+    order_keys: ["0002"],
+  }],
+  pathways: [],
+  interventions: [],
+  diagnostics: [],
+  provenance: { evaluator: "deterministic" },
+} satisfies RiskDiagnosis;
+
+const riskForecast = {
+  schema_version: "aet-risk-forecast/1.0",
+  created_at: "2026-08-01T00:00:00Z",
+  diagnosis_sha256: digest,
+  calibration_sha256: digest,
+  dataset_sha256: digest,
+  forecasts: [{
+    pathway_id: "pathway-001",
+    signature: "harm_realization_capability",
+    status: "UNKNOWN",
+    support: 24,
+    interval: { low: null, high: null },
+    baseline: { low: null, high: null },
+    reason: "calibration_gate_failed",
+  }],
+  gate_status: "FAIL",
+  limitations: ["Insufficient independent outcomes."],
+  provenance: { method: "wilson_interval" },
+} satisfies RiskForecast;
+
 void diagnostics;
 void result;
 void verifiedEvidence;
 void optimizationCandidate;
+void riskDiagnosis;
+void riskForecast;

@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000" role="img" aria-label="AET v1.17 Project Architecture Panorama">
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000" role="img" aria-label="AET v1.19 Evidence Plane Panorama">
 <defs>
 <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#070a12"/><stop offset=".55" stop-color="#0d1324"/><stop offset="1" stop-color="#07111c"/></linearGradient>
 <radialGradient id="blueGlow"><stop stop-color="#2563eb" stop-opacity=".20"/><stop offset="1" stop-color="#2563eb" stop-opacity="0"/></radialGradient>
@@ -16,133 +16,134 @@
 <circle data-graph-role="decoration" data-owner="canvas" cx="288" cy="250" r="512" fill="url(#blueGlow)"/>
 <circle data-graph-role="decoration" data-owner="canvas" cx="1312" cy="550" r="448" fill="url(#purpleGlow)"/>
 <rect width="1600" height="1000" fill="url(#grid)"/>
-<text x="60" y="60" font-size="34" font-weight="800" fill="#f8fafc">AET v1.17 Project Architecture Panorama</text>
-<text x="60" y="88" font-size="16" fill="#94a3b8">From Agent runs to portable evidence, Atlas, improvement prompts, and read-only Plans—with authority kept separate</text>
-<text x="1540" y="62" text-anchor="end" class="mono" font-size="13" fill="#34d399">EVIDENCE → PLAN → HUMAN · v1.17</text>
+<text x="60" y="60" font-size="34" font-weight="800" fill="#f8fafc">AET v1.19 Evidence Plane Panorama</text>
+<text x="60" y="88" font-size="16" fill="#94a3b8">From human intent and Agent runs to portable evidence, graph-first review, diagnosis, and human decisions</text>
+<text x="1540" y="62" text-anchor="end" class="mono" font-size="13" fill="#34d399">INTENT → EVIDENCE → REVIEW → HUMAN · v1.19</text>
 <rect x="40" y="115" width="1520" height="150" rx="24" fill="#ffffff" fill-opacity=".025" stroke="#60a5fa" stroke-opacity=".32" stroke-dasharray="7 8"/>
 <circle cx="70" cy="143" r="16" fill="#60a5fa" fill-opacity=".18" stroke="#60a5fa"/>
 <text x="70" y="149" text-anchor="middle" font-size="13" font-weight="800" fill="#60a5fa">01</text>
-<text x="98" y="150" font-size="18" font-weight="750" fill="#f8fafc">Capture and normalization</text>
+<text x="98" y="150" font-size="18" font-weight="750" fill="#f8fafc">Intent, runs, and normalization</text>
 <rect x="40" y="295" width="1520" height="200" rx="24" fill="#ffffff" fill-opacity=".025" stroke="#c084fc" stroke-opacity=".32" stroke-dasharray="7 8"/>
 <circle cx="70" cy="323" r="16" fill="#c084fc" fill-opacity=".18" stroke="#c084fc"/>
 <text x="70" y="329" text-anchor="middle" font-size="13" font-weight="800" fill="#c084fc">02</text>
-<text x="98" y="330" font-size="18" font-weight="750" fill="#f8fafc">Bounded investigation and verification</text>
+<text x="98" y="330" font-size="18" font-weight="750" fill="#f8fafc">Evidence production and verification</text>
 <rect x="40" y="525" width="1520" height="190" rx="24" fill="#ffffff" fill-opacity=".025" stroke="#34d399" stroke-opacity=".32" stroke-dasharray="7 8"/>
 <circle cx="70" cy="553" r="16" fill="#34d399" fill-opacity=".18" stroke="#34d399"/>
 <text x="70" y="559" text-anchor="middle" font-size="13" font-weight="800" fill="#34d399">03</text>
-<text x="98" y="560" font-size="18" font-weight="750" fill="#f8fafc">Evidence-derived review artifacts</text>
+<text x="98" y="560" font-size="18" font-weight="750" fill="#f8fafc">Bounded review and decision support</text>
 <rect x="40" y="745" width="1520" height="190" rx="24" fill="#ffffff" fill-opacity=".025" stroke="#f59e0b" stroke-opacity=".32" stroke-dasharray="7 8"/>
 <circle cx="70" cy="773" r="16" fill="#f59e0b" fill-opacity=".18" stroke="#f59e0b"/>
 <text x="70" y="779" text-anchor="middle" font-size="13" font-weight="800" fill="#f59e0b">04</text>
-<text x="98" y="780" font-size="18" font-weight="750" fill="#f8fafc">Product surfaces and governance</text>
+<text x="98" y="780" font-size="18" font-weight="750" fill="#f8fafc">Product entrypoints, cases, and governance</text>
 <g filter="url(#shadow)">
 <rect x="70" y="165" width="320" height="96" rx="18" fill="#111827" fill-opacity=".86" stroke="#ffffff" stroke-opacity=".12"/>
 <rect x="70" y="165" width="5" height="96" rx="2.5" fill="#60a5fa"/>
-<text x="94" y="199" font-size="19" font-weight="700" fill="#f8fafc">Native Agent runs</text>
-<text x="94" y="226" font-size="14" fill="#94a3b8">Codex · Claude Code · JSONL</text>
+<text x="94" y="199" font-size="19" font-weight="700" fill="#f8fafc">Human intent and authority</text>
+<text x="94" y="226" font-size="14" fill="#94a3b8">scope · protected paths · stop</text>
+<text class="mono" x="94" y="245" font-size="12" fill="#60a5fa">aet.intent.json</text>
 </g>
 <g filter="url(#shadow)">
 <rect x="430" y="165" width="320" height="96" rx="18" fill="#111827" fill-opacity=".86" stroke="#ffffff" stroke-opacity=".12"/>
 <rect x="430" y="165" width="5" height="96" rx="2.5" fill="#c084fc"/>
-<text x="454" y="199" font-size="19" font-weight="700" fill="#f8fafc">Source adapters</text>
-<text x="454" y="226" font-size="14" fill="#94a3b8">messages · tool calls · tool results</text>
-<text class="mono" x="454" y="245" font-size="12" fill="#c084fc">run_normalization/adapters/*</text>
+<text x="454" y="199" font-size="19" font-weight="700" fill="#f8fafc">Agent Hosts and Skills</text>
+<text x="454" y="226" font-size="14" fill="#94a3b8">Codex · Claude Code · CI · MCP</text>
+<text class="mono" x="454" y="245" font-size="12" fill="#c084fc">skills/* · integrations/*</text>
 </g>
 <g filter="url(#shadow)">
 <rect x="790" y="165" width="320" height="96" rx="18" fill="#111827" fill-opacity=".86" stroke="#ffffff" stroke-opacity=".12"/>
 <rect x="790" y="165" width="5" height="96" rx="2.5" fill="#34d399"/>
 <text x="814" y="199" font-size="19" font-weight="700" fill="#f8fafc">Run Normalizer</text>
-<text x="814" y="226" font-size="14" fill="#94a3b8">stable IDs · incremental ingest · diagnostics</text>
+<text x="814" y="226" font-size="14" fill="#94a3b8">stable IDs · tool calls · diagnostics</text>
 <text class="mono" x="814" y="245" font-size="12" fill="#34d399">src/aet/run_normalization/*</text>
 </g>
 <g filter="url(#shadow)">
 <rect x="1150" y="165" width="340" height="96" rx="18" fill="#111827" fill-opacity=".86" stroke="#ffffff" stroke-opacity=".12"/>
 <rect x="1150" y="165" width="5" height="96" rx="2.5" fill="#f59e0b"/>
-<text x="1174" y="199" font-size="19" font-weight="700" fill="#f8fafc">Canonical Run Records</text>
-<text x="1174" y="226" font-size="14" fill="#94a3b8">records prove only what the run contains</text>
+<text x="1174" y="199" font-size="19" font-weight="700" fill="#f8fafc">Canonical Records</text>
+<text x="1174" y="226" font-size="14" fill="#94a3b8">prove only what records contain</text>
 <text class="mono" x="1174" y="245" font-size="12" fill="#f59e0b">schemas/run-record/v1/*</text>
 </g>
 <g filter="url(#shadow)">
 <rect x="70" y="355" width="320" height="104" rx="18" fill="#111827" fill-opacity=".86" stroke="#ffffff" stroke-opacity=".12"/>
 <rect x="70" y="355" width="5" height="104" rx="2.5" fill="#60a5fa"/>
-<text x="94" y="389" font-size="19" font-weight="700" fill="#f8fafc">Observations</text>
-<text x="94" y="416" font-size="14" fill="#94a3b8">explicit proves / doesNotProve</text>
-<text class="mono" x="94" y="443" font-size="12" fill="#60a5fa">src/aet/observations/*</text>
+<text x="94" y="389" font-size="19" font-weight="700" fill="#f8fafc">Quick + Intent Gate</text>
+<text x="94" y="416" font-size="14" fill="#94a3b8">Check · Scope · Proof · Fresh</text>
+<text class="mono" x="94" y="443" font-size="12" fill="#60a5fa">src/aet/quick/*</text>
 </g>
 <g filter="url(#shadow)">
 <rect x="430" y="355" width="320" height="104" rx="18" fill="#111827" fill-opacity=".86" stroke="#ffffff" stroke-opacity=".12"/>
 <rect x="430" y="355" width="5" height="104" rx="2.5" fill="#c084fc"/>
-<text x="454" y="389" font-size="19" font-weight="700" fill="#f8fafc">Evidence Candidates</text>
-<text x="454" y="416" font-size="14" fill="#94a3b8">unverified · rejected · conflicted</text>
-<text class="mono" x="454" y="443" font-size="12" fill="#c084fc">src/aet/evidence_core/*</text>
+<text x="454" y="389" font-size="19" font-weight="700" fill="#f8fafc">Read-only Investigator</text>
+<text x="454" y="416" font-size="14" fill="#94a3b8">competing hypotheses · budgets · stops</text>
+<text class="mono" x="454" y="443" font-size="12" fill="#c084fc">src/aet/investigation/*</text>
 </g>
 <g filter="url(#shadow)">
 <rect x="790" y="355" width="320" height="104" rx="18" fill="#111827" fill-opacity=".86" stroke="#ffffff" stroke-opacity=".12"/>
 <rect x="790" y="355" width="5" height="104" rx="2.5" fill="#34d399"/>
-<text x="814" y="389" font-size="19" font-weight="700" fill="#f8fafc">Read-only Investigator</text>
-<text x="814" y="416" font-size="14" fill="#94a3b8">primary · competing · stop conditions</text>
-<text class="mono" x="814" y="443" font-size="12" fill="#34d399">investigation/portable.py</text>
+<text x="814" y="389" font-size="19" font-weight="700" fill="#f8fafc">Deterministic authority</text>
+<text x="814" y="416" font-size="14" fill="#94a3b8">Git · Proof · Freshness · provenance</text>
+<text class="mono" x="814" y="443" font-size="12" fill="#34d399">src/aet/grounding.py</text>
 </g>
 <g filter="url(#shadow)">
 <rect x="1150" y="355" width="340" height="104" rx="18" fill="#111827" fill-opacity=".86" stroke="#ffffff" stroke-opacity=".12"/>
 <rect x="1150" y="355" width="5" height="104" rx="2.5" fill="#f59e0b"/>
-<text x="1174" y="389" font-size="19" font-weight="700" fill="#f8fafc">Deterministic authority</text>
-<text x="1174" y="416" font-size="14" fill="#94a3b8">Git · Proof · Freshness · authority</text>
-<text class="mono" x="1174" y="443" font-size="12" fill="#f59e0b">quick/* · grounding.py</text>
+<text x="1174" y="389" font-size="19" font-weight="700" fill="#f8fafc">Portable Evidence Bundle</text>
+<text x="1174" y="416" font-size="14" fill="#94a3b8">content-addressed · redacted · portable</text>
+<text class="mono" x="1174" y="443" font-size="12" fill="#f59e0b">src/aet/bundle/*</text>
 </g>
 <g filter="url(#shadow)">
 <rect x="70" y="585" width="320" height="98" rx="18" fill="#111827" fill-opacity=".86" stroke="#ffffff" stroke-opacity=".12"/>
 <rect x="70" y="585" width="5" height="98" rx="2.5" fill="#34d399"/>
-<text x="94" y="619" font-size="19" font-weight="700" fill="#f8fafc">Bundle Compiler</text>
-<text x="94" y="646" font-size="14" fill="#94a3b8">select · redact · content-address</text>
-<text class="mono" x="94" y="667" font-size="12" fill="#34d399">src/aet/bundle/compiler.py</text>
+<text x="94" y="619" font-size="19" font-weight="700" fill="#f8fafc">Evidence Atlas</text>
+<text x="94" y="646" font-size="14" fill="#94a3b8">11 views · conflicts · visible UNKNOWN</text>
+<text class="mono" x="94" y="667" font-size="12" fill="#34d399">src/aet/atlas/*</text>
 </g>
 <g filter="url(#shadow)">
 <rect x="430" y="585" width="320" height="98" rx="18" fill="#111827" fill-opacity=".86" stroke="#ffffff" stroke-opacity=".12"/>
 <rect x="430" y="585" width="5" height="98" rx="2.5" fill="#60a5fa"/>
-<text x="454" y="619" font-size="19" font-weight="700" fill="#f8fafc">Portable Evidence Bundle</text>
-<text x="454" y="646" font-size="14" fill="#94a3b8">Claim · Evidence · Observation · Proof</text>
-<text class="mono" x="454" y="667" font-size="12" fill="#60a5fa">schemas/evidence-bundle/v1/*</text>
+<text x="454" y="619" font-size="19" font-weight="700" fill="#f8fafc">Improvement + Plan</text>
+<text x="454" y="646" font-size="14" fill="#94a3b8">issues · refs · tests · PROPOSED</text>
+<text class="mono" x="454" y="667" font-size="12" fill="#60a5fa">improvement/* · planning/*</text>
 </g>
 <g filter="url(#shadow)">
 <rect x="790" y="585" width="320" height="98" rx="18" fill="#111827" fill-opacity=".86" stroke="#ffffff" stroke-opacity=".12"/>
 <rect x="790" y="585" width="5" height="98" rx="2.5" fill="#c084fc"/>
-<text x="814" y="619" font-size="19" font-weight="700" fill="#f8fafc">Evidence Atlas</text>
-<text x="814" y="646" font-size="14" fill="#94a3b8">ten views · recursive graph · visible UNKNOWN</text>
-<text class="mono" x="814" y="667" font-size="12" fill="#c084fc">src/aet/atlas/*</text>
+<text x="814" y="619" font-size="19" font-weight="700" fill="#f8fafc">Review Graph</text>
+<text x="814" y="646" font-size="14" fill="#94a3b8">code + evidence + authority · expand</text>
+<text class="mono" x="814" y="667" font-size="12" fill="#c084fc">src/aet/review_graph/*</text>
 </g>
 <g filter="url(#shadow)">
 <rect x="1150" y="585" width="340" height="98" rx="18" fill="#111827" fill-opacity=".86" stroke="#ffffff" stroke-opacity=".12"/>
 <rect x="1150" y="585" width="5" height="98" rx="2.5" fill="#f59e0b"/>
-<text x="1174" y="619" font-size="19" font-weight="700" fill="#f8fafc">Prompts + PROPOSED Plans</text>
-<text x="1174" y="646" font-size="14" fill="#94a3b8">Issue · scope · refs · tests · UNKNOWN</text>
-<text class="mono" x="1174" y="667" font-size="12" fill="#f59e0b">improvement/* · planning/*</text>
+<text x="1174" y="619" font-size="19" font-weight="700" fill="#f8fafc">Behavioural Risk</text>
+<text x="1174" y="646" font-size="14" fill="#94a3b8">3 observable factors · not prediction</text>
+<text class="mono" x="1174" y="667" font-size="12" fill="#f59e0b">src/aet/risk/*</text>
 </g>
 <g filter="url(#shadow)">
 <rect x="70" y="825" width="320" height="88" rx="18" fill="#111827" fill-opacity=".86" stroke="#ffffff" stroke-opacity=".12"/>
 <rect x="70" y="825" width="5" height="88" rx="2.5" fill="#f59e0b"/>
-<text x="94" y="859" font-size="19" font-weight="700" fill="#f8fafc">Four Quick Skills</text>
-<text x="94" y="886" font-size="14" fill="#94a3b8">Check · Scope · Proof · Fresh</text>
-<text class="mono" x="94" y="897" font-size="12" fill="#f59e0b">skills/aet-* · src/aet/quick/*</text>
+<text x="94" y="859" font-size="19" font-weight="700" fill="#f8fafc">CLI · MCP · SDK</text>
+<text x="94" y="886" font-size="14" fill="#94a3b8">artifacts first; integrations optional</text>
+<text class="mono" x="94" y="897" font-size="12" fill="#f59e0b">src/aet/cli.py · packages/*</text>
 </g>
 <g filter="url(#shadow)">
 <rect x="430" y="825" width="320" height="88" rx="18" fill="#111827" fill-opacity=".86" stroke="#ffffff" stroke-opacity=".12"/>
 <rect x="430" y="825" width="5" height="88" rx="2.5" fill="#60a5fa"/>
-<text x="454" y="859" font-size="19" font-weight="700" fill="#f8fafc">Convenience integrations</text>
-<text x="454" y="886" font-size="14" fill="#94a3b8">CLI · MCP · TypeScript / Python SDK</text>
-<text class="mono" x="454" y="897" font-size="12" fill="#60a5fa">src/aet/mcp_server.py · packages/*</text>
+<text x="454" y="859" font-size="19" font-weight="700" fill="#f8fafc">Reproducible case library</text>
+<text x="454" y="886" font-size="14" fill="#94a3b8">Stale · Scope · Review · Risk · Plan</text>
+<text class="mono" x="454" y="897" font-size="12" fill="#60a5fa">examples/* · docs/use-cases/*</text>
 </g>
 <g filter="url(#shadow)">
 <rect x="790" y="825" width="320" height="88" rx="18" fill="#111827" fill-opacity=".86" stroke="#ffffff" stroke-opacity=".12"/>
 <rect x="790" y="825" width="5" height="88" rx="2.5" fill="#c084fc"/>
-<text x="814" y="859" font-size="19" font-weight="700" fill="#f8fafc">Real Atlas scope comparison</text>
-<text x="814" y="886" font-size="14" fill="#94a3b8">source-only · v1.16 evidence · v1.17 plan</text>
-<text class="mono" x="814" y="897" font-size="12" fill="#c084fc">eval/evidence-guided-planner/*</text>
+<text x="814" y="859" font-size="19" font-weight="700" fill="#f8fafc">Deterministic Release gates</text>
+<text x="814" y="886" font-size="14" fill="#94a3b8">Schemas · tests · Wheel · diff binding</text>
+<text class="mono" x="814" y="897" font-size="12" fill="#c084fc">.github/workflows/*</text>
 </g>
 <g filter="url(#shadow)">
 <rect x="1150" y="825" width="340" height="88" rx="18" fill="#111827" fill-opacity=".86" stroke="#ffffff" stroke-opacity=".12"/>
 <rect x="1150" y="825" width="5" height="88" rx="2.5" fill="#34d399"/>
-<text x="1174" y="859" font-size="19" font-weight="700" fill="#f8fafc">Human decision and Lab</text>
+<text x="1174" y="859" font-size="19" font-weight="700" fill="#f8fafc">Human final decision</text>
 <text x="1174" y="886" font-size="14" fill="#94a3b8">no automatic fix · merge · push · release</text>
 <text class="mono" x="1174" y="897" font-size="12" fill="#34d399">docs/quick-vs-lab-boundary.md</text>
 </g>

@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://advancingtitans.github.io/agent-engineering-toolkit/eval/behavioural-risk/suite-v1.schema.json",
+  "title": "AET Behavioural Risk Evaluation Suite v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "suite_id", "frozen_at", "policy", "intent", "cases"],
+  "properties": {
+    "schema_version": {"const": "aet-risk-eval-suite/1.0"},
+    "suite_id": {"type": "string", "minLength": 1},
+    "frozen_at": {"type": "string", "format": "date-time"},
+    "policy": {"type": "string", "minLength": 1},
+    "intent": {"type": "string", "minLength": 1},
+    "cases": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "host", "fixture", "scorable", "expected", "critical_refs"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "host": {"enum": ["codex", "claude-code"]},
+          "fixture": {"type": "string", "minLength": 1},
+          "scorable": {"type": "boolean"},
+          "expected": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["goal_divergence_indicator", "harm_realization_capability", "oversight_resistance_indicator"],
+            "properties": {
+              "goal_divergence_indicator": {"enum": ["PASS", "FAIL", "UNKNOWN", "NOT_APPLICABLE"]},
+              "harm_realization_capability": {"enum": ["PASS", "FAIL", "UNKNOWN", "NOT_APPLICABLE"]},
+              "oversight_resistance_indicator": {"enum": ["PASS", "FAIL", "UNKNOWN", "NOT_APPLICABLE"]}
+            }
+          },
+          "critical_refs": {"type": "array", "items": {"type": "string", "minLength": 1}}
+        }
+      }
+    }
+  }
+}

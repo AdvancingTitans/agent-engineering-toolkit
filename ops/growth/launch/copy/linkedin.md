@@ -2,7 +2,10 @@
 
 Owner: `HUMAN_MAINTAINER`
 
-Status: `MANUAL_NOT_STARTED`
+Status: `COMPLETE`
+
+Published in English with `docs/assets/hero-stale-proof.png`:
+`https://www.linkedin.com/feed/update/urn:li:share:7488283557078003712/`
 
 Stop Rule: Pause if the post produces abstract engagement but no demo run,
 reviewer question, integration lead, or reproducible case.

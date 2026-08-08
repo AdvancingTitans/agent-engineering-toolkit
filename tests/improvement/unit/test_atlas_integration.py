@@ -19,11 +19,11 @@ class ImprovementAtlasIntegrationTests(unittest.TestCase):
             item["id"]: item for item in build_perspectives(graph)
         }
 
-        self.assertEqual(PERSPECTIVES[-2:], (
+        self.assertEqual(PERSPECTIVES[-3:-1], (
             "improvement-chain",
             "regression-lineage",
         ))
-        for identifier in PERSPECTIVES[-2:]:
+        for identifier in PERSPECTIVES[-3:-1]:
             perspective = perspectives[identifier]
             self.assertEqual(perspective["coverage_status"], "UNKNOWN")
             self.assertTrue(perspective["unknowns"])

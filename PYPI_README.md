@@ -1,59 +1,47 @@
 # Agent Engineering Toolkit
 
-> **Your coding agent says tests passed. AET proves which code was actually tested.**
+> **A coding Agent can say “done.” AET shows what happened, what was proved,
+> what changed, and what must remain `UNKNOWN`.**
 
-AET provides proof-carrying workflows for coding agents. It binds test runs,
-changed files, artifacts, and agent claims into portable evidence, then tells
-you when that proof no longer applies.
-
-## Try the stale-proof demo
-
-```bash
-uvx --from agent-engineering-toolkit aet demo stale-proof
-```
-
-Expected result:
-
-```text
-1. Test command executed                    PASS
-2. Proof matches the tested source          EXACT_MATCH
-3. Source changed without rerunning tests   RELEVANT_FILES_CHANGED
-
-Demo result: PASS
-```
-
-The test really passed. Then a relevant source file changed without rerunning
-it, so AET correctly stopped applying the old proof to the current code.
-
-The demo is local and deterministic after package download. It uses Git and
-Python's standard-library `unittest`; it makes zero network or LLM calls.
+AET is a local Evidence Plane for coding Agents. It binds Git state, exact
+command execution, artifacts, Agent runs, and review constraints into portable,
+hash-bound evidence. It does not replace tests or CI, invent missing facts, or
+auto-edit, commit, push, merge, release, or execute an intervention.
 
 ## Install
 
+The PyPI package currently exposes the older v1.11.1 feature set:
+
 ```bash
 uv tool install agent-engineering-toolkit
-aet --version
 ```
 
-PyPI v1.18.0 and the exact GitHub Release wheel were publicly verified on
-2026-07-29.
+For the current v1.19.0 feature set, install the exact GitHub Release wheel:
 
-## Choose the smallest surface
+```bash
+uv tool install https://github.com/AdvancingTitans/agent-engineering-toolkit/releases/download/v1.19.0/agent_engineering_toolkit-1.19.0-py3-none-any.whl
+```
+
+## Smallest useful surfaces
 
 | Question | Command |
 | --- | --- |
 | Are Agent instructions usable? | `aet quick check .` |
-| Does a diff fit the task? | `aet quick scope . --base main --intent aet.intent.json` |
-| Did this command run on these files? | `aet quick proof --output proof.json --relevant-path src/app.py -- <argv>` |
-| Does old proof still apply? | `aet quick fresh --proof proof.json` |
+| Is a diff inside approved intent? | `aet quick scope . --base main --intent aet.intent.json` |
+| Did exact argv run on declared files? | `aet quick proof ... -- <argv>` |
+| Does recorded proof still apply? | `aet quick fresh --proof proof.json` |
 | What should change without editing? | `aet plan context ...` |
+| What is the bounded review context? | `aet review-graph open <package>` |
 
-AET is not another coding agent. It does not replace tests or CI, turn missing
-evidence into `PASS`, or auto-edit, commit, push, merge, or release.
+Advanced surfaces include Portable Evidence Bundles, Evidence Atlas, graph-first
+review handoffs, Evidence-Guided Plans, deterministic Behavioural Risk
+Diagnosis, repository archaeology, and gated local evolution. Authoritative
+states remain `PASS`, `FAIL`, `UNKNOWN`, and `NOT_APPLICABLE`; advice remains
+`PROPOSED`.
 
-- [Source and documentation](https://github.com/AdvancingTitans/agent-engineering-toolkit)
+- [Source and full documentation](https://github.com/AdvancingTitans/agent-engineering-toolkit)
 - [Five-minute start](https://github.com/AdvancingTitans/agent-engineering-toolkit/blob/main/docs/start-here.md)
 - [Status and authority](https://github.com/AdvancingTitans/agent-engineering-toolkit/blob/main/docs/reference/status-and-authority.md)
 - [Security](https://github.com/AdvancingTitans/agent-engineering-toolkit/blob/main/SECURITY.md)
 
-Python 3.11+ · MIT License · no product telemetry
+Python 3.11+ · MIT License · no AET product telemetry

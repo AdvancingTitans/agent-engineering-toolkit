@@ -8,7 +8,11 @@ import sys
 from pathlib import Path
 
 
-HERO_COMMAND = "uvx --from agent-engineering-toolkit aet demo stale-proof"
+HERO_COMMAND = (
+    "uvx --from https://github.com/AdvancingTitans/agent-engineering-toolkit/"
+    "releases/download/v1.19.0/agent_engineering_toolkit-1.19.0-py3-none-any.whl "
+    "aet demo stale-proof"
+)
 
 
 def verify(path: Path, max_lines: int) -> list[str]:

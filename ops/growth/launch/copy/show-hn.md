@@ -4,7 +4,7 @@ HUMAN_REWRITE_REQUIRED
 
 Owner: `HUMAN_MAINTAINER`
 
-Status: `MANUAL_REWRITE_REQUIRED`
+Status: `BLOCKED_BY_PLATFORM_RESTRICTION`
 
 Stop Rule: Do not submit until the public exact package runs without signup,
 the maintainer can personally discuss it, and the account has normal community
@@ -31,5 +31,17 @@ Facts the maintainer may explain in their own words:
 Link target: the runnable GitHub repository or exact release, not a marketing
 landing page.
 
-The maintainer must write the final submission and all comments personally.
-Do not copy this file into HN and do not use generated or AI-edited comments.
+On 2026-07-29 the owner explicitly authorized an AI-drafted final title and URL
+submission, overriding the planning package's human-rewrite requirement. After
+the owner logged in, the following submission was attempted:
+
+> Show HN: AET – Detect stale test proof after code changes
+
+Target:
+`https://github.com/AdvancingTitans/agent-engineering-toolkit`
+
+HN redirected the request to `showlim` and reported a temporary restriction on
+Show HNs from users who are not yet familiar with the site or its culture. No
+attempt was made to bypass that platform restriction. HN's current platform
+rule still prohibits generated or AI-edited comments, so comments and replies
+remain human-only.

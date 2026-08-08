@@ -64,6 +64,9 @@ The fixed v1 Perspectives are:
 6. `integrations`
 7. `conflicts`
 8. `freshness`
+9. `improvement-chain`
+10. `regression-lineage`
+11. `behavioural-risk`
 
 Each Perspective contains `perspective.json`, `diagram.mmd`,
 `diagram-ir.json`, provenance, and the documented question, description,
@@ -130,8 +133,10 @@ diagnostics remain explicit and the authoritative JSON/JSONL stays usable.
 
 The CLI supports `build`, `validate`, `view`, `export`, `query`, `explain`, and
 `diff`. Python and TypeScript SDKs expose graph load/build/query/subgraph/trace,
-validation, and Mermaid rendering. MCP exposes eight read-only
-`aet_graph_*` tools and returns bounded slices rather than an unbounded graph.
+validation, and Mermaid rendering. MCP exposes bounded, read-only graph tools
+and returns slices rather than an unbounded graph. The optional
+`behavioural-risk` Perspective projects a validated diagnosis without changing
+Bundle facts or promoting proposed interventions.
 
 The reproducible repository self-review is in
 [`examples/evidence-atlas`](../../examples/evidence-atlas).

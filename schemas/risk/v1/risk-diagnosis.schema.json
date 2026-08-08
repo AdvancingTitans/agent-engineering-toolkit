@@ -1,0 +1,139 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://advancingtitans.github.io/agent-engineering-toolkit/schemas/risk/v1/risk-diagnosis.schema.json",
+  "$comment": "A vector diagnosis with evidence references. A holistic score, mental-state claim, or automatic action is outside this contract.",
+  "title": "AET Behavioural Risk Diagnosis v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "evaluator_version",
+    "created_at",
+    "policy_id",
+    "policy_sha256",
+    "findings",
+    "pathways",
+    "interventions",
+    "diagnostics",
+    "provenance"
+  ],
+  "properties": {
+    "schema_version": {"const": "aet-risk-diagnosis/1.0"},
+    "evaluator_version": {"type": "string", "minLength": 1},
+    "created_at": {"type": "string", "format": "date-time"},
+    "policy_id": {"type": "string", "minLength": 1},
+    "policy_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "findings": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/finding"}
+    },
+    "pathways": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/pathway"}
+    },
+    "interventions": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/intervention"}
+    },
+    "diagnostics": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/diagnostic"}
+    },
+    "provenance": {"type": "object"}
+  },
+  "$defs": {
+    "status": {"enum": ["PASS", "FAIL", "UNKNOWN", "NOT_APPLICABLE"]},
+    "strength": {"enum": ["DIRECT", "CORROBORATED", "INDIRECT", "NONE"]},
+    "factor": {
+      "enum": [
+        "goal_divergence_indicator",
+        "harm_realization_capability",
+        "oversight_resistance_indicator"
+      ]
+    },
+    "sourceRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ref", "record_id", "source_order_id", "source_type"],
+      "properties": {
+        "ref": {"type": "string", "minLength": 1},
+        "record_id": {"type": ["string", "null"]},
+        "source_order_id": {"type": ["string", "null"]},
+        "source_type": {"type": ["string", "null"]}
+      }
+    },
+    "coverage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["complete", "checked_surfaces", "gaps", "observability_gap"],
+      "properties": {
+        "complete": {"type": "boolean"},
+        "checked_surfaces": {"type": "array", "items": {"type": "string"}},
+        "gaps": {"type": "array", "items": {"type": "string"}},
+        "observability_gap": {"type": "boolean"}
+      }
+    },
+    "finding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "factor", "observable", "status", "strength", "evidence_refs",
+        "counter_evidence_refs", "coverage", "limitations", "does_not_prove",
+        "context_key", "asset_ids", "monitoring_surface_ids", "signal_codes", "order_keys"
+      ],
+      "properties": {
+        "factor": {"$ref": "#/$defs/factor"},
+        "observable": {"type": "string", "minLength": 1},
+        "status": {"$ref": "#/$defs/status"},
+        "strength": {"$ref": "#/$defs/strength"},
+        "evidence_refs": {"type": "array", "items": {"$ref": "#/$defs/sourceRef"}},
+        "counter_evidence_refs": {"type": "array", "items": {"$ref": "#/$defs/sourceRef"}},
+        "coverage": {"$ref": "#/$defs/coverage"},
+        "limitations": {"type": "array", "items": {"type": "string"}},
+        "does_not_prove": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+        "context_key": {"type": "string", "minLength": 1},
+        "asset_ids": {"type": "array", "items": {"type": "string"}},
+        "monitoring_surface_ids": {"type": "array", "items": {"type": "string"}},
+        "signal_codes": {"type": "array", "items": {"type": "string"}},
+        "order_keys": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "pathway": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["pathway_id", "context_key", "factors", "ordered_refs", "status", "causal_limitations"],
+      "properties": {
+        "pathway_id": {"type": "string", "minLength": 1},
+        "context_key": {"type": "string", "minLength": 1},
+        "factors": {"type": "array", "items": {"$ref": "#/$defs/finding"}},
+        "ordered_refs": {"type": "array", "items": {"$ref": "#/$defs/sourceRef"}},
+        "status": {"$ref": "#/$defs/status"},
+        "causal_limitations": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "intervention": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["intervention_id", "context_key", "factor_combination", "authority", "actions", "rationale_refs"],
+      "properties": {
+        "intervention_id": {"type": "string", "minLength": 1},
+        "context_key": {"type": "string", "minLength": 1},
+        "factor_combination": {"type": "array", "items": {"$ref": "#/$defs/factor"}},
+        "authority": {"const": "PROPOSED"},
+        "actions": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+        "rationale_refs": {"type": "array", "items": {"$ref": "#/$defs/sourceRef"}}
+      }
+    },
+    "diagnostic": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["code", "message", "severity", "source_refs"],
+      "properties": {
+        "code": {"type": "string", "minLength": 1},
+        "message": {"type": "string", "minLength": 1},
+        "severity": {"enum": ["info", "warning", "error"]},
+        "source_refs": {"type": "array", "items": {"$ref": "#/$defs/sourceRef"}}
+      }
+    }
+  }
+}

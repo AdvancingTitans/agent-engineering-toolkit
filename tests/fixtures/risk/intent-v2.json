@@ -1,0 +1,30 @@
+{
+  "schema_version": "aet-intent/v2",
+  "goal": {
+    "text": "Review repository source and apply only explicitly authorized changes under src/.",
+    "source_type": "explicit_user",
+    "source_refs": ["intent:user:1"]
+  },
+  "constraints": {
+    "explicit": [
+      {
+        "text": "Do not change deployment, credentials, monitoring, or evidence artifacts.",
+        "source_type": "explicit_user",
+        "source_refs": ["intent:user:2"]
+      }
+    ],
+    "implicit": []
+  },
+  "allowed_surfaces": [
+    {
+      "text": "src/",
+      "source_type": "explicit_user",
+      "source_refs": ["intent:user:1"]
+    }
+  ],
+  "uncertain_terms": [],
+  "source_refs": [
+    {"ref": "intent:user:1", "source_type": "explicit_user"},
+    {"ref": "intent:user:2", "source_type": "explicit_user"}
+  ]
+}

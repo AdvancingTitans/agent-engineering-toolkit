@@ -8,12 +8,12 @@
 
 **[English](../../README.md) · [简体中文](../../docs/README.zh-CN.md)**
 
-> **AET turns AI coding work into portable, inspectable evidence, then compiles
-> that evidence into traceable maps, bounded improvement prompts, and a
-> reviewable read-only Plan before a code Agent edits.**
+> **AET is a local Evidence Plane for coding Agents. It binds intent, Git state,
+> execution, artifacts, review context, and limits into portable evidence that
+> another Agent or human can inspect without inheriting unproved authority.**
 
 An AI coding Agent says it fixed the task and ran the tests. AET helps answer
-seven concrete questions:
+eight concrete questions:
 
 1. Did the change stay relevant to the user's task?
 2. Did the claimed verification actually run on this workspace?
@@ -25,6 +25,8 @@ seven concrete questions:
    advice into evidence or granting an Agent permission to edit?
 7. Before an Agent edits, can its Planner name the required source locations,
    linked change sites, verification requirements, and remaining unknowns?
+8. Can a review Agent receive the same code, evidence, and intervention
+   boundary as one bounded graph slice instead of rereading full context files?
 
 Tools produce reproducible facts. The host LLM may recover intent, form
 competing hypotheses, call authorized tools, test counter-explanations, and
@@ -38,7 +40,9 @@ deterministic facts → bounded investigation → grounding validation
                     → Portable Evidence Bundle
                        ├─→ Evidence Atlas
                        ├─→ Human report + bounded Agent prompt
-                       └─→ read-only Evidence-Guided Plan
+                       ├─→ read-only Evidence-Guided Plan
+                       ├─→ hash-bound Review Graph slice
+                       └─→ Behavioural Risk Diagnosis
                     → independent review → human decision
 ```
 
@@ -70,6 +74,38 @@ aet quick fresh --proof .aet/proofs/auth.json
 The legacy `aet audit`, `review`, `trace`, and `evidence receipt` commands
 remain compatible throughout 1.x. They are advanced native vocabulary, not the
 default Quick product surface.
+
+## v1.19 graph-first review and diagnosis
+
+Review Graph combines the current Python code structure with validated Bundle
+evidence, Improvement constraints, human scope, protected paths, verification,
+and stop conditions. A review Agent opens the hash-bound
+`review/root.slice.json` first and expands only one hop when needed. Package
+tampering, symlinks, missing controls, or Git snapshot drift fail closed; drift
+returns `UNKNOWN` and requires a rebuild.
+
+```bash
+aet review-graph build --workspace . --base main \
+  --bundle .aet/evidence/review-bundle \
+  --improvements .aet/improvements --issue IMP-001 \
+  --output .aet/reviews/IMP-001
+aet review-graph open .aet/reviews/IMP-001 --workspace .
+aet review-graph expand .aet/reviews/IMP-001 --workspace . \
+  --node node:verified_evidence:EV-001 --relation PRODUCED_BY
+```
+
+In one frozen AET case the 6,505-byte root slice was 23.2% smaller than the
+8,468-byte minimum raw materials for the same diagnosis. This is a byte count
+for one Python case, not a universal token, speed, or model-quality claim. See
+the [Review Graph guide](../../docs/review-graph.md) and the
+[method-bounded comparison with code-review-graph](../../docs/comparisons/aet-vs-code-review-graph.md).
+
+`aet risk diagnose` separately reports three observable factors: goal
+divergence relative to explicit intent, demonstrated harm-realization
+capability under current permissions, and observed resistance to a declared
+monitoring surface. It does not infer motive or emit an overall score;
+interventions stay `PROPOSED`, and forecast remains research-only `UNKNOWN`.
+See the [diagnosis contract](../../docs/behavioural-risk-diagnosis.md).
 
 ## Evidence-Guided Planner
 
@@ -370,7 +406,7 @@ Portable Evidence Bundle. v1.16.0 adds two improvement-aware views while
 preserving the same source authority. It does not ask an LLM to draw a
 plausible diagram. It builds a canonical Evidence Graph first, retains
 field-level source references for authoritative nodes and edges, then derives
-ten fixed Perspectives:
+eleven fixed Perspectives:
 
 | Perspective | Question answered |
 | --- | --- |
@@ -384,6 +420,7 @@ ten fixed Perspectives:
 | Freshness | When did evidence become applicable or stale, and why? |
 | Improvement Chain | Which bounded issue, constraints, prompt status, and unknowns derive from a finding? |
 | Regression Lineage | Which current Proof and no-regression comparison would be required to verify an improvement? |
+| Behavioural Risk | Which observable behavioural factors, same-context pathways, limitations, and proposed interventions are present in a validated diagnosis? |
 
 ![AET Evidence Atlas static architecture](../../docs/assets/aet-evidence-atlas-architecture-en.png)
 
@@ -392,7 +429,7 @@ The authority direction is one-way:
 ```mermaid
 flowchart LR
     B["Portable Evidence Bundle<br/>authoritative JSON / JSONL"] --> G["Canonical Evidence Graph<br/>grounded nodes and edges"]
-    G --> P["Ten deterministic Perspectives"]
+    G --> P["Eleven deterministic Perspectives"]
     P --> H["Recursive hierarchy<br/>complex nodes expand; leaves stay compact"]
     H --> R["Mermaid · Markdown · JSON"]
     R --> V["Offline Viewer"]
@@ -469,14 +506,14 @@ conflicted scope claim, its counter-evidence, and an unresolved node:
 flowchart LR
     %% Evidence Atlas
     N_0b51dce8fe915eda{"[CONFLICT] The Bundle v1 change-scope view alone proves complete real diff grouping."}
-    N_6f91af1641ed1424{{"[SUPPORTED] AET projects ten fixed evidence perspectives and exposes complex nodes as recursive Viewer subg..."}}
+    N_6f91af1641ed1424{{"[SUPPORTED] AET projects eleven fixed evidence perspectives and exposes complex nodes as recursive Viewer s..."}}
     N_8575658723b5d49d{{"[SUPPORTED] AET builds a canonical Evidence Graph from source-backed Bundle records without letting Mermaid..."}}
     N_5522d8dace1cb6e7{"[CONFLICT] Path binding is useful for scope context but insufficient to prove complete real diff grouping."}
     N_ac65699e766edc85["[UNKNOWN] Unresolved conflict conflict-change-scope-v1"]
     N_ef4722a060cacfda["[VERIFIED] Bundle Evidence records can bind facts to repository paths."]
     N_1ded0fae46344828["[VERIFIED] The Portable Evidence v1 Evidence record schema does not define an explicit Change Group field."]
     N_c075a66077dd6940["[VERIFIED] The Graph Builder creates canonical nodes and source-backed edges."]
-    N_e824b2ad012b224e["[VERIFIED] The Perspective module defines ten fixed deterministic projections."]
+    N_e824b2ad012b224e["[VERIFIED] The Perspective module defines eleven fixed deterministic projections."]
     N_a42d56cfe9dff13d["[VERIFIED] The offline Viewer contains recursive subgraph navigation."]
     N_f797fb20a8448aa0["[RECORDED] Review AET's own Evidence Atlas implementation and retain support, counter-evidence, limitation..."]
     N_a17fb3165e6b0db5["[RECORDED] The view must display UNKNOWN rather than infer real diff groups."]
@@ -763,15 +800,13 @@ The static panorama answers how that workflow maps to this repository:
 [Watch the English MP4](../../docs/assets/aet-product-intro-en.mp4) ·
 [观看中文 MP4](../../docs/assets/aet-product-intro-zh-CN.mp4)
 
-The silent six-scene v1.17 video starts from a developer asking an Agent to
-review a project without drifting scope. It explains the v1.16-to-v1.17
-relationship, Planning Context, the Host/AET validation boundary, the code
-Agent handoff, and the real Atlas Change Group comparison. The
-[Planner guide](../../docs/evidence-guided-planner.md) provides the detailed
-contract. The
+The silent six-scene v1.19 video explains why coding Agents need an Evidence
+Plane, the intent-to-evidence-to-human flow, minimal Review Graph slices,
+observable-only behavioural diagnosis, bounded product surfaces, and the
+reproducible case library with explicit measurement limits. The
 [media manifest](../../docs/assets/aet-quick-media-manifest.json) binds the bilingual
-GIFs, panoramas, and silent H.264 MP4 videos by SHA-256 and records their generated
-dimensions, frame counts, frame rates, and durations. The separate
+architecture GIF/SVG/PNG, panoramas, and silent H.264 MP4 videos by SHA-256 and
+records dimensions, frame counts, frame rates, and durations. The separate
 [Planner media manifest](../../docs/assets/aet-planner-media-manifest.json) binds the
 workflow and real-case screenshots.
 
@@ -949,7 +984,7 @@ For local development:
 ```bash
 git clone https://github.com/AdvancingTitans/agent-engineering-toolkit.git
 cd agent-engineering-toolkit
-uv run --no-editable python -m unittest discover -s tests
+PYTHONPATH=src uv run --no-editable python -m unittest discover -s tests
 ```
 
 AET uses Python 3.11+ and keeps the deterministic runtime dependency-light.
@@ -960,6 +995,7 @@ provenance, and avoid broadening a Quick command beyond its question. See
 ## Advanced documentation
 
 - [Evidence-Guided Planner](../../docs/evidence-guided-planner.md)
+- [Graph-first review handoff](../../docs/review-graph.md)
 - [Planner and Helper scenarios](../../docs/planner-helper-scenarios.md)
 - [Planning v1 Schemas](../../docs/schemas/planning.md)
 - [Evidence-Grounded Improvement Layer](../../docs/improvement.md)

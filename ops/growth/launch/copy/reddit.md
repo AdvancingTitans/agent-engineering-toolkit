@@ -2,7 +2,14 @@
 
 Owner: `HUMAN_MAINTAINER`
 
-Status: `RULE_CHECK_AND_MANUAL_REWRITE_REQUIRED`
+Status: `COMPLETE`
+
+Public evidence:
+`https://www.reddit.com/r/Python/comments/1unctej/comment/p0hsoq9/`
+
+The current r/Python showcase rules were read before posting. One
+discussion-first comment was posted in the July Showcase thread; it was not
+cross-posted or paired with a Star request.
 
 Stop Rule: Do not post where current community rules prohibit self-promotion;
 do not reuse one post across subreddits.

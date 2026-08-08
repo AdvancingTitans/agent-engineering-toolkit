@@ -96,6 +96,19 @@ from .planning.package_builder import (
 from .planning.request_normalizer import RequestOverrides, normalize_request
 from .planning.skill_exporter import export_plan_skill
 from .planning.validator import validate_plan_candidate
+from .risk.diagnose import diagnose_risk
+from .risk.errors import RiskError
+from .risk.renderer import write_outputs as write_risk_outputs
+from .risk.forecast import forecast_diagnosis, write_forecast
+from .review_graph import GraphLimits, ReviewGraphError
+from .review_graph.storage import (
+    build_review_package,
+    expand_review_package,
+    export_compatibility,
+    open_review_package,
+    validate_review_package,
+)
+from .review_graph.model import canonical_json_bytes as review_graph_json_bytes
 
 
 def _perspective_selection(value: str) -> tuple[str, ...]:
@@ -448,6 +461,32 @@ def build_parser() -> argparse.ArgumentParser:
     bundle_review = bundle_commands.add_parser("validate-review")
     bundle_review.add_argument("--bundle", required=True, type=Path)
     bundle_review.add_argument("--review", required=True, type=Path)
+    risk_parser = commands.add_parser(
+        "risk",
+        help="Create an evidence-grounded behavioural risk diagnosis.",
+    )
+    risk_commands = risk_parser.add_subparsers(dest="risk_command", required=True)
+    risk_diagnose = risk_commands.add_parser(
+        "diagnose",
+        help="Diagnose a canonical or supported native Agent run without executing interventions.",
+    )
+    risk_diagnose.add_argument("--run", required=True, type=Path)
+    risk_diagnose.add_argument("--intent", required=True, type=Path)
+    risk_diagnose.add_argument("--policy", required=True, type=Path)
+    risk_diagnose.add_argument("--bundle", type=Path)
+    risk_diagnose.add_argument("--json-out", required=True, type=Path)
+    risk_diagnose.add_argument("--md-out", type=Path)
+    risk_diagnose.add_argument("--created-at")
+    risk_forecast = risk_commands.add_parser(
+        "forecast",
+        help="Run an experimental, calibration-gated pathway forecast without model training.",
+    )
+    risk_forecast.add_argument("--diagnosis", required=True, type=Path)
+    risk_forecast.add_argument("--calibration", required=True, type=Path)
+    risk_forecast.add_argument("--host", required=True)
+    risk_forecast.add_argument("--repository", required=True)
+    risk_forecast.add_argument("--json-out", required=True, type=Path)
+    risk_forecast.add_argument("--created-at")
     atlas_parser = commands.add_parser(
         "atlas",
         help="Build, validate, query, compare, and view deterministic Evidence Atlases.",
@@ -463,10 +502,15 @@ def build_parser() -> argparse.ArgumentParser:
     atlas_build.add_argument(
         "--perspectives",
         type=_perspective_selection,
-        help="Comma-separated fixed Perspective IDs; default builds all ten.",
+        help="Comma-separated fixed Perspective IDs; default builds all eleven.",
     )
     atlas_build.add_argument("--no-llm", action="store_true")
     atlas_build.add_argument("--no-replace", action="store_true")
+    atlas_build.add_argument(
+        "--risk-diagnosis",
+        type=Path,
+        help="Optional validated diagnosis to project without changing Bundle facts.",
+    )
     atlas_validate = atlas_commands.add_parser("validate")
     atlas_validate.add_argument("input", type=Path)
     atlas_validate.add_argument("--bundle", type=Path)
@@ -595,6 +639,61 @@ def build_parser() -> argparse.ArgumentParser:
     plan_handoff.add_argument("plan", type=Path)
     plan_handoff.add_argument("--diff", required=True, type=Path)
     plan_handoff.add_argument("--output", required=True, type=Path)
+    review_graph_parser = commands.add_parser(
+        "review-graph",
+        help="Build and query bounded graph-first context for review Agents.",
+    )
+    review_graph_commands = review_graph_parser.add_subparsers(
+        dest="review_graph_command",
+        required=True,
+    )
+    review_graph_build = review_graph_commands.add_parser(
+        "build",
+        help="Build a non-overwriting Review Package from code, Bundle evidence, and Improvements.",
+    )
+    review_graph_build.add_argument("--workspace", type=Path, default=Path("."))
+    review_graph_build.add_argument("--base", required=True)
+    review_graph_build.add_argument("--bundle", required=True, type=Path)
+    review_graph_build.add_argument("--improvements", required=True, type=Path)
+    review_graph_build.add_argument("--issue")
+    review_graph_build.add_argument("--output", required=True, type=Path)
+    review_graph_build.add_argument("--max-nodes", type=int, default=24)
+    review_graph_build.add_argument("--max-edges", type=int, default=32)
+    review_graph_build.add_argument("--max-bytes", type=int, default=8_000)
+    review_graph_build.add_argument("--max-files", type=int, default=2_000)
+    review_graph_build.add_argument("--max-source-bytes", type=int, default=8 * 1024 * 1024)
+    review_graph_validate = review_graph_commands.add_parser(
+        "validate",
+        help="Validate Review Package structure, hashes, graph references, and root safety kernel.",
+    )
+    review_graph_validate.add_argument("package", type=Path)
+    review_graph_open = review_graph_commands.add_parser(
+        "open",
+        help="Return the bounded root slice or a stale UNKNOWN stop slice.",
+    )
+    review_graph_open.add_argument("package", type=Path)
+    review_graph_open.add_argument("--workspace", type=Path, default=Path("."))
+    review_graph_open.add_argument("--max-nodes", type=int, default=24)
+    review_graph_open.add_argument("--max-edges", type=int, default=32)
+    review_graph_open.add_argument("--max-bytes", type=int, default=8_000)
+    review_graph_expand = review_graph_commands.add_parser(
+        "expand",
+        help="Expand one Review Graph node by one bounded hop.",
+    )
+    review_graph_expand.add_argument("package", type=Path)
+    review_graph_expand.add_argument("--workspace", type=Path, default=Path("."))
+    review_graph_expand.add_argument("--node", required=True)
+    review_graph_expand.add_argument("--relation", action="append", default=[])
+    review_graph_expand.add_argument("--max-nodes", type=int, default=12)
+    review_graph_expand.add_argument("--max-edges", type=int, default=20)
+    review_graph_expand.add_argument("--max-bytes", type=int, default=6_000)
+    review_graph_compat = review_graph_commands.add_parser(
+        "export-compat",
+        help="Explicitly export legacy agent-context.json and agent-task.md.",
+    )
+    review_graph_compat.add_argument("package", type=Path)
+    review_graph_compat.add_argument("--workspace", type=Path, default=Path("."))
+    review_graph_compat.add_argument("--output", required=True, type=Path)
     mcp_parser = commands.add_parser(
         "mcp",
         help="Serve the optional Portable Evidence Bundle MCP convenience layer.",
@@ -714,6 +813,57 @@ def main(argv: Sequence[str] | None = None) -> int:
             return 0
         except (BundleError, OSError, ValueError) as error:
             raise SystemExit(f"aet: bundle {args.bundle_command} failed: {error}") from error
+    if args.command == "risk":
+        try:
+            if args.risk_command == "forecast":
+                forecast = forecast_diagnosis(
+                    args.diagnosis,
+                    args.calibration,
+                    host=args.host,
+                    repository=args.repository,
+                    now=args.created_at,
+                )
+                output = write_forecast(forecast, args.json_out)
+                print(
+                    render_json(
+                        {
+                            "report_kind": "behavioural_risk_forecast",
+                            "status": forecast["gate_status"],
+                            "authority": "EXPERIMENTAL",
+                            "output": str(output),
+                        }
+                    ),
+                    end="",
+                )
+                return 0 if forecast["gate_status"] == "PASS" else 3
+            diagnosis = diagnose_risk(
+                run_path=args.run,
+                intent_path=args.intent,
+                policy_path=args.policy,
+                bundle_path=args.bundle,
+                now=args.created_at,
+            )
+            json_output, markdown_output = write_risk_outputs(
+                diagnosis,
+                args.json_out,
+                args.md_out,
+            )
+            print(
+                render_json(
+                    {
+                        "report_kind": "behavioural_risk_diagnosis",
+                        "status": "PASS",
+                        "authority": "DIAGNOSIS",
+                        "json_output": str(json_output),
+                        "markdown_output": str(markdown_output) if markdown_output else None,
+                    }
+                ),
+                end="",
+            )
+            return 0
+        except (RiskError, OSError, UnicodeError, ValueError) as error:
+            print(f"aet: risk {args.risk_command} failed: {error}", file=sys.stderr)
+            return 2
     if args.command == "atlas":
         try:
             if args.atlas_command == "build":
@@ -728,6 +878,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                         "llm_enabled": False,
                     },
                     perspective_ids=args.perspectives,
+                    risk_diagnosis=args.risk_diagnosis,
                     replace=not args.no_replace,
                 )
                 report = {
@@ -971,6 +1122,58 @@ def main(argv: Sequence[str] | None = None) -> int:
                 f"aet: plan {args.plan_command} failed: {error}",
                 file=sys.stderr,
             )
+            return 2
+    if args.command == "review-graph":
+        try:
+            if args.review_graph_command == "build":
+                report = build_review_package(
+                    args.workspace,
+                    args.base,
+                    args.bundle,
+                    args.improvements,
+                    args.output,
+                    issue_id=args.issue,
+                    limits=GraphLimits(args.max_nodes, args.max_edges, args.max_bytes),
+                    max_files=args.max_files,
+                    max_source_bytes=args.max_source_bytes,
+                )
+                print(render_json(report), end="")
+                return 1 if report["status"] == "FAIL" else 0
+            if args.review_graph_command == "validate":
+                loaded = validate_review_package(args.package)
+                report = {
+                    "report_kind": "aet_review_graph_validation",
+                    "status": "PASS",
+                    "package_id": loaded["manifest"]["package_id"],
+                    "node_count": len(loaded["graph"]["nodes"]),
+                    "edge_count": len(loaded["graph"]["edges"]),
+                    "root_bytes": len(review_graph_json_bytes(loaded["root_slice"])),
+                }
+                print(render_json(report), end="")
+                return 0
+            if args.review_graph_command == "open":
+                result = open_review_package(
+                    args.package,
+                    args.workspace,
+                    limits=GraphLimits(args.max_nodes, args.max_edges, args.max_bytes),
+                )
+                print(render_json(result), end="")
+                return 0
+            if args.review_graph_command == "expand":
+                result = expand_review_package(
+                    args.package,
+                    args.workspace,
+                    args.node,
+                    relations=tuple(args.relation),
+                    limits=GraphLimits(args.max_nodes, args.max_edges, args.max_bytes),
+                )
+                print(render_json(result), end="")
+                return 0
+            report = export_compatibility(args.package, args.workspace, args.output)
+            print(render_json(report), end="")
+            return 0
+        except (BundleError, ReviewGraphError, OSError, UnicodeError, ValueError) as error:
+            print(f"aet: review-graph {args.review_graph_command} failed: {error}", file=sys.stderr)
             return 2
     if args.command == "mcp":
         from .mcp_server import serve_stdio

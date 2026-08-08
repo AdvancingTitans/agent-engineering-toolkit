@@ -135,16 +135,16 @@ class EvidenceAtlasProtocolTests(unittest.TestCase):
             fields["concerns.md"],
         )
 
-    def test_global_diagram_budget_reserves_all_ten_roots(self) -> None:
+    def test_global_diagram_budget_reserves_all_eleven_roots(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             atlas = Path(temporary) / "bounded.atlas"
             result = build_evidence_atlas(
                 MINIMAL,
                 output=atlas,
-                generation_policy={"max_total_diagrams": 10},
+                generation_policy={"max_total_diagrams": 11},
             )
             self.assertEqual(
-                10,
+                11,
                 sum(
                     len(item["diagrams"])
                     for item in result["hierarchies"].values()
@@ -622,7 +622,7 @@ class EvidenceAtlasProtocolTests(unittest.TestCase):
             ).read_text(encoding="utf-8")
             self.assertEqual(generated, tracked)
 
-    def test_bilingual_readmes_embed_the_exact_generated_example(self) -> None:
+    def test_full_overview_embeds_the_exact_generated_example(self) -> None:
         repository = Path(__file__).resolve().parents[1]
         expected = (
             repository
@@ -630,7 +630,7 @@ class EvidenceAtlasProtocolTests(unittest.TestCase):
             / "evidence-atlas"
             / "aet-self-review-claim-chain.mmd"
         ).read_text(encoding="utf-8").rstrip()
-        for relative in ("README.md", "docs/README.zh-CN.md"):
+        for relative in ("docs/reference/full-product-overview.md",):
             content = (repository / relative).read_text(encoding="utf-8")
             section = content.split(
                 "<!-- atlas-self-review-mermaid:start -->", 1

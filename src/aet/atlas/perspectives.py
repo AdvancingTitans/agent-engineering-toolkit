@@ -242,6 +242,31 @@ _SPECS: dict[str, dict[str, Any]] = {
             "或 Finding；不得推断回归已沉淀。"
         ),
     },
+    "behavioural-risk": {
+        "title": "Behavioural Risk Diagnosis",
+        "question": "哪些证据绑定的行为风险条件、路径与 PROPOSED 干预和当前任务相关？",
+        "description": (
+            "只投影显式提供且能够解析回 Bundle 记录的 Risk Diagnosis；"
+            "不生成整体分数、不推断内部动机、不执行干预。"
+        ),
+        "diagram_type": "flowchart",
+        "direction": "LR",
+        "node_types": {
+            "finding", "recommendation", "verified_evidence", "observation",
+            "claim", "unknown", "limitation", "conflict",
+        },
+        "edge_types": {
+            "DERIVED_FROM", "SUPPORTED_BY", "PARTIALLY_SUPPORTED_BY",
+            "CONTRADICTED_BY", "LIMITED_BY", "LEAVES_UNKNOWN", "RECOMMENDS",
+        },
+        "root_types": ("finding",),
+        "required": (("finding",),),
+        "required_tag": "behavioural-risk",
+        "missing": (
+            "没有提供可解析回 Bundle 记录的 Behavioural Risk Diagnosis；"
+            "不得从普通 Finding 推断行为风险。"
+        ),
+    },
 }
 
 
@@ -251,7 +276,13 @@ def apply_perspectives(graph: dict[str, Any]) -> dict[str, Any]:
     perspectives: list[dict[str, Any]] = []
     for perspective_id in PERSPECTIVES:
         spec = _SPECS[perspective_id]
-        missing = _missing_requirements(nodes.values(), spec["required"])
+        required_tag = spec.get("required_tag")
+        eligible_nodes = [
+            node
+            for node in nodes.values()
+            if required_tag is None or required_tag in node.get("tags", [])
+        ]
+        missing = _missing_requirements(eligible_nodes, spec["required"])
         unknowns = [spec["missing"]] if missing and spec["missing"] else []
         if unknowns:
             unknown_id = _ensure_unknown_node(graph, nodes, perspective_id, unknowns[0])
@@ -262,6 +293,7 @@ def apply_perspectives(graph: dict[str, Any]) -> dict[str, Any]:
             node_id
             for node_id, node in nodes.items()
             if node.get("type") in spec["node_types"]
+            and (required_tag is None or required_tag in node.get("tags", []))
         }
         if unknown_id is not None:
             selected_node_ids.add(unknown_id)
@@ -449,6 +481,8 @@ def _perspective_constraints(perspective_id: str) -> list[str]:
         common.append("Candidate 仍是 PROPOSED；只有有效 Proof 才能形成 Verified Outcome。")
     if perspective_id == "regression-lineage":
         common.append("Regression Fixture 必须绑定已验证 Outcome，不能由建议自动生成事实。")
+    if perspective_id == "behavioural-risk":
+        common.append("只投影能解析回 Bundle 记录的 Diagnosis；干预始终是 PROPOSED。")
     return common
 
 
@@ -459,6 +493,8 @@ def _perspective_concerns(perspective_id: str) -> list[str]:
         return ["Bundle v1 记录当前 Freshness 快照，不保证包含完整历史事件序列。"]
     if perspective_id in {"improvement-chain", "regression-lineage"}:
         return ["Portable Evidence Bundle v1 尚无独立 Improvement 记录集合。"]
+    if perspective_id == "behavioural-risk":
+        return ["Behavioural Risk Diagnosis 是 Bundle 的只读 sibling projection，不改变 Bundle 事实。"]
     return []
 
 

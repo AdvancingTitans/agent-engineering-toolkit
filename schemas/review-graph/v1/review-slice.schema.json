@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://advancingtitans.github.io/agent-engineering-toolkit/schemas/review-graph/v1/review-slice.schema.json",
+  "title": "AET Review Graph Slice v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "mode", "status", "snapshot", "nodes", "edges", "cut"],
+  "properties": {
+    "schema_version": {"const": "aet-review-slice/1.0"},
+    "mode": {"enum": ["root", "expand", "stale"]},
+    "status": {"enum": ["PASS", "FAIL", "UNKNOWN", "NOT_APPLICABLE"]},
+    "snapshot": {"type": "object"},
+    "nodes": {"type": "array"},
+    "edges": {"type": "array"},
+    "cut": {"type": "object"}
+  }
+}

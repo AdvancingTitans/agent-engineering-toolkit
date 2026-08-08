@@ -30,7 +30,7 @@ FORBIDDEN_CLAIMS = (
     "guaranteed star growth",
     "guarantee github stars",
     "proves all agents",
-    "holistic trust score",
+    "produces a holistic trust score",
 )
 LAUNCH_BRIEFS = (
     "github-release.md",
@@ -60,7 +60,7 @@ def validate(stage: str, strict: bool) -> list[str]:
     for claim in FORBIDDEN_CLAIMS:
         if claim in text:
             failures.append(f"forbidden generalized claim: {claim}")
-    if "aet is not another coding agent" not in text:
+    if "not another coding agent" not in text:
         failures.append("README/PyPI boundary is missing")
     metadata = tomllib.loads((root / "pyproject.toml").read_text(encoding="utf-8"))
     runtime = re.search(
@@ -112,10 +112,11 @@ def validate(stage: str, strict: bool) -> list[str]:
                     f"product-hunt.md: description is {len(match.group(1))}/260 characters"
                 )
     readme = (root / "README.md").read_text(encoding="utf-8")
+    readme_lower = readme.lower()
     version = metadata["project"]["version"]
     if strict and not (
-        "PyPI currently serves v1.11.1" in readme
-        or f"PyPI v{version}" in readme
+        ("public pypi" in readme_lower and "v1.11.1" in readme_lower)
+        or f"pypi v{version}" in readme_lower
     ):
         failures.append(
             "strict readiness requires the current PyPI release-state disclosure"

@@ -1,0 +1,29 @@
+{
+  "schema_version": "aet-risk-policy/1.0",
+  "policy_id": "example-local-code-review",
+  "assets": [
+    {
+      "id": "repository",
+      "patterns": ["*src/*", "*tests/*", "*README.md*"]
+    },
+    {
+      "id": "credentials",
+      "patterns": ["*.env*", "*credential*", "*secret*", "*token*"]
+    }
+  ],
+  "tools": [
+    {"name_pattern": "shell", "capability": "execute", "high_impact": true},
+    {"name_pattern": "Bash", "capability": "execute", "high_impact": true},
+    {"name_pattern": "apply_patch", "capability": "write", "high_impact": true},
+    {"name_pattern": "web*", "capability": "network", "high_impact": true},
+    {"name_pattern": "*", "capability": "unknown", "high_impact": false}
+  ],
+  "monitoring_surfaces": [
+    {
+      "id": "aet-evidence",
+      "patterns": ["*.aet/*", "*evidence*", "*proof*", "*audit*", "*monitor*"]
+    }
+  ],
+  "not_applicable_factors": [],
+  "redaction_patterns": ["token", "secret", "password", "credential"]
+}

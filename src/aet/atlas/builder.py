@@ -9,6 +9,8 @@ from pathlib import Path
 from typing import Any
 
 from aet.bundle import validate_bundle
+from aet.risk.errors import RiskInputError
+from aet.risk.schemas import SchemaKind as RiskSchemaKind, validate_version as validate_risk_version
 
 from .model import (
     GRAPH_SCHEMA,
@@ -18,6 +20,7 @@ from .model import (
     record_hashes,
     source_ref,
     stable_id,
+    sha256_value,
 )
 
 
@@ -185,6 +188,7 @@ def build_evidence_graph(
     bundle_or_path: Mapping[str, Any] | Path,
     *,
     generation_policy: Mapping[str, Any] | None = None,
+    risk_diagnosis: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Build one deterministic graph without modifying the source Bundle."""
     bundle = (
@@ -205,6 +209,7 @@ def build_evidence_graph(
     _build_conflicts(builder, evidence_ids)
     _build_ledger(builder, observation_ids, evidence_ids)
     _build_policy(builder)
+    risk_projection = _build_risk_diagnosis(builder, risk_diagnosis)
     _compute_complexity(builder)
 
     generated_from = _input_identity(bundle)
@@ -239,7 +244,172 @@ def build_evidence_graph(
             "record_to_parent_diagrams": {},
         },
     }
+    if risk_diagnosis is not None:
+        graph["extensions"] = {
+            "behavioural_risk_diagnosis": {
+                "schema_version": risk_diagnosis.get("schema_version"),
+                "sha256": sha256_value(risk_diagnosis),
+                "projected_node_count": risk_projection,
+                "authority": "DIAGNOSIS",
+            }
+        }
     return graph
+
+
+def _build_risk_diagnosis(
+    builder: GraphBuilder,
+    diagnosis: Mapping[str, Any] | None,
+) -> int:
+    if diagnosis is None:
+        return 0
+    if diagnosis.get("schema_version") != "aet-risk-diagnosis/1.0":
+        raise ValueError("risk diagnosis must use aet-risk-diagnosis/1.0")
+    if any(key in diagnosis for key in ("overall_score", "trust_score", "model_motive")):
+        raise ValueError("risk diagnosis contains a forbidden authority field")
+    try:
+        validate_risk_version(RiskSchemaKind.RISK_DIAGNOSIS, diagnosis)
+    except RiskInputError as error:
+        raise ValueError(f"invalid risk diagnosis: {error}") from error
+    finding_nodes: dict[str, str] = {}
+    node_count = 0
+    for finding in diagnosis.get("findings", []):
+        if not isinstance(finding, Mapping):
+            continue
+        refs = _risk_bundle_refs(builder.bundle, finding.get("evidence_refs", []))
+        if not refs:
+            continue
+        factor = str(finding.get("factor", "unknown-factor"))
+        status = str(finding.get("status", "UNKNOWN"))
+        node_id = builder.node(
+            "finding",
+            f"risk:{factor}:{finding.get('context_key', 'unknown')}",
+            title=f"{factor}: {status}",
+            summary=str(finding.get("observable", factor)),
+            status={
+                "FAIL": "supported",
+                "PASS": "supported",
+                "UNKNOWN": "unknown",
+                "NOT_APPLICABLE": "not_applicable",
+            }.get(status, "unknown"),
+            authority="behavioural_risk_diagnosis",
+            refs=refs,
+            importance="high" if status == "FAIL" else "normal",
+            tags=["behavioural-risk", factor],
+            attributes={
+                "factor": factor,
+                "diagnosis_status": status,
+                "strength": finding.get("strength"),
+                "does_not_prove": finding.get("does_not_prove", []),
+                "limitations": finding.get("limitations", []),
+                "context_key": finding.get("context_key"),
+            },
+        )
+        finding_nodes[factor] = node_id
+        node_count += 1
+    for pathway in diagnosis.get("pathways", []):
+        if not isinstance(pathway, Mapping):
+            continue
+        refs = _risk_bundle_refs(builder.bundle, pathway.get("ordered_refs", []))
+        factors = [
+            str(item.get("factor"))
+            for item in pathway.get("factors", [])
+            if isinstance(item, Mapping) and item.get("factor")
+        ]
+        if not refs or not factors or any(item not in finding_nodes for item in factors):
+            continue
+        pathway_id = str(pathway.get("pathway_id", "unknown-pathway"))
+        node_id = builder.node(
+            "finding",
+            f"risk-pathway:{pathway_id}",
+            title="Behavioural risk pathway",
+            summary="Ordered same-context factor pathway; observational, not an internal-motive claim.",
+            status="supported" if pathway.get("status") == "FAIL" else "unknown",
+            authority="behavioural_risk_diagnosis",
+            refs=refs,
+            importance="high",
+            tags=["behavioural-risk", "risk-pathway"],
+            attributes={
+                "pathway_id": pathway_id,
+                "factors": sorted(factors),
+                "causal_limitations": pathway.get("causal_limitations", []),
+            },
+        )
+        for factor in sorted(factors):
+            builder.edge(
+                node_id,
+                finding_nodes[factor],
+                "DERIVED_FROM",
+                refs=refs,
+            )
+        node_count += 1
+    for intervention in diagnosis.get("interventions", []):
+        if not isinstance(intervention, Mapping) or intervention.get("authority") != "PROPOSED":
+            continue
+        refs = _risk_bundle_refs(builder.bundle, intervention.get("rationale_refs", []))
+        factors = [str(item) for item in intervention.get("factor_combination", [])]
+        targets = [finding_nodes[item] for item in factors if item in finding_nodes]
+        if not refs or not targets:
+            continue
+        identifier = str(intervention.get("intervention_id", "unknown-intervention"))
+        recommendation_id = builder.node(
+            "recommendation",
+            f"risk-intervention:{identifier}",
+            title="PROPOSED risk intervention",
+            summary="; ".join(str(item) for item in intervention.get("actions", [])),
+            status="recorded",
+            authority="PROPOSED",
+            refs=refs,
+            tags=["behavioural-risk", "proposed-intervention"],
+            attributes={"intervention_id": identifier, "authority": "PROPOSED"},
+        )
+        for target in targets:
+            builder.edge(
+                target,
+                recommendation_id,
+                "RECOMMENDS",
+                refs=refs,
+            )
+        node_count += 1
+    return node_count
+
+
+def _risk_bundle_refs(
+    bundle: Mapping[str, Any],
+    raw_refs: Any,
+) -> list[dict[str, str]]:
+    if not isinstance(raw_refs, list):
+        return []
+    candidates: set[str] = set()
+    for item in raw_refs:
+        if not isinstance(item, Mapping):
+            continue
+        for key in ("ref", "record_id"):
+            if isinstance(item.get(key), str) and item[key]:
+                candidates.add(item[key])
+    result: dict[tuple[str, str, str], dict[str, str]] = {}
+    for collection, path in (
+        ("sources", "archive/sources.jsonl"),
+        ("observations", "core/observations.jsonl"),
+        ("evidence", "core/evidence.jsonl"),
+        ("claims", "core/claims.jsonl"),
+    ):
+        for record in bundle.get(collection, []):
+            if not isinstance(record, Mapping) or not isinstance(record.get("id"), str):
+                continue
+            searchable = {record["id"]}
+            source_refs = record.get("source_refs", [])
+            if isinstance(source_refs, list):
+                searchable.update(str(item) for item in source_refs)
+            locator = record.get("locator")
+            if isinstance(locator, Mapping):
+                searchable.update(
+                    str(locator[key]) for key in ("record_id",) if isinstance(locator.get(key), str)
+                )
+            if candidates.intersection(searchable):
+                field = "id"
+                ref = source_ref(path, record["id"], field)
+                result[(path, record["id"], field)] = ref
+    return [result[key] for key in sorted(result)]
 
 
 def _build_manifest_nodes(builder: GraphBuilder) -> str:

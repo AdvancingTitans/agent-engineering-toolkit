@@ -2,17 +2,10 @@
 
 ## 1. See stale proof in under 90 seconds
 
-After v1.18.0 is published:
+Run the exact v1.19.0 GitHub Release wheel:
 
 ```bash
-uvx --from agent-engineering-toolkit aet demo stale-proof
-```
-
-Until then, build and install the exact candidate wheel:
-
-```bash
-uv build
-python scripts/verify_installed_demo.py
+uvx --from https://github.com/AdvancingTitans/agent-engineering-toolkit/releases/download/v1.19.0/agent_engineering_toolkit-1.19.0-py3-none-any.whl aet demo stale-proof
 ```
 
 The expected transition is:
@@ -34,6 +27,8 @@ the mutated source passed the test.
 - A command must run now: `aet quick proof ... -- <argv>`
 - Existing proof may be stale: `aet quick fresh --proof <proof.json>`
 - You need a read-only implementation plan: `/aet-plan`
+- You need bounded graph-first review context: `aet review-graph open ...`
+- You need evidence-grounded behavioural diagnosis: `aet risk diagnose ...`
 
 Do not chain every surface automatically. Each Quick command answers one
 bounded question and stops.

@@ -7,3 +7,4 @@ export { validateBundle, validateEvidenceBundle } from "./validator.js";
 export { EvidenceBundleError } from "./types.js";
 export { buildEvidenceGraph, getNodeSubgraph, loadEvidenceGraph, queryPerspective, renderMermaid, traceClaimSupport, traceFreshnessImpact, validateEvidenceGraph } from "./atlas.js";
 export { loadPlan, queryPlanEdits, validatePlanReferences } from "./planning.js";
+export { validateRiskDiagnosis, validateRiskForecast } from "./risk.js";

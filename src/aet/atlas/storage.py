@@ -14,6 +14,8 @@ from pathlib import Path, PurePosixPath
 from typing import Any, Iterable
 
 from aet.bundle import BundleError, validate_bundle
+from aet.risk.errors import RiskInputError
+from aet.risk.schemas import SchemaKind as RiskSchemaKind, validate_version as validate_risk_version
 
 from .builder import build_evidence_graph
 from .diff import affected_records
@@ -40,11 +42,13 @@ def build_evidence_atlas(
     output: Path | None = None,
     generation_policy: Mapping[str, Any] | None = None,
     perspective_ids: Iterable[str] | None = None,
+    risk_diagnosis: Path | None = None,
     replace: bool = True,
 ) -> dict[str, Any]:
     """Build and atomically publish a complete v1-compatible Atlas sidecar."""
     bundle_path = Path(bundle_path).resolve(strict=True)
     bundle = validate_bundle(bundle_path)
+    diagnosis = _load_risk_diagnosis(risk_diagnosis) if risk_diagnosis is not None else None
     destination = (
         default_atlas_path(bundle_path)
         if output is None
@@ -59,10 +63,14 @@ def build_evidence_atlas(
         previous_atlas = _load_previous_atlas(destination)
         if previous_atlas is not None:
             previous_graph = previous_atlas["graph"]
+    if diagnosis is not None:
+        previous_atlas = None
+        previous_graph = None
 
     graph = build_evidence_graph(
         bundle,
         generation_policy=generation_policy,
+        risk_diagnosis=diagnosis,
     )
     all_perspectives = build_perspectives(graph)
     perspectives = _select_perspectives(all_perspectives, perspective_ids)
@@ -150,6 +158,25 @@ def build_evidence_atlas(
         "incremental": incremental,
         "output": str(destination),
     }
+
+
+def _load_risk_diagnosis(path: Path) -> dict[str, Any]:
+    target = Path(path)
+    if target.is_symlink() or not target.is_file():
+        raise AtlasStorageError("risk diagnosis must be a regular non-symbolic-link file")
+    try:
+        value = json.loads(target.read_text(encoding="utf-8"))
+    except (OSError, UnicodeError, json.JSONDecodeError) as error:
+        raise AtlasStorageError(f"cannot read risk diagnosis: {error}") from error
+    if not isinstance(value, dict) or value.get("schema_version") != "aet-risk-diagnosis/1.0":
+        raise AtlasStorageError("risk diagnosis must use aet-risk-diagnosis/1.0")
+    if any(key in value for key in ("overall_score", "trust_score", "model_motive")):
+        raise AtlasStorageError("risk diagnosis contains a forbidden authority field")
+    try:
+        validate_risk_version(RiskSchemaKind.RISK_DIAGNOSIS, value)
+    except RiskInputError as error:
+        raise AtlasStorageError(f"invalid risk diagnosis: {error}") from error
+    return value
 
 
 def load_evidence_atlas(path: Path) -> dict[str, Any]:

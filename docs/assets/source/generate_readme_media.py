@@ -88,41 +88,41 @@ def _arrow(lines: list[str], path: str, color: str, marker: str, dashed: bool = 
 
 def render_panorama(language: str, output: Path) -> None:
     zh = language == "zh-CN"
-    title = "AET v1.17 项目架构全景" if zh else "AET v1.17 Project Architecture Panorama"
+    title = "AET v1.19 证据平面全景" if zh else "AET v1.19 Evidence Plane Panorama"
     subtitle = (
-        "从 Agent 运行记录到可移植证据、Evidence Atlas、改进提示词与只读计划；权威始终分层"
+        "从人类意图与 Agent 运行，到可移植证据、图优先审查、风险诊断与人工决策"
         if zh
-        else "From Agent runs to portable evidence, Atlas, improvement prompts, and read-only Plans—with authority kept separate"
+        else "From human intent and Agent runs to portable evidence, graph-first review, diagnosis, and human decisions"
     )
     section_titles = (
-        ("采集与标准化", "有边界的调查与验证", "证据派生的审查产物", "产品入口与治理")
+        ("意图、运行与标准化", "证据生产与确定性验证", "有界审查与决策辅助", "产品入口、案例与治理")
         if zh
-        else ("Capture and normalization", "Bounded investigation and verification", "Evidence-derived review artifacts", "Product surfaces and governance")
+        else ("Intent, runs, and normalization", "Evidence production and verification", "Bounded review and decision support", "Product entrypoints, cases, and governance")
     )
     cards = {
-        "skills": ("原生 Agent 运行记录", "Codex · Claude Code · JSONL", "") if zh else ("Native Agent runs", "Codex · Claude Code · JSONL", ""),
-        "cli": ("Source Adapter", "解析消息、工具调用与工具结果", "run_normalization/adapters/*") if zh else ("Source adapters", "messages · tool calls · tool results", "run_normalization/adapters/*"),
-        "host": ("Run Normalizer", "稳定身份 · 增量导入 · Diagnostics", "src/aet/run_normalization/*") if zh else ("Run Normalizer", "stable IDs · incremental ingest · diagnostics", "src/aet/run_normalization/*"),
-        "human": ("Canonical Run Record", "运行记录只证明记录中发生了什么", "schemas/run-record/v1/*") if zh else ("Canonical Run Records", "records prove only what the run contains", "schemas/run-record/v1/*"),
-        "handlers": ("Observation", "强制声明 proves / doesNotProve", "src/aet/observations/*") if zh else ("Observations", "explicit proves / doesNotProve", "src/aet/observations/*"),
-        "investigate": ("Evidence Candidate", "待验证 · 可拒绝 · 可冲突", "src/aet/evidence_core/*") if zh else ("Evidence Candidates", "unverified · rejected · conflicted", "src/aet/evidence_core/*"),
-        "ledger": ("只读 Investigator", "主假设 · 竞争假设 · 停止条件", "investigation/portable.py") if zh else ("Read-only Investigator", "primary · competing · stop conditions", "investigation/portable.py"),
-        "validator": ("确定性证据权威", "Git · Proof · Freshness · 权限", "quick/* · grounding.py") if zh else ("Deterministic authority", "Git · Proof · Freshness · authority", "quick/* · grounding.py"),
-        "evidence": ("Bundle Compiler", "筛选 · 脱敏 · 内容寻址", "src/aet/bundle/compiler.py") if zh else ("Bundle Compiler", "select · redact · content-address", "src/aet/bundle/compiler.py"),
-        "binding": ("Portable Evidence Bundle", "Claim · Evidence · Observation · Proof", "schemas/evidence-bundle/v1/*") if zh else ("Portable Evidence Bundle", "Claim · Evidence · Observation · Proof", "schemas/evidence-bundle/v1/*"),
-        "contracts": ("Evidence Atlas", "十个视角 · 递归图 · UNKNOWN 可见", "src/aet/atlas/*") if zh else ("Evidence Atlas", "ten views · recursive graph · visible UNKNOWN", "src/aet/atlas/*"),
-        "quality": ("改进提示词与 PROPOSED Plan", "Issue · Scope · 引用 · 验证 · UNKNOWN", "improvement/* · planning/*") if zh else ("Prompts + PROPOSED Plans", "Issue · scope · refs · tests · UNKNOWN", "improvement/* · planning/*"),
-        "showcase": ("四个 Quick Skill", "Check · Scope · Proof · Fresh", "skills/aet-* · src/aet/quick/*") if zh else ("Four Quick Skills", "Check · Scope · Proof · Fresh", "skills/aet-* · src/aet/quick/*"),
-        "memory": ("便利接入层", "CLI · MCP · TypeScript / Python SDK", "src/aet/mcp_server.py · packages/*") if zh else ("Convenience integrations", "CLI · MCP · TypeScript / Python SDK", "src/aet/mcp_server.py · packages/*"),
-        "learn": ("真实 Atlas 范围对照", "source-only · v1.16 evidence · v1.17 plan", "eval/evidence-guided-planner/*") if zh else ("Real Atlas scope comparison", "source-only · v1.16 evidence · v1.17 plan", "eval/evidence-guided-planner/*"),
-        "gate": ("人工决定与 Lab 边界", "不自动 Fix · Merge · Push · Release", "docs/quick-vs-lab-boundary.md") if zh else ("Human decision and Lab", "no automatic fix · merge · push · release", "docs/quick-vs-lab-boundary.md"),
+        "skills": ("人类意图与权限", "Scope · protected paths · stop", "aet.intent.json") if zh else ("Human intent and authority", "scope · protected paths · stop", "aet.intent.json"),
+        "cli": ("Agent Host 与 Skill", "Codex · Claude Code · CI · MCP", "skills/* · integrations/*") if zh else ("Agent Hosts and Skills", "Codex · Claude Code · CI · MCP", "skills/* · integrations/*"),
+        "host": ("Run Normalizer", "稳定身份 · 工具调用 · Diagnostics", "src/aet/run_normalization/*") if zh else ("Run Normalizer", "stable IDs · tool calls · diagnostics", "src/aet/run_normalization/*"),
+        "human": ("Canonical Records", "只证明记录中发生了什么", "schemas/run-record/v1/*") if zh else ("Canonical Records", "prove only what records contain", "schemas/run-record/v1/*"),
+        "handlers": ("Quick + Intent Gate", "Check · Scope · Proof · Fresh", "src/aet/quick/*") if zh else ("Quick + Intent Gate", "Check · Scope · Proof · Fresh", "src/aet/quick/*"),
+        "investigate": ("只读 Investigator", "竞争假设 · 预算 · 停止条件", "src/aet/investigation/*") if zh else ("Read-only Investigator", "competing hypotheses · budgets · stops", "src/aet/investigation/*"),
+        "ledger": ("确定性证据权威", "Git · Proof · Freshness · 来源", "src/aet/grounding.py") if zh else ("Deterministic authority", "Git · Proof · Freshness · provenance", "src/aet/grounding.py"),
+        "validator": ("Portable Evidence Bundle", "内容寻址 · 脱敏 · 可移植", "src/aet/bundle/*") if zh else ("Portable Evidence Bundle", "content-addressed · redacted · portable", "src/aet/bundle/*"),
+        "evidence": ("Evidence Atlas", "11 个视角 · 冲突 · UNKNOWN", "src/aet/atlas/*") if zh else ("Evidence Atlas", "11 views · conflicts · visible UNKNOWN", "src/aet/atlas/*"),
+        "binding": ("Improvement + Plan", "Issue · refs · tests · PROPOSED", "improvement/* · planning/*") if zh else ("Improvement + Plan", "issues · refs · tests · PROPOSED", "improvement/* · planning/*"),
+        "contracts": ("Review Graph", "代码 + 证据 + 权限 · 按需展开", "src/aet/review_graph/*") if zh else ("Review Graph", "code + evidence + authority · expand", "src/aet/review_graph/*"),
+        "quality": ("Behavioural Risk", "3 个可观察因素 · 诊断而非预测", "src/aet/risk/*") if zh else ("Behavioural Risk", "3 observable factors · not prediction", "src/aet/risk/*"),
+        "showcase": ("CLI · MCP · SDK", "自描述产物优先，接入层可选", "src/aet/cli.py · packages/*") if zh else ("CLI · MCP · SDK", "artifacts first; integrations optional", "src/aet/cli.py · packages/*"),
+        "memory": ("可复现案例库", "Stale · Scope · Review · Risk · Plan", "examples/* · docs/use-cases/*") if zh else ("Reproducible case library", "Stale · Scope · Review · Risk · Plan", "examples/* · docs/use-cases/*"),
+        "learn": ("确定性 Release 门禁", "Schema · tests · Wheel · diff binding", ".github/workflows/*") if zh else ("Deterministic Release gates", "Schemas · tests · Wheel · diff binding", ".github/workflows/*"),
+        "gate": ("人工最终决策", "不自动 Fix · Merge · Push · Release", "docs/quick-vs-lab-boundary.md") if zh else ("Human final decision", "no automatic fix · merge · push · release", "docs/quick-vs-lab-boundary.md"),
     }
     lines = _svg_start(1600, 1000, title)
     lines.extend(
         [
             f'<text x="60" y="60" font-size="34" font-weight="800" fill="{TEXT}">{escape(title)}</text>',
             f'<text x="60" y="88" font-size="16" fill="{MUTED}">{escape(subtitle)}</text>',
-            f'<text x="1540" y="62" text-anchor="end" class="mono" font-size="13" fill="{GREEN}">EVIDENCE → PLAN → HUMAN · v1.17</text>',
+            f'<text x="1540" y="62" text-anchor="end" class="mono" font-size="13" fill="{GREEN}">INTENT → EVIDENCE → REVIEW → HUMAN · v1.19</text>',
         ]
     )
     for args in (
@@ -215,60 +215,61 @@ def render_slides(language: str, output_dir: Path) -> None:
     output_dir.mkdir(parents=True, exist_ok=True)
     content = [
         (
-            "让 Agent 审查项目，怎样避免一上来就改错范围？" if zh else "You ask an Agent to review a project. How do you prevent scope drift?",
-            "DEVELOPER REALITY" if not zh else "现实开发场景",
+            "Agent 说“完成”时，证据在哪里？" if zh else "When an Agent says “done,” where is the evidence?",
+            "THE MISSING PLANE" if not zh else "缺失的一层",
             [
-                ("源码搜索可能扩散到无关模块" if zh else "Source search can fan out into unrelated modules", BLUE),
-                ("Evidence 能收敛路径，但未必给出修改关系" if zh else "Evidence narrows paths but may not encode edit relationships", PURPLE),
-                ("Code Agent 动手前需要可审查的只读 Plan" if zh else "A code Agent needs a reviewable read-only Plan before editing", AMBER),
+                ("测试通过，不等于证明仍适用于当前源码" if zh else "A passing test may no longer apply to current source", BLUE),
+                ("代码关系，不等于修改权限或可信结论" if zh else "Code relationships do not grant edit authority", PURPLE),
+                ("Agent 叙述，不会自动升级为 Evidence" if zh else "Agent narration never promotes itself to Evidence", AMBER),
             ],
         ),
         (
-            "v1.16 提供事实层，v1.17 增加规划交接层" if zh else "v1.16 supplies facts; v1.17 adds the planning handoff.",
-            "VERSION RELATIONSHIP",
+            "AET 是编码 Agent 的本地 Evidence Plane" if zh else "AET is a local Evidence Plane for coding Agents.",
+            "AET v1.19",
             [
-                ("v1.16 · Bundle + Atlas + Improvement" if zh else "v1.16 · Bundle + Atlas + Improvement", BLUE),
-                ("v1.17 · Planning Context + Candidate Validator" if zh else "v1.17 · Planning Context + Candidate Validator", PURPLE),
-                ("Plan 权限始终为 PROPOSED" if zh else "Plan authority always remains PROPOSED", GREEN),
-                ("Proof 未执行前始终 UNKNOWN / PENDING" if zh else "Proof stays UNKNOWN / PENDING until executed", AMBER),
+                ("人类 Intent + Agent 运行 + Git 快照" if zh else "Human intent + Agent runs + Git snapshots", BLUE),
+                ("哈希绑定的 Proof + Freshness + Bundle" if zh else "Hash-bound Proof + Freshness + Bundle", PURPLE),
+                ("Atlas + Review Graph + Risk + Plan" if zh else "Atlas + Review Graph + Risk + Plan", GREEN),
+                ("最终行动权限始终属于人" if zh else "Final action authority always remains human", AMBER),
             ],
         ),
         (
-            "把证据编译成 Planner 能消费的有界上下文" if zh else "Compile evidence into bounded context a Planner can consume.",
-            "PLANNING CONTEXT",
+            "默认先读最小、可追溯的审查切片" if zh else "Start review with a minimal, traceable slice.",
+            "GRAPH-FIRST REVIEW" if not zh else "图优先审查",
             [
-                ("Request + allowed paths", "HUMAN INTENT", BLUE),
-                ("Bundle + Atlas + source SHA", "RECORDED FACTS", GREEN),
-                ("Budgets + protected paths", "FAIL-CLOSED BOUNDARY", AMBER),
+                ("root.slice.json", "代码 + Evidence + Scope" if zh else "CODE + EVIDENCE + SCOPE", BLUE),
+                ("按需 expand 一跳" if zh else "Expand one hop on demand", "不先吞整个图或仓库" if zh else "DO NOT READ THE WHOLE GRAPH", GREEN),
+                ("快照漂移" if zh else "Snapshot drift", "UNKNOWN + STOP + REBUILD", AMBER),
             ],
         ),
         (
-            "Host 负责判断，AET 负责确定性校验" if zh else "The Host judges; AET validates deterministically.",
-            "PLANNER BOUNDARY",
+            "行为风险诊断只陈述可观察证据" if zh else "Behavioural diagnosis stays with observable evidence.",
+            "DIAGNOSIS, NOT MIND READING" if not zh else "诊断，不读心",
             [
-                ("Host Candidate", "路径 · disposition · linkage" if zh else "paths · disposition · linkage", BLUE),
-                ("AET Validator", "引用 · 哈希 · Scope · Policy" if zh else "refs · hashes · scope · policy", GREEN),
-                ("Portable Plan", "源码定位 · 测试 · 风险 · UNKNOWN" if zh else "source locators · tests · risks · UNKNOWN", AMBER),
+                ("Goal divergence", "相对显式 Intent" if zh else "relative to explicit intent", BLUE),
+                ("Harm capability", "当前权限下已证明" if zh else "proven in current permissions", PURPLE),
+                ("Oversight resistance", "需要观察到行动和效果" if zh else "requires observed action + effect", GREEN),
+                ("Interventions", "始终 PROPOSED" if zh else "always PROPOSED", AMBER),
             ],
         ),
         (
-            "把 Plan 接进 Code Agent 的 Planner" if zh else "Connect the Plan to a code Agent's planner.",
-            "CODE AGENT HANDOFF",
+            "每天只选择回答当前问题的能力面" if zh else "Choose only the surface that answers today's question.",
+            "BOUNDED WORKFLOW" if not zh else "有界工作流",
             [
-                ("Plan Package", "plan.json · refs · consumer guide", BLUE),
-                ("/aet-plan Skill", "Codex · Claude Code · generic Host", PURPLE),
-                ("Code Agent Planner", "只读读取，再由人批准实施" if zh else "reads only; human approves implementation", GREEN),
-                ("Verification Handoff", "外部 diff → UNKNOWN / PENDING" if zh else "external diff → UNKNOWN / PENDING", AMBER),
+                ("Quick", "Check · Scope · Proof · Fresh", BLUE),
+                ("Evidence", "Bundle · Atlas · Investigation", PURPLE),
+                ("Review", "Improvement · Plan · Review Graph", GREEN),
+                ("Lab", "Risk · Learn · Archaeologist", AMBER),
             ],
         ),
         (
-            "真实案例：Atlas Change Group 修改范围判断" if zh else "Real case: localizing an Atlas Change Group change.",
-            "REPRODUCIBLE CASE" if not zh else "可复现案例",
+            "可复现案例，明确边界，不编造总分" if zh else "Reproducible cases, explicit limits, no trust score.",
+            "PROVE THE BOUNDARY" if not zh else "证明边界",
             [
-                ("source-only", "路径精确率 44.4% · disposition 75%" if zh else "precision 44.4% · disposition 75%", BLUE),
-                ("v1.16 evidence-only", "路径精确率 100% · 测试召回 0%" if zh else "precision 100% · test recall 0%", PURPLE),
-                ("v1.17 Plan", "路径/类型/测试/UNKNOWN 均 100%" if zh else "paths/disposition/tests/UNKNOWN all 100%", GREEN),
-                ("样本边界" if zh else "Sample boundary", "1 个真实 case · 非通用质量声明" if zh else "one real case · not a general claim", AMBER),
+                ("Stale Proof", "PASS → changed source → stale", BLUE),
+                ("Review Graph", "单个冻结案例减少 23.2%" if zh else "23.2% less in one frozen case", PURPLE),
+                ("Planner", "有界定位，非通用质量声明" if zh else "bounded localization, not general", GREEN),
+                ("Risk", "诊断 Release；预测仍 UNKNOWN" if zh else "diagnosis released; forecast UNKNOWN", AMBER),
             ],
         ),
     ]
@@ -306,7 +307,7 @@ def render_slides(language: str, output_dir: Path) -> None:
                 _slide_card(lines, x, y, 680, 205, accent, left, [right])
         lines.extend(
             [
-                f'<text x="90" y="850" font-size="16" fill="{MUTED}">{escape("AET v1.17 · 从可移植证据到可审查的只读计划" if zh else "AET v1.17 · from portable evidence to a reviewable read-only Plan")}</text>',
+                f'<text x="90" y="850" font-size="16" fill="{MUTED}">{escape("AET v1.19 · 本地 Evidence Plane · 权威永不自动升级" if zh else "AET v1.19 · local Evidence Plane · authority never auto-promotes")}</text>',
                 "</svg>",
             ]
         )

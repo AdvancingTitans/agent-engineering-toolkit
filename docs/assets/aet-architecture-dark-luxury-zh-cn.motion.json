@@ -1,0 +1,2020 @@
+{
+  "animation_contract": {
+    "connectors_visible_at_opening": false,
+    "draw_easing": "linear",
+    "draw_schedule": [
+      {
+        "frames": [
+          1,
+          6
+        ],
+        "order": 0,
+        "role": "primary",
+        "stage": 1
+      },
+      {
+        "frames": [
+          5,
+          10
+        ],
+        "order": 0,
+        "role": "primary",
+        "stage": 2
+      },
+      {
+        "frames": [
+          9,
+          18
+        ],
+        "order": 0,
+        "role": "memory-read",
+        "stage": 3
+      },
+      {
+        "frames": [
+          12,
+          21
+        ],
+        "order": 1,
+        "role": "tool-call",
+        "stage": 3
+      },
+      {
+        "frames": [
+          20,
+          25
+        ],
+        "order": 0,
+        "role": "data",
+        "stage": 4
+      },
+      {
+        "frames": [
+          24,
+          29
+        ],
+        "order": 0,
+        "role": "trace",
+        "stage": 5
+      },
+      {
+        "frames": [
+          28,
+          36
+        ],
+        "order": 0,
+        "role": "feedback",
+        "stage": 6
+      }
+    ],
+    "empty_opening_frame": 0,
+    "forbidden": [
+      "source-node-motion",
+      "source-text-motion",
+      "source-geometry-mutation",
+      "source-marker-mutation",
+      "camera-motion",
+      "animated-background"
+    ],
+    "maximum_concurrent_draws": 2,
+    "nodes_visible_every_frame": true,
+    "persistent_data_flow": {
+      "body": {
+        "appended_below_labels_and_nodes": true,
+        "color": "inherit-source-stroke",
+        "dash_pattern": [
+          14,
+          33
+        ],
+        "filter_free": true,
+        "linecap": "round",
+        "linejoin": "round",
+        "marker_free": true,
+        "maximum_live_width": 2.8,
+        "opacity": 0.86,
+        "primitive": "luxury-circuit-rail",
+        "resolved_widths_in_schedule_order": [
+          2.0,
+          2.0,
+          1.7,
+          1.7,
+          1.7,
+          2.0,
+          1.7
+        ],
+        "stroke_width": "min(maximum_live_width, source_stroke)"
+      },
+      "dash_offset_per_rendered_frame": -6,
+      "dash_period": 47,
+      "direction": "source-to-target",
+      "direction_sentinels": [
+        {
+          "directions": [
+            "right"
+          ],
+          "key": "primary/1/0"
+        },
+        {
+          "directions": [
+            "right"
+          ],
+          "key": "primary/2/0"
+        },
+        {
+          "directions": [
+            "down",
+            "left",
+            "down"
+          ],
+          "key": "memory-read/3/0"
+        },
+        {
+          "directions": [
+            "up",
+            "left",
+            "up"
+          ],
+          "key": "feedback/6/0"
+        }
+      ],
+      "expected_initial_phases": [
+        7,
+        14,
+        21,
+        24,
+        28,
+        35,
+        42
+      ],
+      "fade_in_factors": [
+        0.3,
+        0.65,
+        1.0
+      ],
+      "fade_in_frames": [
+        36,
+        38
+      ],
+      "full_opacity_frames": [
+        38,
+        109
+      ],
+      "minimum_review_scale": "50%",
+      "period_step_coprime": true,
+      "phase_policy": "(motionStage * 7 + motionOrder * 3) mod 47",
+      "primitive": "luxury-circuit-rail",
+      "rendered_frames": [
+        36,
+        114
+      ],
+      "reset_behavior": "live rails, signatures, and scene auxiliaries keep advancing while the shared reset opacity fades to 0.03",
+      "reset_opacity_samples": [
+        1.0,
+        0.7575,
+        0.515,
+        0.2725,
+        0.03
+      ],
+      "reset_range": [
+        110,
+        114
+      ],
+      "route_keys": [
+        {
+          "order": 0,
+          "role": "primary",
+          "stage": 1
+        },
+        {
+          "order": 0,
+          "role": "primary",
+          "stage": 2
+        },
+        {
+          "order": 0,
+          "role": "memory-read",
+          "stage": 3
+        },
+        {
+          "order": 1,
+          "role": "tool-call",
+          "stage": 3
+        },
+        {
+          "order": 0,
+          "role": "data",
+          "stage": 4
+        },
+        {
+          "order": 0,
+          "role": "trace",
+          "stage": 5
+        },
+        {
+          "order": 0,
+          "role": "feedback",
+          "stage": 6
+        }
+      ],
+      "signature": {
+        "animated_attributes": [
+          "transform",
+          "opacity"
+        ],
+        "appended_below_labels_and_nodes": true,
+        "direction": "source-to-target",
+        "endpoint_clearance": 8,
+        "geometry": {
+          "diamond_height": 7,
+          "diamond_rotation": 45,
+          "diamond_width": 7,
+          "filtered_elements_per_tracer": 1,
+          "shape": "diamond-with-tapered-tail",
+          "specular_diameter": 2,
+          "tail_length": 12
+        },
+        "path_advance_per_rendered_frame": 6,
+        "primitive": "gem-tracer",
+        "tangent_aware_rotation": true,
+        "wrap": "target-clearance-to-source-clearance"
+      },
+      "signature_advance_per_rendered_frame": 6,
+      "signature_count": 7,
+      "signature_primitive": "gem-tracer",
+      "stream_count": 7,
+      "travel_easing": "linear",
+      "travel_pixels_per_frame_at_100_percent": 6,
+      "travel_pixels_per_frame_at_50_percent": 3.0,
+      "travel_user_units_per_rendered_frame": 6
+    },
+    "primitive": "connector-draw-on-with-persistent-data-flow",
+    "reset_opacity_samples": [
+      1.0,
+      0.7575,
+      0.515,
+      0.2725,
+      0.03
+    ],
+    "reset_range": [
+      110,
+      114
+    ],
+    "route_label_opacity_states": 7,
+    "schedule_key": "(data-motion-role, data-motion-stage, data-motion-order)",
+    "settled_markers": "original marker appears only after route arrival",
+    "settled_topology_dynamic": true,
+    "source_edges_hidden_by_transient_css": true,
+    "text_geometry_motion": 0,
+    "topology_draw_on": true
+  },
+  "artifact": {
+    "bytes": 231702,
+    "encoder": "ffmpeg/gif-palette",
+    "format": "gif",
+    "mime_type": "image/gif",
+    "path": "docs/assets/aet-architecture-dark-luxury-zh-cn.gif",
+    "probe": {
+      "codec_name": "gif",
+      "container": {
+        "duration": "5.750000",
+        "format_name": "gif"
+      },
+      "duration": "5.750000",
+      "height": 600,
+      "nb_frames": "115",
+      "nb_read_frames": "115",
+      "pix_fmt": "bgra",
+      "r_frame_rate": "20/1",
+      "width": 960
+    },
+    "sha256": "de8fc38fbe1666c2cbcf8d39510ff0fb149a60b2ed180fbbef54e925d0417653",
+    "source_frame_count": 115
+  },
+  "dry_run": false,
+  "duration_seconds": 5.75,
+  "encoded_dimensions": {
+    "height": 600,
+    "width": 960
+  },
+  "fixture_sha256": "6ade2db83f0fa772c4791e1a09a2c128373125da3bcfa2624434daff72316122",
+  "fps": 20,
+  "frame_count": 115,
+  "frame_uniqueness_contract": {
+    "adjacent_duplicates_allowed": false,
+    "intentional_reset_boundary_opacity": 1.0,
+    "intentional_reset_boundary_repeat_frame": 110,
+    "long_timeline_repeat_scope": [
+      38,
+      109
+    ],
+    "minimum_unique_rasters_for_long_timeline": 75,
+    "opening_construction_and_reset_tail_globally_distinct": true,
+    "strict_all_unique_through_frame_count": 75
+  },
+  "height": 600,
+  "input_kind": "svg",
+  "loop": {
+    "adjacent_duplicate_count": 0,
+    "all_frames_unique": true,
+    "delta_quality": {
+      "adjacent_max": 0.0010685450980392158,
+      "adjacent_median": 0.0006229450980392157,
+      "adjacent_min": 5.2423921568627445e-06,
+      "adjacent_p95": 0.0006749450980392157,
+      "changed_area_method": "accumulated adjacent luma delta greater than 2 percent",
+      "changed_area_ratio": 0.025869803921568627,
+      "metric": "normalized-luma-mean-absolute-difference",
+      "seam": 0.00010887803921568628,
+      "seam_within_adjacent_p95": true
+    },
+    "embedded_loop_count": 0,
+    "encoded_frames": {
+      "adjacent_duplicate_count": 0,
+      "adjacent_duplicate_pairs": [],
+      "algorithm": "framemd5",
+      "all_frames_unique": true,
+      "first_frame_hash": "cb7fe4adc73e1e2f68d070e95b6b8a4d",
+      "frame_count": 115,
+      "intentional_reset_boundary_opacity": 1.0,
+      "intentional_reset_boundary_repeat_count": 0,
+      "intentional_reset_boundary_repeat_evidence": [],
+      "intentional_reset_boundary_repeat_frame": 110,
+      "last_frame_hash": "38cb844334786a5b5a55873426ab5e55",
+      "minimum_unique_frame_count": 75,
+      "opening_construction_and_reset_tail_globally_distinct": true,
+      "repeat_scope": [
+        38,
+        109
+      ],
+      "repeat_scope_policy": "non-adjacent-repeats-inside-full-opacity-plus-reset-start-boundary",
+      "repeated_frame_group_count": 0,
+      "repeated_frame_index_evidence": [],
+      "repeats_confined_to_full_opacity": true,
+      "repeats_confined_to_permitted_scope": true,
+      "unique_frame_count": 115
+    },
+    "first_frame_sha256": "54eb2db904017dd2374fc510380c0bdacd7d88203b7035a784f0043901f93965",
+    "intentional_reset_boundary_repeat_count": 0,
+    "intentional_reset_boundary_repeat_evidence": [],
+    "last_frame_sha256": "3a5f45f0356709c53703bdbbafce090e34d7189d382365ffe60ea45a9b11e9c0",
+    "minimum_unique_frame_count": 75,
+    "opening_construction_and_reset_tail_globally_distinct": true,
+    "playback": "embedded-infinite",
+    "raw_frames": {
+      "adjacent_duplicate_count": 0,
+      "adjacent_duplicate_pairs": [],
+      "algorithm": "sha256",
+      "all_frames_unique": true,
+      "first_frame_hash": "54eb2db904017dd2374fc510380c0bdacd7d88203b7035a784f0043901f93965",
+      "frame_count": 115,
+      "intentional_reset_boundary_opacity": 1.0,
+      "intentional_reset_boundary_repeat_count": 0,
+      "intentional_reset_boundary_repeat_evidence": [],
+      "intentional_reset_boundary_repeat_frame": 110,
+      "last_frame_hash": "3a5f45f0356709c53703bdbbafce090e34d7189d382365ffe60ea45a9b11e9c0",
+      "minimum_unique_frame_count": 75,
+      "opening_construction_and_reset_tail_globally_distinct": true,
+      "repeat_scope": [
+        38,
+        109
+      ],
+      "repeat_scope_policy": "non-adjacent-repeats-inside-full-opacity-plus-reset-start-boundary",
+      "repeated_frame_group_count": 0,
+      "repeated_frame_index_evidence": [],
+      "repeats_confined_to_full_opacity": true,
+      "repeats_confined_to_permitted_scope": true,
+      "unique_frame_count": 115
+    },
+    "repeat_scope": [
+      38,
+      109
+    ],
+    "repeat_scope_policy": "non-adjacent-repeats-inside-full-opacity-plus-reset-start-boundary",
+    "repeated_frame_index_evidence": [],
+    "repeats_confined_to_full_opacity": true,
+    "repeats_confined_to_permitted_scope": true,
+    "sampling": "uniform-frame-centers",
+    "unique_frame_count": 115
+  },
+  "loop_playback": "embedded-infinite",
+  "mime_type": "image/gif",
+  "motion_class": "semantic",
+  "motion_grammar": {
+    "curves": {
+      "draw": "linear",
+      "persistent-data-flow": "linear",
+      "reset": "linear"
+    },
+    "draw_on": {
+      "connectors_visible_at_opening": false,
+      "draw_easing": "linear",
+      "draw_schedule": [
+        {
+          "frames": [
+            1,
+            6
+          ],
+          "order": 0,
+          "role": "primary",
+          "stage": 1
+        },
+        {
+          "frames": [
+            5,
+            10
+          ],
+          "order": 0,
+          "role": "primary",
+          "stage": 2
+        },
+        {
+          "frames": [
+            9,
+            18
+          ],
+          "order": 0,
+          "role": "memory-read",
+          "stage": 3
+        },
+        {
+          "frames": [
+            12,
+            21
+          ],
+          "order": 1,
+          "role": "tool-call",
+          "stage": 3
+        },
+        {
+          "frames": [
+            20,
+            25
+          ],
+          "order": 0,
+          "role": "data",
+          "stage": 4
+        },
+        {
+          "frames": [
+            24,
+            29
+          ],
+          "order": 0,
+          "role": "trace",
+          "stage": 5
+        },
+        {
+          "frames": [
+            28,
+            36
+          ],
+          "order": 0,
+          "role": "feedback",
+          "stage": 6
+        }
+      ],
+      "empty_opening_frame": 0,
+      "forbidden": [
+        "source-node-motion",
+        "source-text-motion",
+        "source-geometry-mutation",
+        "source-marker-mutation",
+        "camera-motion",
+        "animated-background"
+      ],
+      "maximum_concurrent_draws": 2,
+      "nodes_visible_every_frame": true,
+      "persistent_data_flow": {
+        "body": {
+          "appended_below_labels_and_nodes": true,
+          "color": "inherit-source-stroke",
+          "dash_pattern": [
+            14,
+            33
+          ],
+          "filter_free": true,
+          "linecap": "round",
+          "linejoin": "round",
+          "marker_free": true,
+          "maximum_live_width": 2.8,
+          "opacity": 0.86,
+          "primitive": "luxury-circuit-rail",
+          "resolved_widths_in_schedule_order": [
+            2.0,
+            2.0,
+            1.7,
+            1.7,
+            1.7,
+            2.0,
+            1.7
+          ],
+          "stroke_width": "min(maximum_live_width, source_stroke)"
+        },
+        "dash_offset_per_rendered_frame": -6,
+        "dash_period": 47,
+        "direction": "source-to-target",
+        "direction_sentinels": [
+          {
+            "directions": [
+              "right"
+            ],
+            "key": "primary/1/0"
+          },
+          {
+            "directions": [
+              "right"
+            ],
+            "key": "primary/2/0"
+          },
+          {
+            "directions": [
+              "down",
+              "left",
+              "down"
+            ],
+            "key": "memory-read/3/0"
+          },
+          {
+            "directions": [
+              "up",
+              "left",
+              "up"
+            ],
+            "key": "feedback/6/0"
+          }
+        ],
+        "expected_initial_phases": [
+          7,
+          14,
+          21,
+          24,
+          28,
+          35,
+          42
+        ],
+        "fade_in_factors": [
+          0.3,
+          0.65,
+          1.0
+        ],
+        "fade_in_frames": [
+          36,
+          38
+        ],
+        "full_opacity_frames": [
+          38,
+          109
+        ],
+        "minimum_review_scale": "50%",
+        "period_step_coprime": true,
+        "phase_policy": "(motionStage * 7 + motionOrder * 3) mod 47",
+        "primitive": "luxury-circuit-rail",
+        "rendered_frames": [
+          36,
+          114
+        ],
+        "reset_behavior": "live rails, signatures, and scene auxiliaries keep advancing while the shared reset opacity fades to 0.03",
+        "reset_opacity_samples": [
+          1.0,
+          0.7575,
+          0.515,
+          0.2725,
+          0.03
+        ],
+        "reset_range": [
+          110,
+          114
+        ],
+        "route_keys": [
+          {
+            "order": 0,
+            "role": "primary",
+            "stage": 1
+          },
+          {
+            "order": 0,
+            "role": "primary",
+            "stage": 2
+          },
+          {
+            "order": 0,
+            "role": "memory-read",
+            "stage": 3
+          },
+          {
+            "order": 1,
+            "role": "tool-call",
+            "stage": 3
+          },
+          {
+            "order": 0,
+            "role": "data",
+            "stage": 4
+          },
+          {
+            "order": 0,
+            "role": "trace",
+            "stage": 5
+          },
+          {
+            "order": 0,
+            "role": "feedback",
+            "stage": 6
+          }
+        ],
+        "signature": {
+          "animated_attributes": [
+            "transform",
+            "opacity"
+          ],
+          "appended_below_labels_and_nodes": true,
+          "direction": "source-to-target",
+          "endpoint_clearance": 8,
+          "geometry": {
+            "diamond_height": 7,
+            "diamond_rotation": 45,
+            "diamond_width": 7,
+            "filtered_elements_per_tracer": 1,
+            "shape": "diamond-with-tapered-tail",
+            "specular_diameter": 2,
+            "tail_length": 12
+          },
+          "path_advance_per_rendered_frame": 6,
+          "primitive": "gem-tracer",
+          "tangent_aware_rotation": true,
+          "wrap": "target-clearance-to-source-clearance"
+        },
+        "signature_advance_per_rendered_frame": 6,
+        "signature_count": 7,
+        "signature_primitive": "gem-tracer",
+        "stream_count": 7,
+        "travel_easing": "linear",
+        "travel_pixels_per_frame_at_100_percent": 6,
+        "travel_pixels_per_frame_at_50_percent": 3.0,
+        "travel_user_units_per_rendered_frame": 6
+      },
+      "primitive": "connector-draw-on-with-persistent-data-flow",
+      "reset_opacity_samples": [
+        1.0,
+        0.7575,
+        0.515,
+        0.2725,
+        0.03
+      ],
+      "reset_range": [
+        110,
+        114
+      ],
+      "route_label_opacity_states": 7,
+      "schedule_key": "(data-motion-role, data-motion-stage, data-motion-order)",
+      "settled_markers": "original marker appears only after route arrival",
+      "settled_topology_dynamic": true,
+      "source_edges_hidden_by_transient_css": true,
+      "text_geometry_motion": 0,
+      "topology_draw_on": true
+    },
+    "duration_seconds": 5.75,
+    "frame_duration_ms": 50.0,
+    "phases": {
+      "draw": {
+        "frames": [
+          1,
+          36
+        ],
+        "seconds": [
+          0.075,
+          1.825
+        ]
+      },
+      "empty": {
+        "frames": [
+          0,
+          0
+        ],
+        "seconds": [
+          0.025,
+          0.025
+        ]
+      },
+      "full_opacity": {
+        "frames": [
+          38,
+          109
+        ],
+        "seconds": [
+          1.925,
+          5.475
+        ]
+      },
+      "reset": {
+        "frames": [
+          110,
+          114
+        ],
+        "seconds": [
+          5.525,
+          5.725
+        ]
+      },
+      "stream": {
+        "frames": [
+          36,
+          114
+        ],
+        "seconds": [
+          1.825,
+          5.725
+        ]
+      }
+    },
+    "sample_index_expression": "time * fps - 0.5",
+    "sampling": "uniform-frame-centers",
+    "version": "3.4"
+  },
+  "motion_grammar_version": "3.4",
+  "motion_scene": "golden-circuit",
+  "ok": true,
+  "output": "docs/assets/aet-architecture-dark-luxury-zh-cn.gif",
+  "output_format": "gif",
+  "preset": "golden-circuit",
+  "rendered_pixels": 66240000,
+  "renderer": {
+    "chrome": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+    "duration_seconds": 5.75,
+    "effects": 21,
+    "engine": "chromium-svg-draw-on-persistent-data-flow",
+    "fps": 20,
+    "frame_count": 115,
+    "height": 600,
+    "input_kind": "svg",
+    "loop_frame_policy": "integer-frame-index-centers-with-steady-state-plus-reset-boundary-repeat-scope",
+    "module": "puppeteer-core",
+    "module_version": "25.3.0",
+    "ok": true,
+    "paint_barrier": "fonts-ready-plus-two-animation-frames-before-capture",
+    "preset": "golden-circuit",
+    "resolved_module": "/Users/yjw/.codex/skills/fireworks-tech-graph/node_modules/puppeteer-core/lib/puppeteer/puppeteer-core.js",
+    "sandbox": "enabled",
+    "scene_report": {
+      "animated_background_count": 0,
+      "auxiliary_primitives": [],
+      "camera_motion_count": 0,
+      "connectors_visible_at_opening": false,
+      "direction_sentinels": [
+        {
+          "actual": [
+            "right"
+          ],
+          "dash_offset_per_rendered_frame": -6,
+          "expected": [
+            "right"
+          ],
+          "order": 0,
+          "passed": true,
+          "role": "primary",
+          "schedule_key": "primary/1/0",
+          "signature_advance_per_rendered_frame": 6,
+          "stage": 1
+        },
+        {
+          "actual": [
+            "right"
+          ],
+          "dash_offset_per_rendered_frame": -6,
+          "expected": [
+            "right"
+          ],
+          "order": 0,
+          "passed": true,
+          "role": "primary",
+          "schedule_key": "primary/2/0",
+          "signature_advance_per_rendered_frame": 6,
+          "stage": 2
+        },
+        {
+          "actual": [
+            "down",
+            "left",
+            "down"
+          ],
+          "dash_offset_per_rendered_frame": -6,
+          "expected": [
+            "down",
+            "left",
+            "down"
+          ],
+          "order": 0,
+          "passed": true,
+          "role": "memory-read",
+          "schedule_key": "memory-read/3/0",
+          "signature_advance_per_rendered_frame": 6,
+          "stage": 3
+        },
+        {
+          "actual": [
+            "up",
+            "left",
+            "up"
+          ],
+          "dash_offset_per_rendered_frame": -6,
+          "expected": [
+            "up",
+            "left",
+            "up"
+          ],
+          "order": 0,
+          "passed": true,
+          "role": "feedback",
+          "schedule_key": "feedback/6/0",
+          "signature_advance_per_rendered_frame": 6,
+          "stage": 6
+        }
+      ],
+      "draw_clones": 7,
+      "draw_contract": {
+        "easing": "linear",
+        "marker_after_arrival": true,
+        "marker_during_draw": false,
+        "source_geometry": "exact immutable edge clone"
+      },
+      "draw_schedule": [
+        {
+          "easing": "linear",
+          "edge_id": "request",
+          "marker_after_arrival": true,
+          "marker_during_draw": false,
+          "order": 0,
+          "rendered_frames": [
+            1,
+            6
+          ],
+          "role": "primary",
+          "schedule_key": "primary/1/0",
+          "stage": 1
+        },
+        {
+          "easing": "linear",
+          "edge_id": "dispatch",
+          "marker_after_arrival": true,
+          "marker_during_draw": false,
+          "order": 0,
+          "rendered_frames": [
+            5,
+            10
+          ],
+          "role": "primary",
+          "schedule_key": "primary/2/0",
+          "stage": 2
+        },
+        {
+          "easing": "linear",
+          "edge_id": "context",
+          "marker_after_arrival": true,
+          "marker_during_draw": false,
+          "order": 0,
+          "rendered_frames": [
+            9,
+            18
+          ],
+          "role": "memory-read",
+          "schedule_key": "memory-read/3/0",
+          "stage": 3
+        },
+        {
+          "easing": "linear",
+          "edge_id": "tool-call",
+          "marker_after_arrival": true,
+          "marker_during_draw": false,
+          "order": 1,
+          "rendered_frames": [
+            12,
+            21
+          ],
+          "role": "tool-call",
+          "schedule_key": "tool-call/3/1",
+          "stage": 3
+        },
+        {
+          "easing": "linear",
+          "edge_id": "augment",
+          "marker_after_arrival": true,
+          "marker_during_draw": false,
+          "order": 0,
+          "rendered_frames": [
+            20,
+            25
+          ],
+          "role": "data",
+          "schedule_key": "data/4/0",
+          "stage": 4
+        },
+        {
+          "easing": "linear",
+          "edge_id": "trace",
+          "marker_after_arrival": true,
+          "marker_during_draw": false,
+          "order": 0,
+          "rendered_frames": [
+            24,
+            29
+          ],
+          "role": "trace",
+          "schedule_key": "trace/5/0",
+          "stage": 5
+        },
+        {
+          "easing": "linear",
+          "edge_id": "z-feedback",
+          "marker_after_arrival": true,
+          "marker_during_draw": false,
+          "order": 0,
+          "rendered_frames": [
+            28,
+            36
+          ],
+          "role": "feedback",
+          "schedule_key": "feedback/6/0",
+          "stage": 6
+        }
+      ],
+      "dynamic_not_thicker_than_source": true,
+      "empty_opening_frame": 0,
+      "extra_scene_primitives": [
+        "gem-tracer"
+      ],
+      "gem_filter_boundary": {
+        "filtered_elements_per_tracer": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "only_gem_halo_filtered": true
+      },
+      "grammar_version": "3.4",
+      "halo_count": 0,
+      "live_rail_width_ceiling": 2.8,
+      "live_rail_width_ceiling_passed": true,
+      "maximum_concurrent_draws": 2,
+      "maximum_live_rail_width": 2,
+      "node_motion": 0,
+      "node_motion_count": 0,
+      "nodes_visible_every_frame": true,
+      "packet_head_count": 0,
+      "persistent_packet_heads": [],
+      "persistent_stream_contract": {
+        "body": {
+          "color": "inherit-source-stroke",
+          "dash_pattern": [
+            14,
+            33
+          ],
+          "dynamic_not_thicker_than_source": true,
+          "filter_free": true,
+          "linecap": "round",
+          "linejoin": "round",
+          "marker_free": true,
+          "maximum_live_width": 2.8,
+          "opacity": 0.86,
+          "primitive": "luxury-circuit-rail",
+          "resolved_widths_in_schedule_order": [
+            2,
+            2,
+            1.7,
+            1.7,
+            1.7,
+            2,
+            1.7
+          ],
+          "source_widths_in_schedule_order": [
+            2,
+            2,
+            1.7,
+            1.7,
+            1.7,
+            2,
+            1.7
+          ],
+          "stroke_width": "min(2.8, source_stroke)"
+        },
+        "dash_offset_per_rendered_frame": -6,
+        "dash_period": 47,
+        "direction": "source-to-target",
+        "expected_initial_phases": [
+          7,
+          14,
+          21,
+          24,
+          28,
+          35,
+          42
+        ],
+        "fade_in_factors": [
+          0.3,
+          0.65,
+          1
+        ],
+        "fade_in_frames": [
+          36,
+          38
+        ],
+        "full_opacity_frames": [
+          38,
+          109
+        ],
+        "minimum_review_scale": "50%",
+        "period_step_coprime": true,
+        "phase_policy": "(motionStage * 7 + motionOrder * 3) mod 47",
+        "phase_repeat_within_stream_interval": true,
+        "primitive": "luxury-circuit-rail",
+        "rendered_frames": [
+          36,
+          114
+        ],
+        "reset_behavior": "live rails, signatures, and scene auxiliaries keep advancing while the shared reset opacity fades to 0.03",
+        "reset_opacity_samples": [
+          1,
+          0.7575,
+          0.515,
+          0.2725,
+          0.03
+        ],
+        "reset_range": [
+          110,
+          114
+        ],
+        "signature": {
+          "animated_attributes": [
+            "transform",
+            "opacity"
+          ],
+          "appended_below_labels_and_nodes": true,
+          "direction": "source-to-target",
+          "endpoint_clearance": 8,
+          "geometry_by_route": [
+            {
+              "geometry": {
+                "diamond_height": 7,
+                "diamond_rotation": 45,
+                "diamond_width": 7,
+                "shape": "diamond-with-tapered-tail",
+                "specular_diameter": 2,
+                "tail_length": 12
+              },
+              "primitive": "gem-tracer",
+              "schedule_key": "primary/1/0"
+            },
+            {
+              "geometry": {
+                "diamond_height": 7,
+                "diamond_rotation": 45,
+                "diamond_width": 7,
+                "shape": "diamond-with-tapered-tail",
+                "specular_diameter": 2,
+                "tail_length": 12
+              },
+              "primitive": "gem-tracer",
+              "schedule_key": "primary/2/0"
+            },
+            {
+              "geometry": {
+                "diamond_height": 7,
+                "diamond_rotation": 45,
+                "diamond_width": 7,
+                "shape": "diamond-with-tapered-tail",
+                "specular_diameter": 2,
+                "tail_length": 12
+              },
+              "primitive": "gem-tracer",
+              "schedule_key": "memory-read/3/0"
+            },
+            {
+              "geometry": {
+                "diamond_height": 7,
+                "diamond_rotation": 45,
+                "diamond_width": 7,
+                "shape": "diamond-with-tapered-tail",
+                "specular_diameter": 2,
+                "tail_length": 12
+              },
+              "primitive": "gem-tracer",
+              "schedule_key": "tool-call/3/1"
+            },
+            {
+              "geometry": {
+                "diamond_height": 7,
+                "diamond_rotation": 45,
+                "diamond_width": 7,
+                "shape": "diamond-with-tapered-tail",
+                "specular_diameter": 2,
+                "tail_length": 12
+              },
+              "primitive": "gem-tracer",
+              "schedule_key": "data/4/0"
+            },
+            {
+              "geometry": {
+                "diamond_height": 7,
+                "diamond_rotation": 45,
+                "diamond_width": 7,
+                "shape": "diamond-with-tapered-tail",
+                "specular_diameter": 2,
+                "tail_length": 12
+              },
+              "primitive": "gem-tracer",
+              "schedule_key": "trace/5/0"
+            },
+            {
+              "geometry": {
+                "diamond_height": 7,
+                "diamond_rotation": 45,
+                "diamond_width": 7,
+                "shape": "diamond-with-tapered-tail",
+                "specular_diameter": 2,
+                "tail_length": 12
+              },
+              "primitive": "gem-tracer",
+              "schedule_key": "feedback/6/0"
+            }
+          ],
+          "path_advance_per_rendered_frame": 6,
+          "primitive": "gem-tracer",
+          "signature_kind": "gem-tracer",
+          "tangent_aware_rotation": true,
+          "wrap": "target-clearance-to-source-clearance"
+        },
+        "signature_advance_per_rendered_frame": 6,
+        "signature_count": 7,
+        "signature_primitive": "gem-tracer",
+        "stream_count": 7,
+        "stream_interval_frame_count": 79,
+        "travel_easing": "linear",
+        "travel_pixels_per_frame_at_50_percent": 3,
+        "travel_pixels_per_frame_at_960px": 6,
+        "travel_pixels_per_second_at_50_percent_20fps": 60,
+        "travel_pixels_per_second_at_960px_20fps": 120,
+        "travel_user_units_per_rendered_frame": 6
+      },
+      "persistent_streams": [
+        {
+          "color": "#d4a574",
+          "dash_offset_per_rendered_frame": -6,
+          "dash_pattern": [
+            14,
+            33
+          ],
+          "dash_period": 47,
+          "direction": "source-to-target",
+          "dynamic_not_thicker_than_source": true,
+          "edge_id": "request",
+          "fade_in_frames": [
+            36,
+            38
+          ],
+          "filter_free": true,
+          "full_opacity_frames": [
+            38,
+            109
+          ],
+          "initial_phase": 7,
+          "marker_free": true,
+          "maximum_live_width": 2.8,
+          "motion_order": 0,
+          "motion_stage": 1,
+          "opacity": 0.86,
+          "phase_policy": "(motionStage * 7 + motionOrder * 3) mod 47",
+          "primitive": "luxury-circuit-rail",
+          "rendered_frames": [
+            36,
+            114
+          ],
+          "role": "primary",
+          "schedule_key": "primary/1/0",
+          "source_stroke_width": 2,
+          "stroke_width": 2,
+          "travel_easing": "linear"
+        },
+        {
+          "color": "#d4a574",
+          "dash_offset_per_rendered_frame": -6,
+          "dash_pattern": [
+            14,
+            33
+          ],
+          "dash_period": 47,
+          "direction": "source-to-target",
+          "dynamic_not_thicker_than_source": true,
+          "edge_id": "dispatch",
+          "fade_in_frames": [
+            36,
+            38
+          ],
+          "filter_free": true,
+          "full_opacity_frames": [
+            38,
+            109
+          ],
+          "initial_phase": 14,
+          "marker_free": true,
+          "maximum_live_width": 2.8,
+          "motion_order": 0,
+          "motion_stage": 2,
+          "opacity": 0.86,
+          "phase_policy": "(motionStage * 7 + motionOrder * 3) mod 47",
+          "primitive": "luxury-circuit-rail",
+          "rendered_frames": [
+            36,
+            114
+          ],
+          "role": "primary",
+          "schedule_key": "primary/2/0",
+          "source_stroke_width": 2,
+          "stroke_width": 2,
+          "travel_easing": "linear"
+        },
+        {
+          "color": "#38bdf8",
+          "dash_offset_per_rendered_frame": -6,
+          "dash_pattern": [
+            14,
+            33
+          ],
+          "dash_period": 47,
+          "direction": "source-to-target",
+          "dynamic_not_thicker_than_source": true,
+          "edge_id": "context",
+          "fade_in_frames": [
+            36,
+            38
+          ],
+          "filter_free": true,
+          "full_opacity_frames": [
+            38,
+            109
+          ],
+          "initial_phase": 21,
+          "marker_free": true,
+          "maximum_live_width": 2.8,
+          "motion_order": 0,
+          "motion_stage": 3,
+          "opacity": 0.86,
+          "phase_policy": "(motionStage * 7 + motionOrder * 3) mod 47",
+          "primitive": "luxury-circuit-rail",
+          "rendered_frames": [
+            36,
+            114
+          ],
+          "role": "memory-read",
+          "schedule_key": "memory-read/3/0",
+          "source_stroke_width": 1.7,
+          "stroke_width": 1.7,
+          "travel_easing": "linear"
+        },
+        {
+          "color": "#a78bfa",
+          "dash_offset_per_rendered_frame": -6,
+          "dash_pattern": [
+            14,
+            33
+          ],
+          "dash_period": 47,
+          "direction": "source-to-target",
+          "dynamic_not_thicker_than_source": true,
+          "edge_id": "tool-call",
+          "fade_in_frames": [
+            36,
+            38
+          ],
+          "filter_free": true,
+          "full_opacity_frames": [
+            38,
+            109
+          ],
+          "initial_phase": 24,
+          "marker_free": true,
+          "maximum_live_width": 2.8,
+          "motion_order": 1,
+          "motion_stage": 3,
+          "opacity": 0.86,
+          "phase_policy": "(motionStage * 7 + motionOrder * 3) mod 47",
+          "primitive": "luxury-circuit-rail",
+          "rendered_frames": [
+            36,
+            114
+          ],
+          "role": "tool-call",
+          "schedule_key": "tool-call/3/1",
+          "source_stroke_width": 1.7,
+          "stroke_width": 1.7,
+          "travel_easing": "linear"
+        },
+        {
+          "color": "#6ee7b7",
+          "dash_offset_per_rendered_frame": -6,
+          "dash_pattern": [
+            14,
+            33
+          ],
+          "dash_period": 47,
+          "direction": "source-to-target",
+          "dynamic_not_thicker_than_source": true,
+          "edge_id": "augment",
+          "fade_in_frames": [
+            36,
+            38
+          ],
+          "filter_free": true,
+          "full_opacity_frames": [
+            38,
+            109
+          ],
+          "initial_phase": 28,
+          "marker_free": true,
+          "maximum_live_width": 2.8,
+          "motion_order": 0,
+          "motion_stage": 4,
+          "opacity": 0.86,
+          "phase_policy": "(motionStage * 7 + motionOrder * 3) mod 47",
+          "primitive": "luxury-circuit-rail",
+          "rendered_frames": [
+            36,
+            114
+          ],
+          "role": "data",
+          "schedule_key": "data/4/0",
+          "source_stroke_width": 1.7,
+          "stroke_width": 1.7,
+          "travel_easing": "linear"
+        },
+        {
+          "color": "#d4a574",
+          "dash_offset_per_rendered_frame": -6,
+          "dash_pattern": [
+            14,
+            33
+          ],
+          "dash_period": 47,
+          "direction": "source-to-target",
+          "dynamic_not_thicker_than_source": true,
+          "edge_id": "trace",
+          "fade_in_frames": [
+            36,
+            38
+          ],
+          "filter_free": true,
+          "full_opacity_frames": [
+            38,
+            109
+          ],
+          "initial_phase": 35,
+          "marker_free": true,
+          "maximum_live_width": 2.8,
+          "motion_order": 0,
+          "motion_stage": 5,
+          "opacity": 0.86,
+          "phase_policy": "(motionStage * 7 + motionOrder * 3) mod 47",
+          "primitive": "luxury-circuit-rail",
+          "rendered_frames": [
+            36,
+            114
+          ],
+          "role": "trace",
+          "schedule_key": "trace/5/0",
+          "source_stroke_width": 2,
+          "stroke_width": 2,
+          "travel_easing": "linear"
+        },
+        {
+          "color": "#f87171",
+          "dash_offset_per_rendered_frame": -6,
+          "dash_pattern": [
+            14,
+            33
+          ],
+          "dash_period": 47,
+          "direction": "source-to-target",
+          "dynamic_not_thicker_than_source": true,
+          "edge_id": "z-feedback",
+          "fade_in_frames": [
+            36,
+            38
+          ],
+          "filter_free": true,
+          "full_opacity_frames": [
+            38,
+            109
+          ],
+          "initial_phase": 42,
+          "marker_free": true,
+          "maximum_live_width": 2.8,
+          "motion_order": 0,
+          "motion_stage": 6,
+          "opacity": 0.86,
+          "phase_policy": "(motionStage * 7 + motionOrder * 3) mod 47",
+          "primitive": "luxury-circuit-rail",
+          "rendered_frames": [
+            36,
+            114
+          ],
+          "role": "feedback",
+          "schedule_key": "feedback/6/0",
+          "source_stroke_width": 1.7,
+          "stroke_width": 1.7,
+          "travel_easing": "linear"
+        }
+      ],
+      "preset": "golden-circuit",
+      "primitive": "connector-draw-on-with-persistent-data-flow",
+      "reset_opacity_samples": [
+        1,
+        0.7575,
+        0.515,
+        0.2725,
+        0.03
+      ],
+      "reset_range": [
+        110,
+        114
+      ],
+      "ripple_count": 0,
+      "route_label_clones": 7,
+      "route_label_opacity_states": 7,
+      "scene_identity": "Dark Luxury",
+      "schedule_key": "(data-motion-role, data-motion-stage, data-motion-order)",
+      "settled_marker_clones": 7,
+      "settled_topology_dynamic": true,
+      "signature_kind": "gem-tracer",
+      "signature_travel_at_100_percent": 6,
+      "signature_travel_at_50_percent": 3,
+      "source_edges": 7,
+      "source_edges_hidden_by_transient_css": true,
+      "source_geometry_mutation_count": 0,
+      "source_marker_mutation_count": 0,
+      "source_route_labels": 7,
+      "source_text_mutation_count": 0,
+      "specialized_signature_count": 7,
+      "specialized_signatures": [
+        {
+          "animated_attributes": [
+            "transform",
+            "opacity"
+          ],
+          "appended_below_labels_and_nodes": true,
+          "center_travel_range": [
+            24,
+            67
+          ],
+          "direction": "source-to-target",
+          "edge_id": "request",
+          "endpoint_clearance": 8,
+          "fade_in_frames": [
+            36,
+            38
+          ],
+          "filter_boundary_valid": true,
+          "filtered_element_count": 1,
+          "full_opacity_frames": [
+            38,
+            109
+          ],
+          "geometry": {
+            "diamond_height": 7,
+            "diamond_rotation": 45,
+            "diamond_width": 7,
+            "shape": "diamond-with-tapered-tail",
+            "specular_diameter": 2,
+            "tail_length": 12
+          },
+          "geometry_forward_extent": 5,
+          "geometry_rear_extent": 16,
+          "initial_path_distance": 31,
+          "initial_point": {
+            "x": 251,
+            "y": 186
+          },
+          "initial_tangent_rotation": 0,
+          "marker_free": true,
+          "path_advance_per_rendered_frame": 6,
+          "path_length": 80,
+          "primitive": "gem-tracer",
+          "rendered_frames": [
+            36,
+            114
+          ],
+          "role": "primary",
+          "schedule_key": "primary/1/0",
+          "signature_family": "gem-tracer",
+          "source_color": "#d4a574",
+          "travel_pixels_per_rendered_frame_at_50_percent": 3,
+          "wrap": "target-clearance-to-source-clearance"
+        },
+        {
+          "animated_attributes": [
+            "transform",
+            "opacity"
+          ],
+          "appended_below_labels_and_nodes": true,
+          "center_travel_range": [
+            24,
+            67
+          ],
+          "direction": "source-to-target",
+          "edge_id": "dispatch",
+          "endpoint_clearance": 8,
+          "fade_in_frames": [
+            36,
+            38
+          ],
+          "filter_boundary_valid": true,
+          "filtered_element_count": 1,
+          "full_opacity_frames": [
+            38,
+            109
+          ],
+          "geometry": {
+            "diamond_height": 7,
+            "diamond_rotation": 45,
+            "diamond_width": 7,
+            "shape": "diamond-with-tapered-tail",
+            "specular_diameter": 2,
+            "tail_length": 12
+          },
+          "geometry_forward_extent": 5,
+          "geometry_rear_extent": 16,
+          "initial_path_distance": 38,
+          "initial_point": {
+            "x": 518,
+            "y": 186
+          },
+          "initial_tangent_rotation": 0,
+          "marker_free": true,
+          "path_advance_per_rendered_frame": 6,
+          "path_length": 80,
+          "primitive": "gem-tracer",
+          "rendered_frames": [
+            36,
+            114
+          ],
+          "role": "primary",
+          "schedule_key": "primary/2/0",
+          "signature_family": "gem-tracer",
+          "source_color": "#d4a574",
+          "travel_pixels_per_rendered_frame_at_50_percent": 3,
+          "wrap": "target-clearance-to-source-clearance"
+        },
+        {
+          "animated_attributes": [
+            "transform",
+            "opacity"
+          ],
+          "appended_below_labels_and_nodes": true,
+          "center_travel_range": [
+            24,
+            357
+          ],
+          "direction": "source-to-target",
+          "edge_id": "context",
+          "endpoint_clearance": 8,
+          "fade_in_frames": [
+            36,
+            38
+          ],
+          "filter_boundary_valid": true,
+          "filtered_element_count": 1,
+          "full_opacity_frames": [
+            38,
+            109
+          ],
+          "geometry": {
+            "diamond_height": 7,
+            "diamond_rotation": 45,
+            "diamond_width": 7,
+            "shape": "diamond-with-tapered-tail",
+            "specular_diameter": 2,
+            "tail_length": 12
+          },
+          "geometry_forward_extent": 5,
+          "geometry_rear_extent": 16,
+          "initial_path_distance": 45,
+          "initial_point": {
+            "x": 632,
+            "y": 261
+          },
+          "initial_tangent_rotation": 90,
+          "marker_free": true,
+          "path_advance_per_rendered_frame": 6,
+          "path_length": 370,
+          "primitive": "gem-tracer",
+          "rendered_frames": [
+            36,
+            114
+          ],
+          "role": "memory-read",
+          "schedule_key": "memory-read/3/0",
+          "signature_family": "gem-tracer",
+          "source_color": "#38bdf8",
+          "travel_pixels_per_rendered_frame_at_50_percent": 3,
+          "wrap": "target-clearance-to-source-clearance"
+        },
+        {
+          "animated_attributes": [
+            "transform",
+            "opacity"
+          ],
+          "appended_below_labels_and_nodes": true,
+          "center_travel_range": [
+            24,
+            115
+          ],
+          "direction": "source-to-target",
+          "edge_id": "tool-call",
+          "endpoint_clearance": 8,
+          "fade_in_frames": [
+            36,
+            38
+          ],
+          "filter_boundary_valid": true,
+          "filtered_element_count": 1,
+          "full_opacity_frames": [
+            38,
+            109
+          ],
+          "geometry": {
+            "diamond_height": 7,
+            "diamond_rotation": 45,
+            "diamond_width": 7,
+            "shape": "diamond-with-tapered-tail",
+            "specular_diameter": 2,
+            "tail_length": 12
+          },
+          "geometry_forward_extent": 5,
+          "geometry_rear_extent": 16,
+          "initial_path_distance": 48,
+          "initial_point": {
+            "x": 650,
+            "y": 264
+          },
+          "initial_tangent_rotation": 90,
+          "marker_free": true,
+          "path_advance_per_rendered_frame": 6,
+          "path_length": 128,
+          "primitive": "gem-tracer",
+          "rendered_frames": [
+            36,
+            114
+          ],
+          "role": "tool-call",
+          "schedule_key": "tool-call/3/1",
+          "signature_family": "gem-tracer",
+          "source_color": "#a78bfa",
+          "travel_pixels_per_rendered_frame_at_50_percent": 3,
+          "wrap": "target-clearance-to-source-clearance"
+        },
+        {
+          "animated_attributes": [
+            "transform",
+            "opacity"
+          ],
+          "appended_below_labels_and_nodes": true,
+          "center_travel_range": [
+            24,
+            67
+          ],
+          "direction": "source-to-target",
+          "edge_id": "augment",
+          "endpoint_clearance": 8,
+          "fade_in_frames": [
+            36,
+            38
+          ],
+          "filter_boundary_valid": true,
+          "filtered_element_count": 1,
+          "full_opacity_frames": [
+            38,
+            109
+          ],
+          "geometry": {
+            "diamond_height": 7,
+            "diamond_rotation": 45,
+            "diamond_width": 7,
+            "shape": "diamond-with-tapered-tail",
+            "specular_diameter": 2,
+            "tail_length": 12
+          },
+          "geometry_forward_extent": 5,
+          "geometry_rear_extent": 16,
+          "initial_path_distance": 52,
+          "initial_point": {
+            "x": 532,
+            "y": 374
+          },
+          "initial_tangent_rotation": 0,
+          "marker_free": true,
+          "path_advance_per_rendered_frame": 6,
+          "path_length": 80,
+          "primitive": "gem-tracer",
+          "rendered_frames": [
+            36,
+            114
+          ],
+          "role": "data",
+          "schedule_key": "data/4/0",
+          "signature_family": "gem-tracer",
+          "source_color": "#6ee7b7",
+          "travel_pixels_per_rendered_frame_at_50_percent": 3,
+          "wrap": "target-clearance-to-source-clearance"
+        },
+        {
+          "animated_attributes": [
+            "transform",
+            "opacity"
+          ],
+          "appended_below_labels_and_nodes": true,
+          "center_travel_range": [
+            24,
+            37
+          ],
+          "direction": "source-to-target",
+          "edge_id": "trace",
+          "endpoint_clearance": 8,
+          "fade_in_frames": [
+            36,
+            38
+          ],
+          "filter_boundary_valid": true,
+          "filtered_element_count": 1,
+          "full_opacity_frames": [
+            38,
+            109
+          ],
+          "geometry": {
+            "diamond_height": 7,
+            "diamond_rotation": 45,
+            "diamond_width": 7,
+            "shape": "diamond-with-tapered-tail",
+            "specular_diameter": 2,
+            "tail_length": 12
+          },
+          "geometry_forward_extent": 5,
+          "geometry_rear_extent": 16,
+          "initial_path_distance": 33,
+          "initial_point": {
+            "x": 773,
+            "y": 374
+          },
+          "initial_tangent_rotation": 0,
+          "marker_free": true,
+          "path_advance_per_rendered_frame": 6,
+          "path_length": 50,
+          "primitive": "gem-tracer",
+          "rendered_frames": [
+            36,
+            114
+          ],
+          "role": "trace",
+          "schedule_key": "trace/5/0",
+          "signature_family": "gem-tracer",
+          "source_color": "#d4a574",
+          "travel_pixels_per_rendered_frame_at_50_percent": 3,
+          "wrap": "target-clearance-to-source-clearance"
+        },
+        {
+          "animated_attributes": [
+            "transform",
+            "opacity"
+          ],
+          "appended_below_labels_and_nodes": true,
+          "center_travel_range": [
+            24,
+            292
+          ],
+          "direction": "source-to-target",
+          "edge_id": "z-feedback",
+          "endpoint_clearance": 8,
+          "fade_in_frames": [
+            36,
+            38
+          ],
+          "filter_boundary_valid": true,
+          "filtered_element_count": 1,
+          "full_opacity_frames": [
+            38,
+            109
+          ],
+          "geometry": {
+            "diamond_height": 7,
+            "diamond_rotation": 45,
+            "diamond_width": 7,
+            "shape": "diamond-with-tapered-tail",
+            "specular_diameter": 2,
+            "tail_length": 12
+          },
+          "geometry_forward_extent": 5,
+          "geometry_rear_extent": 16,
+          "initial_path_distance": 66,
+          "initial_point": {
+            "x": 845,
+            "y": 278
+          },
+          "initial_tangent_rotation": -90,
+          "marker_free": true,
+          "path_advance_per_rendered_frame": 6,
+          "path_length": 305,
+          "primitive": "gem-tracer",
+          "rendered_frames": [
+            36,
+            114
+          ],
+          "role": "feedback",
+          "schedule_key": "feedback/6/0",
+          "signature_family": "gem-tracer",
+          "source_color": "#f87171",
+          "travel_pixels_per_rendered_frame_at_50_percent": 3,
+          "wrap": "target-clearance-to-source-clearance"
+        }
+      ],
+      "static_dom_guard": true,
+      "stream_count": 7,
+      "text_geometry_motion": 0,
+      "text_motion": 0,
+      "text_motion_count": 0,
+      "topology_draw_on": true,
+      "trace_span_reveals": [],
+      "waterfall_scanner": null
+    },
+    "width": 960
+  },
+  "report": "docs/assets/aet-architecture-dark-luxury-zh-cn.motion.json",
+  "required_encoder": "ffmpeg/gif",
+  "review_reference_source_sha256": "6ade2db83f0fa772c4791e1a09a2c128373125da3bcfa2624434daff72316122",
+  "review_status": "user-approved",
+  "runtime": {
+    "encoders": [
+      "gif"
+    ],
+    "ffmpeg": "/Users/yjw/.cache/uv/archive-v0/srxjinI55WNKvnwK/lib/python3.13/site-packages/static_ffmpeg/bin/darwin_arm64/ffmpeg",
+    "ffprobe": "/Users/yjw/.cache/uv/archive-v0/srxjinI55WNKvnwK/lib/python3.13/site-packages/static_ffmpeg/bin/darwin_arm64/ffprobe",
+    "format": {
+      "gif": true
+    },
+    "node": "/opt/homebrew/opt/node@24/bin/node",
+    "ok": true,
+    "renderer": {
+      "chrome": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+      "deterministic_timeline": true,
+      "input": "semantic-svg",
+      "module": "puppeteer-core",
+      "module_version": "25.3.0",
+      "motion_model": "connector-draw-on-with-persistent-data-flow",
+      "ok": true,
+      "presets": [
+        "memory-weave",
+        "tool-grounding",
+        "service-blueprint",
+        "memory-lifecycle",
+        "agent-orchestration",
+        "governed-runtime",
+        "token-stream",
+        "golden-circuit",
+        "review-trace",
+        "cloud-flow",
+        "event-transit",
+        "ops-pulse"
+      ],
+      "resolved_module": "/Users/yjw/.codex/skills/fireworks-tech-graph/node_modules/puppeteer-core/lib/puppeteer/puppeteer-core.js",
+      "sandbox_default": "enabled"
+    },
+    "worker": "/Users/yjw/.codex/skills/fireworks-tech-graph/scripts/svg2gif.js"
+  },
+  "scene_signature": {
+    "distinctive_primitives": [
+      "semantic-route-build",
+      "luxury-circuit-rail",
+      "gem-tracer"
+    ],
+    "name": "dark-luxury-golden-gem-circuit"
+  },
+  "seamless_loop_contract": "75 frames or fewer: every raster is unique; more than 75 frames: non-adjacent repeats are allowed within the full-opacity interval, plus the sole intentional reset-boundary exception at reset_start with opacity 1.00, with at least 75 unique rasters; seam MAD must not exceed p95 adjacent-frame MAD",
+  "semantic_profile": "generic",
+  "semantics": {
+    "edges": 7,
+    "edges_without_flow": 0,
+    "motion_metadata": "explicit",
+    "nodes": 6,
+    "resolved_schedule": [
+      {
+        "edge_id": "request",
+        "order": 0,
+        "role": "primary",
+        "source_stroke": "#d4a574",
+        "stage": 1
+      },
+      {
+        "edge_id": "dispatch",
+        "order": 0,
+        "role": "primary",
+        "source_stroke": "#d4a574",
+        "stage": 2
+      },
+      {
+        "edge_id": "context",
+        "order": 0,
+        "role": "memory-read",
+        "source_stroke": "#38bdf8",
+        "stage": 3
+      },
+      {
+        "edge_id": "tool-call",
+        "order": 1,
+        "role": "tool-call",
+        "source_stroke": "#a78bfa",
+        "stage": 3
+      },
+      {
+        "edge_id": "augment",
+        "order": 0,
+        "role": "data",
+        "source_stroke": "#6ee7b7",
+        "stage": 4
+      },
+      {
+        "edge_id": "trace",
+        "order": 0,
+        "role": "trace",
+        "source_stroke": "#d4a574",
+        "stage": 5
+      },
+      {
+        "edge_id": "z-feedback",
+        "order": 0,
+        "role": "feedback",
+        "source_stroke": "#f87171",
+        "stage": 6
+      }
+    ],
+    "schedule_key": "(data-motion-role, data-motion-stage, data-motion-order)",
+    "staged_edges": 7
+  },
+  "size_guidance": {
+    "artifact_target_bytes": 500000,
+    "artifact_within_target": true,
+    "warnings": []
+  },
+  "source": "docs/assets/aet-architecture-dark-luxury-zh-cn.svg",
+  "source_checks": {
+    "composition": {
+      "details": [],
+      "ok": true
+    },
+    "geometry": {
+      "details": [],
+      "ok": true
+    },
+    "markers": {
+      "details": [],
+      "ok": true
+    },
+    "xml": {
+      "details": [],
+      "ok": true
+    }
+  },
+  "source_integrity": {
+    "sha256": "7ec6bb6aa58173df1eb77ab03712cf42e506b4a2c16e211c500a3df8b6471f99",
+    "sha256_after": "7ec6bb6aa58173df1eb77ab03712cf42e506b4a2c16e211c500a3df8b6471f99",
+    "sha256_before": "7ec6bb6aa58173df1eb77ab03712cf42e506b4a2c16e211c500a3df8b6471f99",
+    "unchanged": true
+  },
+  "source_sha256": "7ec6bb6aa58173df1eb77ab03712cf42e506b4a2c16e211c500a3df8b6471f99",
+  "style_contract": {
+    "approval_recorded_on": "2026-07-16",
+    "scope": "signature-speed-path-geometry-and-construction-schedule",
+    "source_policy": "semantic-schedule-and-geometry-not-exact-byte-hash",
+    "status": "user-approved"
+  },
+  "style_contract_status": "user-approved",
+  "style_id": 8,
+  "timing_revision": {
+    "approved_at": "2026-07-17",
+    "baseline": {
+      "duration_seconds": 3.75,
+      "frame_count": 75
+    },
+    "candidate": {
+      "added_full_opacity_frames": [
+        70,
+        109
+      ],
+      "duration_seconds": 5.75,
+      "frame_count": 115
+    },
+    "id": "+2s-settled-flow",
+    "only_pending_item": false,
+    "status": "user-approved"
+  },
+  "visual_theme": "Dark Luxury",
+  "width": 960
+}

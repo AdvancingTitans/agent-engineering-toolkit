@@ -19,7 +19,8 @@ const PERSPECTIVE_IDS = [
     "conflicts",
     "freshness",
     "improvement-chain",
-    "regression-lineage"
+    "regression-lineage",
+    "behavioural-risk"
 ];
 const NODE_TYPES = new Set([
     "intent",
@@ -348,6 +349,25 @@ const PERSPECTIVE_SPECS = {
             "claim",
             "recommendation",
             "artifact",
+            "unknown",
+            "limitation",
+            "conflict"
+        ]
+    },
+    "behavioural-risk": {
+        title: "Behavioural Risk Diagnosis",
+        question: "Which evidence-bound behavioural risk conditions and PROPOSED interventions apply?",
+        diagram_type: "flowchart",
+        direction: "LR",
+        roots: [
+            "finding"
+        ],
+        nodes: [
+            "finding",
+            "recommendation",
+            "verified_evidence",
+            "observation",
+            "claim",
             "unknown",
             "limitation",
             "conflict"
@@ -705,7 +725,8 @@ export function buildEvidenceGraph(bundle) {
     const unknownPerspectiveIds = {
         "change-scope": unknownNode(nodes, "perspective:change-scope", "Bundle v1 has path bindings but no explicit Change Group; this graph cannot prove the actual diff.", manifestRef),
         "improvement-chain": unknownNode(nodes, "perspective:improvement-chain", "Bundle v1 has no independent Improvement Finding, Constraint, Candidate, Verification, or Outcome records.", manifestRef),
-        "regression-lineage": unknownNode(nodes, "perspective:regression-lineage", "Bundle v1 has no bound Improvement Outcome or Regression Fixture records.", manifestRef)
+        "regression-lineage": unknownNode(nodes, "perspective:regression-lineage", "Bundle v1 has no bound Improvement Outcome or Regression Fixture records.", manifestRef),
+        "behavioural-risk": unknownNode(nodes, "perspective:behavioural-risk", "Bundle v1 has no validated Behavioural Risk Diagnosis projection.", manifestRef)
     };
     const nodeValues = [
         ...nodes.values()
@@ -933,7 +954,7 @@ function validateGraphObject(graph) {
         validateRefs(edge.source_refs, `edge ${edge.id}`);
     }
     if (graph.perspectives.length !== PERSPECTIVE_IDS.length || new Set(graph.perspectives.map((item)=>item.id)).size !== PERSPECTIVE_IDS.length) {
-        invalid("Evidence Graph must contain exactly the ten fixed Perspectives");
+        invalid("Evidence Graph must contain exactly the eleven fixed Perspectives");
     }
     for (const expected of PERSPECTIVE_IDS){
         const perspective = graph.perspectives.find((item)=>item.id === expected);
@@ -1106,7 +1127,7 @@ function buildPerspectives(nodes, edges, unknownPerspectiveIds) {
         const unknownId = unknownPerspectiveIds[id];
         if (unknownId) {
             selected.add(unknownId);
-            unknowns.push(id === "change-scope" ? "UNKNOWN: Bundle v1 path bindings do not establish an actual Change Group or diff." : "UNKNOWN: Bundle v1 does not contain the independent Improvement records required by this Perspective.");
+            unknowns.push(id === "change-scope" ? "UNKNOWN: Bundle v1 path bindings do not establish an actual Change Group or diff." : id === "behavioural-risk" ? "UNKNOWN: Bundle v1 does not contain a validated Behavioural Risk Diagnosis projection." : "UNKNOWN: Bundle v1 does not contain the independent Improvement records required by this Perspective.");
         }
         const selectedEdges = edges.filter((edge)=>selected.has(edge.from) && selected.has(edge.to));
         const connected = new Set(selectedEdges.flatMap((edge)=>[

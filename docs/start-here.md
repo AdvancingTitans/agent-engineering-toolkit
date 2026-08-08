@@ -2,10 +2,10 @@
 
 ## 1. See stale proof in under 90 seconds
 
-Run the exact v1.19.0 GitHub Release wheel:
+Run the exact v1.19.1 GitHub Release wheel:
 
 ```bash
-uvx --from https://github.com/AdvancingTitans/agent-engineering-toolkit/releases/download/v1.19.0/agent_engineering_toolkit-1.19.0-py3-none-any.whl aet demo stale-proof
+uvx --from https://github.com/AdvancingTitans/agent-engineering-toolkit/releases/download/v1.19.1/agent_engineering_toolkit-1.19.1-py3-none-any.whl aet demo stale-proof
 ```
 
 The expected transition is:

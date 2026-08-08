@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+## 1.19.1 — 2026-08-09
+
+- Corrected the live public PyPI boundary from v1.11.1 to v1.18.0 after
+  post-release verification, and moved exact GitHub install links to the
+  immutable v1.19.1 patch artifacts. No Evidence, authority, Review Graph, or
+  Behavioural Risk semantics changed.
+
 ## 1.19.0 — 2026-08-08
 
 - Reframed AET as a local Evidence Plane for coding Agents and rebuilt the
@@ -38,7 +45,7 @@
   prompts or benchmark solutions; human validation and forecast eligibility are
   explicitly not claimed.
 - Corrected distribution documentation: the exact current package is published
-  through GitHub Releases, while public PyPI remains on the older v1.11.1
+  through GitHub Releases, while public PyPI remains on the older v1.18.0
   feature set.
 
 ## 1.18.0 — 2026-07-29

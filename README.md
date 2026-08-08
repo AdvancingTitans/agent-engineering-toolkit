@@ -1,6 +1,6 @@
 # Agent Engineering Toolkit
 
-[简体中文](docs/README.zh-CN.md) · [Five-minute start](docs/start-here.md) · [Full reference](docs/reference/full-product-overview.md) · [v1.19.0 Release](https://github.com/AdvancingTitans/agent-engineering-toolkit/releases/tag/v1.19.0)
+[简体中文](docs/README.zh-CN.md) · [Five-minute start](docs/start-here.md) · [Full reference](docs/reference/full-product-overview.md) · [v1.19.1 Release](https://github.com/AdvancingTitans/agent-engineering-toolkit/releases/tag/v1.19.1)
 
 > **A coding Agent can say “done.” AET shows what happened, what was proved, what changed, and what must remain `UNKNOWN`.**
 
@@ -13,7 +13,7 @@ facts, or auto-edit, commit, push, merge, release, revoke access, or execute an
 intervention.
 
 ```bash
-uvx --from https://github.com/AdvancingTitans/agent-engineering-toolkit/releases/download/v1.19.0/agent_engineering_toolkit-1.19.0-py3-none-any.whl aet demo stale-proof
+uvx --from https://github.com/AdvancingTitans/agent-engineering-toolkit/releases/download/v1.19.1/agent_engineering_toolkit-1.19.1-py3-none-any.whl aet demo stale-proof
 ```
 
 ```text
@@ -85,7 +85,7 @@ planning Skill; it never grants edit or verification authority.
 | Behavioural Risk Diagnosis | three observable factors and `PROPOSED` interventions | internal motive, overall risk score, or validated prediction |
 | Learn + Repo Archaeologist | gated local evolution and cited repository history | automatic adoption or model training |
 
-## v1.19.0: graph-first review and behavioural diagnosis
+## v1.19: graph-first review and behavioural diagnosis
 
 Review Graph applies the useful graph-first idea from
 [`code-review-graph`](https://github.com/tirth8205/code-review-graph) to AET's
@@ -185,8 +185,8 @@ They are cited repository archaeology, not endorsements or live health claims.
 
 | Path | Command | Current status |
 | --- | --- | --- |
-| Exact GitHub Release | `uv tool install https://github.com/AdvancingTitans/agent-engineering-toolkit/releases/download/v1.19.0/agent_engineering_toolkit-1.19.0-py3-none-any.whl` | v1.19.0 |
-| Public PyPI | `uv tool install agent-engineering-toolkit` | v1.11.1; older feature set |
+| Exact GitHub Release | `uv tool install https://github.com/AdvancingTitans/agent-engineering-toolkit/releases/download/v1.19.1/agent_engineering_toolkit-1.19.1-py3-none-any.whl` | v1.19.1 |
+| Public PyPI | `uv tool install agent-engineering-toolkit` | v1.18.0; does not include v1.19 Review Graph/Risk |
 | Agent Skills | `DISABLE_TELEMETRY=1 npx skills add AdvancingTitans/agent-engineering-toolkit` | external skills.sh CLI |
 
 AET itself has no product telemetry, account, API key, model call, or cloud

@@ -115,7 +115,7 @@ def validate(stage: str, strict: bool) -> list[str]:
     readme_lower = readme.lower()
     version = metadata["project"]["version"]
     if strict and not (
-        ("public pypi" in readme_lower and "v1.11.1" in readme_lower)
+        ("public pypi" in readme_lower and "v1.18.0" in readme_lower)
         or f"pypi v{version}" in readme_lower
     ):
         failures.append(

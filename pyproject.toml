@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "agent-engineering-toolkit"
-version = "1.19.0"
+version = "1.19.1"
 description = "A local Evidence Plane for coding agents: bind proof, scope, review context, and freshness to exact source."
 readme = "PYPI_README.md"
 requires-python = ">=3.11"

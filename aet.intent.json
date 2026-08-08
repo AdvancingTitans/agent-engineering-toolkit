@@ -1,5 +1,5 @@
 {
-  "intent": "Release the complete current AET implementation as v1.19.0 on GitHub main, including Review Graph, diagnosis-only Behavioural Risk, corrected bilingual product documentation, reproducible static/dynamic media, exact package artifacts, and a GitHub Release, without weakening Evidence authority, enabling forecast, publishing PyPI, or modifying unrelated preserved user inputs.",
+  "intent": "Release the complete current AET implementation as v1.19.1 on GitHub main, including the immutable v1.19 Evidence Plane implementation and a patch correcting the verified public PyPI boundary and exact GitHub install links, without weakening Evidence authority, enabling forecast, publishing PyPI, or modifying unrelated preserved user inputs.",
   "changed_path_budget": 300,
   "allowed_paths": [
     ".github/**",

@@ -82,7 +82,7 @@ target root.
 
 ## Current implementation status
 
-v1.19.0 release candidate. The deterministic core includes Quick, Intent Gate,
+v1.19.1 patch release candidate. The deterministic core includes Quick, Intent Gate,
 Run Normalization, Portable Investigation and Evidence Bundle, eleven-view
 Evidence Atlas, Improvement, Evidence-Guided Planner, graph-first Review Graph,
 diagnosis-only Behavioural Risk, Learn, and Repo Archaeologist. Review Graph
@@ -851,11 +851,11 @@ deterministic core.
   Do not commit, tag, push, publish, or create a GitHub Release until the user
   explicitly authorizes it.
 
-## v1.19.0 Evidence Plane release candidate — 2026-08-08
+## v1.19.0 Evidence Plane release — 2026-08-08
 
 - The user explicitly authorized a direct `main` publication and GitHub
-  Release. PyPI publication remains out of scope because the public package is
-  still v1.11.1 and no PyPI action was requested.
+  Release. PyPI publication remains out of scope; public PyPI is v1.18.0 and
+  no PyPI action was requested.
 - Combined the previously unreleased Behavioural Risk Diagnosis and Review
   Graph implementations without weakening four-state authority. Forecast stays
   hard-locked to research-only `UNKNOWN`; Review Graph snapshot drift and
@@ -875,5 +875,24 @@ deterministic core.
   strict self-audit, focused README/media/Atlas checks, all six README Mermaid
   parses, the 9-case AgentDojo diagnosis gate, TypeScript gates, package build,
   package-content checks, and isolated-wheel Demo/CLI smoke pass. Diff-bound
-  release classification, exact-commit CI, and GitHub Release evidence are the
-  remaining gates at this resume point.
+  release classification, exact-commit CI, and GitHub Release evidence also
+  passed in the runs recorded below.
+
+- Released immutable tag `v1.19.0` from commit
+  `d9beff78af1bf2079af110f4d009686959d664ff`. Main CI Run `31265258405`,
+  tag CI Run `31265258444`, and GitHub Release Run `31265675517` passed.
+  Release ID `367240504` publishes the exact CI wheel, sdist, manifest,
+  diff-bound classification, classification verification, and release evidence.
+- Post-release verification caught one stale live-distribution fact: public
+  PyPI is v1.18.0, not v1.11.1. Do not mutate the released v1.19.0 tag or
+  assets; v1.19.1 is the documentation/package-metadata patch candidate with
+  no Evidence or authority semantic change.
+
+## v1.19.1 live-distribution correction candidate — 2026-08-09
+
+- Verified the official PyPI JSON reports v1.18.0 and corrected the English,
+  Chinese, PyPI, quick-start, launch-gate, Action-template, and exact GitHub
+  install documentation accordingly.
+- Version metadata and lock are 1.19.1. This patch changes no Evidence,
+  authority, Review Graph, Behavioural Risk, media, or protocol semantics and
+  performs no PyPI publication.

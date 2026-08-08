@@ -1,6 +1,6 @@
 # Agent Engineering Toolkit
 
-[English](../README.md) · [五分钟入门](start-here.md) · [完整技术参考](reference/full-product-overview.md) · [v1.19.0 Release](https://github.com/AdvancingTitans/agent-engineering-toolkit/releases/tag/v1.19.0)
+[English](../README.md) · [五分钟入门](start-here.md) · [完整技术参考](reference/full-product-overview.md) · [v1.19.1 Release](https://github.com/AdvancingTitans/agent-engineering-toolkit/releases/tag/v1.19.1)
 
 > **编程 Agent 可以说“完成了”；AET 负责说明真实发生了什么、证明了什么、哪里已经变化，以及什么必须保持 `UNKNOWN`。**
 
@@ -12,7 +12,7 @@ AET 不是另一个编程 Agent，也不替代测试或 CI。它不会补全缺�
 编辑、提交、推送、合并、发布、撤权或执行干预。
 
 ```bash
-uvx --from https://github.com/AdvancingTitans/agent-engineering-toolkit/releases/download/v1.19.0/agent_engineering_toolkit-1.19.0-py3-none-any.whl aet demo stale-proof
+uvx --from https://github.com/AdvancingTitans/agent-engineering-toolkit/releases/download/v1.19.1/agent_engineering_toolkit-1.19.1-py3-none-any.whl aet demo stale-proof
 ```
 
 ```text
@@ -84,7 +84,7 @@ Skill；它不授予编辑或验证权限。
 | Behavioural Risk Diagnosis | 三项可观察因子与 `PROPOSED` 干预 | 内部动机、整体风险分或已验证预测 |
 | Learn + Repo Archaeologist | 有门禁的本地演进与带引用的仓库历史 | 自动采纳或模型训练 |
 
-## v1.19.0：图优先审查与行为风险诊断
+## v1.19：图优先审查与行为风险诊断
 
 Review Graph 借鉴
 [`code-review-graph`](https://github.com/tirth8205/code-review-graph) 的图优先
@@ -175,8 +175,8 @@ sequenceDiagram
 
 | 路径 | 命令 | 当前状态 |
 | --- | --- | --- |
-| 精确 GitHub Release | `uv tool install https://github.com/AdvancingTitans/agent-engineering-toolkit/releases/download/v1.19.0/agent_engineering_toolkit-1.19.0-py3-none-any.whl` | v1.19.0 |
-| 公共 PyPI | `uv tool install agent-engineering-toolkit` | v1.11.1；功能较旧 |
+| 精确 GitHub Release | `uv tool install https://github.com/AdvancingTitans/agent-engineering-toolkit/releases/download/v1.19.1/agent_engineering_toolkit-1.19.1-py3-none-any.whl` | v1.19.1 |
+| 公共 PyPI | `uv tool install agent-engineering-toolkit` | v1.18.0；不含 v1.19 Review Graph/Risk |
 | Agent Skills | `DISABLE_TELEMETRY=1 npx skills add AdvancingTitans/agent-engineering-toolkit` | 外部 skills.sh CLI |
 
 AET 本身不增加产品遥测、账号、API Key、模型调用或云服务。Git 绑定工作流需要

@@ -10,16 +10,16 @@ auto-edit, commit, push, merge, release, or execute an intervention.
 
 ## Install
 
-The PyPI package currently exposes the older v1.11.1 feature set:
+The PyPI package currently exposes the v1.18.0 feature set:
 
 ```bash
 uv tool install agent-engineering-toolkit
 ```
 
-For the current v1.19.0 feature set, install the exact GitHub Release wheel:
+For the current v1.19.1 feature set, install the exact GitHub Release wheel:
 
 ```bash
-uv tool install https://github.com/AdvancingTitans/agent-engineering-toolkit/releases/download/v1.19.0/agent_engineering_toolkit-1.19.0-py3-none-any.whl
+uv tool install https://github.com/AdvancingTitans/agent-engineering-toolkit/releases/download/v1.19.1/agent_engineering_toolkit-1.19.1-py3-none-any.whl
 ```
 
 ## Smallest useful surfaces
